@@ -14,7 +14,7 @@ import torch
 from sb3_contrib import MaskablePPO
 
 from training.env import TetrisEnv
-from training.train_transaction import config_for_tasks, load_committed
+from training.train_transaction import config_for_tasks, load_committed, run
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -30,6 +30,30 @@ def test_default_task_boundaries():
     assert config["target_total_steps"] == 32768
     assert config["ppo"]["n_steps"] == 1024
     assert config["ppo"]["n_envs"] == 1
+    assert config["device"] == "cpu"
+
+
+def test_resume_rejects_device_change_before_loading_checkpoint(tmp_path):
+    run_dir = tmp_path / "recorded_cpu"
+    run_dir.mkdir()
+    (run_dir / "config.json").write_text(json.dumps(config_for_tasks(device="cpu")))
+    (run_dir / "metadata.json").write_text(json.dumps({"device": "cpu"}))
+    (run_dir / "transaction_state.json").write_text(json.dumps({"status": "running"}))
+    import pytest
+    with pytest.raises(ValueError, match="created for device=cpu"):
+        run(run_dir, resume=True, device="cuda")
+
+
+def test_resume_never_falls_back_from_recorded_cuda(tmp_path, monkeypatch):
+    run_dir = tmp_path / "recorded_cuda"
+    run_dir.mkdir()
+    (run_dir / "config.json").write_text(json.dumps(config_for_tasks(device="cuda")))
+    (run_dir / "metadata.json").write_text(json.dumps({"device": "cuda"}))
+    (run_dir / "transaction_state.json").write_text(json.dumps({"status": "running", "committed_task": 0}))
+    monkeypatch.setattr(torch.cuda, "is_available", lambda: False)
+    import pytest
+    with pytest.raises(RuntimeError, match="Recorded CUDA device is unavailable"):
+        run(run_dir, resume=True)
 
 
 def test_rollback_restores_last_commit_and_reexecutes_task(tmp_path):
@@ -41,6 +65,8 @@ def test_rollback_restores_last_commit_and_reexecutes_task(tmp_path):
     task2 = resumed / "committed" / "task_000002"
     assert all((task2 / name).exists() for name in
                ("model.zip", "trainer_state.pkl", "env_state.pkl", "metrics.json", "task_meta.json"))
+    assert json.loads((task2 / "task_meta.json").read_text())["device"] == "cpu"
+    assert json.loads((resumed / "metadata.json").read_text())["device"] == "cpu"
     env = TetrisEnv()
     model, trainer, saved_env = load_committed(MaskablePPO, resumed, 2, env, "cpu")
     assert model.num_timesteps == 2048 and len(model.policy.optimizer.state) > 0

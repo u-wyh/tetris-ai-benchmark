@@ -1,0 +1,4 @@
+# Linux x86_64 NVIDIA only. Install requirements.txt first, then this file.
+# Official PyTorch CUDA 13.0 wheel; tested on RTX 3050 Laptop with driver 595.91.07.
+--index-url https://download.pytorch.org/whl/cu130
+torch==2.10.0+cu130

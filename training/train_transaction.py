@@ -20,13 +20,16 @@ FIELDS = ("task_id", "start_step", "end_step", "wall_seconds", "mean_episode_rew
           "learning_rate", "game_over_count", "truncated_count", "cleared_lines")
 
 
-def config_for_tasks(task_steps=4096, target_steps=32768):
+def config_for_tasks(task_steps=4096, target_steps=32768, device="cpu"):
     if task_steps < 1024 or task_steps % 1024 or target_steps < task_steps or target_steps % task_steps:
         raise ValueError("Task and target must be positive multiples of the 1024-step PPO rollout")
     config = default_config(target=target_steps, chunk=task_steps, first_stage=target_steps,
                             eval_every=task_steps, checkpoint_every=task_steps)
     config["task_steps"] = task_steps
     config["run_type"] = "transactional_maskable_ppo"
+    if device not in ("cpu", "cuda"):
+        raise ValueError("device must be cpu or cuda")
+    config["device"] = device
     return config
 
 
@@ -170,6 +173,9 @@ def load_committed(model_class, run_dir, number, env, device):
     import numpy as np
 
     task_dir = run_dir / "committed" / task_name(number)
+    task_meta = json.loads((task_dir / "task_meta.json").read_text())
+    if task_meta.get("device", device) != device:
+        raise RuntimeError("Committed task device differs from recorded run device")
     trainer = pickle.loads((task_dir / "trainer_state.pkl").read_bytes())
     saved_env = pickle.loads((task_dir / "env_state.pkl").read_bytes())
     model = model_class.load(str(task_dir / "model.zip"), env=env, device=device, force_reset=False)
@@ -227,7 +233,7 @@ def commit_task(run_dir, state, working_dir, model, env, monitor, callback, capt
     model.save(str(working_dir / "model.zip"))
     atomic_json(working_dir / "task_meta.json",
                 {"task_id": number, "status": "committed", "start_step": start,
-                 "end_step": end, "committed_at": now()})
+                 "end_step": end, "committed_at": now(), "device": str(model.device)})
     fsync_tree(working_dir)
     destination = run_dir / "committed" / task_name(number)
     os.replace(working_dir, destination)
@@ -283,7 +289,7 @@ def inspect_status(run_dir):
           f"\nDevice: {meta.get('device')}")
 
 
-def run(run_dir, resume=False, task_steps=4096, target_steps=32768, max_tasks=None):
+def run(run_dir, resume=False, task_steps=4096, target_steps=32768, max_tasks=None, device=None):
     import gymnasium
     import numpy as np
     import sb3_contrib
@@ -308,6 +314,13 @@ def run(run_dir, resume=False, task_steps=4096, target_steps=32768, max_tasks=No
             raise FileNotFoundError("Resume requires an existing transactional run")
         config = json.loads(config_path.read_text())
         state = read_state(run_dir)
+        saved_meta = json.loads((run_dir / "metadata.json").read_text())
+        recorded_device = config.get("device", saved_meta["device"])
+        if saved_meta["device"] != recorded_device:
+            raise RuntimeError("Config and metadata disagree on training device")
+        if device is not None and device != recorded_device:
+            raise ValueError(f"Run was created for device={recorded_device}; requested {device}")
+        device = recorded_device
         if state["status"] == "completed":
             fcntl.flock(lock_file, fcntl.LOCK_UN)
             lock_file.close()
@@ -315,11 +328,15 @@ def run(run_dir, resume=False, task_steps=4096, target_steps=32768, max_tasks=No
     else:
         if config_path.exists() or state_path(run_dir).exists():
             raise FileExistsError("Run already exists; use resume")
-        config = config_for_tasks(task_steps, target_steps)
+        device = device or "cpu"
+        config = config_for_tasks(task_steps, target_steps, device=device)
+        if device == "cuda" and not torch.cuda.is_available():
+            raise RuntimeError("CUDA is unavailable; refusing to create a CUDA run")
         for name in ("working", "committed", "abandoned", "logs", "reports"):
             (run_dir / name).mkdir(exist_ok=True)
         atomic_json(config_path, config)
         meta = metadata(torch, gymnasium, stable_baselines3, sb3_contrib)
+        meta["device"] = device
         meta["resume_episode_policy"] = "Restore full TetrisEnv, TetrisCore, Monitor and SB3 last observation from committed Task."
         meta.update({"ppo_parameters": config["ppo"], "task_steps": task_steps,
                      "target_steps": target_steps, "run_seed": config["run_seed"]})
@@ -328,9 +345,10 @@ def run(run_dir, resume=False, task_steps=4096, target_steps=32768, max_tasks=No
         write_state(run_dir, state)
         log_event(run_dir, "STARTED", task_steps=task_steps, target=target_steps)
 
+    if device == "cuda" and not torch.cuda.is_available():
+        raise RuntimeError("Recorded CUDA device is unavailable; refusing to switch devices")
     discard_uncommitted(run_dir, state["committed_task"])
     rebuild_metrics(run_dir, state["committed_task"])
-    device = "cuda" if torch.cuda.is_available() else "cpu"
     env = TetrisEnv(max_pieces=config["max_pieces"])
     if state["committed_task"]:
         model, _, _ = load_committed(MaskablePPO, run_dir, state["committed_task"], env, device)
@@ -396,7 +414,8 @@ def run(run_dir, resume=False, task_steps=4096, target_steps=32768, max_tasks=No
             working_dir.mkdir()
             atomic_json(working_dir / "task_meta.json",
                         {"task_id": number, "status": "in_progress",
-                         "start_step": state["committed_steps"], "started_at": now()})
+                         "start_step": state["committed_steps"], "started_at": now(),
+                         "device": device})
             state.update({"working_task": number, "working_steps": state["committed_steps"]})
             write_state(run_dir, state)
             log_event(run_dir, "TASK_STARTED", task=number, committed_steps=state["committed_steps"])
@@ -439,13 +458,14 @@ def main():
     parser.add_argument("--status", action="store_true")
     parser.add_argument("--task-steps", type=int, default=4096)
     parser.add_argument("--target-steps", type=int, default=32768)
+    parser.add_argument("--device", choices=("cpu", "cuda"), default=None)
     parser.add_argument("--max-tasks", type=int, default=None, help="Test-only stop after complete commits")
     args = parser.parse_args()
     if args.status:
         inspect_status(args.run_dir)
     else:
         run(args.run_dir, resume=args.resume, task_steps=args.task_steps,
-            target_steps=args.target_steps, max_tasks=args.max_tasks)
+            target_steps=args.target_steps, max_tasks=args.max_tasks, device=args.device)
 
 
 if __name__ == "__main__":

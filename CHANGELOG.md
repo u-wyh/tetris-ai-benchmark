@@ -1,5 +1,10 @@
 # 修改日志
 
+## 2026-10-07
+
+- 在 RTX 3050 Laptop 上验证官方 PyTorch 2.10.0 CUDA 13.0 build，并完成 CPU/CUDA MaskablePPO 短基准；整体吞吐几乎相同，正式训练默认 CPU。
+- 事务训练记录并固定设备，恢复时不自动切换；CUDA checkpoint 的模型和 optimizer 恢复通过。
+
 ## 2026-10-06
 
 - 新增事务式 MaskablePPO Task/Commit 恢复：每 Task 4096 步，完整保存模型、optimizer、环境、RNG 与指标；同盘 rename 后才推进 committed 指针，重启后隔离并重做未提交 Task。

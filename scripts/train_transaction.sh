@@ -27,8 +27,15 @@ case "$command" in
     mkdir -p "$run_dir/logs"
     resume_flag=""
     if [[ "$command" == resume ]]; then resume_flag="--resume"; fi
+    device_flag=""
+    if [[ "$command" == start && -n "${TETRIS_TRANSACTION_DEVICE:-}" ]]; then
+      case "$TETRIS_TRANSACTION_DEVICE" in
+        cpu|cuda) device_flag="--device $TETRIS_TRANSACTION_DEVICE" ;;
+        *) echo "TETRIS_TRANSACTION_DEVICE must be cpu or cuda." >&2; exit 2 ;;
+      esac
+    fi
     tmux new-session -d -s "$session" \
-      "cd '$root' && exec '$root/.venv/bin/python' -m training.train_transaction --run-dir '$run_dir' $resume_flag >> '$run_dir/logs/console.log' 2>&1"
+      "cd '$root' && exec '$root/.venv/bin/python' -m training.train_transaction --run-dir '$run_dir' $resume_flag $device_flag >> '$run_dir/logs/console.log' 2>&1"
     echo "Started in tmux session $session. The process continues after this shell exits."
     ;;
   status)

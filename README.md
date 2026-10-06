@@ -16,6 +16,17 @@ python3 -m venv .venv
 
 环境文件不包含 PPO 或其他训练程序。
 
+## Linux NVIDIA PyTorch
+
+本项目的 `requirements.txt` 默认安装 CPU 版 PyTorch。RTX 3050 Laptop GPU（驱动 595.91.07）已验证官方 `torch 2.10.0+cu130`；先安装基础依赖，再在 Linux NVIDIA 机器上执行：
+
+```bash
+.venv/bin/python -m pip install -r requirements-cuda-linux.txt
+.venv/bin/python -c 'import torch; print(torch.__version__, torch.version.cuda, torch.cuda.is_available())'
+```
+
+CUDA wheel 使用 [PyTorch 官方索引](https://pytorch.org/get-started/previous-versions/)；无需系统级 CUDA Toolkit。再次安装 `requirements.txt` 会恢复 CPU 版，需要随后重新执行 CUDA 安装命令。
+
 ## 首轮 MaskablePPO smoke training
 
 安装依赖后，在项目根目录运行：
@@ -42,3 +53,5 @@ python3 -m venv .venv
 ```
 
 事务训练使用独立的 `tetris-transaction` tmux session；`status` 同时显示 committed 与 working 进度。当前实验不配置开机自动恢复，也不要求先人工 pause。正式训练指标仅由 committed Task 重建，未提交 Task 的指标不会进入 `training_metrics.csv`。
+
+新事务实验默认使用 CPU；可用 `TETRIS_TRANSACTION_DEVICE=cpu` 或 `TETRIS_TRANSACTION_DEVICE=cuda` 指定设备。设备写入 config、metadata 和 Task metadata；恢复时始终使用原实验设备，若该设备不可用则报错，不自动切换。实测见 [CPU/CUDA benchmark 报告](reports/cuda/2026-10-06.md)。
