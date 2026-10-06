@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#080b18">
+  <title>霓虹方块 · Neon Blocks</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="game-page">
+    <header class="title-row">
+      <div>
+        <p class="eyebrow">ARCADE / BLOCKS</p>
+        <h1>霓虹方块</h1>
+      </div>
+      <div class="header-actions">
+        <button id="aiButton" class="ai-button" type="button" aria-pressed="false">
+          <span class="ai-dot"></span>AI 选手
+        </button>
+        <button id="soundButton" class="icon-button" type="button" aria-label="切换声音" title="切换声音">♪</button>
+      </div>
+    </header>
+
+    <section class="game-layout">
+      <div class="board-frame">
+        <div class="board-glow"></div>
+        <div id="aiBadge" class="ai-badge hidden"><span></span><b>AI</b><em id="aiStatus">正在分析</em></div>
+        <canvas id="gameCanvas" width="320" height="640" aria-label="游戏区域"></canvas>
+        <div id="overlay" class="overlay">
+          <div class="overlay-card">
+            <p id="overlayKicker">READY?</p>
+            <h2 id="overlayTitle">开始游戏</h2>
+            <p id="overlayText">叠放方块，填满整行即可消除</p>
+            <button id="startButton" class="primary-button" type="button">开始</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="side-panel">
+        <section class="panel next-panel">
+          <div class="panel-heading">
+            <span>接下来</span>
+            <span class="tiny-label">NEXT</span>
+          </div>
+          <canvas id="nextCanvas" width="144" height="218" aria-label="接下来的方块"></canvas>
+        </section>
+
+        <section class="panel hold-panel">
+          <div class="panel-heading">
+            <span>暂存</span>
+            <span class="tiny-label">HOLD</span>
+          </div>
+          <canvas id="holdCanvas" width="144" height="92" aria-label="暂存的方块"></canvas>
+        </section>
+
+        <section class="panel stats-panel">
+          <div class="stat primary-stat">
+            <span>积分</span>
+            <strong id="score">0</strong>
+          </div>
+          <div class="stat-grid">
+            <div class="stat">
+              <span>最高分</span>
+              <strong id="highScore">0</strong>
+            </div>
+            <div class="stat">
+              <span>等级</span>
+              <strong id="level">1</strong>
+            </div>
+            <div class="stat">
+              <span>消除</span>
+              <strong id="lines">0</strong>
+            </div>
+            <div class="stat">
+              <span>速度</span>
+              <strong id="speed">1.0×</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel controls-panel">
+          <div class="panel-heading"><span>操作</span><span class="tiny-label">CONTROLS</span></div>
+          <div class="key-row"><span><kbd>←</kbd><kbd>→</kbd></span><span>移动</span></div>
+          <div class="key-row"><span><kbd>↑</kbd> / <kbd>X</kbd></span><span>旋转</span></div>
+          <div class="key-row"><span><kbd>↓</kbd></span><span>加速下降</span></div>
+          <div class="key-row"><span><kbd>Space</kbd></span><span>直接落下</span></div>
+          <div class="key-row"><span><kbd>C</kbd></span><span>暂存方块</span></div>
+          <div class="key-row"><span><kbd>P</kbd></span><span>暂停</span></div>
+          <div class="key-row ai-hint"><span><kbd>AI</kbd></span><span>自动挑战高分</span></div>
+        </section>
+      </aside>
+    </section>
+
+    <section class="mobile-controls" aria-label="触屏控制">
+      <button type="button" data-action="left" aria-label="向左">←</button>
+      <button type="button" data-action="down" aria-label="向下">↓</button>
+      <button type="button" data-action="right" aria-label="向右">→</button>
+      <button type="button" data-action="rotate" aria-label="旋转">↻</button>
+      <button type="button" data-action="drop" class="wide" aria-label="直接落下">落下</button>
+      <button type="button" data-action="pause" aria-label="暂停">Ⅱ</button>
+      <button type="button" data-action="hold" aria-label="暂存方块">Hold</button>
+    </section>
+
+    <footer>方向键控制 · 每消除 10 行提升一级</footer>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
