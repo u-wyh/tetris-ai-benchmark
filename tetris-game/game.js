@@ -3,6 +3,7 @@
 const COLS = 10;
 const ROWS = 20;
 const CELL = 32;
+const NEXT_PREVIEW_COUNT = 3;
 const SAVE_KEY = "neonBlocksGameV1";
 
 const PIECES = {
@@ -91,6 +92,30 @@ function createBoard() {
 
 function cloneMatrix(matrix) {
   return matrix.map(row => [...row]);
+}
+
+function getPublicObservation() {
+  const publicBoard = Object.freeze(board.map(row => Object.freeze([...row])));
+  const currentPiece = active && state !== "over" ? Object.freeze({
+    type: active.type,
+    matrix: Object.freeze(active.matrix.map(row => Object.freeze([...row]))),
+    rotation: active.rotation,
+    x: active.x,
+    y: active.y
+  }) : null;
+
+  return Object.freeze({
+    board: publicBoard,
+    currentPiece,
+    hold: heldType,
+    holdAvailable: state === "playing" && !holdUsed,
+    next: Object.freeze(queue.slice(0, NEXT_PREVIEW_COUNT)),
+    score,
+    level,
+    lines,
+    gameOver: state === "over",
+    lock: Object.freeze({ elapsedMs: lockElapsed, resetCount: lockResetCount, started: lockStarted })
+  });
 }
 
 function rotateMatrix(matrix) {
@@ -793,7 +818,7 @@ function drawMatrix(matrix, px, py, type, alpha = 1, ghost = false) {
 
 function drawNext() {
   nextCtx.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
-  queue.slice(0, 3).forEach((type, index) => {
+  queue.slice(0, NEXT_PREVIEW_COUNT).forEach((type, index) => {
     const matrix = PIECES[type].matrix;
     const occupied = occupiedBounds(matrix);
     const size = index === 0 ? 24 : 19;

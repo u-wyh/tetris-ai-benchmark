@@ -21,6 +21,12 @@
 
 `score` 是正式游戏规则和 Benchmark 指标。未来强化学习的 reward function 应独立计算，不能修改或污染正式游戏分数。
 
+## Benchmark v1.0 Observation Policy
+
+公开观察接口 `getPublicObservation()` 返回只读副本：20×10 Board、Current Piece（类型、矩阵、旋转状态和位置）、Hold 与是否可用、Next 3、Score、Level、Lines、Game Over，以及锁定计时和重置次数。Hold 是否可用按游戏规则判断，与当前传统 AI 是否使用 Hold 无关。
+
+Next 4+、7-Bag 剩余顺序、初始 seed、Gameplay/AI RNG state 和浏览器存档数据均不公开。内部队列仍保持至少 5 个方块；当前传统 AI 尚未迁移到此接口，仍直接读取棋盘、活动方块及 `queue[0]`，只前瞻 1 个 Next。
+
 需要复现一局时，可在浏览器开发者控制台运行 `resetGame({ seed: 12345 })`。seed 为 0 到 4294967295 的整数；不指定时新游戏会自动生成 seed。当前 seed 和随机数状态随对局一起保存在浏览器中。
 
 点击右上角“AI 选手”可开启自动玩家。AI 会分析当前棋盘及下一个方块，并在画面中逐步完成旋转、移动和下降；再次点击即可随时切回人工操作。

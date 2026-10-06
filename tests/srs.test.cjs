@@ -548,3 +548,76 @@ test("Block Out and Lock Out add no extra score", () => {
   assert.equal(lock.run("state"), "over");
   assert.equal(lock.run("score"), 17);
 });
+
+test("public observation exposes exactly three Next pieces from a longer queue", () => {
+  const g = game();
+  g.run('resetGame({ seed: 12345 }); queue = ["I", "J", "L", "O", "S", "T"]; bag = ["Z"]');
+  const observation = JSON.parse(g.run("JSON.stringify(getPublicObservation())"));
+  assert.deepEqual(observation.next, ["I", "J", "L"]);
+  assert.equal(g.run("queue.length"), 6);
+  assert.equal(g.run("NEXT_PREVIEW_COUNT"), 3);
+  assert.equal(g.run("getPublicObservation().next.length"), 3);
+});
+
+test("public observation omits hidden queue, bag, RNG, seed, and save data", () => {
+  const g = game();
+  g.run('resetGame({ seed: 12345 }); queue = ["I", "J", "L", "O", "S"]; bag = ["Z"]; saveGame()');
+  const observation = JSON.parse(g.run("JSON.stringify(getPublicObservation())"));
+  assert.deepEqual(Object.keys(observation).sort(),
+    ["board", "currentPiece", "gameOver", "hold", "holdAvailable", "level", "lines", "lock", "next", "score"].sort());
+  assert.deepEqual(Object.keys(observation.lock).sort(), ["elapsedMs", "resetCount", "started"]);
+  assert.equal(JSON.stringify(observation).includes('"bag"'), false);
+  assert.equal(JSON.stringify(observation).includes('"gameplayRngState"'), false);
+  assert.equal(JSON.stringify(observation).includes('"aiRngState"'), false);
+  assert.equal(JSON.stringify(observation).includes('"initialSeed"'), false);
+  assert.equal(JSON.stringify(observation).includes('"savedAt"'), false);
+  assert.equal(JSON.stringify(observation).includes('"O","S"'), false);
+});
+
+test("public board, current piece, and Next are detached frozen snapshots", () => {
+  const g = game();
+  g.run('resetGame(); board[0][0] = "T"; active = makePiece("L"); queue = ["I", "J", "L", "O", "S"]');
+  g.run('var view = getPublicObservation(); view.board[0][0] = "Z"; view.currentPiece.matrix[0][2] = 0; view.next[0] = "Z"');
+  assert.equal(g.run("Object.isFrozen(view) && Object.isFrozen(view.board) && Object.isFrozen(view.board[0])"), true);
+  assert.equal(g.run("Object.isFrozen(view.currentPiece) && Object.isFrozen(view.currentPiece.matrix[0]) && Object.isFrozen(view.next)"), true);
+  assert.equal(g.run("board[0][0]"), "T");
+  assert.equal(g.run("active.matrix[0][2]"), 1);
+  assert.equal(g.run("queue[0]"), "I");
+  const oldX = g.run("view.currentPiece.x");
+  g.run("move(-1)");
+  assert.equal(g.run("view.currentPiece.x"), oldX);
+  assert.equal(g.run("active.x"), oldX - 1);
+});
+
+test("public current piece, Hold availability, score, level, lines, and lock state are accurate", () => {
+  const g = game();
+  g.run('resetGame(); active = makePiece("T"); active.rotation = "R"; active.matrix = pieceMatrix("T", "R"); active.x = 2; active.y = 3; heldType = "I"; holdUsed = false; score = 1234; lines = 12; level = 2; lockElapsed = 175; lockResetCount = 4; lockStarted = true');
+  const visible = JSON.parse(g.run("JSON.stringify(getPublicObservation())"));
+  assert.equal(visible.board.length, 20);
+  assert.equal(visible.board[0].length, 10);
+  assert.deepEqual(visible.currentPiece, {
+    type: "T", matrix: JSON.parse(g.run('JSON.stringify(pieceMatrix("T", "R"))')),
+    rotation: "R", x: 2, y: 3
+  });
+  assert.equal(visible.hold, "I");
+  assert.equal(visible.holdAvailable, true);
+  assert.equal(visible.score, 1234);
+  assert.equal(visible.level, 2);
+  assert.equal(visible.lines, 12);
+  assert.equal(visible.gameOver, false);
+  assert.deepEqual(visible.lock, { elapsedMs: 175, resetCount: 4, started: true });
+  g.run("holdUsed = true");
+  assert.equal(g.run("getPublicObservation().holdAvailable"), false);
+  g.run('state = "over"');
+  assert.equal(g.run("getPublicObservation().gameOver"), true);
+  assert.equal(g.run("getPublicObservation().holdAvailable"), false);
+  assert.equal(g.run("getPublicObservation().currentPiece"), null);
+});
+
+test("the existing AI continues using only queue[0] without the new observation", () => {
+  const g = game();
+  g.run('resetGame({ seed: 12345 }); queue = ["I", "J", "L", "O", "S"]; setAI(true)');
+  assert.equal(g.run("chooseAIMove() !== null"), true);
+  assert.equal(g.run("aiEnabled"), true);
+  assert.equal(g.run("getPublicObservation().next.length"), 3);
+});
