@@ -31,9 +31,15 @@ Next 4+、7-Bag 剩余顺序、初始 seed、Gameplay/AI RNG state 和浏览器�
 
 动作空间固定为 1840：`Hold(2) × Rotation(4) × X(10) × Y(23)`。`rotation` 为 `0/R/2/L` 对应的 `0/1/2/3`；`x`、`y` 是最终占据格子的最左列和最上行，`y ∈ [-3,19]`。`encodeAction()` 与 `decodeAction()` 互逆；`getLegalPlacements()` 返回真实操作路径，`getActionMask()` 返回 1840 个布尔值。Agent 每块选择一次最终 placement，执行器以后可按返回路径执行。Mask 只表示机械可达性，致死 placement 仍可选。
 
-搜索先检查 HardDrop 终点，再按 `Left → Right → RotateCW → Down` 扩展；最短路径优先，同长路径按此固定顺序决定。同一 Hold 分支中占据格相同则只保留最小 action ID。离散锁定模型以每次成功操作 50 ms 计时，首次接地后持续计时，最多 15 次接地重置；HardDrop 立即锁定。搜索不读取隐藏队列或 RNG，也不修改当前对局。当前传统 AI 尚未使用此模块，可能建议被障碍隔开的不可达落点。
+### Human Gameplay Rules
 
-性能基准可运行 `node tests/placement-benchmark.cjs`（项目根目录）。在 4 个固定 seed 的合法局面上各测 3 次，当前环境测得平均 232.39 ms、中位数 219.57 ms、平均 47.8 个 placements，约 4.3 次 mask/s；这只是当前实现的基线。
+人工游戏继续使用 SRS 实时操作、450 ms Lock Delay 和每块最多 15 次接地重置；Hard Drop 立即锁定。
+
+### AI Benchmark Reachability
+
+Agent 每块选择一个最终 placement。BFS 从当前状态出发，只以 `(x,y,rotation)` 去重，按 `Left → Right → RotateCW → Down` 扩展；可先下降再横移或旋转，包括 SRS Wall Kick 和 Tuck。只有当前状态合法且继续 Down 会碰撞时才形成候选终点。同一 Hold 分支中占据格相同则只保留最小 action ID。搜索不模拟 Lock Delay、Lock Reset 时间或手速，也不读取隐藏队列或 RNG，不修改当前对局。当前传统 AI 尚未使用此模块，可能建议被障碍隔开的不可达落点。
+
+性能基准可在项目根目录运行 `node tests/placement-benchmark.cjs`。在 4 个固定 seed 的合法局面上各测 3 次，本次环境测得平均 4.64 ms、中位数 4.41 ms、约 215.6 masks/s，平均搜索 1194 个状态、47.8 个 placements；旧实现平均 232.39 ms、约 4.3 masks/s。
 
 需要复现一局时，可在浏览器开发者控制台运行 `resetGame({ seed: 12345 })`。seed 为 0 到 4294967295 的整数；不指定时新游戏会自动生成 seed。当前 seed 和随机数状态随对局一起保存在浏览器中。
 

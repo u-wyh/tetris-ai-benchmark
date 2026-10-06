@@ -47,6 +47,43 @@ test("a geometric cavity with no legal entry is masked", () => {
   assert.equal(mask(g)[g.run("encodeAction(0, 0, 4, 17)")], false);
 });
 
+test("paths can descend then move or rotate into tuck placements", () => {
+  const g = game();
+  g.run(`resetGame(); active = makePiece("T"); holdUsed = true;
+    ["....#.....", "......#...", "#.......#.", ".##.......",
+     "...##.....", ".....##...", ".......##.", ".#.......#"]
+      .forEach((row, index) => [...row].forEach((cell, x) => {
+        if (cell === "#") board[index + 12][x] = "Z";
+      }));`);
+  const p = placements(g);
+  assert.equal(p.some(item => item.path.some((step, index) => step === "Down"
+    && item.path.slice(index + 1).some(next => next === "Left" || next === "Right"))), true);
+  assert.equal(p.some(item => item.path.some((step, index) => step === "Down"
+    && item.path.slice(index + 1).includes("RotateCW"))), true);
+  assert.equal(g.run(`getLegalPlacements().every(placement => {
+    let piece = {...active};
+    for (const step of placement.path) {
+      if (step === "HardDrop") {
+        if (!collidesOnBoard(board, piece.x, piece.y + 1, piece.matrix)) return false;
+      } else if (step === "RotateCW") {
+        piece = tryRotatePiece(piece, board);
+        if (!piece) return false;
+      } else {
+        const x = piece.x + (step === "Left" ? -1 : step === "Right" ? 1 : 0);
+        const y = piece.y + (step === "Down" ? 1 : 0);
+        if (collidesOnBoard(board, x, y, piece.matrix)) return false;
+        piece = {...piece, x, y};
+      }
+    }
+    const cells = [];
+    piece.matrix.forEach((row, dy) => row.forEach((cell, dx) => {
+      if (cell) cells.push({x: piece.x + dx, y: piece.y + dy});
+    }));
+    cells.sort((a, b) => a.y - b.y || a.x - b.x);
+    return JSON.stringify(cells) === JSON.stringify(placement.occupiedCells);
+  })`), true);
+});
+
 test("T floor kick and I-specific SRS kick produce reachable paths", () => {
   const t = game();
   t.run('resetGame(); active = makePiece("T"); active.y = 18; holdUsed = true');
@@ -60,7 +97,7 @@ test("T floor kick and I-specific SRS kick produce reachable paths", () => {
   const i = game();
   i.run('resetGame(); active = makePiece("I"); active.y = 17; holdUsed = true');
   const targetI = placements(i).find(item => item.rotation === 1 && item.x === 6 && item.y === 16);
-  assert.deepEqual(targetI.path, ["RotateCW", "HardDrop"]);
+  assert.deepEqual(targetI.path, ["RotateCW", "Down", "HardDrop"]);
   i.run("rotate(); hardDrop()");
   assert.equal(i.run("board[19][6]"), "I");
 });
@@ -124,12 +161,31 @@ test("queries leave real game, RNG, score, and lock state unchanged", () => {
   assert.equal(fullState(g), before);
 });
 
-test("the 15-reset budget changes reachability instead of allowing endless floor movement", () => {
+test("geometric reachability ignores Human Mode lock timing and reset count", () => {
   const g = game();
   g.run('resetGame(); active = makePiece("O"); active.y = 18; holdUsed = true; lockStarted = true; lockElapsed = 350; lockResetCount = 15');
   const target = g.run("encodeAction(0, 0, 7, 18)");
-  assert.equal(mask(g)[target], false);
-  g.run("lockResetCount = 14");
+  const first = mask(g);
+  assert.equal(first[target], true);
+  g.run("lockResetCount = 0; lockElapsed = 0; lockStarted = false");
+  assert.deepEqual(mask(g), first);
+});
+
+test("BFS visits each geometric state once and reports both Hold branches", () => {
+  const g = game();
+  g.run('resetGame({seed:12345}); active = makePiece("T"); heldType = "I"');
+  const result = g.run('(() => { const stats = {}; const placements = getLegalPlacements(stats); return {states: stats.states, placements: placements.length}; })()');
+  assert.equal(result.states > 0 && result.states <= 2 * 4 * 24 * 10, true);
+  assert.equal(result.placements, placements(g).length);
+  g.run("holdUsed = true");
+  const single = g.run('(() => { const stats = {}; getActionMask(stats); return stats.states; })()');
+  assert.equal(single < result.states, true);
+});
+
+test("grounded lateral moves remain reachable after the old reset limit", () => {
+  const g = game();
+  g.run('resetGame(); active = makePiece("O"); active.y = 18; holdUsed = true; lockStarted = true; lockElapsed = 450; lockResetCount = 15');
+  const target = g.run("encodeAction(0, 0, 7, 18)");
   assert.equal(mask(g)[target], true);
 });
 

@@ -1,7 +1,6 @@
 "use strict";
 
 const ACTION_COUNT = 1840;
-const PLACEMENT_TICK_MS = 50;
 const PLACEMENT_MIN_Y = -3;
 const PLACEMENT_MAX_Y = 19;
 // BFS expansion order is part of the canonical path definition.
@@ -28,14 +27,6 @@ function decodeAction(action) {
   return { hold: Math.floor(rest / 4), rotation: rest % 4, x, y };
 }
 
-function occupiedCells(piece) {
-  const cells = [];
-  piece.matrix.forEach((row, dy) => row.forEach((value, dx) => {
-    if (value) cells.push({ x: piece.x + dx, y: piece.y + dy });
-  }));
-  return cells.sort((a, b) => a.y - b.y || a.x - b.x);
-}
-
 function placementPath(node, hold, finalStep) {
   const steps = [];
   for (let current = node; current.parent; current = current.parent) steps.push(current.step);
@@ -45,7 +36,7 @@ function placementPath(node, hold, finalStep) {
   return steps;
 }
 
-function searchPlacementBranch(observation, hold) {
+function searchPlacementBranch(observation, hold, stats) {
   const testBoard = observation.board;
   const piece = hold
     ? makePiece(observation.hold ?? observation.next[0])
@@ -53,67 +44,59 @@ function searchPlacementBranch(observation, hold) {
   if (!piece || collidesOnBoard(testBoard, piece.x, piece.y, piece.matrix)) return [];
 
   const type = piece.type;
-  const matrices = Object.fromEntries(ROTATION_STATES.map(rotation => [rotation, pieceMatrix(type, rotation)]));
-  const first = {
-    x: piece.x, y: piece.y, rotation: piece.rotation,
-    lockElapsed: hold ? 0 : observation.lock.elapsedMs,
-    lockResetCount: hold ? 0 : observation.lock.resetCount,
-    lockStarted: hold ? false : observation.lock.started,
-    parent: null, step: null, depth: 0
-  };
+  const matrices = ROTATION_STATES.map(rotation => pieceMatrix(type, rotation));
+  const shapes = matrices.map(matrix => {
+    const cells = [];
+    matrix.forEach((row, dy) => row.forEach((value, dx) => {
+      if (value) cells.push([dx, dy]);
+    }));
+    return { cells, minX: Math.min(...cells.map(cell => cell[0])),
+      minY: Math.min(...cells.map(cell => cell[1])) };
+  });
+  const first = { x: piece.x, y: piece.y,
+    rotation: ROTATION_STATES.indexOf(piece.rotation), parent: null, step: null };
   const frontier = [first];
-  const visited = new Set();
+  const visited = new Set([stateKey(first.x, first.y, first.rotation)]);
   const byCells = new Map();
 
-  function matrixOf(node) { return matrices[node.rotation]; }
-  function isGrounded(node) {
-    return collidesOnBoard(testBoard, node.x, node.y + 1, matrixOf(node));
+  function stateKey(x, y, rotation) {
+    // The matrix origin remains near the 10x20 board; these ranges never overlap.
+    return ((y + 8) * 32 + x + 8) * 4 + rotation;
   }
-  function keyOf(node, grounded) {
-    return `${node.x},${node.y},${node.rotation},${grounded ? 1 : 0},${node.lockStarted ? 1 : 0},${node.lockResetCount},${node.lockElapsed}`;
-  }
-  function addPlacement(node, finalStep = null) {
-    const cells = occupiedCells({ x: node.x, y: node.y, matrix: matrixOf(node) });
-    const x = Math.min(...cells.map(cell => cell.x));
-    const y = Math.min(...cells.map(cell => cell.y));
-    if (x < 0 || x >= COLS || y < PLACEMENT_MIN_Y || y > PLACEMENT_MAX_Y) return;
-    const rotation = ROTATION_STATES.indexOf(node.rotation);
-    const actionId = encodeAction(hold, rotation, x, y);
-    const cellKey = cells.map(cell => `${cell.x}:${cell.y}`).join("|");
-    const pathLength = node.depth + hold + (finalStep ? 1 : 0);
-    const previous = byCells.get(cellKey);
-    if (previous && (previous.actionId < actionId
-      || (previous.actionId === actionId && previous.path.length <= pathLength))) return;
-    byCells.set(cellKey, { actionId, hold, rotation, x, y, occupiedCells: cells,
-      path: placementPath(node, hold, finalStep) });
-  }
-  function enqueue(node) {
-    const top = occupiedCells({ x: node.x, y: node.y, matrix: matrixOf(node) })[0].y;
-    if (top < PLACEMENT_MIN_Y - 3 || top > PLACEMENT_MAX_Y) return;
-    const grounded = isGrounded(node);
-    if (grounded && node.lockStarted && node.lockElapsed >= LOCK_DELAY_MS) {
-      addPlacement(node);
-      return;
+  function collidesAt(x, y, rotation) {
+    for (const [dx, dy] of shapes[rotation].cells) {
+      const column = x + dx;
+      const row = y + dy;
+      if (column < 0 || column >= COLS || row >= ROWS || (row >= 0 && testBoard[row][column])) return true;
     }
-    const key = keyOf(node, grounded);
+    return false;
+  }
+  function addPlacement(node) {
+    const shape = shapes[node.rotation];
+    const x = node.x + shape.minX;
+    const y = node.y + shape.minY;
+    if (x < 0 || x >= COLS || y < PLACEMENT_MIN_Y || y > PLACEMENT_MAX_Y) return;
+    const cells = shape.cells.map(([dx, dy]) => ({ x: node.x + dx, y: node.y + dy }))
+      .sort((a, b) => a.y - b.y || a.x - b.x);
+    const actionId = encodeAction(hold, node.rotation, x, y);
+    const cellKey = cells.map(cell => cell.y * COLS + cell.x).join(",");
+    const previous = byCells.get(cellKey);
+    if (previous && previous.actionId <= actionId) return;
+    byCells.set(cellKey, { actionId, hold, rotation: node.rotation, x, y, occupiedCells: cells,
+      path: placementPath(node, hold, "HardDrop") });
+  }
+  function enqueue(x, y, rotation, parent, step) {
+    const top = y + shapes[rotation].minY;
+    if (top < PLACEMENT_MIN_Y - 3 || top > PLACEMENT_MAX_Y) return;
+    const key = stateKey(x, y, rotation);
     if (visited.has(key)) return;
     visited.add(key);
-    frontier.push(node);
+    frontier.push({ x, y, rotation, parent, step });
   }
 
-  visited.add(keyOf(first, isGrounded(first)));
   for (let head = 0; head < frontier.length; head++) {
     const node = frontier[head];
-    const matrix = matrixOf(node);
-    const grounded = isGrounded(node);
-    if (grounded && node.lockStarted && node.lockElapsed >= LOCK_DELAY_MS) {
-      addPlacement(node);
-      continue;
-    }
-
-    let dropY = node.y;
-    while (!collidesOnBoard(testBoard, node.x, dropY + 1, matrix)) dropY++;
-    addPlacement({ ...node, y: dropY }, "HardDrop");
+    if (collidesAt(node.x, node.y + 1, node.rotation)) addPlacement(node);
 
     for (const step of PLACEMENT_STEPS) {
       let x = node.x;
@@ -121,48 +104,38 @@ function searchPlacementBranch(observation, hold) {
       let rotation = node.rotation;
       if (step === "Left" || step === "Right") {
         x += step === "Left" ? -1 : 1;
-        if (collidesOnBoard(testBoard, x, y, matrix)) continue;
+        if (collidesAt(x, y, rotation)) continue;
       } else if (step === "RotateCW") {
-        const result = tryRotatePiece({ type, matrix, x, y, rotation }, testBoard);
+        const result = tryRotatePiece({ type, matrix: matrices[rotation], x, y,
+          rotation: ROTATION_STATES[rotation] }, testBoard);
         if (!result) continue;
-        ({ x, y, rotation } = result);
+        x = result.x;
+        y = result.y;
+        rotation = (rotation + 1) % 4;
       } else {
         y++;
-        if (collidesOnBoard(testBoard, x, y, matrix)) continue;
+        if (collidesAt(x, y, rotation)) continue;
       }
-
-      let lockElapsed = node.lockElapsed;
-      let lockResetCount = node.lockResetCount;
-      let lockStarted = node.lockStarted;
-      if (grounded && step !== "Down" && lockResetCount < MAX_LOCK_RESETS) {
-        lockElapsed = 0;
-        lockResetCount++;
-        lockStarted = true;
-      }
-      const successor = { x, y, rotation, lockElapsed, lockResetCount, lockStarted,
-        parent: node, step, depth: node.depth + 1 };
-      if (isGrounded(successor)) successor.lockStarted = true;
-      if (successor.lockStarted) {
-        successor.lockElapsed = Math.min(LOCK_DELAY_MS, successor.lockElapsed + PLACEMENT_TICK_MS);
-      }
-      enqueue(successor);
+      enqueue(x, y, rotation, node, step);
     }
   }
+  if (stats) stats.states += visited.size;
   return [...byCells.values()].sort((a, b) => a.actionId - b.actionId);
 }
 
-function getLegalPlacements() {
+function getLegalPlacements(stats = null) {
+  if (stats) stats.states = 0;
   const observation = getPublicObservation();
   if (!observation.currentPiece || observation.phase !== "playing") return [];
-  const placements = searchPlacementBranch(observation, 0);
+  const placements = searchPlacementBranch(observation, 0, stats);
   if (observation.holdAvailable && (observation.hold || observation.next[0])) {
-    placements.push(...searchPlacementBranch(observation, 1));
+    placements.push(...searchPlacementBranch(observation, 1, stats));
   }
   return placements.sort((a, b) => a.actionId - b.actionId);
 }
 
-function getActionMask() {
+function getActionMask(stats = null) {
   const mask = Array(ACTION_COUNT).fill(false);
-  for (const placement of getLegalPlacements()) mask[placement.actionId] = true;
+  for (const placement of getLegalPlacements(stats)) mask[placement.actionId] = true;
   return mask;
 }
