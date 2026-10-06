@@ -68,6 +68,8 @@ let backgroundTicker = null;
 let lastAutosaveAt = 0;
 let dropElapsed = 0;
 let lockElapsed = 0;
+let lockResetCount = 0;
+let lockStarted = false;
 let particles = [];
 let flashRows = [];
 let shake = 0;
@@ -175,6 +177,8 @@ function makePiece(type) {
 function activatePiece(type) {
   active = makePiece(type);
   lockElapsed = 0;
+  lockResetCount = 0;
+  lockStarted = false;
   if (collides(active.x, active.y, active.matrix)) {
     endGame();
   } else if (aiEnabled) {
@@ -291,11 +295,19 @@ function clearLines() {
   sound(cleared.length === 4 ? "tetris" : "clear");
 }
 
+function resetLockDelayAfterGroundedAction(wasGrounded) {
+  if (!wasGrounded || lockResetCount >= 15) return;
+  lockStarted = true;
+  lockElapsed = 0;
+  lockResetCount++;
+}
+
 function move(dx) {
   if (state !== "playing") return;
+  const wasGrounded = collides(active.x, active.y + 1, active.matrix);
   if (!collides(active.x + dx, active.y, active.matrix)) {
     active.x += dx;
-    lockElapsed = 0;
+    resetLockDelayAfterGroundedAction(wasGrounded);
     sound("move");
   }
 }
@@ -305,7 +317,7 @@ function softDrop(manual = false) {
   if (!collides(active.x, active.y + 1, active.matrix)) {
     active.y++;
     dropElapsed = 0;
-    lockElapsed = 0;
+    if (collides(active.x, active.y + 1, active.matrix)) lockStarted = true;
     if (manual) {
       score++;
       updateHighScore();
@@ -332,10 +344,12 @@ function hardDrop() {
 
 function rotate() {
   if (state !== "playing") return;
+  const wasGrounded = collides(active.x, active.y + 1, active.matrix);
   const from = active.rotation;
   const to = ROTATION_STATES[(ROTATION_STATES.indexOf(from) + 1) % ROTATION_STATES.length];
   if (active.type === "O") {
     active.rotation = to;
+    resetLockDelayAfterGroundedAction(wasGrounded);
     return;
   }
   const rotated = pieceMatrix(active.type, to);
@@ -348,7 +362,7 @@ function rotate() {
       active.rotation = to;
       active.x = x;
       active.y = y;
-      lockElapsed = 0;
+      resetLockDelayAfterGroundedAction(wasGrounded);
       sound("rotate");
       return;
     }
@@ -576,7 +590,7 @@ function saveGame() {
   if (!active || state === "ready") return;
   try {
     localStorage.setItem(SAVE_KEY, JSON.stringify({
-      version: 4,
+      version: 5,
       savedAt: Date.now(),
       initialSeed,
       gameplayRngState,
@@ -587,6 +601,9 @@ function saveGame() {
       bag,
       heldType,
       holdUsed,
+      lockElapsed,
+      lockResetCount,
+      lockStarted,
       score,
       lines,
       level,
@@ -608,8 +625,9 @@ function validRngState(value) {
 }
 
 function validSavedGame(saved) {
-  return [1, 2, 3, 4].includes(saved?.version)
+  return [1, 2, 3, 4, 5].includes(saved?.version)
     && (saved.version < 4 || (validRngState(saved.initialSeed) && validRngState(saved.gameplayRngState) && validRngState(saved.aiRngState)))
+    && (saved.version < 5 || (Number.isFinite(saved.lockElapsed) && saved.lockElapsed >= 0 && Number.isInteger(saved.lockResetCount) && saved.lockResetCount >= 0 && saved.lockResetCount <= 15 && typeof saved.lockStarted === "boolean"))
     && (saved.version === 1 || ((saved.heldType === null || validPieceType(saved.heldType)) && typeof saved.holdUsed === "boolean"))
     && Array.isArray(saved.board)
     && saved.board.length === ROWS
@@ -638,7 +656,7 @@ function restoreGame() {
     active = { ...saved.active, matrix: cloneMatrix(saved.active.matrix), rotation: saved.version >= 3 ? saved.active.rotation : rotationFromMatrix(saved.active.type, saved.active.matrix) };
     queue = [...saved.queue];
     bag = [...saved.bag];
-    if (saved.version === 4) {
+    if (saved.version >= 4) {
       initialSeed = saved.initialSeed;
       gameplayRngState = saved.gameplayRngState;
       aiRngState = saved.aiRngState;
@@ -659,7 +677,9 @@ function restoreGame() {
     aiPlan = [];
     aiElapsed = 0;
     dropElapsed = 0;
-    lockElapsed = 0;
+    lockElapsed = saved.version >= 5 ? saved.lockElapsed : 0;
+    lockResetCount = saved.version >= 5 ? saved.lockResetCount : 0;
+    lockStarted = saved.version >= 5 ? saved.lockStarted : false;
     pendingSimulationMs = 0;
     lastTime = performance.now();
     lastAutosaveAt = Date.now();
@@ -899,11 +919,12 @@ function advanceGame(delta, time) {
       if (dropElapsed >= dropInterval()) softDrop(false);
     }
 
-    if (collides(active.x, active.y + 1, active.matrix)) {
+    const grounded = collides(active.x, active.y + 1, active.matrix);
+    if (grounded) lockStarted = true;
+    // Keep the clock running after a floor kick, so the reset cap cannot be bypassed.
+    if (lockStarted) {
       lockElapsed += delta;
-      if (lockElapsed >= 450) mergePiece();
-    } else {
-      lockElapsed = 0;
+      if (grounded && lockElapsed >= 450) mergePiece();
     }
   }
 

@@ -44,7 +44,7 @@ function game(storage = new Map()) {
 }
 
 function snapshot(g) {
-  return g.run("JSON.stringify({ active, lockElapsed, board, score, lines, queue, heldType, holdUsed })");
+  return g.run("JSON.stringify({ active, lockElapsed, lockResetCount, lockStarted, board, score, lines, queue, heldType, holdUsed })");
 }
 
 test("ordinary rotations follow 0 → R → 2 → L → 0", () => {
@@ -255,7 +255,7 @@ test("the initial seed, gameplay state, and AI state survive save and restore", 
   const g = game();
   g.run("resetGame({ seed: 12345 }); shuffledBag(); shuffledBag(); aiRandom(); saveGame()");
   const saved = JSON.parse(g.storage.get("neonBlocksGameV1"));
-  assert.equal(saved.version, 4);
+  assert.equal(saved.version, 5);
   assert.equal(saved.initialSeed, 12345);
   assert.equal(saved.gameplayRngState, g.run("gameplayRngState"));
   assert.equal(saved.aiRngState, g.run("aiRngState"));
@@ -312,4 +312,154 @@ test("Hold consumes RNG only when normal Next replenishment requires another bag
   assert.equal(held.run("gameplayRngState"), stateBeforeSwap);
   assert.equal(held.run('JSON.stringify({queue, bag})'), queueBeforeSwap);
   assert.equal(held.run("gameplayRngState"), normal.run("gameplayRngState"));
+});
+
+test("landing starts 450 ms of delay; soft drop uses the same delay", () => {
+  const natural = game();
+  natural.run('resetGame(); active = makePiece("O"); active.y = 18');
+  natural.run("advanceGame(449, 1000)");
+  assert.equal(natural.run("state"), "playing");
+  assert.equal(natural.run("board[19][4]"), null);
+  assert.equal(natural.run("lockElapsed"), 449);
+  natural.run("advanceGame(1, 1001)");
+  assert.equal(natural.run("board[19][4]"), "O");
+  assert.equal(natural.run("lockResetCount"), 0);
+  assert.equal(natural.run("lockElapsed"), 0);
+
+  const soft = game();
+  soft.run('resetGame(); active = makePiece("O"); active.y = 17; softDrop(true)');
+  assert.equal(soft.run("active.y"), 18);
+  assert.equal(soft.run("lockStarted"), true);
+  soft.run("advanceGame(449, 1000)");
+  assert.equal(soft.run("board[19][4]"), null);
+  soft.run("advanceGame(1, 1001)");
+  assert.equal(soft.run("board[19][4]"), "O");
+});
+
+test("successful grounded left, right, and SRS rotations reset the clock", () => {
+  const g = game();
+  g.run('resetGame(); active = makePiece("O"); active.y = 18; advanceGame(300, 1000)');
+  g.run("move(-1)");
+  assert.equal(g.run("lockResetCount"), 1);
+  assert.equal(g.run("lockElapsed"), 0);
+  g.run("advanceGame(300, 1300); move(1)");
+  assert.equal(g.run("lockResetCount"), 2);
+  assert.equal(g.run("lockElapsed"), 0);
+  g.run("advanceGame(449, 1749)");
+  assert.equal(g.run("board[19][4]"), null);
+  g.run("advanceGame(1, 1750)");
+  assert.equal(g.run("board[19][4]"), "O");
+
+  const rotating = game();
+  rotating.run('resetGame(); active = makePiece("T"); active.y = 18; advanceGame(300, 1000); rotate()');
+  assert.equal(rotating.run("active.rotation"), "R");
+  assert.equal(rotating.run("lockResetCount"), 1);
+  assert.equal(rotating.run("lockElapsed"), 0);
+});
+
+test("failed actions and movement in the air cannot consume lock resets", () => {
+  const blockedMove = game();
+  blockedMove.run('resetGame(); active = makePiece("O"); active.x = 0; active.y = 18; advanceGame(300, 1000); move(-1)');
+  assert.equal(blockedMove.run("lockResetCount"), 0);
+  assert.equal(blockedMove.run("lockElapsed"), 300);
+
+  const blockedRotation = game();
+  blockedRotation.run('resetGame(); active = makePiece("T"); active.x = 4; active.y = 18; board[17][4] = "I"; advanceGame(300, 1000)');
+  const before = snapshot(blockedRotation);
+  blockedRotation.run("rotate()");
+  assert.equal(snapshot(blockedRotation), before);
+  assert.equal(blockedRotation.run("lockResetCount"), 0);
+  assert.equal(blockedRotation.run("lockElapsed"), 300);
+
+  const airborne = game();
+  airborne.run('resetGame(); active = makePiece("O"); active.y = 5; move(-1); move(1); rotate()');
+  assert.equal(airborne.run("lockResetCount"), 0);
+  assert.equal(airborne.run("lockStarted"), false);
+});
+
+test("only 15 grounded actions can reset; the 16th move and later rotation cannot", () => {
+  const g = game();
+  g.run('resetGame(); active = makePiece("O"); active.y = 18');
+  for (let i = 0; i < 15; i++) g.run(i % 2 === 0 ? "move(-1)" : "move(1)");
+  assert.equal(g.run("lockResetCount"), 15);
+  g.run("advanceGame(300, 1000); move(1)");
+  assert.equal(g.run("active.x"), 4);
+  assert.equal(g.run("lockResetCount"), 15);
+  assert.equal(g.run("lockElapsed"), 300);
+  g.run("rotate()");
+  assert.equal(g.run("active.rotation"), "R");
+  assert.equal(g.run("lockResetCount"), 15);
+  assert.equal(g.run("lockElapsed"), 300);
+  g.run("advanceGame(149, 1149)");
+  assert.equal(g.run("board[19][4]"), null);
+  g.run("advanceGame(1, 1150)");
+  assert.equal(g.run("board[19][4]"), "O");
+});
+
+test("leaving the ground after 15 resets does not restore another delay", () => {
+  const g = game();
+  g.run('resetGame(); active = makePiece("O"); active.y = 17; board[19][4] = "T"');
+  for (let i = 0; i < 15; i++) g.run(i % 2 === 0 ? "move(-1)" : "move(1)");
+  g.run("advanceGame(300, 1000); move(1); move(1)");
+  assert.equal(g.run("lockResetCount"), 15);
+  assert.equal(g.run("lockElapsed"), 300);
+  assert.equal(g.run("collides(active.x, active.y + 1, active.matrix)"), false);
+  g.run("advanceGame(150, 1150)");
+  assert.equal(g.run("lockElapsed"), 450);
+  assert.equal(g.run("state"), "playing");
+  g.run("softDrop(true); advanceGame(1, 1151)");
+  assert.equal(g.run("board[19][5]"), "O");
+});
+
+test("hard drop locks immediately despite the reset cap; Hold starts a fresh cycle", () => {
+  const hard = game();
+  hard.run('resetGame(); active = makePiece("O"); lockElapsed = 449; lockResetCount = 15; lockStarted = true; hardDrop()');
+  assert.equal(hard.run("board[19][4]"), "O");
+  assert.equal(hard.run("lockResetCount"), 0);
+  assert.equal(hard.run("lockElapsed"), 0);
+  assert.equal(hard.run("lockStarted"), false);
+
+  const held = game();
+  held.run('resetGame(); active = makePiece("O"); active.y = 18; advanceGame(300, 1000); move(-1); holdPiece()');
+  assert.equal(held.run("lockResetCount"), 0);
+  assert.equal(held.run("lockElapsed"), 0);
+  assert.equal(held.run("lockStarted"), false);
+});
+
+test("refreshing during lock delay preserves timer and reset count", () => {
+  const g = game();
+  g.run('resetGame({ seed: 12345 }); active = makePiece("O"); active.y = 18; advanceGame(300, 1000); move(-1); advanceGame(200, 1200); saveGame()');
+  const restored = game(g.storage);
+  assert.equal(restored.run("lockResetCount"), 1);
+  assert.equal(restored.run("lockElapsed"), 200);
+  assert.equal(restored.run("lockStarted"), true);
+  restored.run("advanceGame(250, 1450)");
+  assert.equal(restored.run("board[19][3]"), "O");
+});
+
+test("version 4 saves start with an unused lock delay budget", () => {
+  const g = game();
+  g.run('resetGame({ seed: 12345 }); active = makePiece("O"); active.y = 18; saveGame()');
+  const saved = JSON.parse(g.storage.get("neonBlocksGameV1"));
+  saved.version = 4;
+  delete saved.lockElapsed;
+  delete saved.lockResetCount;
+  delete saved.lockStarted;
+  g.storage.set("neonBlocksGameV1", JSON.stringify(saved));
+  const restored = game(g.storage);
+  assert.equal(restored.run("lockElapsed"), 0);
+  assert.equal(restored.run("lockResetCount"), 0);
+  assert.equal(restored.run("lockStarted"), false);
+});
+
+test("the existing AI keeps locking pieces through the game loop", () => {
+  const g = game();
+  g.run("resetGame({ seed: 12345 }); setAI(true)");
+  let locked = false;
+  for (let i = 0; i < 300 && !locked; i++) {
+    g.run(`advanceGame(50, ${1000 + i * 50})`);
+    locked = g.run("board.some(row => row.some(Boolean))");
+  }
+  assert.equal(locked, true);
+  assert.equal(g.run("aiEnabled"), true);
 });

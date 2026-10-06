@@ -2,6 +2,7 @@
 
 ## 2026-10-06
 
+- Lock Delay 为 450 ms；每块最多 15 次计时重置，仅成功的接地移动或旋转消耗次数；Hard Drop 仍立即锁定。
 - Gameplay RNG 改用可复现的 Mulberry32；7-Bag 支持固定 seed，并保存、恢复当前 RNG 状态。
 - 视觉随机性与游戏随机性分离；传统 AI 使用独立随机源，不影响出块顺序。
 - 明确 Benchmark v1.0 Top Out：保留出生碰撞 Block Out，加入整块在棋盘上方锁定时的 Lock Out。
