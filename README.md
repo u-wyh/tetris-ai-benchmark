@@ -29,3 +29,16 @@ python3 -m venv .venv
 ```
 
 训练由 `tmux` 在后台运行，日志与 checkpoint 写入 `runs/ppo_smoke_seed42/`（不提交 Git）。使用 237 维 Observation、1840 动作的 MaskablePPO `MlpPolicy`，每个 5120 步 chunk 完成 PPO 更新后原子保存 `latest.zip`。第一阶段在 20480 步自动停为 `awaiting_resume_test`；此时可关机，之后回到 Ubuntu 执行 `resume`，累计训练到目标 50000 步。由于 rollout 固定为 1024 步，最终安全边界是 50176 步。`pause` 会等待当前 chunk 保存完成再退出；用 `status` 确认 `Safe to shutdown: YES` 后再自行关机。没有配置开机自动恢复。
+
+## 事务式恢复实验
+
+事务实验使用独立的 `runs/ppo_transaction_test_seed42/`，与上面的 smoke run 互不影响。每个 Task 是完整的 4096 步（4 个 PPO rollout/update），目标 32768 committed steps。只有模型、optimizer、环境、RNG、指标和 TensorBoard 文件全部写盘，并从 `working/` rename 到 `committed/` 后，`transaction_state.json` 才推进 committed 指针。未完成的 Task 在恢复时标记为 abandoned，从最后的 committed Task 重新执行。
+
+```bash
+./scripts/train_transaction.sh start
+./scripts/train_transaction.sh status
+# 用户自行正常关机并再次进入 Ubuntu 后：
+./scripts/train_transaction.sh resume
+```
+
+事务训练使用独立的 `tetris-transaction` tmux session；`status` 同时显示 committed 与 working 进度。当前实验不配置开机自动恢复，也不要求先人工 pause。正式训练指标仅由 committed Task 重建，未提交 Task 的指标不会进入 `training_metrics.csv`。

@@ -2,6 +2,7 @@
 
 ## 2026-10-06
 
+- 新增事务式 MaskablePPO Task/Commit 恢复：每 Task 4096 步，完整保存模型、optimizer、环境、RNG 与指标；同盘 rename 后才推进 committed 指针，重启后隔离并重做未提交 Task。
 - 新增可恢复的 MaskablePPO smoke training：分块训练、原子 checkpoint、固定 seed 评测、CSV/TensorBoard 日志，以及 tmux 后台 start/status/pause/resume；第一阶段在 20480 步安全停下。
 - 新增 Gymnasium `TetrisEnv`：237 维 Observation、1840 动作与 Action Mask；一步执行一个 Core placement，奖励与游戏分数分离，支持固定 seed、Game Over 与最大方块数截断。
 - 新增 Python TetrisCore 与 JS/Python Parity Test；验证 Mulberry32、7-Bag、Hold、SRS、计分、Top Out、Legal Placement 和 1840 位 Action Mask 一致。Python mask 基准约 3.24 ms、309.0 masks/s。
