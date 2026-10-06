@@ -1,47 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
-const vm = require("node:vm");
-
-const source = fs.readFileSync(path.join(__dirname, "../tetris-game/game.js"), "utf8");
-
-function game(storage = new Map()) {
-  const context2d = () => ({
-    save() {}, restore() {}, clearRect() {}, fillRect() {}, beginPath() {},
-    moveTo() {}, lineTo() {}, stroke() {}, translate() {}, roundRect() {}, fill() {},
-    createLinearGradient() { return { addColorStop() {} }; }
-  });
-  const elements = new Map();
-  const element = id => {
-    if (!elements.has(id)) elements.set(id, {
-      width: id === "gameCanvas" ? 320 : 144,
-      height: id === "gameCanvas" ? 640 : id === "nextCanvas" ? 218 : 92,
-      textContent: "", lastChild: { textContent: "" },
-      classList: { add() {}, remove() {}, toggle() {} },
-      setAttribute() {}, addEventListener() {}, getContext: context2d
-    });
-    return elements.get(id);
-  };
-  const sandbox = vm.createContext({
-    document: {
-      hidden: false,
-      querySelector: selector => element(selector.slice(1)),
-      querySelectorAll: () => [],
-      addEventListener() {}
-    },
-    window: { addEventListener() {} },
-    localStorage: {
-      getItem: key => storage.get(key) ?? null,
-      setItem: (key, value) => storage.set(key, value)
-    },
-    performance: { now: () => 1000 },
-    requestAnimationFrame() {}, setInterval() {},
-    location: { search: "" }, URLSearchParams
-  });
-  vm.runInContext(source, sandbox);
-  return { run: code => vm.runInContext(code, sandbox), storage };
-}
+const { game } = require("./game-harness.cjs");
 
 function snapshot(g) {
   return g.run("JSON.stringify({ active, lockElapsed, lockResetCount, lockStarted, board, score, lines, queue, heldType, holdUsed })");
@@ -564,7 +523,7 @@ test("public observation omits hidden queue, bag, RNG, seed, and save data", () 
   g.run('resetGame({ seed: 12345 }); queue = ["I", "J", "L", "O", "S"]; bag = ["Z"]; saveGame()');
   const observation = JSON.parse(g.run("JSON.stringify(getPublicObservation())"));
   assert.deepEqual(Object.keys(observation).sort(),
-    ["board", "currentPiece", "gameOver", "hold", "holdAvailable", "level", "lines", "lock", "next", "score"].sort());
+    ["board", "currentPiece", "gameOver", "hold", "holdAvailable", "level", "lines", "lock", "next", "phase", "score"].sort());
   assert.deepEqual(Object.keys(observation.lock).sort(), ["elapsedMs", "resetCount", "started"]);
   assert.equal(JSON.stringify(observation).includes('"bag"'), false);
   assert.equal(JSON.stringify(observation).includes('"gameplayRngState"'), false);

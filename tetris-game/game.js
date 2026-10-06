@@ -4,6 +4,8 @@ const COLS = 10;
 const ROWS = 20;
 const CELL = 32;
 const NEXT_PREVIEW_COUNT = 3;
+const LOCK_DELAY_MS = 450;
+const MAX_LOCK_RESETS = 15;
 const SAVE_KEY = "neonBlocksGameV1";
 
 const PIECES = {
@@ -113,6 +115,7 @@ function getPublicObservation() {
     score,
     level,
     lines,
+    phase: state,
     gameOver: state === "over",
     lock: Object.freeze({ elapsedMs: lockElapsed, resetCount: lockResetCount, started: lockStarted })
   });
@@ -261,13 +264,17 @@ function resetGame({ seed = generateSeed() } = {}) {
 }
 
 function collides(x, y, matrix) {
+  return collidesOnBoard(board, x, y, matrix);
+}
+
+function collidesOnBoard(testBoard, x, y, matrix) {
   for (let row = 0; row < matrix.length; row++) {
     for (let col = 0; col < matrix[row].length; col++) {
       if (!matrix[row][col]) continue;
       const nx = x + col;
       const ny = y + row;
       if (nx < 0 || nx >= COLS || ny >= ROWS) return true;
-      if (ny >= 0 && board[ny][nx]) return true;
+      if (ny >= 0 && testBoard[ny][nx]) return true;
     }
   }
   return false;
@@ -321,7 +328,7 @@ function clearLines() {
 }
 
 function resetLockDelayAfterGroundedAction(wasGrounded) {
-  if (!wasGrounded || lockResetCount >= 15) return;
+  if (!wasGrounded || lockResetCount >= MAX_LOCK_RESETS) return;
   lockStarted = true;
   lockElapsed = 0;
   lockResetCount++;
@@ -370,28 +377,28 @@ function hardDrop() {
 function rotate() {
   if (state !== "playing") return;
   const wasGrounded = collides(active.x, active.y + 1, active.matrix);
-  const from = active.rotation;
+  const rotated = tryRotatePiece(active, board);
+  if (!rotated) return;
+  active.matrix = rotated.matrix;
+  active.rotation = rotated.rotation;
+  active.x = rotated.x;
+  active.y = rotated.y;
+  resetLockDelayAfterGroundedAction(wasGrounded);
+  if (active.type !== "O") sound("rotate");
+}
+
+function tryRotatePiece(piece, testBoard) {
+  const from = piece.rotation;
   const to = ROTATION_STATES[(ROTATION_STATES.indexOf(from) + 1) % ROTATION_STATES.length];
-  if (active.type === "O") {
-    active.rotation = to;
-    resetLockDelayAfterGroundedAction(wasGrounded);
-    return;
-  }
-  const rotated = pieceMatrix(active.type, to);
-  const kicks = (active.type === "I" ? SRS_KICKS_I : SRS_KICKS_JLSTZ)[`${from}>${to}`];
+  if (piece.type === "O") return { ...piece, rotation: to };
+  const matrix = pieceMatrix(piece.type, to);
+  const kicks = (piece.type === "I" ? SRS_KICKS_I : SRS_KICKS_JLSTZ)[`${from}>${to}`];
   for (const [dx, dyUp] of kicks) {
-    const x = active.x + dx;
-    const y = active.y - dyUp;
-    if (!collides(x, y, rotated)) {
-      active.matrix = rotated;
-      active.rotation = to;
-      active.x = x;
-      active.y = y;
-      resetLockDelayAfterGroundedAction(wasGrounded);
-      sound("rotate");
-      return;
-    }
+    const x = piece.x + dx;
+    const y = piece.y - dyUp;
+    if (!collidesOnBoard(testBoard, x, y, matrix)) return { ...piece, matrix, rotation: to, x, y };
   }
+  return null;
 }
 
 function ghostY() {
@@ -652,7 +659,7 @@ function validRngState(value) {
 function validSavedGame(saved) {
   return [1, 2, 3, 4, 5].includes(saved?.version)
     && (saved.version < 4 || (validRngState(saved.initialSeed) && validRngState(saved.gameplayRngState) && validRngState(saved.aiRngState)))
-    && (saved.version < 5 || (Number.isFinite(saved.lockElapsed) && saved.lockElapsed >= 0 && Number.isInteger(saved.lockResetCount) && saved.lockResetCount >= 0 && saved.lockResetCount <= 15 && typeof saved.lockStarted === "boolean"))
+    && (saved.version < 5 || (Number.isFinite(saved.lockElapsed) && saved.lockElapsed >= 0 && Number.isInteger(saved.lockResetCount) && saved.lockResetCount >= 0 && saved.lockResetCount <= MAX_LOCK_RESETS && typeof saved.lockStarted === "boolean"))
     && (saved.version === 1 || ((saved.heldType === null || validPieceType(saved.heldType)) && typeof saved.holdUsed === "boolean"))
     && Array.isArray(saved.board)
     && saved.board.length === ROWS
@@ -949,7 +956,7 @@ function advanceGame(delta, time) {
     // Keep the clock running after a floor kick, so the reset cap cannot be bypassed.
     if (lockStarted) {
       lockElapsed += delta;
-      if (grounded && lockElapsed >= 450) mergePiece();
+      if (grounded && lockElapsed >= LOCK_DELAY_MS) mergePiece();
     }
   }
 
