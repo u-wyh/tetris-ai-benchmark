@@ -218,3 +218,98 @@ test("a piece swapped from Hold still causes Block Out on spawn collision", () =
   assert.equal(g.run("active.type"), "T");
   assert.equal(g.run("active.rotation"), "0");
 });
+
+function nextPieces(g, count) {
+  return g.run(`Array.from({ length: ${count} }, () => { const type = active.type; spawnPiece(); return type; }).join("")`);
+}
+
+test("a fixed seed repeats the first 100 pieces and another seed differs", () => {
+  const first = game();
+  const second = game();
+  const different = game();
+  first.run("resetGame({ seed: 12345 })");
+  second.run("resetGame({ seed: 12345 })");
+  different.run("resetGame({ seed: 54321 })");
+  const sequence = nextPieces(first, 100);
+  assert.equal(nextPieces(second, 100), sequence);
+  assert.notEqual(nextPieces(different, 100), sequence);
+  for (let i = 0; i < 98; i += 7) {
+    assert.equal([...sequence.slice(i, i + 7)].sort().join(""), "IJLOSTZ");
+  }
+});
+
+test("seed zero is valid and an ordinary new game records an automatic seed", () => {
+  const fixed = game();
+  fixed.run("resetGame({ seed: 0 })");
+  assert.equal(fixed.run("initialSeed"), 0);
+  const ordinary = game();
+  ordinary.run("resetGame(); saveGame()");
+  const saved = JSON.parse(ordinary.storage.get("neonBlocksGameV1"));
+  assert.equal(Number.isInteger(saved.initialSeed), true);
+  assert.equal(saved.initialSeed >= 0 && saved.initialSeed <= 0xffffffff, true);
+  assert.equal(saved.gameplayRngState, ordinary.run("gameplayRngState"));
+  assert.throws(() => ordinary.run("resetGame({ seed: -1 })"), /unsigned 32-bit integer/);
+});
+
+test("the initial seed, gameplay state, and AI state survive save and restore", () => {
+  const g = game();
+  g.run("resetGame({ seed: 12345 }); shuffledBag(); shuffledBag(); aiRandom(); saveGame()");
+  const saved = JSON.parse(g.storage.get("neonBlocksGameV1"));
+  assert.equal(saved.version, 4);
+  assert.equal(saved.initialSeed, 12345);
+  assert.equal(saved.gameplayRngState, g.run("gameplayRngState"));
+  assert.equal(saved.aiRngState, g.run("aiRngState"));
+  const restored = game(g.storage);
+  assert.equal(restored.run("initialSeed"), 12345);
+  assert.equal(restored.run("gameplayRngState"), saved.gameplayRngState);
+  assert.equal(restored.run("aiRngState"), saved.aiRngState);
+  assert.equal(restored.run("Array.from({length: 20}, shuffledBag).flat().join(\"\")"),
+    g.run("Array.from({length: 20}, shuffledBag).flat().join(\"\")"));
+  assert.equal(restored.run("aiRandom()"), g.run("aiRandom()"));
+});
+
+test("refreshing a saved game preserves the subsequent piece sequence", () => {
+  const g = game();
+  g.run("resetGame({ seed: 12345 })");
+  nextPieces(g, 12);
+  g.run("saveGame()");
+  const restored = game(g.storage);
+  assert.equal(nextPieces(restored, 100), nextPieces(g, 100));
+});
+
+test("visual random calls cannot change the gameplay sequence", () => {
+  const visual = game();
+  const plain = game();
+  visual.run("resetGame({ seed: 12345 })");
+  plain.run("resetGame({ seed: 12345 })");
+  visual.run('createLineParticles(5, Array(10).fill("T")); shake = 5; drawBoard()');
+  assert.equal(nextPieces(visual, 100), nextPieces(plain, 100));
+  assert.equal(visual.run("gameplayRngState"), plain.run("gameplayRngState"));
+});
+
+test("AI decisions use their own RNG and leave the 7-Bag sequence unchanged", () => {
+  const ai = game();
+  const plain = game();
+  ai.run("resetGame({ seed: 12345 }); setAI(true); chooseAIMove(); chooseAIMove()");
+  plain.run("resetGame({ seed: 12345 })");
+  assert.equal(nextPieces(ai, 28), nextPieces(plain, 28));
+  assert.equal(ai.run("gameplayRngState"), plain.run("gameplayRngState"));
+  assert.notEqual(ai.run("aiRngState"), plain.run("aiRngState"));
+});
+
+test("Hold consumes RNG only when normal Next replenishment requires another bag", () => {
+  const held = game();
+  const normal = game();
+  held.run("resetGame({ seed: 12345 }); holdPiece()");
+  normal.run("resetGame({ seed: 12345 }); spawnPiece()");
+  assert.equal(held.run("gameplayRngState"), normal.run("gameplayRngState"));
+  assert.equal(held.run('JSON.stringify({queue, bag})'), normal.run('JSON.stringify({queue, bag})'));
+  held.run("hardDrop()");
+  normal.run("hardDrop()");
+  const stateBeforeSwap = held.run("gameplayRngState");
+  const queueBeforeSwap = held.run('JSON.stringify({queue, bag})');
+  held.run("holdPiece()");
+  assert.equal(held.run("gameplayRngState"), stateBeforeSwap);
+  assert.equal(held.run('JSON.stringify({queue, bag})'), queueBeforeSwap);
+  assert.equal(held.run("gameplayRngState"), normal.run("gameplayRngState"));
+});

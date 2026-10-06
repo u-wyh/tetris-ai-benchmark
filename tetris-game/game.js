@@ -77,6 +77,9 @@ let aiEnabled = false;
 let aiPlan = [];
 let aiElapsed = 0;
 let aiRestartAt = 0;
+let initialSeed = 0;
+let gameplayRngState = 0;
+let aiRngState = 0;
 
 highScoreEl.textContent = formatNumber(highScore);
 
@@ -103,10 +106,49 @@ function rotationFromMatrix(type, matrix) {
   return ROTATION_STATES.find(rotation => JSON.stringify(pieceMatrix(type, rotation)) === signature) ?? null;
 }
 
+function generateSeed() {
+  const value = new Uint32Array(1);
+  if (globalThis.crypto?.getRandomValues) {
+    globalThis.crypto.getRandomValues(value);
+    return value[0];
+  }
+  return (Date.now() ^ Math.floor(performance.now() * 1000)) >>> 0;
+}
+
+function setSeed(seed) {
+  if (!Number.isInteger(seed) || seed < 0 || seed > 0xffffffff) {
+    throw new RangeError("Seed must be an unsigned 32-bit integer");
+  }
+  initialSeed = seed;
+  gameplayRngState = seed;
+  aiRngState = (seed ^ 0x9e3779b9) >>> 0;
+}
+
+// Mulberry32: one uint32 state, with identical 32-bit arithmetic in every run.
+function nextRandom(state) {
+  const nextState = (state + 0x6d2b79f5) >>> 0;
+  let value = nextState;
+  value = Math.imul(value ^ (value >>> 15), value | 1);
+  value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+  return { state: nextState, value: ((value ^ (value >>> 14)) >>> 0) / 4294967296 };
+}
+
+function gameplayRandom() {
+  const result = nextRandom(gameplayRngState);
+  gameplayRngState = result.state;
+  return result.value;
+}
+
+function aiRandom() {
+  const result = nextRandom(aiRngState);
+  aiRngState = result.state;
+  return result.value;
+}
+
 function shuffledBag() {
   const types = Object.keys(PIECES);
   for (let i = types.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = Math.floor(gameplayRandom() * (i + 1));
     [types[i], types[j]] = [types[j], types[i]];
   }
   return types;
@@ -161,7 +203,8 @@ function holdPiece() {
   else activatePiece(incomingType);
 }
 
-function resetGame() {
+function resetGame({ seed = generateSeed() } = {}) {
+  setSeed(seed);
   board = createBoard();
   queue = [];
   bag = [];
@@ -420,7 +463,7 @@ function chooseAIMove() {
     if (nextMoves.length) {
       value += .58 * Math.max(...nextMoves.map(nextMove => boardValue(nextMove.board, nextMove.cleared)));
     }
-    value += Math.random() * .002;
+    value += aiRandom() * .002;
     if (!best || value > best.value) best = { ...move, value };
   }
   return best;
@@ -533,8 +576,11 @@ function saveGame() {
   if (!active || state === "ready") return;
   try {
     localStorage.setItem(SAVE_KEY, JSON.stringify({
-      version: 3,
+      version: 4,
       savedAt: Date.now(),
+      initialSeed,
+      gameplayRngState,
+      aiRngState,
       board,
       active,
       queue,
@@ -557,8 +603,13 @@ function validPieceType(type) {
   return typeof type === "string" && Object.prototype.hasOwnProperty.call(PIECES, type);
 }
 
+function validRngState(value) {
+  return Number.isInteger(value) && value >= 0 && value <= 0xffffffff;
+}
+
 function validSavedGame(saved) {
-  return [1, 2, 3].includes(saved?.version)
+  return [1, 2, 3, 4].includes(saved?.version)
+    && (saved.version < 4 || (validRngState(saved.initialSeed) && validRngState(saved.gameplayRngState) && validRngState(saved.aiRngState)))
     && (saved.version === 1 || ((saved.heldType === null || validPieceType(saved.heldType)) && typeof saved.holdUsed === "boolean"))
     && Array.isArray(saved.board)
     && saved.board.length === ROWS
@@ -584,9 +635,16 @@ function restoreGame() {
     if (!validSavedGame(saved)) return false;
 
     board = saved.board.map(row => [...row]);
-    active = { ...saved.active, matrix: cloneMatrix(saved.active.matrix), rotation: saved.version === 3 ? saved.active.rotation : rotationFromMatrix(saved.active.type, saved.active.matrix) };
+    active = { ...saved.active, matrix: cloneMatrix(saved.active.matrix), rotation: saved.version >= 3 ? saved.active.rotation : rotationFromMatrix(saved.active.type, saved.active.matrix) };
     queue = [...saved.queue];
     bag = [...saved.bag];
+    if (saved.version === 4) {
+      initialSeed = saved.initialSeed;
+      gameplayRngState = saved.gameplayRngState;
+      aiRngState = saved.aiRngState;
+    } else {
+      setSeed(generateSeed());
+    }
     heldType = saved.version >= 2 ? saved.heldType : null;
     holdUsed = saved.version >= 2 ? saved.holdUsed : false;
     fillQueue();
@@ -940,7 +998,10 @@ document.addEventListener("visibilitychange", () => {
 window.addEventListener("pagehide", saveGame);
 
 const restoredGame = restoreGame();
-if (!restoredGame) fillQueue();
+if (!restoredGame) {
+  setSeed(generateSeed());
+  fillQueue();
+}
 drawNext();
 drawHold();
 drawBoard();
