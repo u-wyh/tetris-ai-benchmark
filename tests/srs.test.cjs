@@ -463,3 +463,88 @@ test("the existing AI keeps locking pieces through the game loop", () => {
   assert.equal(locked, true);
   assert.equal(g.run("aiEnabled"), true);
 });
+
+test("one through four cleared lines score 100/300/500/800 at level one", () => {
+  for (const [count, points] of [[1, 100], [2, 300], [3, 500], [4, 800]]) {
+    const g = game();
+    g.run(`resetGame(); board = createBoard(); for (let y = 20 - ${count}; y < 20; y++) board[y].fill("T"); clearLines()`);
+    assert.equal(g.run("score"), points);
+    assert.equal(g.run("lines"), count);
+    assert.equal(g.run("level"), 1);
+  }
+});
+
+test("no line clear adds no score and level advances every ten cumulative lines", () => {
+  const g = game();
+  g.run('resetGame(); board = createBoard(); board[19][0] = "T"; clearLines()');
+  assert.equal(g.run("score"), 0);
+  assert.equal(g.run("lines"), 0);
+  for (const count of [4, 4, 2]) {
+    g.run(`board = createBoard(); for (let y = 20 - ${count}; y < 20; y++) board[y].fill("T"); clearLines()`);
+  }
+  assert.equal(g.run("lines"), 10);
+  assert.equal(g.run("level"), 2);
+  assert.equal(g.run("score"), 1900);
+  g.run('board = createBoard(); board[19].fill("T"); clearLines()');
+  assert.equal(g.run("score"), 2100);
+  assert.equal(g.run("level"), 2);
+});
+
+test("a threshold-crossing clear uses the level before the clear", () => {
+  const g = game();
+  g.run('resetGame(); lines = 9; level = 1; board = createBoard(); board[18].fill("T"); board[19].fill("T"); clearLines()');
+  assert.equal(g.run("lines"), 11);
+  assert.equal(g.run("level"), 2);
+  assert.equal(g.run("score"), 300);
+  g.run('board[19].fill("T"); clearLines()');
+  assert.equal(g.run("score"), 500);
+});
+
+test("soft drop awards one point per moved row; hard drop awards two", () => {
+  const soft = game();
+  soft.run('resetGame(); active = makePiece("O"); softDrop(true); softDrop(true); softDrop(true)');
+  assert.equal(soft.run("score"), 3);
+  soft.run("softDrop(false)");
+  assert.equal(soft.run("score"), 3);
+  soft.run("active.y = 18; softDrop(true)");
+  assert.equal(soft.run("score"), 3);
+
+  const hard = game();
+  hard.run('resetGame(); active = makePiece("O"); active.y = 16; hardDrop()');
+  assert.equal(hard.run("score"), 4);
+  assert.equal(hard.run("board[19][4]"), "O");
+  const zeroDistance = game();
+  zeroDistance.run('resetGame(); active = makePiece("O"); active.y = 18; hardDrop()');
+  assert.equal(zeroDistance.run("score"), 0);
+});
+
+test("Hold, SRS rotation, and lock delay do not award points", () => {
+  const g = game();
+  g.run('resetGame(); active = makePiece("T"); active.y = 18; holdPiece()');
+  assert.equal(g.run("score"), 0);
+  g.run('active = makePiece("T"); active.y = 18; rotate(); advanceGame(300, 1000)');
+  assert.equal(g.run("score"), 0);
+  g.run('board = createBoard(); heldType = "O"; holdUsed = false; holdPiece()');
+  assert.equal(g.run("score"), 0);
+});
+
+test("seed choice does not change scoring for the same piece and actions", () => {
+  const first = game();
+  const second = game();
+  first.run('resetGame({ seed: 12345 }); active = makePiece("O"); softDrop(true); hardDrop()');
+  second.run('resetGame({ seed: 54321 }); active = makePiece("O"); softDrop(true); hardDrop()');
+  assert.equal(first.run("score"), second.run("score"));
+  assert.equal(first.run("score"), 35);
+});
+
+test("Block Out and Lock Out add no extra score", () => {
+  const block = game();
+  block.run('resetGame(); score = 17; board[0][4] = "I"; activatePiece("T")');
+  assert.equal(block.run("state"), "over");
+  assert.equal(block.run("score"), 17);
+
+  const lock = game();
+  lock.run('resetGame(); score = 17; board = createBoard(); active = makePiece("I"); active.y = -2; for (let x = 3; x <= 6; x++) board[0][x] = "T"; mergePiece()');
+  assert.equal(lock.run("state"), "over");
+  assert.equal(lock.run("score"), 17);
+});
