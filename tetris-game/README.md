@@ -2,6 +2,8 @@
 
 无需安装依赖，直接用浏览器打开 `index.html` 即可游玩。
 
+JavaScript 网页是 Benchmark v1.0 的参考实现；`training/tetris_core/` 是 Python 训练核心。Python Core 只有通过 `python3 -m unittest discover -s tests/parity -v` 的 JS/Python Parity Test 才视为有效。测试逐步比较公开状态、规则结果和 1840 位 Action Mask；Python 核心仅执行 AI Benchmark 的最终 placement，不模拟人工模式的实时 Lock Delay。
+
 ## 操作
 
 - `←` / `→`：左右移动

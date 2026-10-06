@@ -2,6 +2,7 @@
 
 ## 2026-10-06
 
+- 新增 Python TetrisCore 与 JS/Python Parity Test；验证 Mulberry32、7-Bag、Hold、SRS、计分、Top Out、Legal Placement 和 1840 位 Action Mask 一致。Python mask 基准约 3.24 ms、309.0 masks/s。
 - 简化 AI placement BFS：仅以 `(x,y,rotation)` 去重，移除搜索中的 50 ms 计时与 Lock Reset 维度，保留完整 SRS 路径可达性；人工 Lock Delay 不变。基准从 232.39 ms/mask 提升至 4.64 ms/mask。
 - 新增 1840 固定动作空间、encode/decode、真实可达 placement 搜索及 Action Mask；支持 SRS、Hold、15 次 Lock Reset，并固定去重与标准路径。
 - 固化 Next Preview = 3，新增只读公开观察接口；隐藏 Next 4+、Bag 和 RNG 内部状态，为统一 Agent 接口建立信息边界。
