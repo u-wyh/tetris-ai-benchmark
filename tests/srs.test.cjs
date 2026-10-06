@@ -169,3 +169,52 @@ test("movement, drops, line clearing, and AI still execute", () => {
   for (let i = 0; i < 100; i++) ai.run("updateAI(100)");
   assert.equal(ai.run("aiEnabled"), true);
 });
+
+test("a clear spawn remains playable and an occupied spawn causes Block Out", () => {
+  const g = game();
+  g.run('resetGame(); board = createBoard(); activatePiece("T")');
+  assert.equal(g.run("state"), "playing");
+  g.run('board[0][4] = "I"; activatePiece("T")');
+  assert.equal(g.run("state"), "over");
+});
+
+test("a piece locked wholly above the board causes Lock Out without merging or spawning", () => {
+  const g = game();
+  g.run('resetGame(); board = createBoard(); active = makePiece("I"); active.y = -2; for (let x = 3; x <= 6; x++) board[0][x] = "T"');
+  assert.equal(g.run("collides(active.x, active.y, active.matrix)"), false);
+  assert.equal(g.run("collides(active.x, active.y + 1, active.matrix)"), true);
+  const boardBefore = g.run("JSON.stringify(board)");
+  const queueBefore = g.run("JSON.stringify(queue)");
+  g.run("advanceGame(450, 1000)");
+  assert.equal(g.run("state"), "over");
+  assert.equal(g.run("JSON.stringify(board)"), boardBefore);
+  assert.equal(g.run("JSON.stringify(queue)"), queueBefore);
+  assert.equal(g.run("lines"), 0);
+});
+
+test("a partially visible piece locks its visible cells and play continues", () => {
+  const g = game();
+  g.run('resetGame(); board = createBoard(); active = makePiece("I"); active.x = 0; active.y = -1; queue[0] = "O"; for (let x = 0; x < 4; x++) board[1][x] = "T"');
+  g.run("advanceGame(450, 1000)");
+  assert.equal(g.run("state"), "playing");
+  assert.equal(g.run("active.type"), "O");
+  assert.equal(g.run('board[0].slice(0, 4).every(cell => cell === "I")'), true);
+});
+
+test("Partial Lock still clears a completed top row", () => {
+  const g = game();
+  g.run('resetGame(); board = createBoard(); active = makePiece("I"); active.x = 0; active.y = -1; queue[0] = "O"; for (let x = 0; x < 4; x++) board[1][x] = "T"; for (let x = 4; x < 10; x++) board[0][x] = "T"');
+  g.run("advanceGame(450, 1000)");
+  assert.equal(g.run("state"), "playing");
+  assert.equal(g.run("lines"), 1);
+  assert.equal(g.run("score"), 100);
+  assert.equal(g.run("board[0].every(cell => cell === null)"), true);
+});
+
+test("a piece swapped from Hold still causes Block Out on spawn collision", () => {
+  const g = game();
+  g.run('resetGame(); board = createBoard(); active = makePiece("I"); heldType = "T"; board[0][4] = "O"; holdPiece()');
+  assert.equal(g.run("state"), "over");
+  assert.equal(g.run("active.type"), "T");
+  assert.equal(g.run("active.rotation"), "0");
+});

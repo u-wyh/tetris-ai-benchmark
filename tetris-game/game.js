@@ -202,12 +202,20 @@ function collides(x, y, matrix) {
 }
 
 function mergePiece() {
+  let lockedInBoard = false;
   active.matrix.forEach((row, y) => row.forEach((value, x) => {
     if (!value) return;
     const boardY = active.y + y;
-    if (boardY >= 0) board[boardY][active.x + x] = active.type;
+    if (boardY >= 0) {
+      board[boardY][active.x + x] = active.type;
+      lockedInBoard = true;
+    }
   }));
 
+  if (!lockedInBoard) {
+    endGame();
+    return;
+  }
   clearLines();
   spawnPiece();
 }
