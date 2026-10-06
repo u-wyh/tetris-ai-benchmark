@@ -15,3 +15,17 @@ python3 -m venv .venv
 ```
 
 环境文件不包含 PPO 或其他训练程序。
+
+## 首轮 MaskablePPO smoke training
+
+安装依赖后，在项目根目录运行：
+
+```bash
+.venv/bin/python -m pip install -r requirements.txt
+./scripts/train_control.sh start
+./scripts/train_control.sh status
+./scripts/train_control.sh pause
+./scripts/train_control.sh resume
+```
+
+训练由 `tmux` 在后台运行，日志与 checkpoint 写入 `runs/ppo_smoke_seed42/`（不提交 Git）。使用 237 维 Observation、1840 动作的 MaskablePPO `MlpPolicy`，每个 5120 步 chunk 完成 PPO 更新后原子保存 `latest.zip`。第一阶段在 20480 步自动停为 `awaiting_resume_test`；此时可关机，之后回到 Ubuntu 执行 `resume`，累计训练到目标 50000 步。由于 rollout 固定为 1024 步，最终安全边界是 50176 步。`pause` 会等待当前 chunk 保存完成再退出；用 `status` 确认 `Safe to shutdown: YES` 后再自行关机。没有配置开机自动恢复。
