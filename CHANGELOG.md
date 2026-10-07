@@ -2,6 +2,8 @@
 
 ## 2026-10-07
 
+- 正式长训在 Task 1 前保存并验证同一随机初始化的 Step-0 PPO 模型；baseline 评测独立于训练状态，可从 Step-0 中断恢复，0 步结果进入 validation 曲线与 best 比较。
+- Validation 记录请求阈值和实际 committed 步数；正式 run metadata 补充 run 名称与 NVIDIA driver，状态显示最近 milestone、validation、best 和训练速度。
 - 长期事务训练仅保留最近 3 个普通 checkpoint；每跨 1M 步独立保存 milestone，并准备完整 Task 边界的 10M 正式配置。
 - 增加固定种子 periodic/milestone validation、预留独立 final test 种子集；best 统一按 periodic 协议的平均存活方块、消行、分数原子切换，避免不同上限评测混用。
 - 评测在独立进程运行，结果原子发布；中断后从已提交 Task 补做评测，再安全执行 retention。

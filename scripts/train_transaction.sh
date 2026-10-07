@@ -2,7 +2,11 @@
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-run_dir="${TETRIS_TRANSACTION_RUN_DIR:-$root/runs/ppo_transaction_vec8_cuda_test_seed42}"
+default_run="$root/runs/ppo_transaction_vec8_cuda_test_seed42"
+if [[ -f "$root/runs/ppo_raw_10m_seed42/transaction_state.json" ]]; then
+  default_run="$root/runs/ppo_raw_10m_seed42"
+fi
+run_dir="${TETRIS_TRANSACTION_RUN_DIR:-$default_run}"
 session="tetris-transaction"
 command="${1:-status}"
 trainer_module="training.train_vector_transaction"

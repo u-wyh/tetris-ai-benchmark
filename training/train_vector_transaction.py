@@ -31,6 +31,16 @@ REQUIRED_FILES = {"model.zip", "trainer_state.pkl", "vector_env_state.pkl",
 
 
 class TransactionTetrisEnv(TetrisEnv):
+    def initial_state_digest(self):
+        """Inspect an unstarted worker without instantiating its lazy RNG."""
+        numpy_rng = self._np_random
+        action_rng = self.action_space._np_random
+        state = (self.core, self.episode_seed, self.episode_count, self.pieces,
+                 self.episode_reward, self._finished, self._np_random_seed,
+                 None if numpy_rng is None else numpy_rng.bit_generator.state,
+                 None if action_rng is None else action_rng.bit_generator.state)
+        return hashlib.sha256(pickle.dumps(state, protocol=5)).hexdigest()
+
     def _info(self, cleared_lines=0):
         info = super()._info(cleared_lines)
         info["episode_reward"] = self.episode_reward
@@ -74,6 +84,7 @@ def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
                    "evaluation_seed_sha256": sha256(SEEDS_FILE),
                    "validation_seed_set": seed_sets["validation"],
                    "final_test_seed_set": seed_sets["final_test"],
+                   "reward_version": "placement-reward-v1",
                    "observation_version": "237-float-public-observation-v1",
                    "action_space_version": "1840-legal-placement-v1"})
     return config
@@ -231,6 +242,7 @@ def commit_vector_task(run_dir, state, working_dir, model, env, callback, captur
     commit_seconds = time.monotonic() - began
     log_event(run_dir, "COMMITTED", task=number, steps=end_step,
               training_seconds=round(training_seconds, 3),
+              training_steps_per_second=round(state["task_steps"] / training_seconds, 2),
               checkpoint_seconds=round(checkpoint_seconds, 3),
               commit_seconds=round(commit_seconds, 3), checkpoint_bytes=checkpoint_bytes)
     if state["status"] == "completed":
@@ -261,6 +273,31 @@ def inspect_status(run_dir):
                     seen_inodes.add(inode)
         print(f"Transaction checkpoints: {len(committed)}\nMilestones: {len(milestones)}"
               f"\nRun disk usage: {disk_bytes / (1024 ** 2):.1f} MiB")
+        if config.get("step0_baseline"):
+            baseline = run_dir / "baseline"
+            print("Step-0 baseline: " + ("validated" if (baseline / "evaluation.json").exists()
+                                         else "saved; validation pending" if baseline.exists()
+                                         else "pending"))
+        print(f"Latest milestone: {max(milestones).name if milestones else '-'}")
+        validation = run_dir / "evaluations" / "validation"
+        results = list(validation.glob("step_*.json")) if validation.exists() else []
+        latest = (max(results, key=lambda path: (int(path.name.split("_")[1]),
+                                                 path.stat().st_mtime_ns)) if results else None)
+        print(f"Latest validation: {latest.name if latest else '-'}")
+        best = run_dir / "best" / "evaluation.json"
+        if best.exists():
+            result = json.loads(best.read_text())
+            print(f"Best validation: step={result['committed_steps']} "
+                  f"mean_pieces={result['aggregate']['mean_pieces']:.3f} "
+                  f"mean_lines={result['aggregate']['mean_lines']:.3f} "
+                  f"mean_score={result['aggregate']['mean_score']:.3f}")
+        else:
+            print("Best validation: -")
+        state = read_state(run_dir)
+        metrics_path = run_dir / "metric_history" / f"{task_name(state['committed_task'])}.json"
+        if state["committed_task"] and metrics_path.exists():
+            metrics = json.loads(metrics_path.read_text())
+            print(f"Latest training steps/s: {config['task_steps'] / metrics['wall_seconds']:.1f}")
     session = subprocess.run(["tmux", "has-session", "-t", "tetris-transaction"],
                              capture_output=True, check=False).returncode == 0
     print(f"tmux session: {'tetris-transaction' if session else 'none'}")
@@ -325,6 +362,7 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                         config[key] = preset[key]
             else:
                 config = vector_config(target_steps=target_steps)
+            config["step0_baseline"] = bool(preset.get("step0_baseline", False)) if config_file else False
             if (config["transaction_retention"] < 3
                     or config["milestone_interval"] < config["task_steps"]
                     or config["validation_interval"] < config["task_steps"]
@@ -340,7 +378,17 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                 (run_dir / name).mkdir(exist_ok=True)
             atomic_json(config_path, config)
             meta = metadata(torch, gymnasium, stable_baselines3, sb3_contrib)
+            try:
+                driver = subprocess.run(["nvidia-smi", "--query-gpu=driver_version",
+                                         "--format=csv,noheader,nounits"],
+                                        capture_output=True, text=True, check=False)
+                driver_version = (driver.stdout.strip().splitlines()[0]
+                                  if driver.returncode == 0 and driver.stdout.strip() else None)
+            except FileNotFoundError:
+                driver_version = None
             meta.update({"device": config["device"], "run_type": config["run_type"],
+                         "run_name": run_dir.name,
+                         "nvidia_driver": driver_version,
                          "n_envs": config["ppo"]["n_envs"], "n_steps": config["ppo"]["n_steps"],
                          "task_steps": config["task_steps"], "worker_seeds": config["worker_seeds"],
                          "worker_seed_rule": config["worker_seed_rule"],
@@ -353,6 +401,7 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                          "validation_seed_set": config["validation_seed_set"],
                          "final_test_seed_set": config["final_test_seed_set"],
                          "reward_definition": config["reward"],
+                         "reward_version": config["reward_version"],
                          "observation_version": config["observation_version"],
                          "action_space_version": config["action_space_version"],
                          "resume_episode_policy": "Restore each worker exactly from committed Task."})
@@ -374,22 +423,38 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
         atomic_json(run_dir / "logs" / "worker_pids.json",
                     {"parent": os.getpid(), "workers": [process.pid for process in env.processes]})
         if state["committed_task"]:
+            if config.get("step0_baseline") and not (run_dir / "baseline" / "evaluation.json").exists():
+                raise RuntimeError("Committed formal run is missing its Step-0 baseline")
             model, _, _ = restore_task(run_dir, state["committed_task"], config, env)
             log_event(run_dir, "RESUMED", committed_task=state["committed_task"],
                       committed_steps=state["committed_steps"])
         else:
-            ppo = config["ppo"]
-            model = MaskablePPO(
-                "MlpPolicy", env,
-                policy_kwargs={"net_arch": {"pi": config["network"]["pi"],
-                                            "vf": config["network"]["vf"]},
-                               "activation_fn": torch.nn.Tanh},
-                learning_rate=ppo["learning_rate"], gamma=ppo["gamma"],
-                gae_lambda=ppo["gae_lambda"], clip_range=ppo["clip_range"],
-                n_steps=ppo["n_steps"], batch_size=ppo["batch_size"],
-                n_epochs=ppo["n_epochs"], ent_coef=ppo["ent_coef"],
-                vf_coef=ppo["vf_coef"], max_grad_norm=ppo["max_grad_norm"],
-                seed=config["run_seed"], device=config["device"], verbose=0)
+            if resume and config.get("step0_baseline") and (run_dir / "baseline").exists():
+                from training.step0_baseline import load_baseline
+                model = load_baseline(run_dir, env, config)
+            else:
+                ppo = config["ppo"]
+                model = MaskablePPO(
+                    "MlpPolicy", env,
+                    policy_kwargs={"net_arch": {"pi": config["network"]["pi"],
+                                                "vf": config["network"]["vf"]},
+                                   "activation_fn": torch.nn.Tanh},
+                    learning_rate=ppo["learning_rate"], gamma=ppo["gamma"],
+                    gae_lambda=ppo["gae_lambda"], clip_range=ppo["clip_range"],
+                    n_steps=ppo["n_steps"], batch_size=ppo["batch_size"],
+                    n_epochs=ppo["n_epochs"], ent_coef=ppo["ent_coef"],
+                    vf_coef=ppo["vf_coef"], max_grad_norm=ppo["max_grad_norm"],
+                    seed=config["run_seed"], device=config["device"], verbose=0)
+            if config.get("step0_baseline"):
+                from training.step0_baseline import evaluate_baseline
+                state.update({"status": "baseline", "pid": os.getpid()})
+                write_state(run_dir, state)
+                evaluate_baseline(run_dir, model, env, config, meta)
+                if max_tasks == 0:
+                    state.update({"status": "awaiting_resume", "pid": None})
+                    write_state(run_dir, state)
+                    log_event(run_dir, "TEST_STOP_AFTER_BASELINE")
+                    return
 
         class Capture(KVWriter):
             def __init__(self):

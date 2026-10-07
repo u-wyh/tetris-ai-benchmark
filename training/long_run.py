@@ -15,7 +15,7 @@ from training.train_ppo import ROOT, atomic_bytes, atomic_json, now
 from training.train_transaction import fsync_dir, fsync_tree, log_event, task_name
 
 SEEDS_FILE = ROOT / "training" / "evaluation" / "seeds.json"
-VALIDATION_FIELDS = ("committed_steps", "model_checkpoint", "num_seeds", "max_pieces",
+VALIDATION_FIELDS = ("committed_steps", "requested_validation_step", "model_checkpoint", "num_seeds", "max_pieces",
                      "mean_pieces", "median_pieces", "mean_lines", "mean_score",
                      "mean_reward", "survival_cap_rate", "game_over_rate", "is_best",
                      "wall_time")
@@ -51,11 +51,18 @@ def validate_evaluation(result, step, protocol, count, cap):
         raise RuntimeError("Incomplete or mismatched validation result")
 
 
-def evaluate_atomic(run_dir, source_model, step, protocol, count, cap, config):
+def evaluate_atomic(run_dir, source_model, step, protocol, count, cap, config, extra=None):
     destination = evaluation_path(run_dir, step, protocol)
     if destination.exists():
         result = json.loads(destination.read_text())
         validate_evaluation(result, step, protocol, count, cap)
+        if extra:
+            if any(key in result and result[key] != value for key, value in extra.items()):
+                raise RuntimeError("Validation metadata differs from run schedule")
+            if any(key not in result for key in extra):
+                result.update(extra)
+                atomic_json(destination, result)
+                fsync_dir(destination.parent)
         return result
     working = run_dir / "evaluations" / "working"
     working.mkdir(parents=True, exist_ok=True)
@@ -76,6 +83,8 @@ def evaluate_atomic(run_dir, source_model, step, protocol, count, cap, config):
         subprocess.run(command, cwd=ROOT, check=True)
         result = json.loads((pending / "result.json").read_text())
         validate_evaluation(result, step, protocol, count, cap)
+        if extra:
+            result.update(extra)
         result["inference_seconds"] = result["wall_seconds"]
         result["wall_seconds"] = time.monotonic() - began
         atomic_json(pending / "result.json", result)
@@ -145,6 +154,8 @@ def sync_best(run_dir):
             step // json.loads((run_dir / "config.json").read_text())["task_steps"])
         if not source.exists():
             source = run_dir / "milestones" / f"step_{step:09d}"
+        if step == 0 and not source.exists():
+            source = run_dir / "baseline"
         if not source.exists():
             raise FileNotFoundError(f"Best source for step {step} was pruned")
         pending = versions / (version.name + ".tmp")
@@ -187,6 +198,7 @@ def rebuild_validation_summary(run_dir):
         result = json.loads(path.read_text())
         agg = result["aggregate"]
         writer.writerow({"committed_steps": result["committed_steps"],
+                         "requested_validation_step": result.get("requested_validation_step", ""),
                          "model_checkpoint": result["model_checkpoint"],
                          "num_seeds": result["num_seeds"], "max_pieces": result["max_pieces"],
                          "mean_pieces": agg["mean_pieces"], "median_pieces": agg["median_pieces"],
@@ -230,11 +242,15 @@ def post_commit(run_dir, state, config, run_metadata, verify):
     for threshold in crossings(previous, step, config.get("validation_interval", 250000)):
         evaluate_atomic(run_dir, source / "model.zip", step, "periodic",
                         config.get("periodic_validation_seeds", 16),
-                        config.get("periodic_validation_max_pieces", 5000), config)
+                        config.get("periodic_validation_max_pieces", 5000), config,
+                        extra={"requested_validation_step": threshold,
+                               "actual_committed_steps": step})
     for threshold in crossings(previous, step, config.get("milestone_interval", 1000000)):
         result = evaluate_atomic(run_dir, source / "model.zip", step, "milestone",
                                  config.get("milestone_validation_seeds", 32),
-                                 config.get("milestone_validation_max_pieces", 10000), config)
+                                 config.get("milestone_validation_max_pieces", 10000), config,
+                                 extra={"requested_milestone": threshold,
+                                        "actual_committed_steps": step})
         create_milestone(run_dir, source, threshold, step, config, run_metadata, result)
     sync_best(run_dir)
     rebuild_validation_summary(run_dir)

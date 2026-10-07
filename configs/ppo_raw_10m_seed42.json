@@ -13,5 +13,6 @@
   "milestone_validation_seeds": 32,
   "milestone_validation_max_pieces": 10000,
   "final_test_seeds": 100,
-  "final_test_max_pieces": 50000
+  "final_test_max_pieces": 50000,
+  "step0_baseline": true
 }

@@ -73,11 +73,11 @@ CUDA wheel 使用 [PyTorch 官方索引](https://pytorch.org/get-started/previou
 
 训练由 `tetris-transaction` tmux session 在后台运行；没有 systemd 自动启动。`status` 同时显示 committed 与 working 进度，关机恢复时以 committed 步数为准。单环境与多环境的 CPU/CUDA 性能比较见 [设备报告](reports/cuda/2026-10-06.md)和[多 worker 报告](reports/performance/vector-env-benchmark-2026-10-07.md)。
 
-## 长期训练检查点与评测协议（尚未启动正式 10M 训练）
+## 长期训练检查点与评测协议
 
-正式预设为 [`configs/ppo_raw_10m_seed42.json`](configs/ppo_raw_10m_seed42.json)：CUDA、8 worker、`n_steps=512`、每 Task 4096 步。请求 10,000,000 步，实际在完整 Task 边界 10,002,432 步停止。将来启动新 run 时，可用 `--config-file` 或脚本的 `TETRIS_TRANSACTION_CONFIG` 指定此预设，并用 `TETRIS_TRANSACTION_RUN_DIR` 指向独立 run 目录；`config.json` 和 `metadata.json` 冻结超参数、版本、设备、Git commit、种子集及其 SHA-256。旧的测试 run 不会被改写。
+正式预设为 [`configs/ppo_raw_10m_seed42.json`](configs/ppo_raw_10m_seed42.json)：CUDA、8 worker、`n_steps=512`、每 Task 4096 步。请求 10,000,000 步，实际在完整 Task 边界 10,002,432 步停止。新 run 可用 `--config-file` 或脚本的 `TETRIS_TRANSACTION_CONFIG` 指定预设，并用 `TETRIS_TRANSACTION_RUN_DIR` 指向独立目录；`config.json` 和 `metadata.json` 冻结超参数、版本、设备、驱动、Git commit、种子集及其 SHA-256。旧测试 run 不会被改写。
 
-将来明确决定开始正式训练后，在项目根目录运行：
+在项目根目录启动独立正式 run：
 
 ```bash
 TETRIS_TRANSACTION_RUN_DIR="$PWD/runs/ppo_raw_10m_seed42" \
@@ -85,8 +85,10 @@ TETRIS_TRANSACTION_CONFIG="$PWD/configs/ppo_raw_10m_seed42.json" \
 ./scripts/train_transaction.sh start
 ```
 
+正式预设先把当前初始化的 PPO 模型保存为 `baseline/model.zip`，用同一套 periodic 16-seed/5000-piece 协议评测 Step-0；结果记录在 `baseline/evaluation.json` 和 validation summary 的 0 步。评测在独立进程中进行，验证策略、optimizer、主 RNG、CUDA RNG 和初始 worker 状态未变后，原模型才开始 Task 1。Step-0 中断可从已保存的 baseline 模型和 RNG 恢复。`baseline/` 永久保留，也参与同尺度的 best 比较。
+
 每个 transaction checkpoint 完整提交并推进指针后，先完成应触发的评测及 milestone，再校验最近 3 个 committed Task，最后清理更旧的普通 Task。`metric_history/` 留下每 Task 的小型指标文件，便于重建 `training_metrics.csv`；`milestones/` 每跨过 1M 阈值独立复制一份模型、配置和 32-seed 评测结果，永久保留。`best/` 是指向完整版本目录的原子切换链接，只保留当前最佳模型；统一按 periodic 16-seed/5000-piece 协议比较平均存活方块、平均消行、平均分数，避免把不同上限的 milestone 结果直接比较。正式 milestone 同时触发 periodic，因此其模型仍参与 best 选择。`status` 报告普通 checkpoint 数、milestone 数和磁盘用量。
 
 训练 seed 为 `42..49`；[`training/evaluation/seeds.json`](training/evaluation/seeds.json) 固定了与训练分离的 32 个 validation seeds 和 100 个 final test seeds。每跨过 250k 已提交步数，在 16 个 validation seeds 上评测，每局最多 5000 块；每个 milestone 另用 32 seeds、最多 10000 块。达到上限属于截断存活，不算死亡；若至少一半达到上限，结果标记 `evaluation_saturated`。结果按 seed 保存，完整评测原子发布到 `evaluations/validation/`，汇总写入 `validation_summary.csv`。评测在独立 Python 子进程加载已提交模型，仅使用合法 Action Mask 和确定性推理；失败或断电后重试缺失结果，不回滚已提交训练。不同 seed 集用于训练、选 best 和最后测试，避免根据正式测试集反复选模。
 
-100 个 final test seeds、每局最多 50000 块仅供训练结束或明确请求时使用。训练器不会自动调用；届时可显式运行 `.venv/bin/python -m training.evaluation.run_final --run-dir <run目录>`。本次只用缩小规模的独立 smoke run 验证了流程，未运行正式 final test，也未启动 10M 训练。
+100 个 final test seeds、每局最多 50000 块只在训练结束且用户决定后使用。训练器不会自动调用；届时可显式运行 `.venv/bin/python -m training.evaluation.run_final --run-dir <run目录>`。正式 run 建立后，`./scripts/train_transaction.sh status` 默认查看它；训练或系统中断后执行 `./scripts/train_transaction.sh resume`。

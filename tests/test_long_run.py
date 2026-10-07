@@ -26,6 +26,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_target_rounding_and_seed_sets():
     preset = json.loads((ROOT / "configs" / "ppo_raw_10m_seed42.json").read_text())
     assert preset["target_total_steps"] == 10_000_000
+    assert preset["step0_baseline"] is True
     assert (preset["device"], preset["n_envs"], preset["n_steps"], preset["task_steps"]) == (
         "cuda", 8, 512, 4096)
     assert (preset["transaction_retention"], preset["milestone_interval"],
@@ -243,7 +244,9 @@ def test_resume_retries_missing_evaluation_before_retention(tmp_path, monkeypatc
     assert sorted(path.name for path in (run_dir / "committed").iterdir()) == [
         "task_000002", "task_000003", "task_000004"]
     assert (run_dir / "best" / "model.zip").read_bytes() == b"4"
-    assert evaluation_path(run_dir, 16384, "periodic").exists()
+    result = json.loads(evaluation_path(run_dir, 16384, "periodic").read_text())
+    assert result["requested_validation_step"] == 16384
+    assert result["actual_committed_steps"] == 16384
 
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA trajectory comparison")
