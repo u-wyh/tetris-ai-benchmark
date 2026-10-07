@@ -22,6 +22,7 @@ from training.train_transaction import (
     write_state,
 )
 from training.env import TetrisEnv
+from training.long_run import SEEDS_FILE, post_commit
 from training.vector_env import make_vector_env, worker_seeds
 
 DEFAULT_RUN = ROOT / "runs" / "ppo_transaction_vec8_cuda_test_seed42"
@@ -41,9 +42,10 @@ def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
     if device not in ("cpu", "cuda"):
         raise ValueError("device must be cpu or cuda")
     seeds = worker_seeds(base_seed, n_envs)
-    if 4096 % n_envs or task_steps != 4096 or target_steps < task_steps or target_steps % task_steps:
+    if 4096 % n_envs or task_steps != 4096 or target_steps < task_steps:
         raise ValueError("Each Task must equal one 4096-sample rollout")
-    config = default_config(target=target_steps, chunk=task_steps, first_stage=target_steps,
+    actual_target = ((target_steps + task_steps - 1) // task_steps) * task_steps
+    config = default_config(target=actual_target, chunk=task_steps, first_stage=actual_target,
                             eval_every=task_steps, checkpoint_every=task_steps)
     config["run_type"] = "transactional_vector_maskable_ppo"
     config["device"] = device
@@ -53,6 +55,27 @@ def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
     config["worker_seeds"] = seeds
     config["ppo"]["n_envs"] = n_envs
     config["ppo"]["n_steps"] = task_steps // n_envs
+    seed_sets = json.loads(SEEDS_FILE.read_text())
+    if (len(seed_sets["validation"]) != 32 or len(set(seed_sets["validation"])) != 32
+            or len(seed_sets["final_test"]) != 100 or len(set(seed_sets["final_test"])) != 100
+            or set(seed_sets["validation"]) & set(seed_sets["final_test"])
+            or set(seeds) & (set(seed_sets["validation"]) | set(seed_sets["final_test"]))):
+        raise ValueError("Training, validation and final test seeds must be disjoint")
+    config.update({"long_run_version": 1, "requested_target_steps": target_steps,
+                   "actual_target_committed_steps": actual_target,
+                   "transaction_retention": 3, "milestone_interval": 1000000,
+                   "validation_interval": 250000,
+                   "periodic_validation_seeds": 16,
+                   "periodic_validation_max_pieces": 5000,
+                   "milestone_validation_seeds": 32,
+                   "milestone_validation_max_pieces": 10000,
+                   "final_test_seeds": 100, "final_test_max_pieces": 50000,
+                   "evaluation_seed_file": str(SEEDS_FILE.relative_to(ROOT)),
+                   "evaluation_seed_sha256": sha256(SEEDS_FILE),
+                   "validation_seed_set": seed_sets["validation"],
+                   "final_test_seed_set": seed_sets["final_test"],
+                   "observation_version": "237-float-public-observation-v1",
+                   "action_space_version": "1840-legal-placement-v1"})
     return config
 
 
@@ -141,9 +164,28 @@ def rebuild_vector_metrics(run_dir, committed_task, config):
     writer.writeheader()
     for number in range(1, committed_task + 1):
         task_dir = run_dir / "committed" / task_name(number)
-        verify_task(task_dir, number, config)
-        writer.writerow(json.loads((task_dir / "metrics.json").read_text()))
+        archived = run_dir / "metric_history" / f"{task_name(number)}.json"
+        if not archived.exists():
+            verify_task(task_dir, number, config)
+            atomic_json(archived, json.loads((task_dir / "metrics.json").read_text()))
+        writer.writerow(json.loads(archived.read_text()))
     atomic_bytes(run_dir / "training_metrics.csv", buffer.getvalue().encode())
+
+
+def ensure_final_model(run_dir, state):
+    if state["status"] != "completed":
+        return
+    source = run_dir / "committed" / task_name(state["committed_task"]) / "model.zip"
+    final = run_dir / "final"
+    final.mkdir(exist_ok=True)
+    destination = final / "model.zip"
+    if destination.exists() and sha256(destination) == sha256(source):
+        return
+    temporary = final / f".model.tmp.{os.getpid()}.zip"
+    temporary.unlink(missing_ok=True)
+    os.link(source, temporary)
+    os.replace(temporary, destination)
+    fsync_dir(final)
 
 
 def commit_vector_task(run_dir, state, working_dir, model, env, callback, capture,
@@ -172,12 +214,15 @@ def commit_vector_task(run_dir, state, working_dir, model, env, callback, captur
                  "n_envs": config["ppo"]["n_envs"], "n_steps": config["ppo"]["n_steps"],
                  "worker_seeds": config["worker_seeds"], "worker_digests": digests})
     checkpoint_bytes = write_manifest(working_dir)
+    verify_task(working_dir, number, config)
     fsync_tree(working_dir)
     checkpoint_seconds = time.monotonic() - began
     destination = run_dir / "committed" / task_name(number)
     os.replace(working_dir, destination)
     fsync_dir(run_dir / "committed")
     fsync_dir(run_dir / "working")
+    atomic_json(run_dir / "metric_history" / f"{task_name(number)}.json",
+                json.loads((destination / "metrics.json").read_text()))
     state.update({"committed_task": number, "committed_steps": end_step,
                   "working_task": None, "working_steps": end_step,
                   "status": "completed" if end_step >= state["target_steps"] else "running"})
@@ -189,12 +234,7 @@ def commit_vector_task(run_dir, state, working_dir, model, env, callback, captur
               checkpoint_seconds=round(checkpoint_seconds, 3),
               commit_seconds=round(commit_seconds, 3), checkpoint_bytes=checkpoint_bytes)
     if state["status"] == "completed":
-        final = run_dir / "final"
-        final.mkdir(exist_ok=True)
-        temporary = final / f".model.tmp.{os.getpid()}.zip"
-        os.link(destination / "model.zip", temporary)
-        os.replace(temporary, final / "model.zip")
-        fsync_dir(final)
+        ensure_final_model(run_dir, state)
     return destination
 
 
@@ -206,13 +246,28 @@ def inspect_status(run_dir):
     if config_path.exists():
         config = json.loads(config_path.read_text())
         print(f"Workers: {config['ppo']['n_envs']}\nn_steps: {config['ppo']['n_steps']}")
+        committed = list((run_dir / "committed").glob("task_*"))
+        milestones = ([path for path in (run_dir / "milestones").glob("step_*")
+                       if path.is_dir() and not path.name.endswith(".tmp")]
+                      if (run_dir / "milestones").exists() else [])
+        seen_inodes = set()
+        disk_bytes = 0
+        for path in run_dir.rglob("*"):
+            if path.is_file():
+                stat = path.stat()
+                inode = (stat.st_dev, stat.st_ino)
+                if inode not in seen_inodes:
+                    disk_bytes += stat.st_blocks * 512
+                    seen_inodes.add(inode)
+        print(f"Transaction checkpoints: {len(committed)}\nMilestones: {len(milestones)}"
+              f"\nRun disk usage: {disk_bytes / (1024 ** 2):.1f} MiB")
     session = subprocess.run(["tmux", "has-session", "-t", "tetris-transaction"],
                              capture_output=True, check=False).returncode == 0
     print(f"tmux session: {'tetris-transaction' if session else 'none'}")
 
 
 def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
-        crash_during_task=None):
+        crash_during_task=None, config_file=None):
     import gymnasium
     import sb3_contrib
     import stable_baselines3
@@ -243,15 +298,45 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     or meta["device"] != config["device"]
                     or meta["worker_seeds"] != config["worker_seeds"]):
                 raise RuntimeError("Run config and metadata disagree")
+            if config.get("long_run_version"):
+                if sha256(SEEDS_FILE) != config["evaluation_seed_sha256"]:
+                    raise RuntimeError("Fixed evaluation seed file changed")
+                post_commit(run_dir, state, config, meta, verify_task)
             if state["status"] == "completed":
+                rebuild_vector_metrics(run_dir, state["committed_task"], config)
+                ensure_final_model(run_dir, state)
                 return
         else:
             if config_path.exists() or state_path(run_dir).exists():
                 raise FileExistsError("Run already exists; use resume")
-            config = vector_config(target_steps=target_steps)
+            if config_file:
+                preset = json.loads(Path(config_file).read_text())
+                if (preset.get("task_steps") != 4096 or preset.get("n_steps") != 4096 // preset["n_envs"]
+                        or preset.get("final_test_seeds", 100) != 100
+                        or preset.get("final_test_max_pieces", 50000) != 50000):
+                    raise ValueError("Preset disagrees with fixed rollout or final-test protocol")
+                config = vector_config(target_steps=preset["target_total_steps"],
+                                       device=preset["device"], n_envs=preset["n_envs"],
+                                       base_seed=preset["base_seed"])
+                for key in ("transaction_retention", "milestone_interval", "validation_interval",
+                            "periodic_validation_seeds", "periodic_validation_max_pieces",
+                            "milestone_validation_seeds", "milestone_validation_max_pieces"):
+                    if key in preset:
+                        config[key] = preset[key]
+            else:
+                config = vector_config(target_steps=target_steps)
+            if (config["transaction_retention"] < 3
+                    or config["milestone_interval"] < config["task_steps"]
+                    or config["validation_interval"] < config["task_steps"]
+                    or not 1 <= config["periodic_validation_seeds"] <= 32
+                    or not 1 <= config["milestone_validation_seeds"] <= 32
+                    or config["periodic_validation_max_pieces"] < 1
+                    or config["milestone_validation_max_pieces"] < 1):
+                raise ValueError("Invalid long-run schedule")
             if config["device"] == "cuda" and not torch.cuda.is_available():
                 raise RuntimeError("CUDA unavailable; refusing to create run")
-            for name in ("working", "committed", "abandoned", "logs", "reports"):
+            for name in ("working", "committed", "abandoned", "logs", "reports",
+                         "metric_history", "milestones", "best_versions", "evaluations"):
                 (run_dir / name).mkdir(exist_ok=True)
             atomic_json(config_path, config)
             meta = metadata(torch, gymnasium, stable_baselines3, sb3_contrib)
@@ -259,15 +344,28 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                          "n_envs": config["ppo"]["n_envs"], "n_steps": config["ppo"]["n_steps"],
                          "task_steps": config["task_steps"], "worker_seeds": config["worker_seeds"],
                          "worker_seed_rule": config["worker_seed_rule"],
+                         "requested_target_steps": config["requested_target_steps"],
+                         "actual_target_committed_steps": config["actual_target_committed_steps"],
+                         "transaction_retention": config["transaction_retention"],
+                         "milestone_interval": config["milestone_interval"],
+                         "validation_interval": config["validation_interval"],
+                         "evaluation_seed_sha256": config["evaluation_seed_sha256"],
+                         "validation_seed_set": config["validation_seed_set"],
+                         "final_test_seed_set": config["final_test_seed_set"],
+                         "reward_definition": config["reward"],
+                         "observation_version": config["observation_version"],
+                         "action_space_version": config["action_space_version"],
                          "resume_episode_policy": "Restore each worker exactly from committed Task."})
             atomic_json(run_dir / "metadata.json", meta)
             state = initial_state(config)
             write_state(run_dir, state)
-            log_event(run_dir, "STARTED", target=target_steps, workers=config["ppo"]["n_envs"])
+            log_event(run_dir, "STARTED", target=config["target_total_steps"],
+                      workers=config["ppo"]["n_envs"])
         if config["device"] == "cuda" and not torch.cuda.is_available():
             raise RuntimeError("Recorded CUDA device unavailable; refusing fallback")
         # Verify the official pointer before moving any orphaned Task to abandoned.
-        for number in range(1, state["committed_task"] + 1):
+        first_retained = max(1, state["committed_task"] - config.get("transaction_retention", state["committed_task"]) + 1)
+        for number in range(first_retained, state["committed_task"] + 1):
             verify_task(run_dir / "committed" / task_name(number), number, config)
         discard_uncommitted(run_dir, state["committed_task"])
         rebuild_vector_metrics(run_dir, state["committed_task"], config)
@@ -364,6 +462,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     model.logger.close()
                 commit_vector_task(run_dir, state, working_dir, model, env, callback,
                                    capture, training_seconds, config)
+                if config.get("long_run_version"):
+                    post_commit(run_dir, state, config, meta, verify_task)
                 completed_this_process += 1
                 if max_tasks is not None and completed_this_process >= max_tasks:
                     log_event(run_dir, "TEST_STOP_AFTER_COMMIT", task=number)
@@ -391,6 +491,7 @@ def main():
     parser.add_argument("--resume", action="store_true")
     parser.add_argument("--status", action="store_true")
     parser.add_argument("--target-steps", type=int, default=32768)
+    parser.add_argument("--config-file", type=Path, default=None)
     parser.add_argument("--max-tasks", type=int, default=None, help="Test-only stop after commits")
     parser.add_argument("--crash-during-task", type=int, default=None,
                         help="Test-only injected interruption after 32 vector steps")
@@ -399,7 +500,8 @@ def main():
         inspect_status(args.run_dir)
     else:
         run(args.run_dir, resume=args.resume, target_steps=args.target_steps,
-            max_tasks=args.max_tasks, crash_during_task=args.crash_during_task)
+            max_tasks=args.max_tasks, crash_during_task=args.crash_during_task,
+            config_file=args.config_file)
 
 
 if __name__ == "__main__":

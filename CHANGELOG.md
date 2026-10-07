@@ -2,6 +2,9 @@
 
 ## 2026-10-07
 
+- 长期事务训练仅保留最近 3 个普通 checkpoint；每跨 1M 步独立保存 milestone，并准备完整 Task 边界的 10M 正式配置。
+- 增加固定种子 periodic/milestone validation、预留独立 final test 种子集，按平均存活方块、消行、分数管理原子切换的 best model。
+- 评测在独立进程运行，结果原子发布；中断后从已提交 Task 补做评测，再安全执行 retention。
 - 事务式训练接入 CUDA + 8 worker `SubprocVecEnv`；每 Task 保存并校验 8 份环境状态、主进程 CUDA RNG、模型/optimizer，恢复时逐 worker 核对 observation/mask digest。
 - 故障注入验证未提交 Task 回滚、损坏 checkpoint 拒绝加载及中断/不中断训练的参数、optimizer、RNG、环境状态完全一致；稳态吞吐约 550 steps/s，checkpoint 约 8.8 MB。
 - 增加 `forkserver` 模式的 `SubprocVecEnv` 和 `base_seed + worker_rank` 种子管理；通过多 worker MaskablePPO、mask 与自动重置测试。

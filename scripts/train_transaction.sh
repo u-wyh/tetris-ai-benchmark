@@ -48,8 +48,17 @@ case "$command" in
       fi
       device_flag=""
     fi
+    config_flag=""
+    if [[ "$command" == start && -n "${TETRIS_TRANSACTION_CONFIG:-}" ]]; then
+      if [[ "$trainer_module" != "training.train_vector_transaction" || ! -f "$TETRIS_TRANSACTION_CONFIG" ]]; then
+        echo "TETRIS_TRANSACTION_CONFIG requires an existing vector config file." >&2
+        exit 2
+      fi
+      printf -v escaped_config '%q' "$TETRIS_TRANSACTION_CONFIG"
+      config_flag="--config-file $escaped_config"
+    fi
     tmux new-session -d -s "$session" \
-      "cd '$root' && exec '$root/.venv/bin/python' -m $trainer_module --run-dir '$run_dir' $resume_flag $device_flag >> '$run_dir/logs/console.log' 2>&1"
+      "cd '$root' && exec '$root/.venv/bin/python' -m $trainer_module --run-dir '$run_dir' $resume_flag $device_flag $config_flag >> '$run_dir/logs/console.log' 2>&1"
     echo "Started in tmux session $session. The process continues after this shell exits."
     ;;
   status)
