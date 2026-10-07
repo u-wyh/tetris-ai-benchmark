@@ -1,5 +1,7 @@
 """One Gymnasium step is one parity-tested TetrisCore legal placement."""
 
+import copy
+
 import gymnasium as gym
 import numpy as np
 
@@ -31,6 +33,7 @@ class TetrisEnv(gym.Env):
         self.episode_seed = None
         self.pieces = 0
         self.episode_reward = 0.0
+        self.episode_count = 0
         self._finished = False
 
     @staticmethod
@@ -57,9 +60,12 @@ class TetrisEnv(gym.Env):
 
     def reset(self, *, seed=None, options=None):
         super().reset(seed=seed)
+        if seed is not None:
+            self.action_space.seed(seed)
         if seed is None:
             seed = int(self.np_random.integers(0, 1 << 32, dtype=np.uint32))
         self.episode_seed = seed
+        self.episode_count += 1
         if self.core is None:
             self.core = TetrisCore(seed)
         else:
@@ -68,6 +74,36 @@ class TetrisEnv(gym.Env):
         self.episode_reward = 0.0
         self._finished = False
         return self._encode_observation(self.core.get_public_observation()), self._info()
+
+    def get_observation(self):
+        if self.core is None:
+            raise RuntimeError("Call reset() before requesting an observation")
+        return self._encode_observation(self.core.get_public_observation())
+
+    def get_state(self):
+        """Snapshot all trajectory-relevant state; TetrisCore owns board, bag and gameplay RNG."""
+        if self.core is None:
+            raise RuntimeError("Call reset() before snapshotting")
+        return {"core": copy.deepcopy(self.core), "max_pieces": self.max_pieces,
+                "episode_seed": self.episode_seed, "episode_count": self.episode_count,
+                "pieces": self.pieces, "episode_reward": self.episode_reward,
+                "finished": self._finished,
+                "numpy_generator": copy.deepcopy(self.np_random.bit_generator.state),
+                "action_generator": copy.deepcopy(self.action_space.np_random.bit_generator.state),
+                "numpy_seed": self._np_random_seed}
+
+    def set_state(self, state):
+        if state["max_pieces"] != self.max_pieces:
+            raise ValueError("Checkpoint max_pieces differs from environment")
+        self.core = copy.deepcopy(state["core"])
+        self.episode_seed = state["episode_seed"]
+        self.episode_count = state["episode_count"]
+        self.pieces = state["pieces"]
+        self.episode_reward = state["episode_reward"]
+        self._finished = state["finished"]
+        self.np_random.bit_generator.state = copy.deepcopy(state["numpy_generator"])
+        self.action_space.np_random.bit_generator.state = copy.deepcopy(state["action_generator"])
+        self._np_random_seed = state["numpy_seed"]
 
     def action_masks(self):
         if self.core is None:

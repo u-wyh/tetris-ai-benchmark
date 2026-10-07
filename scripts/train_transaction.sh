@@ -2,9 +2,16 @@
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-run_dir="${TETRIS_TRANSACTION_RUN_DIR:-$root/runs/ppo_transaction_test_seed42}"
+run_dir="${TETRIS_TRANSACTION_RUN_DIR:-$root/runs/ppo_transaction_vec8_cuda_test_seed42}"
 session="tetris-transaction"
 command="${1:-status}"
+trainer_module="training.train_vector_transaction"
+if [[ -f "$run_dir/config.json" ]]; then
+  run_type="$("$root/.venv/bin/python" -c 'import json,sys; print(json.load(open(sys.argv[1])).get("run_type", ""))' "$run_dir/config.json")"
+  if [[ "$run_type" == "transactional_maskable_ppo" ]]; then
+    trainer_module="training.train_transaction"
+  fi
+fi
 
 session_running() {
   tmux has-session -t "$session" 2>/dev/null
@@ -34,13 +41,20 @@ case "$command" in
         *) echo "TETRIS_TRANSACTION_DEVICE must be cpu or cuda." >&2; exit 2 ;;
       esac
     fi
+    if [[ "$trainer_module" == "training.train_vector_transaction" ]]; then
+      if [[ -n "$device_flag" && "$device_flag" != "--device cuda" ]]; then
+        echo "The vector transaction test is fixed to device=cuda." >&2
+        exit 2
+      fi
+      device_flag=""
+    fi
     tmux new-session -d -s "$session" \
-      "cd '$root' && exec '$root/.venv/bin/python' -m training.train_transaction --run-dir '$run_dir' $resume_flag $device_flag >> '$run_dir/logs/console.log' 2>&1"
+      "cd '$root' && exec '$root/.venv/bin/python' -m $trainer_module --run-dir '$run_dir' $resume_flag $device_flag >> '$run_dir/logs/console.log' 2>&1"
     echo "Started in tmux session $session. The process continues after this shell exits."
     ;;
   status)
     cd "$root"
-    "$root/.venv/bin/python" -m training.train_transaction --run-dir "$run_dir" --status
+    "$root/.venv/bin/python" -m "$trainer_module" --run-dir "$run_dir" --status
     ;;
   *)
     echo "Usage: $0 {start|resume|status}" >&2
