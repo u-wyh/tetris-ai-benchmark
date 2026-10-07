@@ -27,6 +27,19 @@ python3 -m venv .venv
 
 CUDA wheel 使用 [PyTorch 官方索引](https://pytorch.org/get-started/previous-versions/)；无需系统级 CUDA Toolkit。再次安装 `requirements.txt` 会恢复 CPU 版，需要随后重新执行 CUDA 安装命令。
 
+## 多进程环境短基准
+
+`training/vector_env.py` 用 `SubprocVecEnv` 的 `forkserver` 模式创建独立的 `TetrisEnv` worker，种子为 `base_seed + worker_rank`；`action_masks()` 保留在各 worker 内。基准固定每轮 `n_envs × n_steps = 4096`、每组 16384 训练步，结果写在被 Git 忽略的 `runs/vector_env_benchmark/`，不保存模型。
+
+```bash
+.venv/bin/python -m scripts.benchmark_vector_env --device cpu --n-envs 4 --run-dir runs/vector_env_benchmark/cpu_env4
+.venv/bin/python -m scripts.benchmark_vector_env --device cuda --n-envs 4 --run-dir runs/vector_env_benchmark/cuda_env4
+```
+
+该入口由 `if __name__ == "__main__"` 保护，可安全启动子进程。多进程环境目前用于 benchmark；事务式训练的完整多 worker 状态保存尚未接入。
+
+[8 组实测结果](reports/performance/vector-env-benchmark-2026-10-07.md) 中最快的是 CUDA + 8 worker（566.83 steps/s）。后续可据此设计可恢复的多 worker 正式训练；现有事务式训练入口仍默认单环境 CPU。
+
 ## 首轮 MaskablePPO smoke training
 
 安装依赖后，在项目根目录运行：
