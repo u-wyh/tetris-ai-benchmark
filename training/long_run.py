@@ -119,11 +119,15 @@ def create_milestone(run_dir, source, threshold, step, config, run_metadata, res
 
 
 def sync_best(run_dir):
-    """Switch a symlink atomically; best always resolves to a complete version."""
+    """Compare one fixed protocol; switch a complete best version atomically."""
     validation = run_dir / "evaluations" / "validation"
     if not validation.exists():
         return None
-    candidates = [(json.loads(path.read_text()), path) for path in sorted(validation.glob("*.json"))]
+    # Milestone's 32-seed/10k cap is not comparable with periodic's 16-seed/5k cap.
+    # Formal 1M milestones also cross a 250k periodic threshold, so each model
+    # remains eligible for best under the same fixed periodic protocol.
+    candidates = [(json.loads(path.read_text()), path)
+                  for path in sorted(validation.glob("*_periodic.json"))]
     if not candidates:
         return None
     winner, result_path = max(candidates, key=lambda item: best_key(item[0]))

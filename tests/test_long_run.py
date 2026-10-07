@@ -153,6 +153,25 @@ def test_failed_best_pointer_swap_preserves_previous_model(tmp_path, monkeypatch
     assert (run_dir / "best" / "model.zip").read_bytes() == b"8192"
 
 
+def test_best_uses_one_comparable_validation_protocol(tmp_path):
+    run_dir = tmp_path
+    (run_dir / "committed").mkdir()
+    (run_dir / "evaluations" / "validation").mkdir(parents=True)
+    atomic_json(run_dir / "config.json", {"task_steps": 4096})
+    for step, pieces in ((4096, 100), (8192, 110)):
+        source = run_dir / "committed" / task_name(step // 4096)
+        source.mkdir()
+        (source / "model.zip").write_bytes(str(step).encode())
+        atomic_json(evaluation_path(run_dir, step, "periodic"),
+                    fake_result(step, pieces, 0, 0))
+    atomic_json(evaluation_path(run_dir, 8192, "milestone"),
+                fake_result(8192, 10000, 0, 0, protocol="milestone"))
+    sync_best(run_dir)
+    assert (run_dir / "best" / "model.zip").read_bytes() == b"8192"
+    assert json.loads((run_dir / "best" / "metadata.json").read_text())[
+        "evaluation_path"].endswith("_periodic.json")
+
+
 def test_evaluation_cap_and_interruption(tmp_path, monkeypatch):
     rows = [{"seed": 1, "pieces_survived": 5, "lines": 2, "score": 10,
              "episode_reward": 1.0, "game_over": False, "survived_cap": True},

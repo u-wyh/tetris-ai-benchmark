@@ -85,7 +85,7 @@ TETRIS_TRANSACTION_CONFIG="$PWD/configs/ppo_raw_10m_seed42.json" \
 ./scripts/train_transaction.sh start
 ```
 
-每个 transaction checkpoint 完整提交并推进指针后，先完成应触发的评测及 milestone，再校验最近 3 个 committed Task，最后清理更旧的普通 Task。`metric_history/` 留下每 Task 的小型指标文件，便于重建 `training_metrics.csv`；`milestones/` 每跨过 1M 阈值独立复制一份模型、配置和 32-seed 评测结果，永久保留。`best/` 是指向完整版本目录的原子切换链接，只保留当前最佳模型；比较顺序为 validation 的平均存活方块、平均消行、平均分数。`status` 报告普通 checkpoint 数、milestone 数和磁盘用量。
+每个 transaction checkpoint 完整提交并推进指针后，先完成应触发的评测及 milestone，再校验最近 3 个 committed Task，最后清理更旧的普通 Task。`metric_history/` 留下每 Task 的小型指标文件，便于重建 `training_metrics.csv`；`milestones/` 每跨过 1M 阈值独立复制一份模型、配置和 32-seed 评测结果，永久保留。`best/` 是指向完整版本目录的原子切换链接，只保留当前最佳模型；统一按 periodic 16-seed/5000-piece 协议比较平均存活方块、平均消行、平均分数，避免把不同上限的 milestone 结果直接比较。正式 milestone 同时触发 periodic，因此其模型仍参与 best 选择。`status` 报告普通 checkpoint 数、milestone 数和磁盘用量。
 
 训练 seed 为 `42..49`；[`training/evaluation/seeds.json`](training/evaluation/seeds.json) 固定了与训练分离的 32 个 validation seeds 和 100 个 final test seeds。每跨过 250k 已提交步数，在 16 个 validation seeds 上评测，每局最多 5000 块；每个 milestone 另用 32 seeds、最多 10000 块。达到上限属于截断存活，不算死亡；若至少一半达到上限，结果标记 `evaluation_saturated`。结果按 seed 保存，完整评测原子发布到 `evaluations/validation/`，汇总写入 `validation_summary.csv`。评测在独立 Python 子进程加载已提交模型，仅使用合法 Action Mask 和确定性推理；失败或断电后重试缺失结果，不回滚已提交训练。不同 seed 集用于训练、选 best 和最后测试，避免根据正式测试集反复选模。
 
