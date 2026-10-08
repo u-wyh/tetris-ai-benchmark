@@ -2,6 +2,7 @@
 
 ## 2026-10-08
 
+- 夜间 PPO 队列补充可恢复的 `extended_training` 选择阶段：统一比较 Raw/V1/V2/V3/V4，仅在 V3/V4 达到保守存活门槛且无明显 Game Over 风险时创建独立 10M run。
 - 新增独立 PPO-Shaped V2（新增洞惩罚系数 0.02）2M 配置；保留 V1 全部训练参数，并在 Step-0 同时校验与 Raw、V1 的初始权重一致。
 - 完成 PPO-Raw/Shaped 2M 的 32-seed 逐落点死亡诊断；Shaped 少造洞但在中央形成尖塔，终局总高度 83.22、最高列 19.31，31/32 局的最高列在中央两列。新增带存活样本数的高度/洞曲线、死亡前 20 步曲线与报告；未训练新模型。
 - 第四阶段网页集成：增加 Human、V1 Adapter、V2 Hold-only（默认）和 V2 Beam-8 模式。策略只接收公开 Observation，由独立 Web Worker 使用合法 Placement BFS 搜索；主线程按标准路径逐步执行 Hold、移动、旋转、无人工加分的 Down 和 Hard Drop。保留原始网页 V1 函数和 Human 规则。
