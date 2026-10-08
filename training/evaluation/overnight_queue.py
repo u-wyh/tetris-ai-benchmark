@@ -35,7 +35,7 @@ def evaluate_existing(state):
         rows[name] = evaluate_model(path, SEEDS, 5000, "overnight_validation", 2002944, diagnostics=True)
     atomic_json(out, rows)
 
-def train(stage, run, config):
+def train(run, config):
     if completed(run): return
     run_dir = ROOT / "runs" / run
     args = [str(ROOT / ".venv/bin/python"), "-m", "training.train_vector_transaction",
