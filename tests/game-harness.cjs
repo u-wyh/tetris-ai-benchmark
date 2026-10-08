@@ -4,6 +4,7 @@ const vm = require("node:vm");
 
 const source = fs.readFileSync(path.join(__dirname, "../tetris-game/game.js"), "utf8");
 const placementSource = fs.readFileSync(path.join(__dirname, "../tetris-game/legal-placements.js"), "utf8");
+const traditionalSource = fs.readFileSync(path.join(__dirname, "../tetris-game/traditional-ai.js"), "utf8");
 
 function game(storage = new Map()) {
   const context2d = () => ({
@@ -35,11 +36,12 @@ function game(storage = new Map()) {
       setItem: (key, value) => storage.set(key, value)
     },
     performance: { now: () => 1000 },
-    requestAnimationFrame() {}, setInterval() {},
+    requestAnimationFrame() {}, setInterval() {}, setTimeout(callback) { callback(); },
     location: { search: "" }, URLSearchParams
   });
   vm.runInContext(source, sandbox);
   vm.runInContext(placementSource, sandbox);
+  vm.runInContext(traditionalSource, sandbox);
   return { run: code => vm.runInContext(code, sandbox), storage };
 }
 

@@ -15,7 +15,7 @@
         <h1>霓虹方块</h1>
       </div>
       <div class="header-actions">
-        <button id="aiButton" class="ai-button" type="button" aria-pressed="false">
+        <button id="aiButton" class="ai-button hidden" type="button" aria-pressed="false">
           <span class="ai-dot"></span>AI 选手
         </button>
         <button id="soundButton" class="icon-button" type="button" aria-label="切换声音" title="切换声音">♪</button>
@@ -38,6 +38,24 @@
       </div>
 
       <aside class="side-panel">
+        <section class="panel ai-settings-panel">
+          <div class="panel-heading"><span>游戏模式</span><span class="tiny-label">MODE</span></div>
+          <label>算法
+            <select id="modeSelect">
+              <option value="human">Human</option>
+              <option value="v1">V1 Adapter</option>
+              <option value="legacy" hidden>Original web V1 · legacy save</option>
+              <option value="hold" selected>V2 Hold-only · 推荐</option>
+              <option value="beam">V2 Beam-8 · 实验</option>
+            </select>
+          </label>
+          <label>固定 Seed <input id="seedInput" type="number" min="0" max="4294967295" step="1" placeholder="随机"></label>
+          <label>演示速度 <input id="demoSpeed" type="range" min="0.25" max="8" step="0.25" value="1"></label>
+          <div class="ai-control-row">
+            <button id="pauseButton" type="button">暂停 / 继续</button>
+            <button id="restartButton" type="button">重新开始</button>
+          </div>
+        </section>
         <section class="panel next-panel">
           <div class="panel-heading">
             <span>接下来</span>
@@ -76,6 +94,14 @@
               <span>速度</span>
               <strong id="speed">1.0×</strong>
             </div>
+            <div class="stat">
+              <span>放置方块</span>
+              <strong id="placedCount">0</strong>
+            </div>
+            <div class="stat">
+              <span>存活时间</span>
+              <strong id="elapsedTime">0:00</strong>
+            </div>
           </div>
         </section>
 
@@ -106,5 +132,6 @@
   </main>
   <script src="game.js"></script>
   <script src="legal-placements.js"></script>
+  <script src="traditional-ai.js"></script>
 </body>
 </html>

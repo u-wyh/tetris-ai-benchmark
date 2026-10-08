@@ -214,7 +214,7 @@ test("the initial seed, gameplay state, and AI state survive save and restore", 
   const g = game();
   g.run("resetGame({ seed: 12345 }); shuffledBag(); shuffledBag(); aiRandom(); saveGame()");
   const saved = JSON.parse(g.storage.get("neonBlocksGameV1"));
-  assert.equal(saved.version, 5);
+  assert.equal(saved.version, 6);
   assert.equal(saved.initialSeed, 12345);
   assert.equal(saved.gameplayRngState, g.run("gameplayRngState"));
   assert.equal(saved.aiRngState, g.run("aiRngState"));

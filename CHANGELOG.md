@@ -2,6 +2,10 @@
 
 ## 2026-10-08
 
+- 第四阶段网页集成：增加 Human、V1 Adapter、V2 Hold-only（默认）和 V2 Beam-8 模式。策略只接收公开 Observation，由独立 Web Worker 使用合法 Placement BFS 搜索；主线程按标准路径逐步执行 Hold、移动、旋转、无人工加分的 Down 和 Hard Drop。保留原始网页 V1 函数和 Human 规则。
+- 页面新增固定 Seed、演示速度、开始/暂停/重新开始、方块放置数量、存活时间及第 6 版可恢复存档。固定种子的网页策略与 Python V1/V2 在动作和正式 Core 状态上逐步一致；AI 搜索不会读取隐藏队列、Bag 或 RNG。
+- 验证：Python 78 tests、35 subtests passed；JS 61 tests passed；JS/Python Parity 6 tests passed（含三模式固定 seed 动作序列、Board/Score/Lines/Level/Hold/Next/Game Over、Worker 几何与主游戏一致）。Tailscale 8080 服务及所需脚本均通过 HTTP 200 检查。
+- 本次提交信息：`feat(web): integrate parity-tested traditional AI modes`。
 - 新增独立传统 V2（`v2-1`）：公开观察边界内的增强启发式、合法 Hold、两层 Beam Search（宽度 8、前瞻系数 0.58）和顶部风险项；提供纯局面模拟、确定性 tie-break、组件耗时统计、可恢复 benchmark、配对比较与 bootstrap/sign-test 分析。
 - V2 开发集消融（310100–310103）中，5000 块上限下无 Hold 平均 4734.25 块、Hold-only 与 Beam-8 均 4/4 截断；无 Hold 决策 4.294 ms、Hold-only 5.662 ms、Beam-8 53.825 ms。独立 10000 块开发组中无 Hold 两局在 6173/7421 块死亡，Hold-only 与 Beam-8 两局均达到上限；这些结果用于冻结配置，不能替代正式 validation。
 - V2 validation 配对评测使用与 V1 完全相同的 16 seeds 和 5000 块上限：V2 平均 5000 块、1998.9375 行、20,878,968.75 分，16/16 截断；正式分片平均决策 64.396 ms、P95 84.689 ms、15.529 次/秒。V1 为平均 4044.6875 块、10/16 截断；V2 在 6 个 V1 Game Over seed 上均存活到上限，但 10 对双方都截断，寿命差受右截断影响，不能直接宣称无偏最终寿命提升。

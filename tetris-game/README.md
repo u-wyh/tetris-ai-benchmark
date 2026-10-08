@@ -27,7 +27,7 @@ JavaScript 网页是 Benchmark v1.0 的参考实现；`training/tetris_core/` �
 
 公开观察接口 `getPublicObservation()` 返回只读副本：20×10 Board、Current Piece（类型、矩阵、旋转状态和位置）、Hold 与是否可用、Next 3、Score、Level、Lines、游戏阶段与 Game Over，以及锁定计时和重置次数。Hold 是否可用按游戏规则判断，与当前传统 AI 是否使用 Hold 无关。
 
-Next 4+、7-Bag 剩余顺序、初始 seed、Gameplay/AI RNG state 和浏览器存档数据均不公开。内部队列仍保持至少 5 个方块；当前传统 AI 尚未迁移到此接口，仍直接读取棋盘、活动方块及 `queue[0]`，只前瞻 1 个 Next。
+Next 4+、7-Bag 剩余顺序、初始 seed、Gameplay/AI RNG state 和浏览器存档数据均不公开。内部队列仍保持至少 5 个方块。网页菜单中的 V1 Adapter 与 V2 均只接收公开观察；保留的原始网页 V1 代码仍按旧方式读取 `queue[0]`，仅用于历史行为回归。
 
 ## Benchmark v1.0 Legal Placements
 
@@ -39,14 +39,24 @@ Next 4+、7-Bag 剩余顺序、初始 seed、Gameplay/AI RNG state 和浏览器�
 
 ### AI Benchmark Reachability
 
-Agent 每块选择一个最终 placement。BFS 从当前状态出发，只以 `(x,y,rotation)` 去重，按 `Left → Right → RotateCW → Down` 扩展；可先下降再横移或旋转，包括 SRS Wall Kick 和 Tuck。只有当前状态合法且继续 Down 会碰撞时才形成候选终点。同一 Hold 分支中占据格相同则只保留最小 action ID。搜索不模拟 Lock Delay、Lock Reset 时间或手速，也不读取隐藏队列或 RNG，不修改当前对局。当前传统 AI 尚未使用此模块，可能建议被障碍隔开的不可达落点。
+Agent 每块选择一个最终 placement。BFS 从当前状态出发，只以 `(x,y,rotation)` 去重，按 `Left → Right → RotateCW → Down` 扩展；可先下降再横移或旋转，包括 SRS Wall Kick 和 Tuck。只有当前状态合法且继续 Down 会碰撞时才形成候选终点。同一 Hold 分支中占据格相同则只保留最小 action ID。搜索不模拟 Lock Delay、Lock Reset 时间或手速，也不读取隐藏队列或 RNG，不修改当前对局。网页中的 V1 Adapter 和 V2 均从此模块取得合法落点与执行路径；原始网页 V1 代码仍可能建议不可达落点。
 
 性能基准可在项目根目录运行 `node tests/placement-benchmark.cjs`。在 4 个固定 seed 的合法局面上各测 3 次，本次环境测得平均 4.64 ms、中位数 4.41 ms、约 215.6 masks/s，平均搜索 1194 个状态、47.8 个 placements；旧实现平均 232.39 ms、约 4.3 masks/s。
 
 需要复现一局时，可在浏览器开发者控制台运行 `resetGame({ seed: 12345 })`。seed 为 0 到 4294967295 的整数；不指定时新游戏会自动生成 seed。当前 seed 和随机数状态随对局一起保存在浏览器中。
 
-点击右上角“AI 选手”可开启自动玩家。AI 会分析当前棋盘及下一个方块，并在画面中逐步完成旋转、移动和下降；再次点击即可随时切回人工操作。
+在侧栏选择 Human、V1 Adapter、V2 Hold-only 或 V2 Beam-8。默认选中 Hold-only；Beam-8 搜索两层，计算较慢。输入 0–4294967295 的 Seed，点击“重新开始”可复现同一开局；清空输入后重新开始会生成随机 Seed 并显示出来。可暂停、继续、调整演示速度。网页 AI 在独立 Worker 中搜索，主线程逐步执行 BFS 路径；AI 的 Down 不计人工 Soft Drop 分。Human 的实时操作和计分规则不变。
 
 切换到其他标签页或最小化浏览器后，AI 会通过后台计时器继续运行；返回页面时，画面会显示后台运行后的最新棋盘和分数。
 
-对局会自动保存在浏览器本地，包括棋盘、当前方块、后续队列、暂存方块及本轮使用状态、积分、等级、AI 开关和暂停状态。刷新页面后会从最近的状态继续运行。
+对局会自动保存在浏览器本地，包括棋盘、当前方块、后续队列、暂存方块及本轮使用状态、积分、等级、算法模式、方块放置数量、存活时间和暂停状态。刷新页面后会从最近的状态继续运行。
+
+从项目根目录启动 Tailscale 网页服务：
+
+```bash
+tmux new-session -d -s tetris-original-web -c "$PWD" 'python3 -m http.server 8080 --bind "$(tailscale ip -4)" --directory tetris-game'
+tmux ls | grep tetris-original-web              # status
+tmux kill-session -t tetris-original-web         # stop
+```
+
+当前服务若已运行，无需重复 start。通过 `http://<Tailscale IPv4>:8080/` 访问。跨语言验证可运行 `.venv/bin/python -m unittest discover -s tests/parity -v`；网页测试运行 `node --test tests/*.test.cjs`。

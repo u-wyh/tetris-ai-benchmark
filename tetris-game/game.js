@@ -53,6 +53,13 @@ const highScoreEl = document.querySelector("#highScore");
 const levelEl = document.querySelector("#level");
 const linesEl = document.querySelector("#lines");
 const speedEl = document.querySelector("#speed");
+const modeSelect = document.querySelector("#modeSelect");
+const seedInput = document.querySelector("#seedInput");
+const demoSpeed = document.querySelector("#demoSpeed");
+const restartButton = document.querySelector("#restartButton");
+const pauseButton = document.querySelector("#pauseButton");
+const placedEl = document.querySelector("#placedCount");
+const elapsedEl = document.querySelector("#elapsedTime");
 
 let board = createBoard();
 let active = null;
@@ -85,6 +92,16 @@ let aiRestartAt = 0;
 let initialSeed = 0;
 let gameplayRngState = 0;
 let aiRngState = 0;
+let aiMode = "human";
+let aiWorker = null;
+let aiRequestId = 0;
+let aiPlanning = false;
+let aiExpectedAction = null;
+let placedCount = 0;
+let survivalMs = 0;
+let legacyAI = false;
+aiMode = modeSelect?.value || "human";
+aiEnabled = aiMode !== "human";
 
 highScoreEl.textContent = formatNumber(highScore);
 
@@ -152,6 +169,7 @@ function setSeed(seed) {
   initialSeed = seed;
   gameplayRngState = seed;
   aiRngState = (seed ^ 0x9e3779b9) >>> 0;
+  if (seedInput) seedInput.value = String(seed);
 }
 
 // Mulberry32: one uint32 state, with identical 32-bit arithmetic in every run.
@@ -210,7 +228,8 @@ function activatePiece(type) {
   if (collides(active.x, active.y, active.matrix)) {
     endGame();
   } else if (aiEnabled) {
-    planAI();
+    if (legacyAI) planAI();
+    else planTraditional();
   }
 }
 
@@ -223,8 +242,8 @@ function spawnPiece(resetHold = true) {
   activatePiece(type);
 }
 
-function holdPiece() {
-  if (state !== "playing" || aiEnabled || holdUsed) return;
+function holdPiece(forAI = false) {
+  if (state !== "playing" || (aiEnabled && !forAI) || holdUsed) return;
   const outgoingType = active.type;
   const incomingType = heldType;
   heldType = outgoingType;
@@ -253,6 +272,11 @@ function resetGame({ seed = generateSeed() } = {}) {
   aiPlan = [];
   aiElapsed = 0;
   aiRestartAt = 0;
+  aiRequestId++;
+  aiPlanning = false;
+  aiExpectedAction = null;
+  placedCount = 0;
+  survivalMs = 0;
   lastTime = performance.now();
   state = "playing";
   overlay.classList.add("hidden");
@@ -292,11 +316,15 @@ function mergePiece() {
   }));
 
   if (!lockedInBoard) {
+    placedCount++;
+    updateStats();
     endGame();
     return;
   }
   clearLines();
+  placedCount++;
   spawnPiece();
+  updateStats();
 }
 
 function clearLines() {
@@ -548,10 +576,99 @@ function updateAI(delta) {
   else if (action === "drop") hardDrop();
 }
 
+function ensureTraditionalWorker() {
+  if (aiWorker || typeof Worker === "undefined") return;
+  try {
+    aiWorker = new Worker("traditional-worker.js");
+    aiWorker.onmessage = event => {
+      const { id, actionId, rngState, error } = event.data;
+      if (id !== aiRequestId || state !== "playing" || !aiEnabled) return;
+      aiPlanning = false;
+      if (error) { aiStatus.textContent = `决策失败：${error}`; return; }
+      acceptTraditionalAction(actionId, rngState);
+    };
+    aiWorker.onerror = () => {
+      aiPlanning = false;
+      aiStatus.textContent = "搜索线程出错";
+      aiWorker.terminate();
+      aiWorker = null;
+    };
+  } catch (_) {
+    aiWorker = null;
+  }
+}
+
+function acceptTraditionalAction(actionId, rngState) {
+  const placement = getLegalPlacements().find(item => item.actionId === actionId);
+  if (!placement || (aiMode === "v1" && placement.hold)) {
+    aiStatus.textContent = "动作校验失败";
+    return;
+  }
+  if (aiMode === "v1") aiRngState = rngState;
+  aiExpectedAction = actionId;
+  aiPlan = [...placement.path];
+  aiElapsed = -100;
+  aiStatus.textContent = `${aiMode === "v1" ? "V1" : aiMode === "beam" ? "Beam-8" : "Hold-only"} · ${placement.hold ? "Hold · " : ""}${placement.x + 1} 列`;
+}
+
+function planTraditional() {
+  if (!aiEnabled || state !== "playing" || !active || aiPlanning || aiPlan.length) return;
+  ensureTraditionalWorker();
+  const observation = getPublicObservation();
+  const id = ++aiRequestId;
+  aiPlanning = true;
+  aiStatus.textContent = "正在分析";
+  if (aiWorker) {
+    aiWorker.postMessage({ id, observation, mode: aiMode, rngState: aiRngState });
+  } else {
+    // Test/older-browser fallback; modern browsers use the worker above.
+    setTimeout(() => {
+      if (id !== aiRequestId || state !== "playing") return;
+      try {
+        const result = aiMode === "v1" ? traditionalChooseV1(observation, aiRngState)
+          : { actionId: traditionalChooseV2(observation, aiMode === "beam" ? "beam" : "hold"), rngState: aiRngState };
+        aiPlanning = false;
+        acceptTraditionalAction(result.actionId, result.rngState);
+      } catch (error) { aiPlanning = false; aiStatus.textContent = `决策失败：${error}`; }
+    }, 0);
+  }
+}
+
+function updateTraditional(delta) {
+  if (!aiPlan.length) { planTraditional(); return; }
+  aiElapsed += delta;
+  const action = aiPlan[0];
+  const speed = Number(demoSpeed?.value) || 1;
+  const delay = (action === "Down" ? 24 : action === "HardDrop" ? 85 : 72) / speed;
+  if (aiElapsed < delay) return;
+  aiElapsed = 0;
+  aiPlan.shift();
+  if (action === "Hold") holdPiece(true);
+  else if (action === "Left") move(-1);
+  else if (action === "Right") move(1);
+  else if (action === "RotateCW") rotate();
+  else if (action === "Down") softDrop(false);
+  else if (action === "HardDrop") hardDrop();
+}
+
+function setMode(mode) {
+  if (!["human", "v1", "hold", "beam"].includes(mode)) return;
+  aiMode = mode;
+  legacyAI = false;
+  aiEnabled = mode !== "human";
+  aiRequestId++;
+  aiPlanning = false;
+  aiPlan = [];
+  if (modeSelect) modeSelect.value = mode;
+  syncAIControls();
+  if (aiEnabled && state === "playing") planTraditional();
+  saveGame();
+}
+
 function setAI(enabled) {
+  legacyAI = enabled;
   aiEnabled = enabled;
   syncAIControls();
-
   if (!enabled) {
     aiPlan = [];
     aiStatus.textContent = "已关闭";
@@ -568,6 +685,7 @@ function syncAIControls() {
   aiButton.setAttribute("aria-pressed", String(aiEnabled));
   aiBadge.classList.toggle("hidden", !aiEnabled);
   aiButton.lastChild.textContent = aiEnabled ? "AI 运行中" : "AI 选手";
+  if (modeSelect) modeSelect.value = legacyAI ? "legacy" : aiMode;
 }
 
 function dropInterval() {
@@ -580,6 +698,10 @@ function togglePause() {
     state = "playing";
     lastTime = performance.now();
     overlay.classList.add("hidden");
+    if (aiEnabled) {
+      if (legacyAI) planAI();
+      else planTraditional();
+    }
   } else {
     state = "paused";
     showOverlay("PAUSED", "已暂停", "按 P 或点击按钮继续", "继续");
@@ -591,8 +713,8 @@ function endGame() {
   state = "over";
   updateHighScore();
   sound("over");
-  aiRestartAt = aiEnabled ? performance.now() + 1800 : 0;
-  showOverlay("GAME OVER", "游戏结束", aiEnabled ? `AI 得分 ${formatNumber(score)} · 即将重试` : `本局得分 ${formatNumber(score)}`, "再来一局");
+  aiRestartAt = legacyAI ? performance.now() + 1800 : 0;
+  showOverlay("GAME OVER", "游戏结束", legacyAI ? `AI 得分 ${formatNumber(score)} · 即将重试` : `本局得分 ${formatNumber(score)}`, "再来一局");
   saveGame();
 }
 
@@ -616,13 +738,15 @@ function updateStats() {
   levelEl.textContent = level;
   linesEl.textContent = lines;
   speedEl.textContent = `${(900 / dropInterval()).toFixed(1)}×`;
+  if (placedEl) placedEl.textContent = formatNumber(placedCount);
+  if (elapsedEl) elapsedEl.textContent = `${Math.floor(survivalMs / 60000)}:${String(Math.floor(survivalMs / 1000) % 60).padStart(2, "0")}`;
 }
 
 function saveGame() {
   if (!active || state === "ready") return;
   try {
     localStorage.setItem(SAVE_KEY, JSON.stringify({
-      version: 5,
+      version: 6,
       savedAt: Date.now(),
       initialSeed,
       gameplayRngState,
@@ -640,7 +764,12 @@ function saveGame() {
       lines,
       level,
       state,
-      aiEnabled
+      aiEnabled,
+      legacyAI,
+      aiMode,
+      placedCount,
+      survivalMs,
+      demoSpeed: Number(demoSpeed?.value) || 1
     }));
     lastAutosaveAt = Date.now();
   } catch (_) {
@@ -657,9 +786,10 @@ function validRngState(value) {
 }
 
 function validSavedGame(saved) {
-  return [1, 2, 3, 4, 5].includes(saved?.version)
+  return [1, 2, 3, 4, 5, 6].includes(saved?.version)
     && (saved.version < 4 || (validRngState(saved.initialSeed) && validRngState(saved.gameplayRngState) && validRngState(saved.aiRngState)))
     && (saved.version < 5 || (Number.isFinite(saved.lockElapsed) && saved.lockElapsed >= 0 && Number.isInteger(saved.lockResetCount) && saved.lockResetCount >= 0 && saved.lockResetCount <= MAX_LOCK_RESETS && typeof saved.lockStarted === "boolean"))
+    && (saved.version < 6 || (["human", "v1", "hold", "beam"].includes(saved.aiMode) && Number.isInteger(saved.placedCount) && saved.placedCount >= 0 && Number.isFinite(saved.survivalMs) && saved.survivalMs >= 0 && Number.isFinite(saved.demoSpeed) && saved.demoSpeed >= 0.25 && saved.demoSpeed <= 8))
     && (saved.version === 1 || ((saved.heldType === null || validPieceType(saved.heldType)) && typeof saved.holdUsed === "boolean"))
     && Array.isArray(saved.board)
     && saved.board.length === ROWS
@@ -703,7 +833,13 @@ function restoreGame() {
     lines = Math.max(0, Number(saved.lines) || 0);
     level = Math.floor(lines / 10) + 1;
     state = saved.state;
-    aiEnabled = Boolean(saved.aiEnabled);
+    legacyAI = saved.version >= 6 ? Boolean(saved.legacyAI) : Boolean(saved.aiEnabled);
+    aiMode = saved.version >= 6 ? saved.aiMode : "human";
+    aiEnabled = legacyAI || aiMode !== "human";
+    placedCount = saved.version >= 6 ? saved.placedCount : 0;
+    survivalMs = saved.version >= 6 ? saved.survivalMs : 0;
+    if (seedInput) seedInput.value = String(initialSeed);
+    if (demoSpeed && saved.version >= 6) demoSpeed.value = String(saved.demoSpeed);
     particles = [];
     flashRows = [];
     aiPlan = [];
@@ -722,14 +858,15 @@ function restoreGame() {
     if (state === "playing") {
       overlay.classList.add("hidden");
       if (aiEnabled) {
-        planAI();
+        if (legacyAI) planAI();
+        else planTraditional();
         aiStatus.textContent = "已恢复对局";
       }
     } else if (state === "paused") {
       showOverlay("RESTORED", "对局已恢复", "刷新前处于暂停状态", "继续");
       if (aiEnabled) aiStatus.textContent = "等待继续";
     } else {
-      aiRestartAt = aiEnabled ? performance.now() + 1800 : 0;
+      aiRestartAt = legacyAI ? performance.now() + 1800 : 0;
       showOverlay("GAME OVER", "游戏结束", `本局得分 ${formatNumber(score)}`, "再来一局");
     }
     return true;
@@ -944,8 +1081,12 @@ function advanceGame(delta, time) {
   updateEffects(delta);
 
   if (state === "playing" && active) {
+    const previousSecond = Math.floor(survivalMs / 1000);
+    survivalMs += delta;
+    if (Math.floor(survivalMs / 1000) !== previousSecond) updateStats();
     if (aiEnabled) {
-      updateAI(delta);
+      if (legacyAI) updateAI(delta);
+      else updateTraditional(delta);
     } else {
       dropElapsed += delta;
       if (dropElapsed >= dropInterval()) softDrop(false);
@@ -954,7 +1095,7 @@ function advanceGame(delta, time) {
     const grounded = collides(active.x, active.y + 1, active.matrix);
     if (grounded) lockStarted = true;
     // Keep the clock running after a floor kick, so the reset cap cannot be bypassed.
-    if (lockStarted) {
+    if (lockStarted && (!aiEnabled || legacyAI)) {
       lockElapsed += delta;
       if (grounded && lockElapsed >= LOCK_DELAY_MS) mergePiece();
     }
@@ -1034,8 +1175,27 @@ document.querySelectorAll("[data-action]").forEach(button => {
   });
 });
 
-startButton.addEventListener("click", () => state === "paused" ? togglePause() : resetGame());
+function requestedSeed() {
+  const raw = seedInput?.value.trim();
+  if (!raw) return generateSeed();
+  const value = Number(raw);
+  if (!Number.isInteger(value) || value < 0 || value > 0xffffffff) {
+    if (seedInput) seedInput.setCustomValidity("请输入 0 到 4294967295 的整数种子");
+    seedInput?.reportValidity();
+    return null;
+  }
+  if (seedInput) seedInput.setCustomValidity("");
+  return value;
+}
+function restartRequestedGame() {
+  const seed = requestedSeed();
+  if (seed !== null) resetGame({ seed });
+}
+startButton.addEventListener("click", () => state === "paused" ? togglePause() : restartRequestedGame());
 aiButton.addEventListener("click", () => setAI(!aiEnabled));
+modeSelect?.addEventListener("change", () => setMode(modeSelect.value));
+restartButton?.addEventListener("click", restartRequestedGame);
+pauseButton?.addEventListener("click", togglePause);
 soundButton.addEventListener("click", () => {
   muted = !muted;
   soundButton.classList.toggle("muted", muted);
@@ -1055,6 +1215,7 @@ if (!restoredGame) {
   setSeed(generateSeed());
   fillQueue();
 }
+syncAIControls();
 drawNext();
 drawHold();
 drawBoard();
