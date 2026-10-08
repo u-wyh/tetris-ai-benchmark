@@ -33,10 +33,19 @@ def aggregate(rows, max_pieces):
                    "survival_cap_rate": sum(row["survived_cap"] for row in rows) / len(rows)})
     result["evaluation_saturated"] = result["survival_cap_rate"] >= 0.5
     result["metric_censored_by_cap"] = any(row["survived_cap"] for row in rows)
+    if all("new_holes_total" in row for row in rows):
+        total_pieces = sum(row["pieces_survived"] for row in rows)
+        deaths = [row["holes_at_end"] for row in rows if row["game_over"]]
+        result.update(new_holes_events=sum(row["new_holes_events"] for row in rows),
+                      new_holes_total=sum(row["new_holes_total"] for row in rows),
+                      new_holes_per_100_pieces=(100 * sum(row["new_holes_total"] for row in rows)
+                                                / total_pieces),
+                      mean_holes_at_death=statistics.mean(deaths) if deaths else None)
     return result
 
 
-def evaluate_model(model_path, seeds, max_pieces, protocol, committed_steps):
+def evaluate_model(model_path, seeds, max_pieces, protocol, committed_steps,
+                   diagnostics=False):
     from sb3_contrib import MaskablePPO
     import torch
 
@@ -49,15 +58,23 @@ def evaluate_model(model_path, seeds, max_pieces, protocol, committed_steps):
         for seed in seeds:
             observation, info = env.reset(seed=int(seed))
             ended = False
+            hole_events = hole_total = 0
             while not ended:
                 action, _ = model.predict(observation, deterministic=True,
                                           action_masks=env.action_masks())
                 observation, reward, terminated, truncated, info = env.step(int(action))
+                if diagnostics:
+                    hole_events += int(info["new_holes"] > 0)
+                    hole_total += info["new_holes"]
                 ended = terminated or truncated
-            rows.append({"seed": int(seed), "pieces_survived": info["pieces"],
-                         "lines": info["lines"], "score": info["score"],
-                         "episode_reward": env.episode_reward,
-                         "game_over": bool(terminated), "survived_cap": bool(truncated)})
+            row = {"seed": int(seed), "pieces_survived": info["pieces"],
+                   "lines": info["lines"], "score": info["score"],
+                   "episode_reward": env.episode_reward,
+                   "game_over": bool(terminated), "survived_cap": bool(truncated)}
+            if diagnostics:
+                row.update(new_holes_events=hole_events, new_holes_total=hole_total,
+                           holes_at_end=info["holes_after"])
+            rows.append(row)
     finally:
         env.close()
     return {"protocol": protocol, "committed_steps": committed_steps,

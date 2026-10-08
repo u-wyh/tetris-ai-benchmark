@@ -1,6 +1,7 @@
 """One Gymnasium step is one parity-tested TetrisCore legal placement."""
 
 import copy
+import math
 
 import gymnasium as gym
 import numpy as np
@@ -9,6 +10,27 @@ from training.tetris_core import ACTION_COUNT, TetrisCore
 
 PIECE_TYPES = "IJLOSTZ"
 LINE_REWARDS = (0.0, 1.0, 3.0, 5.0, 8.0)
+RAW_REWARD_VERSION = "placement-reward-v1"
+HOLE_REWARD_VERSION = "placement-reward-hole-v1"
+
+
+def count_holes(board):
+    """Count empty cells with an occupied cell above in the same column."""
+    occupied_above = [False] * 10
+    holes = 0
+    for row in board:
+        for x, cell in enumerate(row):
+            if cell is not None:
+                occupied_above[x] = True
+            elif occupied_above[x]:
+                holes += 1
+    return holes
+
+
+def shape_reward(raw_reward, holes_before, holes_after, coefficient):
+    new_holes = max(0, holes_after - holes_before)
+    penalty = coefficient * new_holes
+    return raw_reward - penalty, new_holes, penalty
 
 
 def placement_reward(cleared_lines, game_over):
@@ -21,11 +43,16 @@ def placement_reward(cleared_lines, game_over):
 class TetrisEnv(gym.Env):
     metadata = {"render_modes": []}
 
-    def __init__(self, max_pieces=10000):
+    def __init__(self, max_pieces=10000, hole_penalty_coef=0.0):
         super().__init__()
         if type(max_pieces) is not int or max_pieces < 1:
             raise ValueError("max_pieces must be a positive integer")
+        if (isinstance(hole_penalty_coef, bool) or not isinstance(hole_penalty_coef, (int, float))
+                or not math.isfinite(hole_penalty_coef) or hole_penalty_coef < 0):
+            raise ValueError("hole_penalty_coef must be a finite nonnegative number")
         self.max_pieces = max_pieces
+        self.hole_penalty_coef = float(hole_penalty_coef)
+        self.reward_version = (HOLE_REWARD_VERSION if self.hole_penalty_coef else RAW_REWARD_VERSION)
         self.action_space = gym.spaces.Discrete(ACTION_COUNT)
         self.observation_space = gym.spaces.Box(
             low=0.0, high=1.0, shape=(237,), dtype=np.float32)
@@ -85,6 +112,7 @@ class TetrisEnv(gym.Env):
         if self.core is None:
             raise RuntimeError("Call reset() before snapshotting")
         return {"core": copy.deepcopy(self.core), "max_pieces": self.max_pieces,
+                "reward_version": self.reward_version, "hole_penalty_coef": self.hole_penalty_coef,
                 "episode_seed": self.episode_seed, "episode_count": self.episode_count,
                 "pieces": self.pieces, "episode_reward": self.episode_reward,
                 "finished": self._finished,
@@ -95,6 +123,9 @@ class TetrisEnv(gym.Env):
     def set_state(self, state):
         if state["max_pieces"] != self.max_pieces:
             raise ValueError("Checkpoint max_pieces differs from environment")
+        if (state.get("reward_version", RAW_REWARD_VERSION) != self.reward_version
+                or state.get("hole_penalty_coef", 0.0) != self.hole_penalty_coef):
+            raise ValueError("Checkpoint reward configuration differs from environment")
         self.core = copy.deepcopy(state["core"])
         self.episode_seed = state["episode_seed"]
         self.episode_count = state["episode_count"]
@@ -120,6 +151,7 @@ class TetrisEnv(gym.Env):
         action = int(action)
         if not self.action_space.contains(action) or not self.action_masks()[action]:
             raise ValueError(f"Action {action} is not a legal placement in this state")
+        holes_before = count_holes(self.core.board)
         previous_lines = self.core.lines
         public = self.core.step(action)
         cleared_lines = self.core.lines - previous_lines
@@ -127,6 +159,13 @@ class TetrisEnv(gym.Env):
         self.pieces += 1
         truncated = self.pieces >= self.max_pieces and not terminated
         self._finished = terminated or truncated
-        reward = placement_reward(cleared_lines, terminated)
+        raw_reward = placement_reward(cleared_lines, terminated)
+        holes_after = count_holes(self.core.board)
+        reward, new_holes, hole_penalty = shape_reward(
+            raw_reward, holes_before, holes_after, self.hole_penalty_coef)
         self.episode_reward += reward
-        return self._encode_observation(public), reward, terminated, truncated, self._info(cleared_lines)
+        info = self._info(cleared_lines)
+        info.update(raw_reward=raw_reward, shaped_reward=reward,
+                    holes_before=holes_before, holes_after=holes_after,
+                    new_holes=new_holes, hole_penalty=hole_penalty)
+        return self._encode_observation(public), reward, terminated, truncated, info

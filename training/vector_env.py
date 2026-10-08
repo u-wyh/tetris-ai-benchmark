@@ -15,10 +15,12 @@ def worker_seeds(base_seed, n_envs):
     return [base_seed + rank for rank in range(n_envs)]
 
 
-def make_vector_env(n_envs, base_seed=42, max_pieces=10000, env_class=TetrisEnv):
+def make_vector_env(n_envs, base_seed=42, max_pieces=10000, env_class=TetrisEnv,
+                    env_kwargs=None):
     """Create real workers; Gymnasium seeds are applied on the first reset."""
     seeds = worker_seeds(base_seed, n_envs)
-    env = SubprocVecEnv([partial(env_class, max_pieces=max_pieces) for _ in seeds],
+    env = SubprocVecEnv([partial(env_class, max_pieces=max_pieces, **(env_kwargs or {}))
+                         for _ in seeds],
                         start_method="forkserver")
     if list(env.seed(base_seed)) != seeds:
         env.close()

@@ -9,6 +9,7 @@ import shutil
 
 from training.long_run import evaluate_atomic, rebuild_validation_summary, sync_best
 from training.train_ppo import atomic_bytes, atomic_json, now
+from training.train_ppo import ROOT
 from training.train_transaction import (fsync_dir, fsync_tree, global_rng_state,
                                         log_event, restore_global_rng)
 
@@ -23,6 +24,26 @@ def file_sha256(path):
 
 def worker_digests(env):
     return env.env_method("initial_state_digest")
+
+
+def compare_raw_initial_parameters(model, config):
+    """Reward-only experiments must start from Raw's exact random policy."""
+    if not config.get("hole_penalty_coef", 0.0):
+        return None
+    import torch
+    from sb3_contrib import MaskablePPO
+
+    reference = ROOT / "runs/ppo_raw_10m_seed42/baseline/model.zip"
+    if not reference.is_file():
+        raise FileNotFoundError(f"Raw Step-0 reference is missing: {reference}")
+    raw = MaskablePPO.load(str(reference), device="cpu")
+    actual, expected = model.policy.state_dict(), raw.policy.state_dict()
+    if (model.num_timesteps != 0 or raw.num_timesteps != 0
+            or actual.keys() != expected.keys()
+            or any(not torch.equal(value.detach().cpu(), expected[key])
+                   for key, value in actual.items())):
+        raise RuntimeError("Shaped Step-0 parameters differ from Raw Step-0")
+    return file_sha256(reference)
 
 
 def model_snapshot(model, env):
@@ -78,6 +99,7 @@ def save_baseline(run_dir, model, env, config, run_metadata):
         raise RuntimeError("Baseline model must have zero training timesteps")
     if list(env._seeds) != config["worker_seeds"]:
         raise RuntimeError("Initial worker seeds differ from formal config")
+    reference_sha = compare_raw_initial_parameters(model, config)
     baseline = run_dir / "baseline"
     if baseline.exists():
         return baseline
@@ -95,6 +117,8 @@ def save_baseline(run_dir, model, env, config, run_metadata):
         "observation_version": config["observation_version"],
         "action_space_version": config["action_space_version"],
         "reward_version": config["reward_version"], "reward_definition": config["reward"],
+        "hole_penalty_coef": config.get("hole_penalty_coef", 0.0),
+        "raw_step0_model_sha256": reference_sha,
         "initial_worker_digests": worker_digests(env),
         "pending_worker_seeds": list(env._seeds),
         "model_sha256": file_sha256(pending / "model.zip"),
@@ -113,6 +137,8 @@ def load_baseline(run_dir, env, config):
     baseline = run_dir / "baseline"
     meta = json.loads((baseline / "metadata.json").read_text())
     if (meta["seed"] != config["run_seed"] or meta["training_steps"] != 0
+            or meta.get("reward_version") != config["reward_version"]
+            or meta.get("hole_penalty_coef", 0.0) != config.get("hole_penalty_coef", 0.0)
             or file_sha256(baseline / "model.zip") != meta["model_sha256"]
             or file_sha256(baseline / "trainer_state.pkl") != meta["trainer_state_sha256"]):
         raise RuntimeError("Step-0 baseline integrity failed")
