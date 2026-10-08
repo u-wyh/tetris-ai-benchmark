@@ -1,0 +1,9 @@
+{
+  "target_total_steps": 2000000,
+  "device": "cuda", "n_envs": 8, "n_steps": 512, "task_steps": 4096,
+  "base_seed": 42, "height_penalty_coef": 0.02,
+  "transaction_retention": 3, "milestone_interval": 1000000, "validation_interval": 250000,
+  "periodic_validation_seeds": 16, "periodic_validation_max_pieces": 5000,
+  "milestone_validation_seeds": 32, "milestone_validation_max_pieces": 10000,
+  "final_test_seeds": 100, "final_test_max_pieces": 50000, "step0_baseline": true
+}

@@ -131,6 +131,7 @@ def save_baseline(run_dir, model, env, config, run_metadata):
         "action_space_version": config["action_space_version"],
         "reward_version": config["reward_version"], "reward_definition": config["reward"],
         "hole_penalty_coef": config.get("hole_penalty_coef", 0.0),
+        "height_penalty_coef": config.get("height_penalty_coef", 0.0),
         "raw_step0_model_sha256": reference_sha,
         "v1_step0_model_sha256": v1_reference_sha,
         "initial_worker_digests": worker_digests(env),
@@ -153,6 +154,7 @@ def load_baseline(run_dir, env, config):
     if (meta["seed"] != config["run_seed"] or meta["training_steps"] != 0
             or meta.get("reward_version") != config["reward_version"]
             or meta.get("hole_penalty_coef", 0.0) != config.get("hole_penalty_coef", 0.0)
+            or meta.get("height_penalty_coef", 0.0) != config.get("height_penalty_coef", 0.0)
             or file_sha256(baseline / "model.zip") != meta["model_sha256"]
             or file_sha256(baseline / "trainer_state.pkl") != meta["trainer_state_sha256"]):
         raise RuntimeError("Step-0 baseline integrity failed")

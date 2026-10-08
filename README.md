@@ -92,3 +92,21 @@ TETRIS_TRANSACTION_CONFIG="$PWD/configs/ppo_raw_10m_seed42.json" \
 训练 seed 为 `42..49`；[`training/evaluation/seeds.json`](training/evaluation/seeds.json) 固定了与训练分离的 32 个 validation seeds 和 100 个 final test seeds。每跨过 250k 已提交步数，在 16 个 validation seeds 上评测，每局最多 5000 块；每个 milestone 另用 32 seeds、最多 10000 块。达到上限属于截断存活，不算死亡；若至少一半达到上限，结果标记 `evaluation_saturated`。结果按 seed 保存，完整评测原子发布到 `evaluations/validation/`，汇总写入 `validation_summary.csv`。评测在独立 Python 子进程加载已提交模型，仅使用合法 Action Mask 和确定性推理；失败或断电后重试缺失结果，不回滚已提交训练。不同 seed 集用于训练、选 best 和最后测试，避免根据正式测试集反复选模。
 
 100 个 final test seeds、每局最多 50000 块只在训练结束且用户决定后使用。训练器不会自动调用；届时可显式运行 `.venv/bin/python -m training.evaluation.run_final --run-dir <run目录>`。正式 run 建立后，`./scripts/train_transaction.sh status` 默认查看它；训练或系统中断后执行 `./scripts/train_transaction.sh resume`。
+
+## 在浏览器观看已训练 PPO
+
+在项目根目录运行：
+
+```bash
+.venv/bin/python -m training.ppo_viewer
+```
+
+打开 `http://127.0.0.1:8081/`，点击“自动播放”或“下一步”。页面每步使用已训练的 MaskablePPO、1840 动作掩码和 Python TetrisCore 实时选取并执行合法 placement；可调整速度和 seed。默认加载按 validation 选出的 `best/model.zip`，也可用 `--checkpoint latest` 观看最终提交模型。原 `tetris-game` 人工网页及其 8080 端口不受影响。浏览器回放按 AI Benchmark 的“一块一个最终落点”规则，不模拟人工键盘、下落动画或 450 ms Lock Delay。
+
+若从 Tailscale 上的另一台电脑观看，可在可信网络内用 `--host 0.0.0.0` 启动，然后访问本机 Tailscale 地址的 `8081` 端口。停止服务按 `Ctrl+C`。
+# PPO overnight height-risk experiments
+
+The overnight queue compares existing Raw/V1/V2 checkpoints, then trains V3
+(new-hole plus height-risk shaping) and V4 (height-risk shaping only). Human
+game rules, observations, and action space are unchanged; each run is an
+independent transactional 2M-step experiment.

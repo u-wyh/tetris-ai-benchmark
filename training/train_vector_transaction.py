@@ -23,7 +23,8 @@ from training.train_transaction import (
     write_state,
 )
 from training.env import TetrisEnv
-from training.env.tetris_env import HOLE_REWARD_VERSION, RAW_REWARD_VERSION
+from training.env.tetris_env import (HEIGHT_REWARD_VERSION, HOLE_HEIGHT_REWARD_VERSION,
+                                     HOLE_REWARD_VERSION, RAW_REWARD_VERSION)
 from training.long_run import SEEDS_FILE, post_commit
 from training.vector_env import make_vector_env, worker_seeds
 
@@ -35,7 +36,8 @@ HOLE_METRIC_FIELDS = ("mean_raw_reward", "mean_shaped_reward", "mean_new_holes",
 
 
 def reward_settings(config):
-    return config.get("reward_version", RAW_REWARD_VERSION), config.get("hole_penalty_coef", 0.0)
+    return (config.get("reward_version", RAW_REWARD_VERSION),
+            config.get("hole_penalty_coef", 0.0), config.get("height_penalty_coef", 0.0))
 
 
 def hole_metrics_for_task(callback, count):
@@ -64,12 +66,15 @@ class TransactionTetrisEnv(TetrisEnv):
 
 
 def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
-                  base_seed=42, hole_penalty_coef=0.0):
+                  base_seed=42, hole_penalty_coef=0.0, height_penalty_coef=0.0):
     if device not in ("cpu", "cuda"):
         raise ValueError("device must be cpu or cuda")
     if (isinstance(hole_penalty_coef, bool) or not isinstance(hole_penalty_coef, (int, float))
             or not math.isfinite(hole_penalty_coef) or hole_penalty_coef < 0):
         raise ValueError("hole_penalty_coef must be a finite nonnegative number")
+    if (isinstance(height_penalty_coef, bool) or not isinstance(height_penalty_coef, (int, float))
+            or not math.isfinite(height_penalty_coef) or height_penalty_coef < 0):
+        raise ValueError("height_penalty_coef must be a finite nonnegative number")
     seeds = worker_seeds(base_seed, n_envs)
     if 4096 % n_envs or task_steps != 4096 or target_steps < task_steps:
         raise ValueError("Each Task must equal one 4096-sample rollout")
@@ -103,12 +108,18 @@ def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
                    "evaluation_seed_sha256": sha256(SEEDS_FILE),
                    "validation_seed_set": seed_sets["validation"],
                    "final_test_seed_set": seed_sets["final_test"],
-                   "reward_version": HOLE_REWARD_VERSION if hole_penalty_coef else RAW_REWARD_VERSION,
+                   "reward_version": (HOLE_HEIGHT_REWARD_VERSION if height_penalty_coef and hole_penalty_coef
+                                      else HEIGHT_REWARD_VERSION if height_penalty_coef
+                                      else HOLE_REWARD_VERSION if hole_penalty_coef
+                                      else RAW_REWARD_VERSION),
                    "observation_version": "237-float-public-observation-v1",
                    "action_space_version": "1840-legal-placement-v1"})
     if hole_penalty_coef:
         config["hole_penalty_coef"] = hole_penalty_coef
         config["reward"]["new_holes_penalty_coef"] = hole_penalty_coef
+    if height_penalty_coef:
+        config["height_penalty_coef"] = height_penalty_coef
+        config["reward"]["height_risk_penalty_coef"] = height_penalty_coef
     return config
 
 
@@ -251,6 +262,7 @@ def commit_vector_task(run_dir, state, working_dir, model, env, callback, captur
                  "n_envs": config["ppo"]["n_envs"], "n_steps": config["ppo"]["n_steps"],
                  "reward_version": reward_settings(config)[0],
                  "hole_penalty_coef": reward_settings(config)[1],
+                 "height_penalty_coef": reward_settings(config)[2],
                  "worker_seeds": config["worker_seeds"], "worker_digests": digests})
     checkpoint_bytes = write_manifest(working_dir)
     verify_task(working_dir, number, config)
@@ -366,9 +378,13 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                 raise RuntimeError("Run config and metadata disagree")
             if config_file:
                 preset = json.loads(Path(config_file).read_text())
-                requested_coef = preset.get("hole_penalty_coef", 0.0)
-                requested_version = (HOLE_REWARD_VERSION if requested_coef else RAW_REWARD_VERSION)
-                if (requested_version, requested_coef) != reward_settings(config):
+                requested_hole = preset.get("hole_penalty_coef", 0.0)
+                requested_height = preset.get("height_penalty_coef", 0.0)
+                requested_coef = (requested_hole, requested_height)
+                requested_version = (HOLE_HEIGHT_REWARD_VERSION if requested_height and requested_hole
+                                     else HEIGHT_REWARD_VERSION if requested_height
+                                     else HOLE_REWARD_VERSION if requested_hole else RAW_REWARD_VERSION)
+                if (requested_version, requested_hole, requested_height) != reward_settings(config):
                     raise RuntimeError("Resume reward config differs from recorded run")
             if config.get("long_run_version"):
                 if sha256(SEEDS_FILE) != config["evaluation_seed_sha256"]:
@@ -390,7 +406,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                 config = vector_config(target_steps=preset["target_total_steps"],
                                        device=preset["device"], n_envs=preset["n_envs"],
                                        base_seed=preset["base_seed"],
-                                       hole_penalty_coef=preset.get("hole_penalty_coef", 0.0))
+                                       hole_penalty_coef=preset.get("hole_penalty_coef", 0.0),
+                                       height_penalty_coef=preset.get("height_penalty_coef", 0.0))
                 for key in ("transaction_retention", "milestone_interval", "validation_interval",
                             "periodic_validation_seeds", "periodic_validation_max_pieces",
                             "milestone_validation_seeds", "milestone_validation_max_pieces"):
@@ -439,6 +456,7 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                          "reward_definition": config["reward"],
                          "reward_version": config["reward_version"],
                          "hole_penalty_coef": reward_settings(config)[1],
+                         "height_penalty_coef": reward_settings(config)[2],
                          "observation_version": config["observation_version"],
                          "action_space_version": config["action_space_version"],
                          "resume_episode_policy": "Restore each worker exactly from committed Task."})
@@ -455,8 +473,9 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
             verify_task(run_dir / "committed" / task_name(number), number, config)
         discard_uncommitted(run_dir, state["committed_task"])
         rebuild_vector_metrics(run_dir, state["committed_task"], config)
-        env_kwargs = ({"hole_penalty_coef": reward_settings(config)[1]}
-                      if reward_settings(config)[1] else None)
+        env_kwargs = ({"hole_penalty_coef": reward_settings(config)[1],
+                       "height_penalty_coef": reward_settings(config)[2]}
+                      if any(reward_settings(config)[1:]) else None)
         env = make_vector_env(config["ppo"]["n_envs"], config["run_seed"],
                               config["max_pieces"], env_class=TransactionTetrisEnv,
                               env_kwargs=env_kwargs)
@@ -559,7 +578,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                              "start_step": state["committed_steps"], "started_at": now(),
                              "device": config["device"], "n_envs": config["ppo"]["n_envs"],
                              "reward_version": reward_settings(config)[0],
-                             "hole_penalty_coef": reward_settings(config)[1]})
+                             "hole_penalty_coef": reward_settings(config)[1],
+                             "height_penalty_coef": reward_settings(config)[2]})
                 state.update({"working_task": number, "working_steps": state["committed_steps"]})
                 write_state(run_dir, state)
                 log_event(run_dir, "TASK_STARTED", task=number,
