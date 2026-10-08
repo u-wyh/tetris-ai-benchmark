@@ -1,0 +1,309 @@
+{
+  "seeds": [
+    100000,
+    100001,
+    100002,
+    100003,
+    100004,
+    100005,
+    100006,
+    100007,
+    100008,
+    100009,
+    100010,
+    100011,
+    100012,
+    100013,
+    100014,
+    100015,
+    100016,
+    100017,
+    100018,
+    100019,
+    100020,
+    100021,
+    100022,
+    100023,
+    100024,
+    100025,
+    100026,
+    100027,
+    100028,
+    100029,
+    100030,
+    100031
+  ],
+  "max_pieces": 5000,
+  "models": {
+    "raw": {
+      "num_seeds": 32,
+      "pieces_total": 1854,
+      "mean_pieces": 57.9375,
+      "median_pieces": 56.5,
+      "game_over_rate": 1.0,
+      "survival_cap_rate": 0.0,
+      "mean_lines": 10.25,
+      "mean_score": 1315.625,
+      "lines_per_100_pieces": 17.691477885652642,
+      "new_holes_total": 2804,
+      "new_holes_events": 782,
+      "new_holes_per_100_pieces": 151.2405609492988,
+      "mean_raw_reward_total": 8.6829375,
+      "mean_hole_penalty_at_lambda_010": 8.762500000000001,
+      "mean_shaped_reward_at_lambda_010": -0.07956250000000167,
+      "hold_rate": 0.37001078748651567,
+      "placement_x_counts": {
+        "0": 334,
+        "1": 124,
+        "2": 190,
+        "3": 212,
+        "4": 172,
+        "5": 168,
+        "6": 180,
+        "7": 240,
+        "8": 119,
+        "9": 115
+      },
+      "clear_counts": {
+        "0": 1538,
+        "1": 304,
+        "2": 12,
+        "3": 0,
+        "4": 0
+      },
+      "zero_new_holes_rate": 0.5782092772384034,
+      "height_increase_without_new_holes_rate": 0.37216828478964403,
+      "mean_aggregate_height_after": 69.86192017259978,
+      "mean_max_height_after": 11.276159654800432,
+      "mean_delta_aggregate_height": 3.1202804746494066,
+      "mean_delta_max_height": 0.3451995685005394,
+      "high_risk_preheight_15": {
+        "actions": 685,
+        "rate": 0.36947141316073356,
+        "hold_rate": 0.32116788321167883,
+        "zero_new_holes_rate": 0.5109489051094891,
+        "height_increase_without_new_holes_rate": 0.33138686131386863,
+        "mean_new_holes": 2.1722627737226277,
+        "clear_rate": 0.07883211678832117,
+        "placement_x_counts": {
+          "0": 128,
+          "1": 80,
+          "2": 97,
+          "3": 74,
+          "4": 75,
+          "5": 48,
+          "6": 64,
+          "7": 72,
+          "8": 38,
+          "9": 9
+        }
+      },
+      "first_max_height": {
+        "15": {
+          "reached": 32,
+          "mean_step_among_reached": 34.25,
+          "mean_remaining_pieces_among_reached": 23.6875
+        },
+        "18": {
+          "reached": 32,
+          "mean_step_among_reached": 41.46875,
+          "mean_remaining_pieces_among_reached": 16.46875
+        },
+        "19": {
+          "reached": 32,
+          "mean_step_among_reached": 44.46875,
+          "mean_remaining_pieces_among_reached": 13.46875
+        }
+      },
+      "death_board_mean": {
+        "aggregate_height": 180.78125,
+        "max_height": 20,
+        "holes": 56.4375,
+        "bumpiness": 14.3125,
+        "covered_holes": 319.53125
+      },
+      "death_board_ge_15": 1.0,
+      "death_board_ge_19": 1.0,
+      "death_mean_column_heights": [
+        15.15625,
+        17.78125,
+        18.875,
+        18.78125,
+        18.28125,
+        17.5625,
+        17.96875,
+        19.375,
+        18.96875,
+        18.03125
+      ],
+      "death_max_column_counts": {
+        "0": 4,
+        "1": 8,
+        "2": 7,
+        "3": 4,
+        "4": 0,
+        "5": 1,
+        "6": 1,
+        "7": 5,
+        "8": 1,
+        "9": 1
+      },
+      "death_mean_max_height_before_final_action": 20,
+      "last_10": {
+        "episodes": 32,
+        "first_mean_aggregate_height": 132,
+        "last_mean_aggregate_height": 180.78125,
+        "first_mean_max_height": 18.5,
+        "last_mean_max_height": 20,
+        "first_mean_holes": 38.625,
+        "last_mean_holes": 56.4375
+      },
+      "last_20": {
+        "episodes": 32,
+        "first_mean_aggregate_height": 85.5625,
+        "last_mean_aggregate_height": 180.78125,
+        "first_mean_max_height": 14.4375,
+        "last_mean_max_height": 20,
+        "first_mean_holes": 26.8125,
+        "last_mean_holes": 56.4375
+      }
+    },
+    "shaped": {
+      "num_seeds": 32,
+      "pieces_total": 1378,
+      "mean_pieces": 43.0625,
+      "median_pieces": 42.0,
+      "game_over_rate": 1.0,
+      "survival_cap_rate": 0.0,
+      "mean_lines": 10.125,
+      "mean_score": 1621.875,
+      "lines_per_100_pieces": 23.51233671988389,
+      "new_holes_total": 509,
+      "new_holes_events": 355,
+      "new_holes_per_100_pieces": 36.937590711175616,
+      "mean_raw_reward_total": 11.9180625,
+      "mean_hole_penalty_at_lambda_010": 1.5906250000000002,
+      "mean_shaped_reward_at_lambda_010": 10.327437499999998,
+      "hold_rate": 0.42670537010159654,
+      "placement_x_counts": {
+        "0": 184,
+        "1": 148,
+        "2": 119,
+        "3": 99,
+        "4": 314,
+        "5": 89,
+        "6": 170,
+        "7": 103,
+        "8": 75,
+        "9": 77
+      },
+      "clear_counts": {
+        "0": 1157,
+        "1": 160,
+        "2": 36,
+        "3": 8,
+        "4": 17
+      },
+      "zero_new_holes_rate": 0.7423802612481858,
+      "height_increase_without_new_holes_rate": 0.6001451378809869,
+      "mean_aggregate_height_after": 35.63715529753266,
+      "mean_max_height_after": 6.420899854862119,
+      "mean_delta_aggregate_height": 1.932510885341074,
+      "mean_delta_max_height": 0.44847605224963716,
+      "high_risk_preheight_15": {
+        "actions": 88,
+        "rate": 0.06386066763425254,
+        "hold_rate": 0.42045454545454547,
+        "zero_new_holes_rate": 0.6477272727272727,
+        "height_increase_without_new_holes_rate": 0.5795454545454546,
+        "mean_new_holes": 0.5909090909090909,
+        "clear_rate": 0.06818181818181818,
+        "placement_x_counts": {
+          "0": 9,
+          "1": 6,
+          "2": 6,
+          "3": 5,
+          "4": 34,
+          "5": 9,
+          "6": 5,
+          "7": 4,
+          "8": 8,
+          "9": 2
+        }
+      },
+      "first_max_height": {
+        "15": {
+          "reached": 32,
+          "mean_step_among_reached": 40.3125,
+          "mean_remaining_pieces_among_reached": 2.75
+        },
+        "18": {
+          "reached": 32,
+          "mean_step_among_reached": 42.75,
+          "mean_remaining_pieces_among_reached": 0.3125
+        },
+        "19": {
+          "reached": 32,
+          "mean_step_among_reached": 42.875,
+          "mean_remaining_pieces_among_reached": 0.1875
+        }
+      },
+      "death_board_mean": {
+        "aggregate_height": 83.21875,
+        "max_height": 19.3125,
+        "holes": 12.46875,
+        "bumpiness": 33.34375,
+        "covered_holes": 64.34375
+      },
+      "death_board_ge_15": 1.0,
+      "death_board_ge_19": 1.0,
+      "death_mean_column_heights": [
+        5.5625,
+        5.4375,
+        6.21875,
+        7.40625,
+        18.125,
+        17,
+        7.0625,
+        5.8125,
+        5.1875,
+        5.40625
+      ],
+      "death_max_column_counts": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 1,
+        "4": 16,
+        "5": 15,
+        "6": 0,
+        "7": 0,
+        "8": 0,
+        "9": 0
+      },
+      "death_mean_max_height_before_final_action": 16.625,
+      "last_10": {
+        "episodes": 32,
+        "first_mean_aggregate_height": 47.9375,
+        "last_mean_aggregate_height": 83.21875,
+        "first_mean_max_height": 8.0625,
+        "last_mean_max_height": 19.3125,
+        "first_mean_holes": 5.75,
+        "last_mean_holes": 12.46875
+      },
+      "last_20": {
+        "episodes": 32,
+        "first_mean_aggregate_height": 28.96875,
+        "last_mean_aggregate_height": 83.21875,
+        "first_mean_max_height": 4.96875,
+        "last_mean_max_height": 19.3125,
+        "first_mean_holes": 2.40625,
+        "last_mean_holes": 12.46875
+      }
+    }
+  },
+  "checkpoint_sha256": {
+    "raw": "426935eccace49f248250c2286bbef952b3bde1a7e119dfeea0fff34b7e7cbbc",
+    "shaped": "66e7dd8efeb11ef8f0e375f0310afb9ee04a709a9915c9ed6ed4538efbdb4bd5"
+  }
+}

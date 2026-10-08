@@ -2,6 +2,7 @@
 
 ## 2026-10-08
 
+- 完成 PPO-Raw/Shaped 2M 的 32-seed 逐落点死亡诊断；Shaped 少造洞但在中央形成尖塔，终局总高度 83.22、最高列 19.31，31/32 局的最高列在中央两列。新增带存活样本数的高度/洞曲线、死亡前 20 步曲线与报告；未训练新模型。
 - 第四阶段网页集成：增加 Human、V1 Adapter、V2 Hold-only（默认）和 V2 Beam-8 模式。策略只接收公开 Observation，由独立 Web Worker 使用合法 Placement BFS 搜索；主线程按标准路径逐步执行 Hold、移动、旋转、无人工加分的 Down 和 Hard Drop。保留原始网页 V1 函数和 Human 规则。
 - 页面新增固定 Seed、演示速度、开始/暂停/重新开始、方块放置数量、存活时间及第 6 版可恢复存档。固定种子的网页策略与 Python V1/V2 在动作和正式 Core 状态上逐步一致；AI 搜索不会读取隐藏队列、Bag 或 RNG。
 - 验证：Python 78 tests、35 subtests passed；JS 61 tests passed；JS/Python Parity 6 tests passed（含三模式固定 seed 动作序列、Board/Score/Lines/Level/Hold/Next/Game Over、Worker 几何与主游戏一致）。Tailscale 8080 服务及所需脚本均通过 HTTP 200 检查。
