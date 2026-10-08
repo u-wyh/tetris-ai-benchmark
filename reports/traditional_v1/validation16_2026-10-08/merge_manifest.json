@@ -1,0 +1,66 @@
+{
+  "imported": [
+    {
+      "seed": 100004,
+      "source": "runs/traditional_v1_shard1_20261008",
+      "source_git_commit": "8d0599d351cf391dfd1bffdf853b3cd7bbea2ec4"
+    },
+    {
+      "seed": 100005,
+      "source": "runs/traditional_v1_shard1_20261008",
+      "source_git_commit": "8d0599d351cf391dfd1bffdf853b3cd7bbea2ec4"
+    },
+    {
+      "seed": 100006,
+      "source": "runs/traditional_v1_shard1_20261008",
+      "source_git_commit": "8d0599d351cf391dfd1bffdf853b3cd7bbea2ec4"
+    },
+    {
+      "seed": 100007,
+      "source": "runs/traditional_v1_shard1_20261008",
+      "source_git_commit": "8d0599d351cf391dfd1bffdf853b3cd7bbea2ec4"
+    },
+    {
+      "seed": 100008,
+      "source": "runs/traditional_v1_shard2_20261008",
+      "source_git_commit": "8d0599d351cf391dfd1bffdf853b3cd7bbea2ec4"
+    },
+    {
+      "seed": 100009,
+      "source": "runs/traditional_v1_shard2_20261008",
+      "source_git_commit": "8d0599d351cf391dfd1bffdf853b3cd7bbea2ec4"
+    },
+    {
+      "seed": 100010,
+      "source": "runs/traditional_v1_shard2_20261008",
+      "source_git_commit": "8d0599d351cf391dfd1bffdf853b3cd7bbea2ec4"
+    },
+    {
+      "seed": 100011,
+      "source": "runs/traditional_v1_shard2_20261008",
+      "source_git_commit": "8d0599d351cf391dfd1bffdf853b3cd7bbea2ec4"
+    },
+    {
+      "seed": 100012,
+      "source": "runs/traditional_v1_shard3_20261008",
+      "source_git_commit": "8d0599d351cf391dfd1bffdf853b3cd7bbea2ec4"
+    },
+    {
+      "seed": 100013,
+      "source": "runs/traditional_v1_shard3_20261008",
+      "source_git_commit": "8d0599d351cf391dfd1bffdf853b3cd7bbea2ec4"
+    },
+    {
+      "seed": 100014,
+      "source": "runs/traditional_v1_shard3_20261008",
+      "source_git_commit": "8d0599d351cf391dfd1bffdf853b3cd7bbea2ec4"
+    },
+    {
+      "seed": 100015,
+      "source": "runs/traditional_v1_shard3_20261008",
+      "source_git_commit": "8d0599d351cf391dfd1bffdf853b3cd7bbea2ec4"
+    }
+  ],
+  "merged_at": "2026-10-08T06:53:05.618836+00:00",
+  "note": "Independent CPU processes ran concurrently; wall-clock decision timings include system load."
+}
