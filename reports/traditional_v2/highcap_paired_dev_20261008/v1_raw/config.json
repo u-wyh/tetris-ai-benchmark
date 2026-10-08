@@ -1,0 +1,27 @@
+{
+  "seeds": [
+    310100,
+    310103
+  ],
+  "max_pieces": 10000,
+  "strategy": "v1-adapter-1",
+  "weights": {
+    "cleared": 8.2,
+    "aggregate_height": -0.47,
+    "holes": -4.2,
+    "covered_holes": -0.16,
+    "bumpiness": -0.28,
+    "max_height": -0.18,
+    "wells": -0.08
+  },
+  "lookahead": 0.58,
+  "jitter": 0.002,
+  "hold": false,
+  "code_sha256": "728bbd0f631b2ce33e7b86e2704ab7cedd5ee77a884cbf3ff680347823dc1a6e",
+  "created_at": "2026-10-08T08:40:48.495771+00:00",
+  "python": "3.12.3",
+  "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39",
+  "git_commit": "ccebb369776251992b2cf794283dff7c976bebf5",
+  "git_status": " M README.md\n M training/evaluation/merge_traditional.py\n?? ppo-viewer.log\n?? reports/traditional_v2/\n?? tests/test_compare_traditional.py\n?? tests/test_traditional_v2.py\n?? training/evaluation/compare_traditional.py\n?? training/evaluation/profile_traditional.py\n?? training/evaluation/traditional_v2.py\n?? training/ppo_viewer.html\n?? training/ppo_viewer.py\n?? training/traditional/v2.py\n",
+  "timing": "placement generation + mask + policy; excludes execution/I/O"
+}

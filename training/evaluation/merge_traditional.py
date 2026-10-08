@@ -9,22 +9,24 @@ from pathlib import Path
 
 from training.evaluation.traditional import atomic, now
 
-COMPATIBLE = ("max_pieces", "strategy", "weights", "lookahead", "jitter", "hold", "code_sha256")
+COMPATIBLE_V1 = ("max_pieces", "strategy", "weights", "lookahead", "jitter", "hold", "code_sha256")
+COMPATIBLE_V2 = ("max_pieces", "strategy", "policy", "code_sha256")
 
 
 def merge(target, sources):
     target = Path(target)
     destination_config = json.loads((target / "config.json").read_text())
+    compatible = COMPATIBLE_V2 if destination_config["strategy"] == "v2-1" else COMPATIBLE_V1
     manifest = target / "merge_manifest.json"
     if manifest.exists():
         raise FileExistsError("Merge manifest already exists")
     pending = []
+    merged_seeds = set(destination_config["seeds"])
     for source in map(Path, sources):
         config = json.loads((source / "config.json").read_text())
-        if any(config[key] != destination_config[key] for key in COMPATIBLE):
+        if any(config[key] != destination_config[key] for key in compatible):
             raise ValueError(f"Incompatible benchmark configuration: {source}")
-        if not set(config["seeds"]).issubset(destination_config["seeds"]):
-            raise ValueError(f"Source contains seeds outside the target: {source}")
+        merged_seeds.update(config["seeds"])
         if json.loads((source / "status.json").read_text())["state"] != "complete":
             raise ValueError(f"Source is not complete: {source}")
         for seed in config["seeds"]:
@@ -48,6 +50,9 @@ def merge(target, sources):
                              source_git_commit=git_commit))
     atomic(manifest, dict(imported=imported, merged_at=now(),
                           note="Independent CPU processes ran concurrently; wall-clock decision timings include system load."))
+    if sorted(merged_seeds) != destination_config["seeds"]:
+        destination_config["seeds"] = sorted(merged_seeds)
+        atomic(target / "config.json", destination_config)
     return imported
 
 

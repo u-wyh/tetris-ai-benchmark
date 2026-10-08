@@ -1,0 +1,133 @@
+{
+  "v1": "runs/traditional_v1_dev10k_pair_20261008",
+  "v2": "runs/traditional_v2_dev10k_beam8_20261008",
+  "seeds": [
+    310100,
+    310103
+  ],
+  "max_pieces": 10000,
+  "v1_config": {
+    "seeds": [
+      310100,
+      310103
+    ],
+    "max_pieces": 10000,
+    "strategy": "v1-adapter-1",
+    "weights": {
+      "cleared": 8.2,
+      "aggregate_height": -0.47,
+      "holes": -4.2,
+      "covered_holes": -0.16,
+      "bumpiness": -0.28,
+      "max_height": -0.18,
+      "wells": -0.08
+    },
+    "lookahead": 0.58,
+    "jitter": 0.002,
+    "hold": false,
+    "code_sha256": "728bbd0f631b2ce33e7b86e2704ab7cedd5ee77a884cbf3ff680347823dc1a6e",
+    "created_at": "2026-10-08T08:40:48.495771+00:00",
+    "python": "3.12.3",
+    "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39",
+    "git_commit": "ccebb369776251992b2cf794283dff7c976bebf5",
+    "git_status": " M README.md\n M training/evaluation/merge_traditional.py\n?? ppo-viewer.log\n?? reports/traditional_v2/\n?? tests/test_compare_traditional.py\n?? tests/test_traditional_v2.py\n?? training/evaluation/compare_traditional.py\n?? training/evaluation/profile_traditional.py\n?? training/evaluation/traditional_v2.py\n?? training/ppo_viewer.html\n?? training/ppo_viewer.py\n?? training/traditional/v2.py\n",
+    "timing": "placement generation + mask + policy; excludes execution/I/O"
+  },
+  "v2_config": {
+    "seeds": [
+      310100,
+      310103
+    ],
+    "max_pieces": 10000,
+    "strategy": "v2-1",
+    "policy": {
+      "mode": "beam",
+      "beam_width": 8,
+      "lookahead": 0.58,
+      "weights": {
+        "cleared": 8.2,
+        "aggregate_height": -0.47,
+        "holes": -4.2,
+        "covered_holes": -0.16,
+        "bumpiness": -0.28,
+        "max_height": -0.18,
+        "wells": -0.08,
+        "row_transitions": -0.14,
+        "column_transitions": -0.22,
+        "top_risk": -0.9
+      },
+      "death_penalty": 1000000.0
+    },
+    "code_sha256": "6dc6c6d31fc3d02fdc3ee0bd369dbd07aac438b14f98bce2803da546c4a469f4",
+    "created_at": "2026-10-08T08:04:11.859606+00:00",
+    "python": "3.12.3",
+    "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39",
+    "git_commit": "130fc5e044e4cf2cefb14f544605ffbaadf673d9",
+    "git_status": " M CHANGELOG.md\n M README.md\n M training/env/tetris_env.py\n M training/evaluation/evaluate.py\n M training/step0_baseline.py\n M training/train_vector_transaction.py\n M training/vector_env.py\n?? configs/ppo_hole_v1_2m_seed42.json\n?? ppo-viewer.log\n?? reports/experiments/ppo_hole_v1_protocol.md\n?? tests/test_reward_shaping.py\n?? tests/test_traditional_v2.py\n?? training/evaluation/compare_hole_v1.py\n?? training/evaluation/compare_traditional.py\n?? training/evaluation/profile_traditional.py\n?? training/evaluation/traditional_v2.py\n?? training/ppo_viewer.html\n?? training/ppo_viewer.py\n?? training/traditional/v2.py\n",
+    "timing": "root legal BFS + policy simulation/features/future BFS/search; excludes Core.step and record I/O"
+  },
+  "paired": [
+    {
+      "seed": 310100,
+      "v1_pieces": 10000,
+      "v2_pieces": 10000,
+      "pieces_difference": 0,
+      "v1_lines": 3999,
+      "v2_lines": 3999,
+      "lines_difference": 0,
+      "v1_score": 88672400,
+      "v2_score": 83076900,
+      "score_difference": -5595500,
+      "v1_game_over": false,
+      "v2_game_over": false,
+      "v1_truncated": true,
+      "v2_truncated": true
+    },
+    {
+      "seed": 310103,
+      "v1_pieces": 2388,
+      "v2_pieces": 10000,
+      "pieces_difference": 7612,
+      "v1_lines": 945,
+      "v2_lines": 3999,
+      "lines_difference": 3054,
+      "v1_score": 4947000,
+      "v2_score": 83005400,
+      "score_difference": 78058400,
+      "v1_game_over": true,
+      "v2_game_over": false,
+      "v1_truncated": false,
+      "v2_truncated": true
+    }
+  ],
+  "summary": {
+    "mean_pieces_difference": 3806,
+    "median_pieces_difference": 3806.0,
+    "mean_pieces_difference_bootstrap_95ci": [
+      0.0,
+      7612.0
+    ],
+    "mean_lines_difference": 1527,
+    "median_lines_difference": 1527.0,
+    "mean_lines_difference_bootstrap_95ci": [
+      0.0,
+      3054.0
+    ],
+    "mean_score_difference": 36231450,
+    "median_score_difference": 36231450.0,
+    "mean_score_difference_bootstrap_95ci": [
+      -5595500.0,
+      78058400.0
+    ],
+    "v1_cap_rate": 0.5,
+    "v2_cap_rate": 1,
+    "both_cap_count": 1,
+    "v1_dead_v2_cap_count": 1,
+    "v1_cap_v2_dead_count": 0,
+    "observed_wins": 1,
+    "observed_losses": 0,
+    "equal_or_both_capped": 1,
+    "sign_test_two_sided_p": 1.0
+  },
+  "created_at": "2026-10-08T08:52:54.314530+00:00"
+}

@@ -1,0 +1,33 @@
+{
+  "seeds": [
+    310100,
+    310103
+  ],
+  "max_pieces": 10000,
+  "strategy": "v2-1",
+  "policy": {
+    "mode": "hold",
+    "beam_width": 8,
+    "lookahead": 0.58,
+    "weights": {
+      "cleared": 8.2,
+      "aggregate_height": -0.47,
+      "holes": -4.2,
+      "covered_holes": -0.16,
+      "bumpiness": -0.28,
+      "max_height": -0.18,
+      "wells": -0.08,
+      "row_transitions": -0.14,
+      "column_transitions": -0.22,
+      "top_risk": -0.9
+    },
+    "death_penalty": 1000000.0
+  },
+  "code_sha256": "6dc6c6d31fc3d02fdc3ee0bd369dbd07aac438b14f98bce2803da546c4a469f4",
+  "created_at": "2026-10-08T08:01:07.292237+00:00",
+  "python": "3.12.3",
+  "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39",
+  "git_commit": "130fc5e044e4cf2cefb14f544605ffbaadf673d9",
+  "git_status": " M CHANGELOG.md\n M README.md\n M training/env/tetris_env.py\n M training/evaluation/evaluate.py\n M training/step0_baseline.py\n M training/train_vector_transaction.py\n M training/vector_env.py\n?? configs/ppo_hole_v1_2m_seed42.json\n?? ppo-viewer.log\n?? reports/experiments/ppo_hole_v1_protocol.md\n?? tests/test_reward_shaping.py\n?? tests/test_traditional_v2.py\n?? training/evaluation/compare_hole_v1.py\n?? training/evaluation/compare_traditional.py\n?? training/evaluation/traditional_v2.py\n?? training/ppo_viewer.html\n?? training/ppo_viewer.py\n?? training/traditional/v2.py\n",
+  "timing": "root legal BFS + policy simulation/features/future BFS/search; excludes Core.step and record I/O"
+}
