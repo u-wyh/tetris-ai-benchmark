@@ -26,24 +26,36 @@ def worker_digests(env):
     return env.env_method("initial_state_digest")
 
 
-def compare_raw_initial_parameters(model, config):
-    """Reward-only experiments must start from Raw's exact random policy."""
-    if not config.get("hole_penalty_coef", 0.0):
-        return None
+def compare_initial_parameters(model, reference, label):
+    """Verify that a reward-only run starts from the same random policy."""
     import torch
     from sb3_contrib import MaskablePPO
 
-    reference = ROOT / "runs/ppo_raw_10m_seed42/baseline/model.zip"
     if not reference.is_file():
-        raise FileNotFoundError(f"Raw Step-0 reference is missing: {reference}")
-    raw = MaskablePPO.load(str(reference), device="cpu")
-    actual, expected = model.policy.state_dict(), raw.policy.state_dict()
-    if (model.num_timesteps != 0 or raw.num_timesteps != 0
+        raise FileNotFoundError(f"{label} Step-0 reference is missing: {reference}")
+    baseline = MaskablePPO.load(str(reference), device="cpu")
+    actual, expected = model.policy.state_dict(), baseline.policy.state_dict()
+    if (model.num_timesteps != 0 or baseline.num_timesteps != 0
             or actual.keys() != expected.keys()
             or any(not torch.equal(value.detach().cpu(), expected[key])
                    for key, value in actual.items())):
-        raise RuntimeError("Shaped Step-0 parameters differ from Raw Step-0")
+        raise RuntimeError(f"Shaped Step-0 parameters differ from {label} Step-0")
     return file_sha256(reference)
+
+
+def compare_raw_initial_parameters(model, config):
+    if not config.get("hole_penalty_coef", 0.0):
+        return None
+    return compare_initial_parameters(
+        model, ROOT / "runs/ppo_raw_10m_seed42/baseline/model.zip", "Raw")
+
+
+def compare_v1_initial_parameters(model, config):
+    if config.get("hole_penalty_coef") != 0.02:
+        return None
+    return compare_initial_parameters(
+        model, ROOT / "runs/ppo_hole_v1_2m_seed42_lambda010/baseline/model.zip",
+        "Shaped V1")
 
 
 def model_snapshot(model, env):
@@ -100,6 +112,7 @@ def save_baseline(run_dir, model, env, config, run_metadata):
     if list(env._seeds) != config["worker_seeds"]:
         raise RuntimeError("Initial worker seeds differ from formal config")
     reference_sha = compare_raw_initial_parameters(model, config)
+    v1_reference_sha = compare_v1_initial_parameters(model, config)
     baseline = run_dir / "baseline"
     if baseline.exists():
         return baseline
@@ -119,6 +132,7 @@ def save_baseline(run_dir, model, env, config, run_metadata):
         "reward_version": config["reward_version"], "reward_definition": config["reward"],
         "hole_penalty_coef": config.get("hole_penalty_coef", 0.0),
         "raw_step0_model_sha256": reference_sha,
+        "v1_step0_model_sha256": v1_reference_sha,
         "initial_worker_digests": worker_digests(env),
         "pending_worker_seeds": list(env._seeds),
         "model_sha256": file_sha256(pending / "model.zip"),

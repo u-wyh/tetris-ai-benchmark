@@ -166,6 +166,7 @@ def test_resume_rejects_changed_reward_coefficient_before_workers_start(tmp_path
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="Formal Step-0 uses CUDA initialization")
 def test_shaped_step0_matches_raw_cuda_parameters_exactly():
+    torch.set_num_threads(1)
     config = vector_config(target_steps=2_000_000, hole_penalty_coef=0.1)
     ppo = config["ppo"]
     env = DummyVecEnv([lambda: TetrisEnv(hole_penalty_coef=0.1) for _ in range(8)])
