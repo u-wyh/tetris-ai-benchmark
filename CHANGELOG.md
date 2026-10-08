@@ -7,6 +7,7 @@
 - V2 validation 配对评测使用与 V1 完全相同的 16 seeds 和 5000 块上限：V2 平均 5000 块、1998.9375 行、20,878,968.75 分，16/16 截断；正式分片平均决策 64.396 ms、P95 84.689 ms、15.529 次/秒。V1 为平均 4044.6875 块、10/16 截断；V2 在 6 个 V1 Game Over seed 上均存活到上限，但 10 对双方都截断，寿命差受右截断影响，不能直接宣称无偏最终寿命提升。
 - 同局面 CPU profile：V1 总决策约 66.16 ms，V2 约 65.46 ms；V2 成本主要为未来合法 BFS 34.17 ms 和模拟/特征 25.12 ms。V2 报告、逐 seed 原始 JSON、配置和合并清单归档在 `reports/traditional_v2/`。
 - 新增可配置 PPO-Shaped V1 Reward：每个净新增洞扣 0.10，Raw 默认系数 0 保持兼容；事务元数据、恢复校验、Task 洞指标及独立 2M 配对评测入口同步接入，不改变游戏规则和 Observation。
+- PPO-Shaped V1 已完成 2,002,944 步；32 个相同 validation seeds 上相对 Raw 2M 每 100 块新增洞从 151.24 降至 36.94，但平均存活从 57.94 降至 43.06。配对结果见 `reports/experiments/ppo_hole_v1_2m_comparison.md`，未启动 10M。
 - 新增独立传统 V1 合法落点适配器与可恢复的 CPU Benchmark。保留网页 V1 原代码、七项启发式权重、一块 Next 前瞻系数和微小随机扰动；适配器使用 Core 的 BFS 落点及 Action Mask，禁用 Hold，固定 seed 复现选择。
 - 每个 seed 完成后原子保存动作序列、逐决策耗时和正式游戏结果；记录代码 SHA-256、Git 基线、配置、异常与进度，生成聚合 JSON 和 Markdown 报告。中断后只重跑未完成对局，输出目录禁止覆盖。
 - 3-seed × 200 块 Smoke Test 完成，独立重跑动作、分数、消行及截断状态完全一致；修订版 Smoke Test 保持相同动作与结果。新增 V1 公式、合法性、公开信息边界、Top Out、截断、确定性及异常恢复测试。
