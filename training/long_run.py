@@ -253,7 +253,9 @@ def post_commit(run_dir, state, config, run_metadata, verify):
                                  extra={"requested_milestone": threshold,
                                         "actual_committed_steps": step})
         create_milestone(run_dir, source, threshold, step, config, run_metadata, result)
-        if config.get("longlife_validation"):
+        # The inherited 2M checkpoint is evaluated independently so resume can
+        # start training without waiting for a potentially long baseline replay.
+        if config.get("longlife_validation") and number not in config.get("pinned_tasks", []):
             evaluate_atomic(run_dir, source / "model.zip", step, "longlife",
                             config["longlife_validation"]["seeds"],
                             config["longlife_validation"]["max_pieces"], config,

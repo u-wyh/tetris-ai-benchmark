@@ -48,6 +48,23 @@ def test_threshold_crossing_once():
     assert list(crossings(253952, 258048, 250000)) == []
 
 
+def test_inherited_checkpoint_longlife_runs_separately(monkeypatch, tmp_path):
+    calls = []
+    monkeypatch.setattr(long_run, "evaluate_atomic",
+                        lambda *args, **kwargs: calls.append(args[3]) or {})
+    monkeypatch.setattr(long_run, "create_milestone", lambda *args: None)
+    monkeypatch.setattr(long_run, "sync_best", lambda *args: None)
+    monkeypatch.setattr(long_run, "rebuild_validation_summary", lambda *args: None)
+    monkeypatch.setattr(long_run, "prune_transactions", lambda *args: None)
+    config = {"task_steps": 4096, "validation_interval": 4096,
+              "milestone_interval": 4096, "pinned_tasks": [489],
+              "longlife_validation": {"seeds": 16, "max_pieces": 20000}}
+    for task in (489, 490):
+        state = {"committed_task": task, "committed_steps": task * 4096}
+        post_commit(tmp_path, state, config, {}, lambda *args: None)
+    assert calls == ["periodic", "milestone", "periodic", "milestone", "longlife"]
+
+
 def test_non_aligned_milestone_is_independent(tmp_path):
     source = tmp_path / "committed" / "task_000245"
     source.mkdir(parents=True)
