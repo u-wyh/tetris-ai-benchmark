@@ -1,5 +1,10 @@
 # 修改日志
 
+## 2026-10-09
+
+- 完成五个 2M PPO checkpoint 的统一 32-seed 棋盘诊断与逐 seed 配对 bootstrap 区间；V3 减少中央最高列，但未稳定超过 Raw 存活。
+- 写出 Candidate-Scoring MaskablePPO 架构设计与首轮独立 2M 对照计划；本次未启动新训练。
+
 ## 2026-10-08
 
 - 夜间 PPO 队列补充可恢复的 `extended_training` 选择阶段：统一比较 Raw/V1/V2/V3/V4，仅在 V3/V4 达到保守存活门槛且无明显 Game Over 风险时创建独立 10M run。
