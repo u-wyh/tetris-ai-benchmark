@@ -412,6 +412,9 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
             config = json.loads(config_path.read_text())
             state = read_state(run_dir)
             meta = json.loads((run_dir / "metadata.json").read_text())
+            if (run_dir / "continuation.json").exists():
+                from training.extend_candidate import verify_continuation
+                verify_continuation(run_dir, config, state, meta)
             if (config["run_type"] != "transactional_vector_maskable_ppo"
                     or meta["device"] != config["device"]
                     or meta["worker_seeds"] != config["worker_seeds"]

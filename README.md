@@ -116,3 +116,7 @@ independent transactional 2M-step experiment.
 `CandidateTetrisEnv` 保留公开的 237 维状态、固定 1840 个 Action ID 和正式合法掩码；`candidate` 是 `uint8[1840,16]` 的版本化候选矩阵。16 个整数特征依次为方块类型、Hold、旋转、x、y+3、消行数、落点后洞数、总高度、最高列、凹凸度、井深、新增洞、减少洞、落点前最高列、落点后顶部四行占用数、Lock Out 标记。它们均在定义范围内精确编码为整数，非法动作行全零；特征只模拟已知方块的一次确定性落点，不生成未来方块。共享评分网络仅处理掩码为真的候选行，critic 读取公开状态。正式游戏规则和 Raw Reward 不变。
 
 正式配置为 `configs/ppo_candidate_raw_2m_seed42.json`，训练使用 CUDA、8 worker、seed42、每 Task 4096 步和完整事务 checkpoint。运行 `tmux new-session -d -s tetris-candidate-2m './scripts/run_candidate_pipeline.sh'` 可启动后台流水线；它从特征测试、性能 smoke、2M 训练推进到配对评测和报告。状态保存在 `runs/ppo_candidate_pipeline_seed42/status.json`，异常后可重新运行同一脚本继续。该实验不会自动启动 10M。
+
+10M 续训使用 `training.extend_candidate` 将已完成的 2M run 校验并复制到独立目录，保留原 run 与 Task 489；只扩大目标步数，保留模型、optimizer、RNG、8 个 worker、全部训练指标和原评测。新目录用 `training.train_vector_transaction --resume` 恢复。原 16-seed/5000 块 periodic 和 32-seed/10000 块 milestone 协议继续执行；每个后续 milestone 另做 16 个固定 validation seeds、20000 块上限的 `longlife` 评测，结果单独保存并记录 `survival_cap_rate`。初始 2M 模型也做同一长寿命协议。达到 10M 后用 `training.evaluation.candidate_10m_report` 对同一步数的 Raw 10M 做 32-seed/5000 块配对报告。最终测试集仍须手动触发。
+
+续训准备命令：`.venv/bin/python -m training.extend_candidate --source runs/ppo_candidate_raw_2m_seed42 --destination runs/ppo_candidate_raw_10m_seed42`。后台训练执行 `scripts/run_candidate_10m.sh`；独立的初始长寿命验证执行 `.venv/bin/python -m training.extend_candidate --destination runs/ppo_candidate_raw_10m_seed42 --evaluate-baseline`。两者可以并行运行；中断后重跑训练脚本会从最后的 committed Task 恢复，长寿命评测也会复用已完成结果。

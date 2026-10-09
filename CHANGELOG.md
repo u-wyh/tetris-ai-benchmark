@@ -2,6 +2,9 @@
 
 ## 2026-10-09
 
+- 完成 Candidate-Scoring PPO 2M 对照审计：32 个 validation seeds 平均存活 3242.75 块、中位数 3532.5 块；14/32 局在 5000 块上限截断，逐 seed 结束标志与块数一致。报告补充全部逐 seed 结果与截断说明。
+- 新增独立 10M 续训准备：验证已完成 Task 的完整 manifest、CUDA RNG 和 8 worker 状态，复制原 run 到新目录，保留 2M 原件与固定 Task，严格校验除目标外的全部训练配置。CUDA 对照测试覆盖中断恢复，并比对最终权重、optimizer、RNG 和 worker 状态。
+- 10M 续训保留原 5000 块 periodic 与 10000 块 milestone 协议，另在 2M 起点及后续 milestone 使用 16 个固定 validation seeds、20000 块上限的独立长寿命协议，记录截断率；训练完成后自动生成与 Raw 10M 的 32-seed 配对报告，不调用 final-test seeds。
 - 实现 Candidate-Scoring MaskablePPO：公开 Dict Observation、精确 uint8 的 16 维落点特征、共享候选评分网络、合法动作 gather/scatter、事务式 8-worker CUDA 训练与自动配对评测流水线。
 - 完成五个 2M PPO checkpoint 的统一 32-seed 棋盘诊断与逐 seed 配对 bootstrap 区间；V3 减少中央最高列，但未稳定超过 Raw 存活。
 - 写出 Candidate-Scoring MaskablePPO 架构设计与首轮独立 2M 对照计划；本次未启动新训练。

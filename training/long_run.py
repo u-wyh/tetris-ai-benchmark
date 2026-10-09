@@ -221,7 +221,8 @@ def prune_transactions(run_dir, state, config, verify):
         verify(run_dir / "committed" / task_name(number), number, config)
     began = time.monotonic()
     for source in sorted((run_dir / "committed").glob("task_*")):
-        if source.is_dir() and int(source.name.split("_")[1]) <= latest - keep:
+        if (source.is_dir() and int(source.name.split("_")[1]) <= latest - keep
+                and int(source.name.split("_")[1]) not in config.get("pinned_tasks", [])):
             shutil.rmtree(source)
     fsync_dir(run_dir / "committed")
     elapsed = time.monotonic() - began
@@ -252,6 +253,12 @@ def post_commit(run_dir, state, config, run_metadata, verify):
                                  extra={"requested_milestone": threshold,
                                         "actual_committed_steps": step})
         create_milestone(run_dir, source, threshold, step, config, run_metadata, result)
+        if config.get("longlife_validation"):
+            evaluate_atomic(run_dir, source / "model.zip", step, "longlife",
+                            config["longlife_validation"]["seeds"],
+                            config["longlife_validation"]["max_pieces"], config,
+                            extra={"requested_milestone": threshold,
+                                   "actual_committed_steps": step})
     sync_best(run_dir)
     rebuild_validation_summary(run_dir)
     prune_transactions(run_dir, state, config, verify)
