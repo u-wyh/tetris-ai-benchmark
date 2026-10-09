@@ -1,0 +1,14 @@
+{
+  "target_total_steps": 4096,
+  "device": "cuda",
+  "n_envs": 8,
+  "n_steps": 512,
+  "task_steps": 4096,
+  "base_seed": 42,
+  "candidate_policy": true,
+  "step0_baseline": true,
+  "periodic_validation_seeds": 1,
+  "periodic_validation_max_pieces": 5,
+  "milestone_validation_seeds": 1,
+  "milestone_validation_max_pieces": 5
+}

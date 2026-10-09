@@ -110,3 +110,9 @@ The overnight queue compares existing Raw/V1/V2 checkpoints, then trains V3
 (new-hole plus height-risk shaping) and V4 (height-risk shaping only). Human
 game rules, observations, and action space are unchanged; each run is an
 independent transactional 2M-step experiment.
+
+## Candidate-Scoring PPO（独立实验）
+
+`CandidateTetrisEnv` 保留公开的 237 维状态、固定 1840 个 Action ID 和正式合法掩码；`candidate` 是 `uint8[1840,16]` 的版本化候选矩阵。16 个整数特征依次为方块类型、Hold、旋转、x、y+3、消行数、落点后洞数、总高度、最高列、凹凸度、井深、新增洞、减少洞、落点前最高列、落点后顶部四行占用数、Lock Out 标记。它们均在定义范围内精确编码为整数，非法动作行全零；特征只模拟已知方块的一次确定性落点，不生成未来方块。共享评分网络仅处理掩码为真的候选行，critic 读取公开状态。正式游戏规则和 Raw Reward 不变。
+
+正式配置为 `configs/ppo_candidate_raw_2m_seed42.json`，训练使用 CUDA、8 worker、seed42、每 Task 4096 步和完整事务 checkpoint。运行 `tmux new-session -d -s tetris-candidate-2m './scripts/run_candidate_pipeline.sh'` 可启动后台流水线；它从特征测试、性能 smoke、2M 训练推进到配对评测和报告。状态保存在 `runs/ppo_candidate_pipeline_seed42/status.json`，异常后可重新运行同一脚本继续。该实验不会自动启动 10M。

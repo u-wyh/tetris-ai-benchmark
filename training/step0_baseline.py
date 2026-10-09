@@ -69,6 +69,7 @@ def model_snapshot(model, env):
 def assert_unchanged(before, model, env):
     import numpy as np
     import torch
+    from training.train_vector_transaction import observations_equal
 
     after = model_snapshot(model, env)
     if (before["workers"] != after["workers"]
@@ -102,7 +103,7 @@ def assert_unchanged(before, model, env):
     for field in ("sb3_last_obs", "sb3_last_episode_starts"):
         initial, current = first[field], second[field]
         if (initial is None) != (current is None) or (
-                initial is not None and not np.array_equal(initial, current)):
+                initial is not None and not observations_equal(initial, current)):
             raise RuntimeError("Step-0 validation changed PPO rollout state")
 
 

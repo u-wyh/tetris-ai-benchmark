@@ -6,10 +6,12 @@ from pathlib import Path
 
 import numpy as np
 import torch
+from gymnasium import spaces
 from sb3_contrib import MaskablePPO
 
 from analysis.ppo_raw_diagnostics import board_features, sha256
 from training.env import TetrisEnv
+from training.env.candidate_env import CandidateTetrisEnv
 from training.train_ppo import ROOT, atomic_json
 
 RUN = ROOT / "runs/ppo_overnight_height_reward"
@@ -65,7 +67,8 @@ def old_rows(label):
 
 def replay_rows(path):
     model = MaskablePPO.load(str(path), device="cpu")
-    env = TetrisEnv(max_pieces=5000)
+    env = (CandidateTetrisEnv if isinstance(model.observation_space, spaces.Dict)
+           else TetrisEnv)(max_pieces=5000)
     rows = []
     try:
         for seed in SEEDS:

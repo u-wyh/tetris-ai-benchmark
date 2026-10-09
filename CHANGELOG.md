@@ -2,6 +2,7 @@
 
 ## 2026-10-09
 
+- 实现 Candidate-Scoring MaskablePPO：公开 Dict Observation、精确 uint8 的 16 维落点特征、共享候选评分网络、合法动作 gather/scatter、事务式 8-worker CUDA 训练与自动配对评测流水线。
 - 完成五个 2M PPO checkpoint 的统一 32-seed 棋盘诊断与逐 seed 配对 bootstrap 区间；V3 减少中央最高列，但未稳定超过 Raw 存活。
 - 写出 Candidate-Scoring MaskablePPO 架构设计与首轮独立 2M 对照计划；本次未启动新训练。
 

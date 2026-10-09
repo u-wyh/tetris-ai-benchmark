@@ -23,6 +23,9 @@ from training.train_transaction import (
     write_state,
 )
 from training.env import TetrisEnv
+from training.env.candidate_env import CandidateTetrisEnv, OBSERVATION_VERSION
+from training.candidate_features import FEATURE_VERSION
+from training.candidate_policy import CandidateScoringPolicy
 from training.env.tetris_env import (HEIGHT_REWARD_VERSION, HOLE_HEIGHT_REWARD_VERSION,
                                      HOLE_REWARD_VERSION, RAW_REWARD_VERSION)
 from training.long_run import SEEDS_FILE, post_commit
@@ -65,8 +68,13 @@ class TransactionTetrisEnv(TetrisEnv):
         return info
 
 
+class TransactionCandidateEnv(CandidateTetrisEnv, TransactionTetrisEnv):
+    """Candidate observation with the same transaction metadata hooks."""
+
+
 def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
-                  base_seed=42, hole_penalty_coef=0.0, height_penalty_coef=0.0):
+                  base_seed=42, hole_penalty_coef=0.0, height_penalty_coef=0.0,
+                  candidate_policy=False):
     if device not in ("cpu", "cuda"):
         raise ValueError("device must be cpu or cuda")
     if (isinstance(hole_penalty_coef, bool) or not isinstance(hole_penalty_coef, (int, float))
@@ -120,6 +128,10 @@ def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
     if height_penalty_coef:
         config["height_penalty_coef"] = height_penalty_coef
         config["reward"]["height_risk_penalty_coef"] = height_penalty_coef
+    if candidate_policy:
+        config.update({"policy": "CandidateScoringPolicy", "candidate_policy": True,
+                       "observation_version": OBSERVATION_VERSION,
+                       "candidate_feature_version": FEATURE_VERSION})
     return config
 
 
@@ -156,7 +168,10 @@ def verify_task(task_dir, number, config):
             or meta["device"] != config["device"] or meta["n_envs"] != config["ppo"]["n_envs"]
             or meta["n_steps"] != config["ppo"]["n_steps"]
             or len(meta["worker_digests"]) != config["ppo"]["n_envs"]
-            or reward_settings(meta) != reward_settings(config)):
+            or reward_settings(meta) != reward_settings(config)
+            or meta.get("observation_version", "237-float-public-observation-v1") != config["observation_version"]
+            or meta.get("policy", "MlpPolicy") != config["policy"]
+            or meta.get("candidate_feature_version") != config.get("candidate_feature_version")):
         raise RuntimeError(f"Committed Task {number} metadata disagrees with run config")
     return meta
 
@@ -164,14 +179,37 @@ def verify_task(task_dir, number, config):
 def observation_and_mask_digests(env):
     import numpy as np
 
-    observations = np.stack(env.env_method("get_observation"))
+    worker_observations = env.env_method("get_observation")
+    if isinstance(worker_observations[0], dict):
+        observations = {key: np.stack([row[key] for row in worker_observations])
+                        for key in worker_observations[0]}
+        if (observations["state"].shape[1:] != (237,)
+                or observations["candidate"].shape[1:] != (1840, 16)):
+            raise RuntimeError("Candidate observation shape changed")
+        observation_bytes = [b"".join(observations[key][i].tobytes()
+                                      for key in sorted(observations))
+                             for i in range(len(worker_observations))]
+    else:
+        observations = np.stack(worker_observations)
+        if observations.shape[1:] != (237,):
+            raise RuntimeError("Worker observation shape changed")
+        observation_bytes = [row.tobytes() for row in observations]
     masks = np.stack(env.env_method("action_masks"))
-    if observations.shape[1:] != (237,) or masks.shape[1:] != (1840,):
-        raise RuntimeError("Worker observation or mask shape changed")
-    digests = [{"observation": hashlib.sha256(row.tobytes()).hexdigest(),
+    if masks.shape[1:] != (1840,):
+        raise RuntimeError("Worker mask shape changed")
+    digests = [{"observation": hashlib.sha256(row).hexdigest(),
                 "mask": hashlib.sha256(mask.tobytes()).hexdigest()}
-               for row, mask in zip(observations, masks)]
+               for row, mask in zip(observation_bytes, masks)]
     return observations, digests
+
+
+def observations_equal(left, right):
+    import numpy as np
+    if isinstance(left, dict) or isinstance(right, dict):
+        return (isinstance(left, dict) and isinstance(right, dict)
+                and left.keys() == right.keys()
+                and all(np.array_equal(left[key], right[key]) for key in left))
+    return np.array_equal(left, right)
 
 
 def restore_task(run_dir, number, config, env):
@@ -192,7 +230,7 @@ def restore_task(run_dir, number, config, env):
     observations, digests = observation_and_mask_digests(env)
     if digests != task_meta["worker_digests"]:
         raise RuntimeError("Restored worker observation or action-mask digest differs from commit")
-    if model._last_obs is None or not np.array_equal(model._last_obs, observations):
+    if model._last_obs is None or not observations_equal(model._last_obs, observations):
         raise RuntimeError("Restored vector observations disagree with PPO last observation")
     if (model.num_timesteps != trainer["num_timesteps"]
             or not np.array_equal(model._last_episode_starts, trainer["sb3_last_episode_starts"])):
@@ -235,7 +273,7 @@ def ensure_final_model(run_dir, state):
 
 
 def commit_vector_task(run_dir, state, working_dir, model, env, callback, capture,
-                       training_seconds, config):
+                       training_seconds, config, gpu_peak=None):
     import numpy as np
 
     number = state["working_task"]
@@ -246,7 +284,7 @@ def commit_vector_task(run_dir, state, working_dir, model, env, callback, captur
     began = time.monotonic()
     saved_workers = env.env_method("get_state")
     observations, digests = observation_and_mask_digests(env)
-    if len(saved_workers) != config["ppo"]["n_envs"] or not np.array_equal(model._last_obs, observations):
+    if len(saved_workers) != config["ppo"]["n_envs"] or not observations_equal(model._last_obs, observations):
         raise RuntimeError("Worker states and PPO observations disagree before commit")
     trainer = global_rng_state(model)
     metrics = metrics_for_task(model, callback, capture, number, start_step, training_seconds)
@@ -263,6 +301,9 @@ def commit_vector_task(run_dir, state, working_dir, model, env, callback, captur
                  "reward_version": reward_settings(config)[0],
                  "hole_penalty_coef": reward_settings(config)[1],
                  "height_penalty_coef": reward_settings(config)[2],
+                 "observation_version": config["observation_version"], "policy": config["policy"],
+                 "candidate_feature_version": config.get("candidate_feature_version"),
+                 "gpu_peak_mib": gpu_peak,
                  "worker_seeds": config["worker_seeds"], "worker_digests": digests})
     checkpoint_bytes = write_manifest(working_dir)
     verify_task(working_dir, number, config)
@@ -374,7 +415,10 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
             if (config["run_type"] != "transactional_vector_maskable_ppo"
                     or meta["device"] != config["device"]
                     or meta["worker_seeds"] != config["worker_seeds"]
-                    or reward_settings(meta) != reward_settings(config)):
+                    or reward_settings(meta) != reward_settings(config)
+                    or meta.get("observation_version", "237-float-public-observation-v1") != config["observation_version"]
+                    or meta.get("policy", "MlpPolicy") != config["policy"]
+                    or meta.get("candidate_feature_version") != config.get("candidate_feature_version")):
                 raise RuntimeError("Run config and metadata disagree")
             if config_file:
                 preset = json.loads(Path(config_file).read_text())
@@ -386,6 +430,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                                      else HOLE_REWARD_VERSION if requested_hole else RAW_REWARD_VERSION)
                 if (requested_version, requested_hole, requested_height) != reward_settings(config):
                     raise RuntimeError("Resume reward config differs from recorded run")
+                if bool(preset.get("candidate_policy", False)) != bool(config.get("candidate_policy", False)):
+                    raise RuntimeError("Resume candidate policy differs from recorded run")
             if config.get("long_run_version"):
                 if sha256(SEEDS_FILE) != config["evaluation_seed_sha256"]:
                     raise RuntimeError("Fixed evaluation seed file changed")
@@ -407,7 +453,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                                        device=preset["device"], n_envs=preset["n_envs"],
                                        base_seed=preset["base_seed"],
                                        hole_penalty_coef=preset.get("hole_penalty_coef", 0.0),
-                                       height_penalty_coef=preset.get("height_penalty_coef", 0.0))
+                                       height_penalty_coef=preset.get("height_penalty_coef", 0.0),
+                                       candidate_policy=bool(preset.get("candidate_policy", False)))
                 for key in ("transaction_retention", "milestone_interval", "validation_interval",
                             "periodic_validation_seeds", "periodic_validation_max_pieces",
                             "milestone_validation_seeds", "milestone_validation_max_pieces"):
@@ -458,6 +505,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                          "hole_penalty_coef": reward_settings(config)[1],
                          "height_penalty_coef": reward_settings(config)[2],
                          "observation_version": config["observation_version"],
+                         "policy": config["policy"],
+                         "candidate_feature_version": config.get("candidate_feature_version"),
                          "action_space_version": config["action_space_version"],
                          "resume_episode_policy": "Restore each worker exactly from committed Task."})
             atomic_json(run_dir / "metadata.json", meta)
@@ -477,7 +526,9 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                        "height_penalty_coef": reward_settings(config)[2]}
                       if any(reward_settings(config)[1:]) else None)
         env = make_vector_env(config["ppo"]["n_envs"], config["run_seed"],
-                              config["max_pieces"], env_class=TransactionTetrisEnv,
+                              config["max_pieces"],
+                              env_class=TransactionCandidateEnv if config.get("candidate_policy")
+                              else TransactionTetrisEnv,
                               env_kwargs=env_kwargs)
         atomic_json(run_dir / "logs" / "worker_pids.json",
                     {"parent": os.getpid(), "workers": [process.pid for process in env.processes]})
@@ -493,11 +544,13 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                 model = load_baseline(run_dir, env, config)
             else:
                 ppo = config["ppo"]
+                policy = CandidateScoringPolicy if config.get("candidate_policy") else "MlpPolicy"
+                policy_kwargs = ({} if config.get("candidate_policy") else
+                                 {"net_arch": {"pi": config["network"]["pi"],
+                                               "vf": config["network"]["vf"]},
+                                  "activation_fn": torch.nn.Tanh})
                 model = MaskablePPO(
-                    "MlpPolicy", env,
-                    policy_kwargs={"net_arch": {"pi": config["network"]["pi"],
-                                                "vf": config["network"]["vf"]},
-                                   "activation_fn": torch.nn.Tanh},
+                    policy, env, policy_kwargs=policy_kwargs,
                     learning_rate=ppo["learning_rate"], gamma=ppo["gamma"],
                     gae_lambda=ppo["gae_lambda"], clip_range=ppo["clip_range"],
                     n_steps=ppo["n_steps"], batch_size=ppo["batch_size"],
@@ -588,6 +641,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                 tensorboard = TensorBoardOutputFormat(str(working_dir / "tensorboard"))
                 model.set_logger(Logger(str(working_dir), [tensorboard, capture]))
                 callback = TaskCallback(working_dir, number, state["committed_steps"])
+                if config["device"] == "cuda":
+                    torch.cuda.reset_peak_memory_stats()
                 began = time.monotonic()
                 try:
                     model.learn(total_timesteps=state["task_steps"], callback=callback,
@@ -596,8 +651,11 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     model.logger.dump(model.num_timesteps)
                 finally:
                     model.logger.close()
+                gpu_peak = ({"allocated": round(torch.cuda.max_memory_allocated() / 2**20, 2),
+                             "reserved": round(torch.cuda.max_memory_reserved() / 2**20, 2)}
+                            if config["device"] == "cuda" else None)
                 commit_vector_task(run_dir, state, working_dir, model, env, callback,
-                                   capture, training_seconds, config)
+                                   capture, training_seconds, config, gpu_peak)
                 if config.get("long_run_version"):
                     post_commit(run_dir, state, config, meta, verify_task)
                 completed_this_process += 1
