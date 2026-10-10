@@ -1,5 +1,11 @@
 # 修改日志
 
+## 2026-10-10
+
+- Candidate-Scoring PPO 从原 2M checkpoint 完整续训至 10,002,432 committed steps，原 Task 489 与全部历史评测保留；CUDA 8-worker 训练、里程碑、长寿命验证及最终 checkpoint 均完成，未运行 final-test seeds。
+- 同一批 32 个 validation seeds、5000 块上限下，Candidate 10M 平均存活 4543.12 块、平均分 33,924,706.25，27/32 局达到上限；Raw 10M 分别为 198.06 块、45,712.50 分、0/32 局达到上限。逐 seed 对照见 `reports/experiments/ppo_candidate_raw_10m_comparison.md`。
+- 独立 16-seed、20000 块长寿命验证中，Candidate 10M 平均存活 12,677.7 块、5/16 局达到上限；7M 里程碑为 15,247.4 块、9/16 局达到上限。长期生存尚不稳定，不能据此宣称超过传统模型的 100000 块能力。
+
 ## 2026-10-09
 
 - 完成 Candidate-Scoring PPO 2M 对照审计：32 个 validation seeds 平均存活 3242.75 块、中位数 3532.5 块；14/32 局在 5000 块上限截断，逐 seed 结束标志与块数一致。报告补充全部逐 seed 结果与截断说明。
