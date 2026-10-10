@@ -2,6 +2,8 @@
 
 ## 2026-10-10
 
+- Candidate PPO Champion 从 7M/8M/9M/10M 统一 32-seed、20000 块验证中预先选出 7,000,064 steps；冻结后完成 100-seed、50000 块正式测试：平均存活 20247.0 块、10/100 局达到上限。详见 `reports/experiments/ppo_candidate_champion_selection.md` 和 `reports/experiments/ppo_candidate_final_100seed.md`。
+
 - 新增 Candidate PPO Champion 自动队列：核验 7M–10M milestone SHA256 与训练配置，按固定 32-seed/20000 块逐局持久化长寿命验证，使用预先固定的存活优先规则选模并冻结；随后单次执行 100-seed/50000 块正式测试、Raw 已冻结报告对照和传统算法公平比较成本方案。独立 tmux 队列可从已完成局恢复，不重新训练或使用正式测试调参。
 - Candidate-Scoring PPO 从原 2M checkpoint 完整续训至 10,002,432 committed steps，原 Task 489 与全部历史评测保留；CUDA 8-worker 训练、里程碑、长寿命验证及最终 checkpoint 均完成，未运行 final-test seeds。
 - 同一批 32 个 validation seeds、5000 块上限下，Candidate 10M 平均存活 4543.12 块、平均分 33,924,706.25，27/32 局达到上限；Raw 10M 分别为 198.06 块、45,712.50 分、0/32 局达到上限。逐 seed 对照见 `reports/experiments/ppo_candidate_raw_10m_comparison.md`。
