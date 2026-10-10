@@ -2,6 +2,7 @@
 
 ## 2026-10-10
 
+- 新增 Candidate Champion 与传统 V2 Hold-only 的 100-seed、50000 块正式配对队列：复用已冻结 Candidate 结果，严格核对历史 V2 配置与 Core 代码 SHA，传统策略逐 seed 原子保存并可恢复；完成后自动汇总截断存活、得分、配对 bootstrap 区间和实际吞吐。未训练新模型。
 - Candidate PPO Champion 从 7M/8M/9M/10M 统一 32-seed、20000 块验证中预先选出 7,000,064 steps；冻结后完成 100-seed、50000 块正式测试：平均存活 20247.0 块、10/100 局达到上限。详见 `reports/experiments/ppo_candidate_champion_selection.md` 和 `reports/experiments/ppo_candidate_final_100seed.md`。
 
 - 新增 Candidate PPO Champion 自动队列：核验 7M–10M milestone SHA256 与训练配置，按固定 32-seed/20000 块逐局持久化长寿命验证，使用预先固定的存活优先规则选模并冻结；随后单次执行 100-seed/50000 块正式测试、Raw 已冻结报告对照和传统算法公平比较成本方案。独立 tmux 队列可从已完成局恢复，不重新训练或使用正式测试调参。
