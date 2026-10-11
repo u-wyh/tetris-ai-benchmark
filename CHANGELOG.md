@@ -1,5 +1,9 @@
 # 修改日志
 
+## 2026-10-11
+
+- 新增 Candidate PPO 20M 独立选模与测试队列：核验 7M/19M/20M checkpoint 和 20M 长局结果，按统一 32-seed、20,000 块验证冻结 Champion；随后使用未参加旧实验的 400000–400099 种子运行 100 局独立测试，再串行运行 V2 Hold-only 配对评测。逐 seed 原子保存，队列支持恢复，旧 Champion 与旧 V2 结果保留。
+
 ## 2026-10-10
 
 - 新增 Candidate Champion 与传统 V2 Hold-only 的 100-seed、50000 块正式配对队列：复用已冻结 Candidate 结果，严格核对历史 V2 配置与 Core 代码 SHA，传统策略逐 seed 原子保存并可恢复；完成后自动汇总截断存活、得分、配对 bootstrap 区间和实际吞吐。未训练新模型。
