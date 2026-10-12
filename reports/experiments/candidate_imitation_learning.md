@@ -16,6 +16,8 @@ Two 128-step teacher trajectories yielded 256 unique public states and 101 Hold 
 
 The compressed shards used 152,663 bytes, about 596 bytes per sample. At that density, 200,000 samples would use about 119 MB before manifest and filesystem overhead. Actual full-run size and collection speed will be recorded after collection.
 
+A separate 1,000-step single-seed timing run completed in 10.04 seconds, about 100 samples per second on one CPU process, with a 41 MB peak resident set and a 600 KB compressed shard. Linear extrapolation gives roughly 34 minutes of collector wall time for 200,000 samples; full-run speed may change with board state and concurrent load. Its 1,000 public states were unique, 35.5% of labels used Hold, and none reached height 12.
+
 Using one seed for training and another for BC validation (128 samples each), three actor-only epochs produced:
 
 | Metric | Before BC | Epoch 3 |
