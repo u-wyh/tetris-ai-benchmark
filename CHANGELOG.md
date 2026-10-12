@@ -1,5 +1,9 @@
 # 修改日志
 
+## 2026-10-12
+
+- 新增独立 V2 Hold 模仿学习路线：真实 Core 专家轨迹分片、公开状态与合法 Action ID 校验、SHA256 可恢复采集、从 20M PPO 复制的 Actor-only BC、独立 2M PPO 微调初始化和 30M 完成后自动推进的后台队列。256 条双 seed 烟雾样本上，BC 验证 Top-1 从 35.9% 提至 38.3%；完整生存对比仍待队列完成。详见 `reports/experiments/candidate_imitation_learning.md`。
+
 ## 2026-10-11
 
 - 新增 Candidate PPO 20M 独立选模与测试队列：核验 7M/19M/20M checkpoint 和 20M 长局结果，按统一 32-seed、20,000 块验证冻结 Champion；随后使用未参加旧实验的 400000–400099 种子运行 100 局独立测试，再串行运行 V2 Hold-only 配对评测。逐 seed 原子保存，队列支持恢复，旧 Champion 与旧 V2 结果保留。

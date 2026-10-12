@@ -435,6 +435,12 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     raise RuntimeError("Resume reward config differs from recorded run")
                 if bool(preset.get("candidate_policy", False)) != bool(config.get("candidate_policy", False)):
                     raise RuntimeError("Resume candidate policy differs from recorded run")
+                if preset.get("initial_model") != config.get("initial_model"):
+                    raise RuntimeError("Resume initial model differs from recorded run")
+            if config.get("initial_model"):
+                initial = config["initial_model"]
+                if sha256(Path(initial["path"])) != initial["sha256"]:
+                    raise RuntimeError("Initial model changed")
             if config.get("long_run_version"):
                 if sha256(SEEDS_FILE) != config["evaluation_seed_sha256"]:
                     raise RuntimeError("Fixed evaluation seed file changed")
@@ -463,6 +469,11 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                             "milestone_validation_seeds", "milestone_validation_max_pieces"):
                     if key in preset:
                         config[key] = preset[key]
+                if "initial_model" in preset:
+                    initial = preset["initial_model"]
+                    if not config.get("candidate_policy") or sha256(Path(initial["path"])) != initial["sha256"]:
+                        raise RuntimeError("Candidate initial model integrity failed")
+                    config["initial_model"] = initial
             else:
                 config = vector_config(target_steps=target_steps)
             config["step0_baseline"] = bool(preset.get("step0_baseline", False)) if config_file else False
@@ -560,6 +571,12 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     n_epochs=ppo["n_epochs"], ent_coef=ppo["ent_coef"],
                     vf_coef=ppo["vf_coef"], max_grad_norm=ppo["max_grad_norm"],
                     seed=config["run_seed"], device=config["device"], verbose=0)
+                if config.get("initial_model"):
+                    source = MaskablePPO.load(config["initial_model"]["path"], device="cpu")
+                    model.policy.load_state_dict(source.policy.state_dict(), strict=True)
+                    # Preserve the fresh optimizer, timestep zero, and independent RNG.
+                    if model.num_timesteps != 0:
+                        raise RuntimeError("Fine-tune run must start at PPO step zero")
             if config.get("step0_baseline"):
                 from training.step0_baseline import evaluate_baseline
                 state.update({"status": "baseline", "pid": os.getpid()})

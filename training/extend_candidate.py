@@ -56,7 +56,7 @@ def prepare(source: Path, destination: Path, requested_target: int = 10_000_000,
         if (config.get("policy") != "CandidateScoringPolicy"
                 or config.get("reward_version") != RAW_REWARD_VERSION
                 or config["device"] != "cuda" or config["ppo"]["n_envs"] != 8
-                or config["run_seed"] != 42 or metadata["device"] != "cuda"):
+                or metadata["device"] != "cuda"):
             raise RuntimeError("Source differs from the approved Candidate CUDA configuration")
         target = ((requested_target + config["task_steps"] - 1) // config["task_steps"]) * config["task_steps"]
         if target <= state["committed_steps"]:
