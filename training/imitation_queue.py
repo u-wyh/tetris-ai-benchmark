@@ -3,6 +3,7 @@ import argparse
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import time
@@ -106,10 +107,21 @@ def prepare_finetune():
     source = BC / "epoch_03.zip"
     if not source.exists():
         raise FileNotFoundError(source)
+    initial = FINE / "initial" / "model.zip"
+    initial.parent.mkdir(parents=True, exist_ok=True)
+    if not initial.exists():
+        temporary = initial.with_suffix(".tmp")
+        shutil.copy2(source, temporary)
+        if digest(temporary) != digest(source):
+            raise RuntimeError("Fine-tune initial copy mismatch")
+        os.replace(temporary, initial)
+    if digest(initial) != digest(source):
+        raise RuntimeError("Fine-tune initial model changed")
     config = json.loads((ROOT / "configs/ppo_candidate_raw_2m_seed42.json").read_text())
-    config.update({"base_seed": 142, "initial_model": {"path": str(source.resolve()),
+    config.update({"base_seed": 142, "initial_model": {"path": str(initial.resolve()),
                    "sha256": digest(source), "actor": "20M PPO + BC epoch 3",
                    "critic": "20M PPO, unchanged by actor-only BC",
+                   "source_path": str(source.resolve()),
                    "optimizer": "fresh", "ppo_steps_before_run": 0},
                    "step0_baseline": False})
     path = RUN / "finetune_config.json"
