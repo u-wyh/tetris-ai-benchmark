@@ -17,6 +17,7 @@
 - 20:58｜把训练节点的独立种子验证改为最多 8 个 CPU 进程并行，保留输出种子顺序；为未来 10 万块长局加入一次性 4/6/8/10/12 进程吞吐量试跑并自动选最快值。串并行逐 seed 结果一致，相关 9 个定向测试通过。长局试跑将在长局阶段才执行，不与 PPO 训练争抢 CPU。依据：本次代码提交及 `tests/test_parallel_candidate_evaluation.py`。
 - 20:59｜2M 节点的 16-seed、每局 5000 块周期验证以新并行实现完成，耗时 64.484 秒；此前同规格串行验证通常约 10 分钟。32-seed、每局 10000 块里程碑验证随后启动。依据：`runs/candidate_bc_klppo_2m/events.log`。这仅是同任务评测墙钟时间对比，不代表模型质量变化。
 - 22:49｜后台队列进入 4 模型、共同 32-seed、每局上限 10 万块的长局验证。一次性吞吐试跑在 4/6/8/10/12 路中选出 12 路；BC 已完成 32 局，其中 31 局达上限、平均 99,320.5 块；纯 PPO 30M 已完成 32 局，其中 12 局达上限、平均 69,392.7 块。KL-PPO 2M 正在跑，DAgger 长局待跑；未据此宣称全部任务完成。依据：`runs/candidate_bc_next_stage/long_worker_tuning.json`、`long_validation_protocol.json` 及 `comparisons/long_100k_*/status.json`、`summary.json`。
+- 22:57｜核查纯 PPO 30M 的较高得分：双方都跑满 10 万块的 12 个种子上，30M 平均约 158.5 亿，BC 约 83.4 亿；同种子 `100008` 前 3000 块追踪显示 30M 有 293 次四行消除，BC 为 0，双方总消行相近。依据：`reports/experiments/candidate_score_mechanism.md` 与原始逐局结果。
 
 ## 2026-10-12
 
