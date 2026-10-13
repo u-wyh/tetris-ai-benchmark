@@ -1,6 +1,7 @@
 """Actor-only mixed BC and learner-state DAgger supervised experiment."""
 import argparse
 import json
+import os
 import random
 from pathlib import Path
 
@@ -47,7 +48,7 @@ def unique_dagger(directory, seeds):
 
 
 def train(dagger_data, dagger_validation, output, epochs=2, samples_per_source=20000,
-          device="cpu", seed=20261013):
+          device="cpu", seed=20261013, max_new_epochs=None):
     output = Path(output)
     train_seeds = seed_list(dagger_data)
     validation_seeds = seed_list(dagger_validation)
@@ -86,15 +87,40 @@ def train(dagger_data, dagger_validation, output, epochs=2, samples_per_source=2
     if not config_path.exists():
         atomic_json(config_path, config)
     model = MaskablePPO.load(str(CHAMPION), device=device)
+    critic_before = {k: v.detach().clone() for k, v in model.policy.value_net.state_dict().items()}
+    training_state = output / "training_state.pt"
+    if training_state.exists():
+        saved = torch.load(training_state, map_location="cpu", weights_only=False)
+        checkpoint = output / f"epoch_{saved['epoch']:02d}.zip"
+        if (saved["source_sha256"] != config["source_sha256"] or
+                digest(checkpoint) != saved["checkpoint_sha256"] or
+                not 0 < saved["epoch"] <= epochs):
+            raise RuntimeError("DAgger training transaction integrity failed")
+        model = MaskablePPO.load(str(checkpoint), device=device)
+        history = saved["history"]
+        start_epoch = saved["epoch"]
+    else:
+        if (output / "history.json").exists():
+            raise RuntimeError("DAgger history exists without an optimizer/RNG transaction")
+        history = [{"epoch": 0, "original_validation": metrics(model.policy, original_val, device),
+                    "dagger_validation": metrics(model.policy, dagger_val, device), "timestamp": now()}]
+        start_epoch = 0
     policy = model.policy
     actor = (list(policy.state_encoder.parameters()) +
              list(policy.candidate_encoder.parameters()) +
              list(policy.score_head.parameters()))
-    critic_before = {k: v.detach().clone() for k, v in policy.value_net.state_dict().items()}
+    if any(not torch.equal(v, critic_before[k]) for k, v in policy.value_net.state_dict().items()):
+        raise RuntimeError("DAgger checkpoint changed the frozen Critic")
     optimizer = torch.optim.Adam(actor, lr=5e-5)
-    history = [{"epoch": 0, "original_validation": metrics(policy, original_val, device),
-                "dagger_validation": metrics(policy, dagger_val, device), "timestamp": now()}]
-    for epoch in range(1, epochs + 1):
+    if training_state.exists():
+        optimizer.load_state_dict(saved["optimizer"])
+        random.setstate(saved["python_random"])
+        np.random.set_state(saved["numpy_random"])
+        torch.set_rng_state(saved["torch_cpu_random"])
+        if saved["torch_cuda_random"] is not None:
+            torch.cuda.set_rng_state_all(saved["torch_cuda_random"])
+        atomic_json(output / "history.json", history)
+    for epoch in range(start_epoch + 1, epochs + 1):
         policy.train()
         mixed = original + dagger
         random.shuffle(mixed)
@@ -110,9 +136,26 @@ def train(dagger_data, dagger_validation, output, epochs=2, samples_per_source=2
         row = {"epoch": epoch, "original_validation": metrics(policy, original_val, device),
                "dagger_validation": metrics(policy, dagger_val, device), "timestamp": now()}
         history.append(row)
-        model.save(str(output / f"epoch_{epoch:02d}.zip"))
+        checkpoint = output / f"epoch_{epoch:02d}.zip"
+        temporary_model = output / f".epoch_{epoch:02d}.tmp.zip"
+        model.save(str(temporary_model))
+        os.replace(temporary_model, checkpoint)
+        transaction = {"epoch": epoch, "history": history,
+                       "source_sha256": config["source_sha256"],
+                       "checkpoint_sha256": digest(checkpoint),
+                       "optimizer": optimizer.state_dict(),
+                       "python_random": random.getstate(),
+                       "numpy_random": np.random.get_state(),
+                       "torch_cpu_random": torch.get_rng_state(),
+                       "torch_cuda_random": (torch.cuda.get_rng_state_all()
+                                             if device == "cuda" else None)}
+        temporary_state = output / ".training_state.tmp.pt"
+        torch.save(transaction, temporary_state)
+        os.replace(temporary_state, training_state)
         atomic_json(output / "history.json", history)
         print(row, flush=True)
+        if max_new_epochs is not None and epoch - start_epoch >= max_new_epochs:
+            return history
     loaded = MaskablePPO.load(str(output / f"epoch_{epochs:02d}.zip"), device=device)
     obs, mask, _ = batch(dagger_val[:1], device)
     with torch.no_grad():
