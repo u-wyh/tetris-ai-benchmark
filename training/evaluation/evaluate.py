@@ -55,8 +55,8 @@ def evaluate_model(model_path, seeds, max_pieces, protocol, committed_steps,
     model = MaskablePPO.load(str(model_path), device="cpu")
     began = time.monotonic()
     rows = []
-    from training.env.candidate_env import CandidateTetrisEnv
-    env_class = (CandidateTetrisEnv if isinstance(getattr(model, "observation_space", None), spaces.Dict)
+    from training.env.fast_candidate_env import FastCandidateTetrisEnv
+    env_class = (FastCandidateTetrisEnv if isinstance(getattr(model, "observation_space", None), spaces.Dict)
                  else TetrisEnv)
     env = env_class(max_pieces=max_pieces)
     try:

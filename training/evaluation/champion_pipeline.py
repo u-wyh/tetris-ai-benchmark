@@ -15,7 +15,7 @@ from pathlib import Path
 
 import numpy as np
 
-from training.env.candidate_env import CandidateTetrisEnv
+from training.env.fast_candidate_env import FastCandidateTetrisEnv
 from training.evaluation.evaluate import aggregate
 from training.long_run import SEEDS_FILE
 from training.train_ppo import ROOT, atomic_json, now
@@ -128,7 +128,7 @@ def initialize():
 
 def evaluate_seed(model, seed, max_pieces):
     """Use the same deterministic MaskablePPO policy and official action masks."""
-    env = CandidateTetrisEnv(max_pieces=max_pieces)
+    env = FastCandidateTetrisEnv(max_pieces=max_pieces)
     started = time.monotonic()
     try:
         observation, _ = env.reset(seed=seed)
