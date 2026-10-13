@@ -4,6 +4,7 @@
 
 ## 2026-10-13
 
+- 23:54｜Hybrid 队列完成烟雾阶段并进入 16-seed 20K 调参；启动独立 `tetris-hybrid-publish` 收尾程序，待全部确认局完成后提交推送报告。依据：`runs/candidate_ppo30m_bc_hybrid/status.json`、`training/evaluation/hybrid_publish.py`。
 - 23:46｜双策略队列入口检查意外进入等待 DAgger 的循环，立即中断；仅写入模型协议与等待状态，未加载模型或执行对局。依据：`runs/candidate_ppo30m_bc_hybrid/status.json`、本次终端中断记录。
 - 23:51｜核验冻结 PPO 30M 与 BC checkpoint SHA256、观测／特征／动作版本；实现独立双策略 A/B 控制器与可恢复评测队列。4 项策略单测、环境／并行定向测试共 10 项通过，Parity 6 项和 35 个子测试通过；两模型 CPU 1000 块低负载试跑完成。启动 `tetris-hybrid` tmux 队列，先等待 DAgger 队列完成。依据：`tests/test_hybrid_policy.py`、`runs/candidate_ppo30m_bc_hybrid/`、本次测试输出。
 - 23:52｜补齐逐局恢复校验、模型空间核验、配对报告和真实模型一致性测试后，停止并重启仍在等待 DAgger 的 `tetris-hybrid` 队列；停止前无 Hybrid 对局。更新后 11 项定向测试通过。依据：队列状态、`tests/test_hybrid_policy.py`、本次终端输出。
