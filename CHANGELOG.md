@@ -1,5 +1,9 @@
 # 修改日志
 
+## 2026-10-13
+
+- 20M PPO + BC 在与传统 V1、V2 Hold 相同的 10 个 validation seeds、100,000 块上限下全部 10/10 到达上限；V2 Hold 同为 10/10，V1 为 1/10、平均存活 26,002.6 块。BC 与 V2 在此上限内持平，超出上限的真实寿命仍未知。详见 `reports/experiments/candidate_bc_vs_traditional_100k.md`。
+
 ## 2026-10-12
 
 - 新增独立 V2 Hold 模仿学习路线：真实 Core 专家轨迹分片、公开状态与合法 Action ID 校验、SHA256 可恢复采集、从 20M PPO 复制的 Actor-only BC、独立 2M PPO 微调初始化和 30M 完成后自动推进的后台队列。256 条双 seed 烟雾样本上，BC 验证 Top-1 从 35.9% 提至 38.3%；完整生存对比仍待队列完成。详见 `reports/experiments/candidate_imitation_learning.md`。
