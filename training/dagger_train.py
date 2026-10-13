@@ -1,9 +1,11 @@
 """Actor-only mixed BC and learner-state DAgger supervised experiment."""
 import argparse
+import hashlib
 import json
 import os
 import random
 from pathlib import Path
+import subprocess
 
 import numpy as np
 import torch
@@ -47,6 +49,15 @@ def unique_dagger(directory, seeds):
     return result
 
 
+def dataset_version(directory, seeds):
+    checksum = hashlib.sha256()
+    for seed in seeds:
+        path = Path(directory) / f"seed_{seed}.json"
+        manifest = json.loads(path.read_text())
+        checksum.update(f"{seed}:{manifest['sha256']}:{manifest['samples']}\n".encode())
+    return checksum.hexdigest()
+
+
 def train(dagger_data, dagger_validation, output, epochs=2, samples_per_source=20000,
           device="cpu", seed=20261013, max_new_epochs=None):
     output = Path(output)
@@ -77,13 +88,21 @@ def train(dagger_data, dagger_validation, output, epochs=2, samples_per_source=2
               "dagger_train_seeds": train_seeds,
               "dagger_validation_dataset": str(Path(dagger_validation).resolve()),
               "dagger_validation_seeds": validation_seeds,
+              "original_dataset_version": dataset_version(ORIGINAL, range(600000, 600108)),
+              "dagger_dataset_version": dataset_version(dagger_data, train_seeds),
+              "dagger_validation_version": dataset_version(dagger_validation, validation_seeds),
               "samples_per_source": samples_per_source, "mix_ratio": "1:1",
               "epochs": epochs, "device": device, "random_seed": seed,
-              "teacher_hash": TEACHER_HASH, "ppo_environment_steps_added": 0}
+              "teacher_hash": TEACHER_HASH, "ppo_environment_steps_added": 0,
+              "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"],
+                                                    cwd=ROOT, text=True).strip()}
     output.mkdir(parents=True, exist_ok=True)
     config_path = output / "config.json"
-    if config_path.exists() and json.loads(config_path.read_text()) != config:
-        raise RuntimeError("DAgger training config changed")
+    if config_path.exists():
+        saved_config = json.loads(config_path.read_text())
+        if {key: value for key, value in saved_config.items() if key != "git_commit"} != {
+                key: value for key, value in config.items() if key != "git_commit"}:
+            raise RuntimeError("DAgger training config changed")
     if not config_path.exists():
         atomic_json(config_path, config)
     model = MaskablePPO.load(str(CHAMPION), device=device)
