@@ -13,6 +13,8 @@
 - 20:23 后｜应用户要求，短暂暂停队列、训练器和正在运行的验证进程；完成评测加速与一致性检查后恢复。暂停／恢复的精确时刻未自动写入运行日志，本项依据会话操作记录。
 - 20:32｜提交并推送评测加速 `2fb5925`。同机同种子 1000 块交替测试：旧环境约 7.79 ms/块，新环境约 4.73 ms/块；19 个定向测试、4 个 Core 对照测试通过，另有两局各 2000 块逐步一致。依据：Git `2fb5925`、`reports/experiments/candidate_evaluation_speedup.md`。已启动的验证进程继续使用旧代码，之后新启动的评测使用加速环境。
 - 20:36｜建立本操作流水账与 `AGENTS.md` 续写约定，补录可核实的重要节点。此时后台队列仍处于 `train_kl_ppo_2m` 阶段；未改变训练配置或进程。依据：Git 提交与 `runs/candidate_bc_next_stage/queue_status.json`。
+- 20:57｜KL-PPO 正式微调提交第 489 个事务 checkpoint，累计 2,002,944 PPO 步；随后开始训练节点验证。依据：`runs/candidate_bc_klppo_2m/transaction_state.json`、`events.log`。
+- 20:58｜把训练节点的独立种子验证改为最多 8 个 CPU 进程并行，保留输出种子顺序；为未来 10 万块长局加入一次性 4/6/8/10/12 进程吞吐量试跑并自动选最快值。串并行逐 seed 结果一致，相关 9 个定向测试通过。长局试跑将在长局阶段才执行，不与 PPO 训练争抢 CPU。依据：本次代码提交及 `tests/test_parallel_candidate_evaluation.py`。
 
 ## 2026-10-12
 

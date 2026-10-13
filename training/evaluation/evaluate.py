@@ -1,7 +1,10 @@
 """Evaluate a committed model in an independent process; never call learn()."""
 
 import argparse
+from concurrent.futures import ProcessPoolExecutor
 import json
+from multiprocessing import get_context
+import os
 import statistics
 import time
 from pathlib import Path
@@ -46,42 +49,67 @@ def aggregate(rows, max_pieces):
     return result
 
 
-def evaluate_model(model_path, seeds, max_pieces, protocol, committed_steps,
-                   diagnostics=False):
+_WORKER_MODEL = None
+
+
+def _init_worker(model_path):
+    global _WORKER_MODEL
     from sb3_contrib import MaskablePPO
     import torch
-
     torch.set_num_threads(1)
-    model = MaskablePPO.load(str(model_path), device="cpu")
-    began = time.monotonic()
-    rows = []
+    _WORKER_MODEL = MaskablePPO.load(str(model_path), device="cpu")
+
+
+def _evaluate_seed(model, seed, max_pieces, diagnostics):
+    if model is None:
+        raise RuntimeError("Evaluation worker has no model")
     from training.env.fast_candidate_env import FastCandidateTetrisEnv
     env_class = (FastCandidateTetrisEnv if isinstance(getattr(model, "observation_space", None), spaces.Dict)
                  else TetrisEnv)
     env = env_class(max_pieces=max_pieces)
     try:
-        for seed in seeds:
-            observation, info = env.reset(seed=int(seed))
-            ended = False
-            hole_events = hole_total = 0
-            while not ended:
-                action, _ = model.predict(observation, deterministic=True,
-                                          action_masks=env.action_masks())
-                observation, reward, terminated, truncated, info = env.step(int(action))
-                if diagnostics:
-                    hole_events += int(info["new_holes"] > 0)
-                    hole_total += info["new_holes"]
-                ended = terminated or truncated
-            row = {"seed": int(seed), "pieces_survived": info["pieces"],
-                   "lines": info["lines"], "score": info["score"],
-                   "episode_reward": env.episode_reward,
-                   "game_over": bool(terminated), "survived_cap": bool(truncated)}
+        observation, info = env.reset(seed=int(seed))
+        ended = False
+        hole_events = hole_total = 0
+        while not ended:
+            action, _ = model.predict(observation, deterministic=True,
+                                      action_masks=env.action_masks())
+            observation, reward, terminated, truncated, info = env.step(int(action))
             if diagnostics:
-                row.update(new_holes_events=hole_events, new_holes_total=hole_total,
-                           holes_at_end=info["holes_after"])
-            rows.append(row)
+                hole_events += int(info["new_holes"] > 0)
+                hole_total += info["new_holes"]
+            ended = terminated or truncated
+        row = {"seed": int(seed), "pieces_survived": info["pieces"],
+               "lines": info["lines"], "score": info["score"],
+               "episode_reward": env.episode_reward,
+               "game_over": bool(terminated), "survived_cap": bool(truncated)}
+        if diagnostics:
+            row.update(new_holes_events=hole_events, new_holes_total=hole_total,
+                       holes_at_end=info["holes_after"])
+        return row
     finally:
         env.close()
+
+
+def _evaluate_worker(seed, max_pieces, diagnostics):
+    return _evaluate_seed(_WORKER_MODEL, seed, max_pieces, diagnostics)
+
+
+def evaluate_model(model_path, seeds, max_pieces, protocol, committed_steps,
+                   diagnostics=False, workers=1):
+    if workers < 1:
+        raise ValueError("Evaluation workers must be positive")
+    began = time.monotonic()
+    if workers == 1:
+        _init_worker(model_path)
+        rows = [_evaluate_worker(seed, max_pieces, diagnostics) for seed in seeds]
+    else:
+        with ProcessPoolExecutor(max_workers=min(workers, len(seeds)),
+                                 mp_context=get_context("spawn"),
+                                 initializer=_init_worker, initargs=(model_path,)) as pool:
+            # executor.map preserves the frozen seed order in the result file.
+            rows = list(pool.map(_evaluate_worker, seeds,
+                                 [max_pieces] * len(seeds), [diagnostics] * len(seeds)))
     return {"protocol": protocol, "committed_steps": committed_steps,
             "model_checkpoint": str(model_path), "num_seeds": len(seeds),
             "max_pieces": max_pieces, "seeds": list(seeds), "per_seed": rows,
@@ -99,12 +127,16 @@ def main():
     parser.add_argument("--protocol", required=True)
     parser.add_argument("--committed-steps", type=int, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--workers", type=int, default=0,
+                        help="0 selects up to eight CPU workers for independent seeds")
     args = parser.parse_args()
     seeds = json.loads(args.seeds_file.read_text())[args.seed_set][:args.seed_count]
     if len(seeds) != args.seed_count or len(set(seeds)) != len(seeds):
         raise ValueError("Seed count or uniqueness mismatch")
+    workers = min(8, os.cpu_count() or 1, len(seeds)) if args.workers == 0 else args.workers
     atomic_json(args.output, evaluate_model(args.model, seeds, args.max_pieces,
-                                            args.protocol, args.committed_steps))
+                                            args.protocol, args.committed_steps,
+                                            workers=workers))
 
 
 if __name__ == "__main__":
