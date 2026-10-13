@@ -157,19 +157,38 @@ def evaluate_dagger():
 
 
 def compare():
+    import math
+    import statistics
+    from training.evaluation.next_stage_agreement import agreement
     from training.evaluation.next_stage_models import RUN as comparison_run
     source = ROOT / "runs/imitation_v2_hold_20m/validation"
     existing = {}
     for label in ("pure_30m", "bc", "bc_ppo_2m"):
-        rows = list((source / label).glob("seed_*.json"))
-        if len(rows) != 32:
+        paths = list((source / label).glob("seed_*.json"))
+        if len(paths) != 32:
             raise RuntimeError(f"Incomplete old matched comparison: {label}")
-        pieces = [json.loads(path.read_text())["pieces_survived"] for path in rows]
-        existing[label] = {"mean_pieces": sum(pieces) / 32,
-                           "capped_count": sum(value == 20000 for value in pieces)}
+        rows = [json.loads(path.read_text()) for path in paths]
+        pieces = sorted(row["pieces_survived"] for row in rows)
+        existing[label] = {"mean_pieces": statistics.mean(pieces),
+                           "p10_pieces": pieces[math.ceil(.1 * len(pieces)) - 1],
+                           "capped_count": sum(value == 20000 for value in pieces),
+                           "mean_lines": statistics.mean(row["lines"] for row in rows),
+                           "mean_score": statistics.mean(row["score"] for row in rows),
+                           "new_holes_per_100_pieces": (100 * sum(row["new_holes_total"] for row in rows)
+                                                        / sum(row["pieces_survived"] for row in rows)),
+                           "mean_height_at_end": statistics.mean(row["height_at_end"] for row in rows)}
     new = {label: json.loads((comparison_run / "comparisons" / label / "summary.json").read_text())
            for label in ("kl_ppo_2m", "dagger_selected")}
+    selected = json.loads((DAGGER / "selected.json").read_text())["epoch"]
+    action_agreement = agreement({
+        "pure_30m": ROOT / "runs/ppo_candidate_raw_30m_seed42/final/model.zip",
+        "bc": CHAMPION,
+        "bc_ppo_2m": ROOT / "runs/imitation_v2_hold_20m/ppo_finetune_2m/final/model.zip",
+        "kl_ppo_2m": KL / "final/model.zip",
+        "dagger_selected": DAGGER / "bc" / f"epoch_{selected:02d}.zip",
+    })
     atomic_json(RUN / "comparison_summary.json", {"existing": existing, "new": new,
+                "v2_action_agreement": action_agreement,
                 "protocol": "same 32 fixed validation seeds, deterministic, mask, 20k cap",
                 "completed_at": now()})
 
@@ -248,11 +267,17 @@ def generate_reports():
              f"全新 30-seed × 100,000 块：BC {general['bc']['capped_count']}/30，"
              f"V2 Hold {general['v2_hold']['capped_count']}/30；"
              f"双方均截断 {general['paired']['both_capped']} 局。", "",
-             "| 模型 | 20k 平均存活 | 20k 截断局数 |", "|---|---:|---:|"]
+             "| 模型 | 20k 平均存活 | P10 | 截断局数 | 新增洞/100块 | 结束高度 | V2 动作一致率* |",
+             "|---|---:|---:|---:|---:|---:|---:|"]
     for group in ("existing", "new"):
         for name, row in comparison[group].items():
-            lines.append(f"| {name} | {row['mean_pieces']:.1f} | {row['capped_count']}/32 |")
-    lines += ["", f"100k 长验证模型：{', '.join(long_protocol['models']) or '无'}。", ""]
+            agreement = comparison["v2_action_agreement"]["models"][name]["v2_action_agreement"]
+            lines.append(f"| {name} | {row['mean_pieces']:.1f} | {row['p10_pieces']} | "
+                         f"{row['capped_count']}/32 | {row['new_holes_per_100_pieces']:.2f} | "
+                         f"{row['mean_height_at_end']:.1f} | {agreement:.1%} |")
+    lines += ["", "*动作一致率在同一批 2,048 个旧 BC 验证集专家状态上计算；"
+                   "这是相同状态的监督对照，不能替代模型各自轨迹的长期生存结果。", "",
+              f"100k 长验证模型：{', '.join(long_protocol['models']) or '无'}。", ""]
     for name in long_protocol["models"]:
         row = json.loads((RUN / "comparisons" / f"long_100k_{name}" / "summary.json").read_text())
         lines.append(f"- {name}: 平均存活 {row['mean_pieces']:.1f}，P10 {row['p10_pieces']}，"
