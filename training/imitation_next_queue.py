@@ -20,7 +20,7 @@ STAGES = ("new_seed_generalization_test", "analyze_ppo_degradation", "kl_ppo_smo
           "tune_kl_beta", "train_kl_ppo_2m", "evaluate_kl_ppo", "collect_dagger_data",
           "collect_dagger_validation", "dagger_supervised_training",
           "evaluate_dagger_tuning", "evaluate_dagger", "comparative_analysis",
-          "long_validation_if_saturated", "generate_reports")
+          "long_validation_if_saturated", "generate_reports", "publish_reports")
 
 
 def command(*args):
@@ -264,6 +264,25 @@ def generate_reports():
                                               "generated_at": now()})
 
 
+def publish_reports():
+    files = ["candidate_bc_generalization.md", "candidate_bc_ppo_degradation.md",
+             "candidate_kl_ppo_2m.md", "candidate_dagger_v1.md",
+             "candidate_imitation_next_stage.md"]
+    paths = [f"reports/experiments/{name}" for name in files]
+    subprocess.run(["git", "add", "--", *paths], cwd=ROOT, check=True)
+    changes = subprocess.run(["git", "diff", "--cached", "--quiet", "--", *paths],
+                             cwd=ROOT, check=False)
+    if changes.returncode == 1:
+        subprocess.run(["git", "commit", "-m", "docs(imitation): publish completed KL and DAgger results",
+                        "--", *paths], cwd=ROOT, check=True)
+    elif changes.returncode:
+        raise RuntimeError("Could not verify staged report changes")
+    subprocess.run(["git", "push", "origin", "main"], cwd=ROOT, check=True)
+    atomic_json(RUN / "report_status.json", {"state": "published", "git_commit":
+                subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
+                "published_at": now()})
+
+
 ACTIONS = {"new_seed_generalization_test": wait_generalization,
            "analyze_ppo_degradation": lambda: command("training.evaluation.bc_ppo_degradation"),
            "kl_ppo_smoke_tests": lambda: command("pytest", "-q", "tests/test_kl_maskable_ppo.py",
@@ -279,7 +298,8 @@ ACTIONS = {"new_seed_generalization_test": wait_generalization,
            "evaluate_dagger": evaluate_dagger,
            "comparative_analysis": compare,
            "long_validation_if_saturated": long_validation,
-           "generate_reports": generate_reports}
+           "generate_reports": generate_reports,
+           "publish_reports": publish_reports}
 
 
 def run():
