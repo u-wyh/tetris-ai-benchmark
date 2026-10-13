@@ -14,8 +14,10 @@ RUN = ROOT / "runs/candidate_bc_next_stage"
 CHAMPION = RUN / "champion/model.zip"
 KL = ROOT / "runs/candidate_bc_klppo_2m"
 DAGGER = ROOT / "runs/candidate_bc_dagger_v1"
+KL_TUNING = RUN / "kl_tuning"
+KL_BETAS = {"beta_001": 0.01, "beta_003": 0.03}
 STAGES = ("new_seed_generalization_test", "analyze_ppo_degradation", "kl_ppo_smoke_tests",
-          "train_kl_ppo_2m", "evaluate_kl_ppo", "collect_dagger_data",
+          "tune_kl_beta", "train_kl_ppo_2m", "evaluate_kl_ppo", "collect_dagger_data",
           "collect_dagger_validation", "dagger_supervised_training",
           "evaluate_dagger_tuning", "evaluate_dagger", "comparative_analysis",
           "long_validation_if_saturated", "generate_reports")
@@ -43,18 +45,22 @@ def wait_generalization():
         time.sleep(30)
 
 
-def prepare_kl():
+def prepare_kl(beta, target_steps, run_seed, path):
     config = json.loads((ROOT / "configs/ppo_candidate_raw_2m_seed42.json").read_text())
     model_hash = digest(CHAMPION)
-    config.update({"base_seed": 242, "step0_baseline": False,
+    config.update({"base_seed": run_seed, "target_total_steps": target_steps,
+                   "step0_baseline": False,
                    "initial_model": {"path": str(CHAMPION.resolve()), "sha256": model_hash,
                                      "actor": "frozen 20M PPO + BC epoch 3",
                                      "critic": "20M PPO critic unchanged by actor-only BC",
                                      "optimizer": "fresh", "ppo_steps_before_run": 0},
                    "kl_reference": {"path": str(CHAMPION.resolve()), "sha256": model_hash,
-                                    "beta": 0.02, "direction": "KL(current||BC)",
+                                    "beta": beta, "direction": "KL(current||BC)",
                                     "legal_actions_only": True}})
-    path = RUN / "kl_ppo_config.json"
+    if target_steps < 1_000_000:
+        config.update({"validation_interval": 1_000_000, "milestone_interval": 1_000_000})
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
     if path.exists() and json.loads(path.read_text()) != config:
         raise RuntimeError("Frozen KL-PPO config changed")
     if not path.exists():
@@ -62,19 +68,54 @@ def prepare_kl():
     return path
 
 
-def train_kl():
-    config = prepare_kl()
-    state = KL / "transaction_state.json"
-    command("training.train_vector_transaction", "--run-dir", KL,
+def train_transaction(run_dir, config):
+    state = run_dir / "transaction_state.json"
+    command("training.train_vector_transaction", "--run-dir", run_dir,
             *( ["--resume"] if state.exists() else ["--config-file", config]))
     result = json.loads(state.read_text())
-    if result["status"] != "completed" or result["committed_steps"] < 2_000_000:
-        raise RuntimeError("KL-PPO did not commit 2M steps")
+    if result["status"] != "completed":
+        raise RuntimeError(f"KL-PPO run did not complete: {run_dir}")
+    return result
 
 
 def model_evaluation(label, model, seed_set="validation", cap=20000):
     command("training.evaluation.next_stage_models", "--label", label,
             "--model", model, "--seed-set", seed_set, "--cap", cap)
+
+
+def tune_kl_beta():
+    # These eight seeds are disjoint from the held-out 30-seed BC/V2 comparison.
+    model_evaluation("tuning_bc", CHAMPION, "tuning")
+    scores = {}
+    for index, (label, beta) in enumerate(KL_BETAS.items()):
+        run_dir = KL_TUNING / label
+        config = prepare_kl(beta, 250_000, 342 + 100 * index,
+                            KL_TUNING / f"{label}_config.json")
+        state = train_transaction(run_dir, config)
+        if state["committed_steps"] < 250_000:
+            raise RuntimeError(f"KL tuning run stopped early: {label}")
+        comparison_label = f"tuning_kl_{label}"
+        model_evaluation(comparison_label, run_dir / "final/model.zip", "tuning")
+        scores[label] = json.loads((RUN / "comparisons" / comparison_label / "summary.json").read_text())
+    # Pre-registered survival priority; prefer the stronger anchor on exact ties.
+    selected = max(KL_BETAS, key=lambda label: (scores[label]["mean_pieces"],
+                                                 scores[label]["p10_pieces"],
+                                                 scores[label]["capped_count"],
+                                                 KL_BETAS[label]))
+    atomic_json(KL_TUNING / "selection.json",
+                {"selected": selected, "beta": KL_BETAS[selected], "scores": scores,
+                 "tuning_seeds": list(range(1260000, 1260008)),
+                 "pilot_environment_steps_per_beta": 253952,
+                 "selection_rule": "mean survival, P10, cap count, then stronger KL",
+                 "fresh_30_seed_test_excluded": True, "selected_at": now()})
+
+
+def train_kl():
+    selection = json.loads((KL_TUNING / "selection.json").read_text())
+    config = prepare_kl(selection["beta"], 2_000_000, 242, RUN / "kl_ppo_config.json")
+    result = train_transaction(KL, config)
+    if result["committed_steps"] < 2_000_000:
+        raise RuntimeError("KL-PPO did not commit 2M steps")
 
 
 def collect_dagger():
@@ -228,6 +269,7 @@ ACTIONS = {"new_seed_generalization_test": wait_generalization,
            "kl_ppo_smoke_tests": lambda: command("pytest", "-q", "tests/test_kl_maskable_ppo.py",
                                                   "tests/test_dagger_dataset.py",
                                                   "tests/test_kl_transaction.py"),
+           "tune_kl_beta": tune_kl_beta,
            "train_kl_ppo_2m": train_kl,
            "evaluate_kl_ppo": lambda: model_evaluation("kl_ppo_2m", KL / "final/model.zip"),
            "collect_dagger_data": collect_dagger,
