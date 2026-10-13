@@ -16,6 +16,9 @@ def test_independent_seeds_are_new_and_disjoint():
 
 
 def test_selection_is_frozen_and_recoverable(tmp_path, monkeypatch):
+    # The real 400000-series independent results now exist. Isolate this unit
+    # test's seed-audit root so it exercises pre-evaluation selection behavior.
+    monkeypatch.setattr(pipeline, "ROOT", tmp_path)
     monkeypatch.setattr(pipeline, "RUN", tmp_path)
     proto = pipeline.frozen_protocol()
     for step, pieces in zip(pipeline.STEPS, (10000, 16000, 8000)):

@@ -2,6 +2,7 @@
 
 ## 2026-10-13
 
+- 冻结 20M PPO + BC epoch 3 Champion 并核验模型/数据/教师版本，排队运行全新 30-seed、100,000 块 BC 与 V2 Hold 对照；新增 BC+普通 PPO 退步的动作漂移、KL 和训练曲线分析。实现独立 KL-PPO 事务训练、真实 Core DAgger 采集与混合监督训练及可恢复后台队列，正式生存结果仍待完成。详见 `reports/experiments/candidate_imitation_next_stage.md`。
 - 20M PPO + BC 在与传统 V1、V2 Hold 相同的 10 个 validation seeds、100,000 块上限下全部 10/10 到达上限；V2 Hold 同为 10/10，V1 为 1/10、平均存活 26,002.6 块。BC 与 V2 在此上限内持平，超出上限的真实寿命仍未知。详见 `reports/experiments/candidate_bc_vs_traditional_100k.md`。
 
 ## 2026-10-12

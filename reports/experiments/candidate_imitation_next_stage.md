@@ -1,0 +1,9 @@
+# Candidate 模仿学习下一阶段：进度与决策
+
+截至 2026-10-13：冻结 `20M PPO + BC epoch 3` 完成；普通 BC+2M PPO 的退步证据已分析；30 个全新种子的 BC/V2 100,000 块测试正在等待旧 V2 配对验证完成。KL-PPO 与 DAgger 已实现并通过小规模正确性测试，正式训练和比较尚未完成。后台依次执行泛化测试、KL 2M、DAgger 采集/监督训练、同 seed 生存比较；任一步失败会留有状态与异常，不会静默跳过。
+
+已有统一 32-seed、20,000 块比较：纯 PPO 30M 平均 19,626、31/32 跑满；20M+BC 平均 20,000、32/32；普通 BC+2M PPO 平均 15,369、16/32。已有 10-seed、100,000 块比较中，BC 和 V2 均 10/10 跑满，仅能认定此上限内的生存下界相同。DAgger 与 KL-PPO 是否保留或改善 BC 的长寿命能力尚需后台实验确认。独立新种子用于 BC/V2 一次性泛化判断，**不**用于超参数选择。
+
+现阶段最值得保留的是冻结 BC Champion。普通 PPO 微调明显降低它在既有验证集上的稳定性，不建议盲目再加普通 PPO 步数。若 KL-PPO 或 DAgger 在同一协议中提高长期存活与低分位表现，再考虑扩大；本轮不自动启动 50M/100M，也不组合两种方法。
+
+详细结果：[泛化验证](candidate_bc_generalization.md)、[PPO 退步分析](candidate_bc_ppo_degradation.md)、[KL-PPO](candidate_kl_ppo_2m.md)、[DAgger](candidate_dagger_v1.md)。

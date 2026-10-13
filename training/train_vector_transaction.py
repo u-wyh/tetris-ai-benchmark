@@ -36,6 +36,7 @@ REQUIRED_FILES = {"model.zip", "trainer_state.pkl", "vector_env_state.pkl",
                   "metrics.json", "task_meta.json"}
 HOLE_METRIC_FIELDS = ("mean_raw_reward", "mean_shaped_reward", "mean_new_holes",
                       "new_holes_per_100_pieces", "mean_hole_penalty")
+KL_METRIC_FIELDS = ("bc_kl", "explained_variance")
 
 
 def reward_settings(config):
@@ -223,8 +224,17 @@ def restore_task(run_dir, number, config, env):
     if len(saved) != config["ppo"]["n_envs"]:
         raise RuntimeError("Committed checkpoint does not contain every worker")
     env.reset()  # Consume the initial per-worker seeds before installing saved logical state.
-    model = MaskablePPO.load(str(task_dir / "model.zip"), env=env,
+    algorithm = MaskablePPO
+    if config.get("kl_reference"):
+        from training.kl_maskable_ppo import KLMaskablePPO
+        algorithm = KLMaskablePPO
+    model = algorithm.load(str(task_dir / "model.zip"), env=env,
                              device=config["device"], force_reset=False)
+    if config.get("kl_reference"):
+        reference = config["kl_reference"]
+        if sha256(Path(reference["path"])) != reference["sha256"]:
+            raise RuntimeError("Frozen BC reference changed")
+        model.set_reference(MaskablePPO.load(reference["path"], device=config["device"]))
     for index, state in enumerate(saved):
         env.env_method("set_state", state, indices=[index])
     observations, digests = observation_and_mask_digests(env)
@@ -243,7 +253,8 @@ def restore_task(run_dir, number, config, env):
 
 def rebuild_vector_metrics(run_dir, committed_task, config):
     buffer = io.StringIO()
-    columns = FIELDS + (HOLE_METRIC_FIELDS if config.get("hole_penalty_coef", 0.0) else ())
+    columns = (FIELDS + (HOLE_METRIC_FIELDS if config.get("hole_penalty_coef", 0.0) else ())
+               + (KL_METRIC_FIELDS if config.get("kl_reference") else ()))
     writer = csv.DictWriter(buffer, fieldnames=columns)
     writer.writeheader()
     for number in range(1, committed_task + 1):
@@ -288,6 +299,11 @@ def commit_vector_task(run_dir, state, working_dir, model, env, callback, captur
         raise RuntimeError("Worker states and PPO observations disagree before commit")
     trainer = global_rng_state(model)
     metrics = metrics_for_task(model, callback, capture, number, start_step, training_seconds)
+    if config.get("kl_reference"):
+        metrics["bc_kl"] = (float(capture.values["train/bc_kl"])
+                            if "train/bc_kl" in capture.values else None)
+        metrics["explained_variance"] = (float(capture.values["train/explained_variance"])
+                                         if "train/explained_variance" in capture.values else None)
     if config.get("hole_penalty_coef", 0.0):
         metrics.update(hole_metrics_for_task(callback, state["task_steps"]))
     atomic_json(working_dir / "metrics.json", metrics)
@@ -437,10 +453,16 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     raise RuntimeError("Resume candidate policy differs from recorded run")
                 if preset.get("initial_model") != config.get("initial_model"):
                     raise RuntimeError("Resume initial model differs from recorded run")
+                if preset.get("kl_reference") != config.get("kl_reference"):
+                    raise RuntimeError("Resume KL reference differs from recorded run")
             if config.get("initial_model"):
                 initial = config["initial_model"]
                 if sha256(Path(initial["path"])) != initial["sha256"]:
                     raise RuntimeError("Initial model changed")
+            if config.get("kl_reference"):
+                reference = config["kl_reference"]
+                if sha256(Path(reference["path"])) != reference["sha256"]:
+                    raise RuntimeError("Frozen BC reference changed")
             if config.get("long_run_version"):
                 if sha256(SEEDS_FILE) != config["evaluation_seed_sha256"]:
                     raise RuntimeError("Fixed evaluation seed file changed")
@@ -474,6 +496,16 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     if not config.get("candidate_policy") or sha256(Path(initial["path"])) != initial["sha256"]:
                         raise RuntimeError("Candidate initial model integrity failed")
                     config["initial_model"] = initial
+                if "kl_reference" in preset:
+                    reference = preset["kl_reference"]
+                    if (not config.get("candidate_policy") or
+                            sha256(Path(reference["path"])) != reference["sha256"] or
+                            float(reference["beta"]) < 0):
+                        raise RuntimeError("KL reference integrity failed")
+                    if not config.get("initial_model") or config["initial_model"]["sha256"] != reference["sha256"]:
+                        raise RuntimeError("KL run must start from the frozen BC reference")
+                    config["kl_reference"] = reference
+                    config["algorithm"] = "training.kl_maskable_ppo.KLMaskablePPO"
             else:
                 config = vector_config(target_steps=target_steps)
             config["step0_baseline"] = bool(preset.get("step0_baseline", False)) if config_file else False
@@ -563,20 +595,29 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                                  {"net_arch": {"pi": config["network"]["pi"],
                                                "vf": config["network"]["vf"]},
                                   "activation_fn": torch.nn.Tanh})
-                model = MaskablePPO(
+                algorithm = MaskablePPO
+                extra_algorithm = {}
+                if config.get("kl_reference"):
+                    from training.kl_maskable_ppo import KLMaskablePPO
+                    algorithm = KLMaskablePPO
+                    extra_algorithm["kl_beta"] = config["kl_reference"]["beta"]
+                model = algorithm(
                     policy, env, policy_kwargs=policy_kwargs,
                     learning_rate=ppo["learning_rate"], gamma=ppo["gamma"],
                     gae_lambda=ppo["gae_lambda"], clip_range=ppo["clip_range"],
                     n_steps=ppo["n_steps"], batch_size=ppo["batch_size"],
                     n_epochs=ppo["n_epochs"], ent_coef=ppo["ent_coef"],
                     vf_coef=ppo["vf_coef"], max_grad_norm=ppo["max_grad_norm"],
-                    seed=config["run_seed"], device=config["device"], verbose=0)
+                    seed=config["run_seed"], device=config["device"], verbose=0,
+                    **extra_algorithm)
                 if config.get("initial_model"):
                     source = MaskablePPO.load(config["initial_model"]["path"], device="cpu")
                     model.policy.load_state_dict(source.policy.state_dict(), strict=True)
                     # Preserve the fresh optimizer, timestep zero, and independent RNG.
                     if model.num_timesteps != 0:
                         raise RuntimeError("Fine-tune run must start at PPO step zero")
+                if config.get("kl_reference"):
+                    model.set_reference(source)
             if config.get("step0_baseline"):
                 from training.step0_baseline import evaluate_baseline
                 state.update({"status": "baseline", "pid": os.getpid()})
