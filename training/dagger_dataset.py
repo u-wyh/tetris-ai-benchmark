@@ -102,8 +102,13 @@ def collect(output, seeds, limit=1000, target=20000):
               "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()}
     output.mkdir(parents=True, exist_ok=True)
     config_path = output / "config.json"
-    if config_path.exists() and json.loads(config_path.read_text()) != config:
-        raise RuntimeError("DAgger collection configuration changed")
+    if config_path.exists():
+        saved = json.loads(config_path.read_text())
+        # Preserve the original code commit as provenance, while allowing a
+        # documentation-only Git commit between interrupted collection runs.
+        if {key: value for key, value in saved.items() if key != "git_commit"} != {
+                key: value for key, value in config.items() if key != "git_commit"}:
+            raise RuntimeError("DAgger collection configuration changed")
     if not config_path.exists():
         atomic_json(config_path, config)
     torch.set_num_threads(1)
