@@ -27,7 +27,8 @@ def test_generate_reports_from_completed_artifacts(tmp_path, monkeypatch):
          {"bc": sample, "v2_hold": sample,
           "paired": {"both_capped": 30, "bc_wins": 0, "v2_wins": 0}})
     row = {"mean_pieces": 20000, "p10_pieces": 20000, "capped_count": 32,
-           "mean_lines": 7999, "new_holes_per_100_pieces": 2.1,
+           "mean_lines": 7999, "mean_score": 333000000,
+           "new_holes_per_100_pieces": 2.1,
            "mean_height_at_end": 3.0}
     labels = ("pure_30m", "bc", "bc_ppo_2m", "kl_ppo_2m", "dagger_selected")
     save(queue.RUN / "comparison_summary.json",

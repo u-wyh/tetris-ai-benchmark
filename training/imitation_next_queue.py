@@ -267,13 +267,14 @@ def generate_reports():
              f"全新 30-seed × 100,000 块：BC {general['bc']['capped_count']}/30，"
              f"V2 Hold {general['v2_hold']['capped_count']}/30；"
              f"双方均截断 {general['paired']['both_capped']} 局。", "",
-             "| 模型 | 20k 平均存活 | P10 | 截断局数 | 新增洞/100块 | 结束高度 | V2 动作一致率* |",
-             "|---|---:|---:|---:|---:|---:|---:|"]
+             "| 模型 | 20k 平均存活 | P10 | 截断局数 | 平均消行 | 平均游戏分 | 新增洞/100块 | 结束高度 | V2 动作一致率* |",
+             "|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for group in ("existing", "new"):
         for name, row in comparison[group].items():
             agreement = comparison["v2_action_agreement"]["models"][name]["v2_action_agreement"]
             lines.append(f"| {name} | {row['mean_pieces']:.1f} | {row['p10_pieces']} | "
-                         f"{row['capped_count']}/32 | {row['new_holes_per_100_pieces']:.2f} | "
+                         f"{row['capped_count']}/32 | {row['mean_lines']:.1f} | "
+                         f"{row['mean_score']:.0f} | {row['new_holes_per_100_pieces']:.2f} | "
                          f"{row['mean_height_at_end']:.1f} | {agreement:.1%} |")
     lines += ["", "*动作一致率在同一批 2,048 个旧 BC 验证集专家状态上计算；"
                    "这是相同状态的监督对照，不能替代模型各自轨迹的长期生存结果。", "",
