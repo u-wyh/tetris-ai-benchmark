@@ -5,6 +5,7 @@ import statistics
 import traceback
 
 from sb3_contrib import MaskablePPO
+import torch
 
 from training.evaluation.champion_pipeline import evaluate_seed
 from training.imitation_dataset import digest
@@ -39,6 +40,7 @@ def summary(rows):
 
 
 def run():
+    torch.set_num_threads(1)
     RUN.mkdir(parents=True, exist_ok=True)
     v1, v2 = reference("v1"), reference("hold")
     config = {"model": str(MODEL), "model_sha256": digest(MODEL),
