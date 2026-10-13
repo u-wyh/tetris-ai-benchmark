@@ -2,6 +2,9 @@
 
 这里记录对训练、评测和项目代码产生实际影响的操作。时间为北京时间（UTC+08:00）。代码提交以 Git 为准，训练步数和阶段以 `runs/` 中的事务及队列文件为准。补录项只写可核实的事实；普通只读查询和每条 shell 命令不逐项记录。
 
+## 2026-10-14
+
+- 02:34｜Hybrid 调参及独立确认评测完成，最终报告已生成并准备提交推送。依据：`runs/candidate_ppo30m_bc_hybrid/status.json`、`reports/experiments/candidate_ppo30m_bc_hybrid.md`。
 ## 2026-10-13
 
 - 23:54｜Hybrid 队列完成烟雾阶段并进入 16-seed 20K 调参；启动独立 `tetris-hybrid-publish` 收尾程序，待全部确认局完成后提交推送报告。依据：`runs/candidate_ppo30m_bc_hybrid/status.json`、`training/evaluation/hybrid_publish.py`。
