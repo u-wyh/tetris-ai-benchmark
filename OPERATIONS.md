@@ -4,6 +4,9 @@
 
 ## 2026-10-13
 
+- 23:46｜双策略队列入口检查意外进入等待 DAgger 的循环，立即中断；仅写入模型协议与等待状态，未加载模型或执行对局。依据：`runs/candidate_ppo30m_bc_hybrid/status.json`、本次终端中断记录。
+- 23:51｜核验冻结 PPO 30M 与 BC checkpoint SHA256、观测／特征／动作版本；实现独立双策略 A/B 控制器与可恢复评测队列。4 项策略单测、环境／并行定向测试共 10 项通过，Parity 6 项和 35 个子测试通过；两模型 CPU 1000 块低负载试跑完成。启动 `tetris-hybrid` tmux 队列，先等待 DAgger 队列完成。依据：`tests/test_hybrid_policy.py`、`runs/candidate_ppo30m_bc_hybrid/`、本次测试输出。
+- 23:52｜补齐逐局恢复校验、模型空间核验、配对报告和真实模型一致性测试后，停止并重启仍在等待 DAgger 的 `tetris-hybrid` 队列；停止前无 Hybrid 对局。更新后 11 项定向测试通过。依据：队列状态、`tests/test_hybrid_policy.py`、本次终端输出。
 - 12:43–13:53｜建立并行的 BC／传统算法 10 万块配对测试，提交结果报告；10 个共同种子中 BC 与 V2 Hold 均 10/10 到达上限。依据：Git `db72647`–`87119b2`、`reports/experiments/candidate_bc_vs_traditional_100k.md`。
 - 14:55–15:23｜提交全新种子泛化、KL-PPO、DAgger 和可恢复后台队列；补充恢复与数据版本测试，启动 `tetris-imitation-next`。依据：Git `f637691`–`1322a44`、队列状态。
 - 17:27｜30 个全新种子、每局上限 10 万块的 BC／V2 Hold 对照完成：BC 30/30、V2 28/30 到达上限。依据：`runs/candidate_bc_next_stage/generalization/summary.json`。
