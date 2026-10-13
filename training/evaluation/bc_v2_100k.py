@@ -3,6 +3,8 @@ import json
 from pathlib import Path
 import statistics
 import traceback
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from multiprocessing import get_context
 
 from sb3_contrib import MaskablePPO
 import torch
@@ -16,6 +18,7 @@ MODEL = ROOT / "runs/imitation_v2_hold_20m/bc/epoch_03.zip"
 REFERENCE = ROOT / "reports/traditional_longlife/validation10_100000_20261008"
 SEEDS = list(range(100016, 100026))
 CAP = 100000
+WORKERS = 4
 
 
 def reference(label):
@@ -39,8 +42,15 @@ def summary(rows):
             "mean_lines": statistics.mean(r["lines"] for r in rows)}
 
 
-def run():
+def evaluate_one(seed):
     torch.set_num_threads(1)
+    model = MaskablePPO.load(str(MODEL), device="cpu")
+    row = evaluate_seed(model, seed, CAP)
+    atomic_json(RUN / f"seed_{seed}.json", row)
+    return seed, row["pieces_survived"], row["lines"]
+
+
+def run():
     RUN.mkdir(parents=True, exist_ok=True)
     v1, v2 = reference("v1"), reference("hold")
     config = {"model": str(MODEL), "model_sha256": digest(MODEL),
@@ -52,8 +62,8 @@ def run():
         raise RuntimeError("100k comparison configuration changed")
     if not path.exists():
         atomic_json(path, config)
-    model = MaskablePPO.load(str(MODEL), device="cpu")
     try:
+        pending = []
         for seed in SEEDS:
             target = RUN / f"seed_{seed}.json"
             if target.exists():
@@ -61,11 +71,20 @@ def run():
                 if row["seed"] != seed or row["pieces_survived"] > CAP:
                     raise RuntimeError(f"Invalid saved BC row for {seed}")
             else:
-                atomic_json(RUN / "status.json", {"state": "running", "seed": seed,
-                                                      "completed_seeds": seed-SEEDS[0], "updated_at": now()})
-                row = evaluate_seed(model, seed, CAP)
-                atomic_json(target, row)
-            print(f"seed={seed} pieces={row['pieces_survived']} lines={row['lines']}", flush=True)
+                pending.append(seed)
+        completed = len(SEEDS) - len(pending)
+        atomic_json(RUN / "status.json", {"state": "running", "completed_seeds": completed,
+                                              "total_seeds": len(SEEDS), "workers": WORKERS,
+                                              "updated_at": now()})
+        with ProcessPoolExecutor(max_workers=WORKERS, mp_context=get_context("spawn")) as pool:
+            futures = {pool.submit(evaluate_one, seed): seed for seed in pending}
+            for future in as_completed(futures):
+                seed, pieces, lines = future.result()
+                completed += 1
+                atomic_json(RUN / "status.json", {"state": "running", "completed_seeds": completed,
+                                                      "total_seeds": len(SEEDS), "last_seed": seed,
+                                                      "workers": WORKERS, "updated_at": now()})
+                print(f"seed={seed} pieces={pieces} lines={lines}", flush=True)
         bc = [json.loads((RUN / f"seed_{seed}.json").read_text()) for seed in SEEDS]
         result = {"bc": summary(bc), "v1": summary(v1), "v2_hold": summary(v2),
                   "protocol": config, "completed_at": now()}
