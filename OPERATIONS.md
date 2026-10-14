@@ -4,6 +4,7 @@
 
 ## 2026-10-14
 
+- 10:07｜提交并推送 B12 失败分析、冻结 C1/C2 设计及独立 V2 评测实现（Git `1ee5800`）；启动 `tetris-hybrid-v2` 可恢复后台队列和独立收尾推送程序。烟雾阶段已开始；不会启动任何 PPO、BC、DAgger 或蒸馏训练。依据：`runs/hybrid_v2/status.json`、tmux 会话、Git `1ee5800`。
 - 10:06｜冻结 C1/C2 设计与独立种子协议，新增可恢复评测和最终报告／推送程序；Python 定向回归 30 项、Parity 6 项含 35 子测试、JS 语法检查通过。尚未启动新开发长局评测。依据：`reports/experiments/hybrid_v2_design.md`、`tests/test_hybrid_v2.py`、本次测试输出。
 - 10:02｜六个 B12 失败局完成确定性重放与选定位置同状态双分支；生成诊断报告。六局 1131 次 BC 动作中，753 次 Hold 用法与 PPO 候选不同、77 次 BC 候选新增洞更多；关键单点结论及不确定性见报告。依据：`runs/hybrid_v2/failure_analysis/`、`reports/experiments/hybrid_b12_failure_analysis.md`。
 - 09:52｜`700016` 的旧 B12 轨迹与终局重放一致。为缩短剩余五局离线反事实耗时，中断串行分析并改为最多 4 个 CPU 进程并行后恢复；已完成且字段齐全的局不重跑。依据：`runs/hybrid_v2/failure_analysis/seed_700016.json`、`failure.log`。
