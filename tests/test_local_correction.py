@@ -1,5 +1,6 @@
 """Local imitation must preserve official masking and the frozen reference."""
 import torch
+import io
 
 import training.local_correction_data as data
 from training.evaluation.hybrid_queue import load_models
@@ -140,3 +141,15 @@ def test_development_gate_preserves_four_clear_strategy():
     assert not _promising(candidate, ppo)
     candidate["four_fraction"] = .87
     assert not _healthy(candidate, ppo)
+
+
+def test_rng_state_loaded_on_cuda_can_restore_cpu_generator():
+    if not torch.cuda.is_available():
+        return
+    state = torch.get_rng_state()
+    output = io.BytesIO()
+    torch.save({"torch_rng": state}, output)
+    output.seek(0)
+    loaded = torch.load(output, map_location="cuda", weights_only=False)
+    torch.set_rng_state(loaded["torch_rng"].cpu())
+    assert torch.equal(torch.get_rng_state(), state)

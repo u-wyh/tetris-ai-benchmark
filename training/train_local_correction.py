@@ -132,9 +132,9 @@ def train(variant="V1", epochs=3, keep_weight=1.0, device="cuda", seed=20261014)
                            weights_only=False)
         optimizer.load_state_dict(state["optimizer"])
         rng.setstate(state["python_rng"])
-        torch.set_rng_state(state["torch_rng"])
+        torch.set_rng_state(state["torch_rng"].cpu())
         if device == "cuda":
-            torch.cuda.set_rng_state_all(state["cuda_rng"])
+            torch.cuda.set_rng_state_all([value.cpu() for value in state["cuda_rng"]])
     critic = {key: value.detach().clone() for key, value in policy.value_net.state_dict().items()}
     if not history:
         atomic_json(folder / "baseline.json", {"train": metrics(policy, reference, correct, keep, device),
