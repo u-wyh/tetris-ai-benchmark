@@ -44,6 +44,8 @@ def generate(state, choice=None):
              f"策略分歧 {sum(x['policy_disagreements'] for x in metas):,}；"
              f"保留风险候选 {sum(x['risky_candidates'] for x in metas):,}，"
              f"正常样本 {sum(x['normal_samples'] for x in metas):,}。", "",
+             "优先选择 PPO 实际死亡前 1000 块内、距死亡约 500 块的风险状态；"
+             "从冻结 PPO 确定性重放目标位置，并验证公开状态哈希与动作一致。", "",
              f"已验证 {sum(len(x['labels']) for x in labels):,} 个同状态分支，"
              f"A 类可信纠错 {sum(x['A'] for x in labels):,}，"
              f"B 类不确定 {sum(x['B'] for x in labels):,}。"

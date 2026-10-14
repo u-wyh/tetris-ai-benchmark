@@ -85,3 +85,29 @@ def test_sampler_keeps_every_candidate_until_capacity(monkeypatch, tmp_path):
     result = data.capture(730904, load_models())
     assert result["risky_candidates"] == result["risk_disagreements_seen"]
     assert result["normal_samples"] == result["normal_candidates_seen"]
+
+
+def test_branch_selection_prioritizes_observed_predeath_states():
+    rows = {i * 100: {"step": i * 100, "category": "candidate",
+                      "death_distance": None, "ppo_risk": {"height": 19, "central_top4": 2}}
+            for i in range(13)}
+    rows[5000] = {"step": 5000, "category": "candidate", "death_distance": 500,
+                  "ppo_risk": {"height": 12, "central_top4": 0}}
+    chosen = data._branch_targets(rows)
+    assert len(chosen) == 12
+    assert 5000 in chosen
+
+
+def test_selected_state_replay_matches_public_hash(monkeypatch, tmp_path):
+    monkeypatch.setattr(data, "RUN", tmp_path)
+    monkeypatch.setattr(data, "CAP", 200)
+    models = load_models()
+    meta = data.capture(730904, models)
+    shard, _, _ = data._paths(730904)
+    import gzip
+    import json
+    with gzip.open(shard, "rt", encoding="utf8") as stream:
+        rows = {row["step"]: row for row in map(json.loads, stream)}
+    targets = data._branch_targets(rows)
+    snapshots = data._replay_snapshots(730904, rows, targets, models, meta["shard_sha256"])
+    assert sorted(snapshots) == targets

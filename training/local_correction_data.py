@@ -37,7 +37,8 @@ def audit():
                     if not path.is_relative_to(RUN):
                         raise RuntimeError(f"Previously used seed {seed}: {path}")
     protocol = {"models": HASHES, "seeds": groups, "cap": CAP,
-                "branch_horizon": HORIZON, "version": 2}
+                "branch_horizon": HORIZON, "version": 3,
+                "branch_selection": "death_distance_near_500_with_100_piece_spacing_v1"}
     path = RUN / "protocol.json"
     if path.exists() and json.loads(path.read_text()) != protocol:
         raise RuntimeError("Frozen local-correction protocol changed")
@@ -220,6 +221,59 @@ def classify(row, snapshot, models):
             "branches": branches}
 
 
+def _branch_targets(rows):
+    """Use outcome only offline to locate the risky decisions worth branching."""
+    def priority(row):
+        distance = row["death_distance"]
+        if distance is not None and distance <= HORIZON:
+            return (0, abs(distance - HORIZON // 2), -row["ppo_risk"]["height"], row["step"])
+        return (1, -row["ppo_risk"]["height"], -row["ppo_risk"]["central_top4"], row["step"])
+    chosen = []
+    for row in sorted((r for r in rows.values() if r["category"] == "candidate"), key=priority):
+        if len(chosen) == 12:
+            break
+        if all(abs(row["step"] - step) >= 100 for step in chosen):
+            chosen.append(row["step"])
+    return sorted(chosen)
+
+
+def _replay_snapshots(seed, rows, targets, models, source_sha):
+    path = RUN / "branch_snapshots" / f"seed_{seed}.pkl"
+    meta_path = RUN / "branch_snapshots" / f"seed_{seed}.json"
+    if meta_path.exists():
+        meta = json.loads(meta_path.read_text())
+        if (meta["source_sha256"] != source_sha or meta["steps"] != targets or
+                digest(path) != meta["snapshots_sha256"]):
+            raise RuntimeError("Branch snapshot cache changed")
+        return pickle.loads(path.read_bytes())
+    env = FastCandidateTetrisEnv(max_pieces=CAP)
+    selected = set(targets)
+    snapshots = {}
+    try:
+        obs, _ = env.reset(seed=seed)
+        while env.pieces <= max(targets, default=-1):
+            mask = env.action_masks()
+            action = int(models["ppo"].predict(obs, action_masks=mask, deterministic=True)[0])
+            if env.pieces in selected:
+                row = rows[env.pieces]
+                public = env.core.get_public_observation()
+                public_hash = hashlib.sha256(json.dumps(public, sort_keys=True).encode()).hexdigest()
+                if action != row["ppo_action"] or public_hash != row["state_sha256"]:
+                    raise RuntimeError(f"PPO replay diverged at {seed}:{env.pieces}")
+                snapshots[env.pieces] = env.get_state()
+            obs, _, done, capped, _ = env.step(action)
+            if done or capped:
+                break
+        if sorted(snapshots) != targets:
+            raise RuntimeError(f"Could not restore every selected state in seed {seed}")
+        atomic_bytes(path, pickle.dumps(snapshots, protocol=pickle.HIGHEST_PROTOCOL))
+        atomic_json(meta_path, {"seed": seed, "steps": targets, "source_sha256": source_sha,
+                                "snapshots_sha256": digest(path)})
+        return snapshots
+    finally:
+        env.close()
+
+
 def filter_seed(seed, models=None):
     shard, states_path, meta_path = _paths(seed)
     meta = json.loads(meta_path.read_text())
@@ -228,18 +282,21 @@ def filter_seed(seed, models=None):
     output = RUN / "labels" / f"seed_{seed}.json"
     if output.exists():
         saved = json.loads(output.read_text())
-        if saved["source_sha256"] != meta["shard_sha256"]:
+        if (saved["source_sha256"] != meta["shard_sha256"] or
+                saved.get("selection_version") != 3):
             raise RuntimeError("Label source changed")
         return saved
     models = models or load_models()
     with gzip.open(shard, "rt", encoding="utf8") as stream:
         rows = {row["step"]: row for row in map(json.loads, stream)}
-    states = pickle.loads(states_path.read_bytes())
+    targets = _branch_targets(rows)
+    states = _replay_snapshots(seed, rows, targets, models, meta["shard_sha256"])
     labels = {}
     for step, snapshot in states.items():
         labels[str(step)] = classify(rows[step], snapshot, models)
     result = {"seed": seed, "source_sha256": meta["shard_sha256"],
-              "horizon": HORIZON, "labels": labels,
+              "horizon": HORIZON, "selection_version": 3,
+              "branch_steps": targets, "labels": labels,
               "A": sum(v["category"] == "A" for v in labels.values()),
               "B": sum(v["category"] == "B" for v in labels.values()),
               "C": meta["normal_samples"]}
