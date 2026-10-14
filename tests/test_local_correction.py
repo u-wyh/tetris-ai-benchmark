@@ -141,6 +141,9 @@ def test_development_gate_preserves_four_clear_strategy():
     assert not _promising(candidate, ppo)
     candidate["four_fraction"] = .87
     assert not _healthy(candidate, ppo)
+    candidate["four_fraction"] = .93
+    candidate["p10_pieces"] = 4000
+    assert not _healthy(candidate, ppo)
 
 
 def test_rng_state_loaded_on_cuda_can_restore_cpu_generator():

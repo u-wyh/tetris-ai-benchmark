@@ -37,10 +37,11 @@ def audit():
                     if not path.is_relative_to(RUN):
                         raise RuntimeError(f"Previously used seed {seed}: {path}")
     protocol = {"models": HASHES, "seeds": groups, "cap": CAP,
-                "branch_horizon": HORIZON, "version": 5,
+                "branch_horizon": HORIZON, "version": 6,
                 "branch_selection": "death_distance_near_500_with_100_piece_spacing_v1",
                 "trusted_trigger": "obvious_danger_or_rapid_growth_3_v1",
-                "four_clear_gate": "short_drop_le_5pp_confirm_drop_le_3pp_v1"}
+                "four_clear_gate": "short_drop_le_5pp_confirm_drop_le_3pp_v1",
+                "development_p10_gate": "candidate_ge_80pct_of_ppo_v1"}
     path = RUN / "protocol.json"
     if path.exists() and json.loads(path.read_text()) != protocol:
         raise RuntimeError("Frozen local-correction protocol changed")

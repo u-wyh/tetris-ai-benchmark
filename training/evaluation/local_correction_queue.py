@@ -149,6 +149,7 @@ def evaluate(phase, variant, seeds, cap, checkpoint=None):
 
 def _healthy(candidate, ppo):
     return (candidate["mean_pieces"] >= .9 * ppo["mean_pieces"] and
+            candidate["p10_pieces"] >= .8 * ppo["p10_pieces"] and
             candidate["mean_score"] >= .9 * ppo["mean_score"] and
             candidate["four_fraction"] >= ppo["four_fraction"] - .05)
 
