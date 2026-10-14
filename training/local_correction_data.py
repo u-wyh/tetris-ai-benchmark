@@ -37,7 +37,7 @@ def audit():
                     if not path.is_relative_to(RUN):
                         raise RuntimeError(f"Previously used seed {seed}: {path}")
     protocol = {"models": HASHES, "seeds": groups, "cap": CAP,
-                "branch_horizon": HORIZON, "version": 1}
+                "branch_horizon": HORIZON, "version": 2}
     path = RUN / "protocol.json"
     if path.exists() and json.loads(path.read_text()) != protocol:
         raise RuntimeError("Frozen local-correction protocol changed")
@@ -88,10 +88,12 @@ def capture(seed, models=None):
             normal_candidate = not is_risky and step % 97 == seed % 97
             if risk_candidate:
                 risky_seen += 1
-                risk_slot = sample_rng.randrange(risky_seen)
+                risk_slot = (len(risky) if len(risky) < 1000
+                             else sample_rng.randrange(risky_seen))
             if normal_candidate:
                 normal_seen += 1
-                normal_slot = sample_rng.randrange(normal_seen)
+                normal_slot = (len(normal) if len(normal) < 1000
+                               else sample_rng.randrange(normal_seen))
             keep_risk = risk_candidate and risk_slot < 1000
             keep_normal = normal_candidate and normal_slot < 1000
             if keep_risk or keep_normal:

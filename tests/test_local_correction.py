@@ -77,3 +77,11 @@ def test_counterfactual_snapshot_is_reproducible(monkeypatch):
         assert first["pieces"] == 20
     finally:
         env.close()
+
+
+def test_sampler_keeps_every_candidate_until_capacity(monkeypatch, tmp_path):
+    monkeypatch.setattr(data, "RUN", tmp_path)
+    monkeypatch.setattr(data, "CAP", 200)
+    result = data.capture(730904, load_models())
+    assert result["risky_candidates"] == result["risk_disagreements_seen"]
+    assert result["normal_samples"] == result["normal_candidates_seen"]
