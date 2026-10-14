@@ -34,6 +34,10 @@ def generate(state, choice=None):
     metas = [row for row in metas if row]
     labels = [_read(RUN / "labels" / f"seed_{seed}.json") for seed in TRAIN + VALIDATION]
     labels = [row for row in labels if row]
+    verified = [value for row in labels for value in row["labels"].values()]
+    trusted = [value for value in verified if value["category"] == "A"]
+    trigger_counts = {name: sum(value.get("trigger") == name for value in trusted)
+                      for name in ("obvious_danger", "rapid_growth")}
     summary = _read(RUN / "dataset_summary.json", {})
     lines = ["# PPO 30M 局部纠错：数据与证据", "", f"状态：`{state}`。训练种子 `{TRAIN[0]}..{TRAIN[-1]}`；"
              f"独立样本验证种子 `{VALIDATION[0]}..{VALIDATION[-1]}`；完整 episode 隔离。", "",
@@ -50,6 +54,15 @@ def generate(state, choice=None):
              f"A 类可信纠错 {sum(x['A'] for x in labels):,}，"
              f"B 类不确定 {sum(x['B'] for x in labels):,}。"
              f"每个分支最多跟踪 {HORIZON} 块，触及上限右截断。", "",
+             f"A 类触发来源：高位危险 {trigger_counts['obvious_danger']}，"
+             f"单步快速增高 {trigger_counts['rapid_growth']}；"
+             f"其中改变 Hold 用法 {sum(value.get('hold_changed', False) for value in trusted)}。"
+             "这是被严格筛选后的构成，不代表 PPO 所有死亡的原因分布。", "",
+             f"全部已分支状态中，PPO 分支在观察窗内死亡 "
+             f"{sum(v['branches']['ppo']['game_over'] for v in verified)} 次；"
+             f"BC 分支比 PPO 多活至少 250 块 "
+             f"{sum(v['branches']['bc']['pieces'] >= v['branches']['ppo']['pieces'] + 250 for v in verified)} 次。"
+             "BC 有时确实能救局，但并非意见不同时总是更好。", "",
              "A 类必须同时满足：PPO 一步高位危险或单步最高列增长至少 3 格、"
              "BC 一步显著更安全、可见下一步空间未显著缩水、"
              "PPO 分支在观察窗内死亡、BC 至少多活 250 块、共同存活区间得分保留 ≥80%、"
