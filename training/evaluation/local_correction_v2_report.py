@@ -75,6 +75,7 @@ def generate():
     rejected = diagnosis["rejected"]
     hold_audit = _read(V2 / "hold_audit.json")["records"]
     sweep = _read(V2 / "gradient_sweep.json")
+    sensitivity = _read(V2 / "loss_sensitivity.json")
     REPORTS.mkdir(parents=True, exist_ok=True)
     lines = ["# PPO 30M 局部纠错失败诊断", "",
              "本报告审计已冻结 V1 的 18 条训练 A 类与 3 条独立样本验证 A 类。"
@@ -125,6 +126,17 @@ def generate():
                   "A 梯度占主导而网络参数共享，少量纠错更新也可能改变大量正常状态；"
                   "这与验证 C 对 PPO 一致率降到 92.07%、masked KL 升至 0.04756 一致，"
                   "但固定 batch 梯度不能单独量化每个正常状态的漂移原因。", "",
+                  "同一批次顺序、同一初始 PPO 下，仅在内存中做 24 次更新的 KL 系数敏感性诊断：", "",
+                  "| KL 系数 | 训练 A Top-1 | 验证 A Top-1 | 验证 C 对 PPO 一致率 | 验证 C masked KL |",
+                  "|---:|---:|---:|---:|---:|"])
+    for item in sensitivity["results"]:
+        lines.append(f"| {item['keep_weight']} | "
+                     f"{item['train']['danger']['label_top1']:.2%} | "
+                     f"{item['validation']['danger']['label_top1']:.2%} | "
+                     f"{item['validation']['normal']['ppo_agreement']:.2%} | "
+                     f"{item['validation']['normal']['masked_kl']:.5f} |")
+    lines.extend(["", "系数增大略改善正常动作保持，但 24 次更新后的 A 类 Top-1 未改善；"
+                  "这些只是受控短程诊断，不能据此选择正式 KL 系数或推断长局得分。", "",
                   "## 18 条小样本记忆诊断", "",
                   "| 更新次数 | Top-1/18 | 平均专家概率 | 平均 NLL |",
                   "|---:|---:|---:|---:|"])

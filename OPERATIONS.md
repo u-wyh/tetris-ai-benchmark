@@ -4,6 +4,7 @@
 
 ## 2026-10-14
 
+- 20:59–21:01｜完成仅在内存中的固定批次 KL 系数敏感性诊断：同一初始 PPO、24 次更新、系数 0/1/3/10 时训练 A Top-1 都为 4/18，验证 A 均 0/3；正常状态对 PPO 一致率分别为 91.67%/91.89%/92.29%/93.55%。未保存模型或做游戏评测，结果仅说明更强 KL 可略减短程漂移。依据：`runs/ppo30m_local_correction/active_v2/loss_sensitivity.json`。
 - 20:38–20:42｜新增 V2 独立收尾 tmux 程序；阶段性诊断报告 Git `643a043`、收尾程序 Git `3baff89`、梯度复核 Git `4ce15f4` 已推送。补充数据集物化步骤，待分支全部完成后生成带 Episode ID/逐条哈希的压缩分片；当前队列仍在运行，尚未把中间进度当作最终通过率。依据：`active_v2/status.json`、tmux 会话、`training/evaluation/local_correction_v2_materialize.py`。
 - 20:40｜V1 epoch 3 的 16 个固定 8A+8C batch 梯度复核完成：16/16 梯度余弦为负，余弦中位数 -0.553，C/A 范数比中位数 14.5%；不作任何优化器更新，结果写入 `active_v2/gradient_sweep.json`。这是有限 batch 诊断，不能外推为全数据梯度。依据：`runs/ppo30m_local_correction/active_v2/gradient_sweep.json`。
 - 20:33–20:38｜V2 概率字段修订 Git `189604e` 已推送并恢复独立 tmux 队列。完成 21 条 V1 A 类的一步公开 Hold/Next 审计：12 条 Hold 标志不同中仅 3 条使后续 Current/Hold/Next 方块状态实际不同；以邻列差作为深井粗代理时，BC 动作在 Hold 与非 Hold 两组均使井变浅，尚无长期因果结论。新增三份阶段性报告生成器及 3 个固定案例；Python 定向 12 项、Parity 6 项、JS 61 项通过。依据：`active_v2/hold_audit.json`、`reports/experiments/local_correction_*.md`、tmux `tetris-local-correction-v2`。
