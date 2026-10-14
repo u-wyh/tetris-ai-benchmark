@@ -4,6 +4,7 @@
 
 ## 2026-10-14
 
+- 15:44｜推送采样器修复 Git `a9e7390`，按 v2 协议重新启动 `tetris-local-correction`；归档的 3 局 v1 数据不参与新结果。依据：`runs/ppo30m_local_correction/status.json`、tmux 会话、`invalid_sampler_v1/`。
 - 15:43｜发现采样池未满时错误替换样本，3 局已完成的采集分片不符合目标抽样协议；停止 `tetris-local-correction`，将旧协议、日志和 3 局分片原样移至 `runs/ppo30m_local_correction/invalid_sampler_v1/` 保存证据。修复后协议升至 v2，新增未满容量时全部保留的测试并通过 4 项定向测试；尚未恢复队列。依据：归档目录、`tests/test_local_correction.py`、新 `protocol.json`。
 - 15:37｜已推送局部纠错流水线实现（Git `e238e05`），启动 `tetris-local-correction` tmux 可恢复队列，当前仅采集冻结 PPO 30M 自主轨迹；后续反事实样本不足或 V1 评测不达门槛时自动停止，不启动大规模 PPO。依据：`runs/ppo30m_local_correction/status.json`、`queue.log`、tmux 会话。
 - 15:36｜实现独立 PPO 30M 局部纠错数据、反事实筛选、Actor 监督训练和可恢复分阶段评测；冻结模型 SHA、版本与独立种子组校验通过。定向 Python 10 项、Parity 21 项及 35 子测试、JS 语法检查通过；额外 Python 全量测试运行 7 分 16 秒已有 136 项通过，无失败，但因包含耗时训练事务测试而主动中断。CUDA 16 样本反向传播烟雾测试通过，峰值约 24.1 MiB。依据：`tests/test_local_correction.py`、`reports/experiments/ppo30m_local_correction_dataset.md`、本次测试输出。尚未启动正式数据采集或训练。
