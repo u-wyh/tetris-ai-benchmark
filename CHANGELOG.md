@@ -2,6 +2,7 @@
 
 ## 2026-10-14
 
+- PPO 30M 局部纠错 V1 三轮小规模训练及 32-seed、20K 开发评测完成。三轮均未通过预设继续门槛：前两轮 P10 生存不足，第三轮四消事件占比比纯 PPO 低 5.19 个百分点。停止 V2、100K 长局与独立确认；补充逐 seed 配对、共同存活区间得分和失败诊断报告。详见 `reports/experiments/ppo30m_local_correction_comparison.md`。
 - 新增 PPO 30M 局部专家纠错独立流水线：冻结模型真实轨迹、优先真实死亡前状态的同状态 BC 反事实筛选、A/C 类 Actor 监督与 masked KL、V1/V2 阶段门槛、可恢复开发及独立确认评测；收尾程序自动发布成功或科学上合理的提前停止结果。旧 checkpoint、TetrisCore、Action ID、网页和历史结果未修改；大型产物只写入 `runs/ppo30m_local_correction/`。
 - 对 Hybrid B12 六个失败局完成确定性重放、同 Core 状态的 PPO/BC 反事实分支和可见 Next 落点诊断；保留有限观察窗与归因限制。新增独立 C1 保守拦截和 C2 Hold／可见下一块空间保护规则，冻结新开发 16-seed 与确认 32-seed 协议；原 B12 和两个模型保持不变。详见 `reports/experiments/hybrid_b12_failure_analysis.md`、`hybrid_v2_design.md`。
 

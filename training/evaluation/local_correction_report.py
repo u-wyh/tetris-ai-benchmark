@@ -93,6 +93,15 @@ def generate(state, choice=None):
         lines.append("")
     if state == "insufficient_verified_corrections":
         lines.extend(["可靠 A 类样本不足，按预设门槛停止监督训练。没有用 B 类不确定样本强行给 BC 标签。", ""])
+    if state == "v1_failed_short_validation":
+        lines.extend(["## 学习诊断", "", "3 个 epoch 的独立样本验证 A 类专家动作命中均为 0/3；训练集 A 类到第 3 轮仅命中 5/18。"
+                      "正常样本对 PPO 的动作一致率由第 1 轮的 97.03% 降到第 3 轮的 92.07%，"
+                      "masked KL 升至 0.04756。A 类太少，尚无证据表明模型学会可靠纠错；"
+                      "正常策略已发生可测偏移，存在损失四消能力的迹象。", "",
+                      "V1 的 3 个短 epoch 已完成；从训练配置保存到第 3 轮 checkpoint 落盘约 15 秒"
+                      "（2026-10-14 16:47:47–16:48:02，北京时间，文件时间戳）。"
+                      "V2 风险加权版本因 V1 未通过开发短局门槛而没有启动。"
+                      "本次不增加训练轮数，也不进行 PPO 续训。", ""])
     (REPORTS / "ppo30m_local_correction_training.md").write_text("\n".join(lines))
 
     lines = ["# PPO 30M 局部纠错：统一比较", "", f"状态：`{state}`。", "",
@@ -103,6 +112,36 @@ def generate(state, choice=None):
     for phase in ("development_20k", "development_100k", "confirmation_100k"):
         if any(_summary(phase, variant) for variant in variants):
             lines.extend(_table(phase, variants))
+    if state == "v1_failed_short_validation":
+        lines.extend(["## 开发短局判断", "",
+                      "预定继续门槛：平均存活至少为 PPO 的 90%，P10 至少 80%，平均分至少 90%，"
+                      "四消事件占比最多下降 5 个百分点。V1 第 1、2 轮未通过 P10 门槛；"
+                      "第 3 轮平均存活、P10 和平均分均高于 PPO，"
+                      "但四消占比 87.65% 对 PPO 的 92.84%，下降 5.19 个百分点，未通过保留门槛。", "",
+                      "第 3 轮在这些开发种子上平均存活比 PPO 多约 608 块，平均总分多约 1,185 万；"
+                      "共同存活区间的千块节点累计分数平均比 PPO 少约 399 万。"
+                      "总分增加与双方共同存活时得分的变化方向不同，不能把短局总分当成四消策略改善的证据。", "",
+                      "BC 在 32 局均触顶，但平均分约 3.34 亿、四消占比 0.03%；"
+                      "B12 平均分约 5.76 亿，P10 为 16,525 块。"
+                      "第 3 轮看似比两者均分更高，但只在开发短局观察到，且未通过四消门槛。", "",
+                      "未开展 100K 长局与独立确认，无法判断长期生存或泛化。"
+                      "3 个独立验证 A 样本均未学会，正常样本对 PPO 的一致率随训练下降；"
+                      "目前更可能是监督样本稀缺或策略扰动造成的局部变化，不能据此判定已修复 PPO 的致命错误。"
+                      "不建议以现有数据扩大训练；下一步先增加经过相同反事实规则验证的 A 类样本，"
+                      "并审查改变 Hold 的标签对四消布局的影响，再重新设定独立选模实验。", ""])
+        base = RUN / "evaluations" / "development_20k"
+        names = ("ppo", "bc", "B12", "V1_e1", "V1_e2", "V1_e3")
+        lines.extend(["## 开发集逐 seed 配对", "",
+                      "每格为存活块数/最终分数；触顶局按右截断记录。", "",
+                      "| Seed | PPO | BC | B12 | V1 e1 | V1 e2 | V1 e3 |",
+                      "|---:|---:|---:|---:|---:|---:|---:|"])
+        for seed in DEV:
+            rows = [_read(base / name / f"seed_{seed}.json") for name in names]
+            if not all(rows):
+                raise RuntimeError(f"Incomplete development seed {seed}")
+            cells = [f"{row['pieces_survived']}/{row['score']}" for row in rows]
+            lines.append(f"| {seed} | " + " | ".join(cells) + " |")
+        lines.append("")
     if choice:
         lines.extend([f"冻结候选：`{choice['variant']}`；checkpoint SHA256 "
                       f"`{choice['checkpoint_sha256']}`。", ""])

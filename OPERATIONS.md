@@ -4,6 +4,8 @@
 
 ## 2026-10-14
 
+- 19:47–19:50｜补齐局部纠错失败报告的训练诊断、四消门槛解释、共同存活区间得分及 32 个开发种子逐局配对；重新生成报告。定向 Python 15 项、Parity 6 项和 JS 61 项回归通过。依据：`reports/experiments/ppo30m_local_correction_*.md`、`tests/test_local_correction.py`、`tests/parity/` 及 Node test 输出。
+- 19:46｜V1 三个 epoch 的 32-seed、20K 开发评测全部完成；第 1、2 轮 P10 未过门槛，第 3 轮四消占比 87.65% 对 PPO 92.84%，降幅 5.19 个百分点、略超 5 点门槛。队列按协议停止为 `v1_failed_short_validation`，没有启动 V2、长局或确认种子；收尾程序提交并推送 Git `74e004a`。依据：`runs/ppo30m_local_correction/status.json`、`publish_status.json`、`evaluations/development_20k/*/summary.json`。
 - 19:46｜PPO 30M 局部纠错队列结束，结果状态为 `v1_failed_short_validation`；数据、训练及比较报告已生成。依据：`runs/ppo30m_local_correction/status.json`、`reports/experiments/ppo30m_local_correction_comparison.md`。
 - 19:32｜推送 P10 筛选门槛修订 Git `d3bfe0a`，恢复 `tetris-local-correction` 独立队列；启动后校验既有 20 局轨迹和反事实标签，进入已保存的 V1 三轮训练恢复流程。开发评测将复用合规已完成对局，当前尚无新的完整候选结果。依据：`runs/ppo30m_local_correction/status.json`、`queue.log`、tmux 会话。
 - 17:25｜首个 Local-BC V1 epoch 在 32 个 20K 开发种子上平均存活 17,221、P10 4,977、平均分 5.26 亿，对照 PPO 分别为 18,406、18,119、5.73 亿；因原继续门槛漏掉严重低分位退步，在仅完成 V1 epoch 2 的 3 局时中断队列，增加 P10 至少保留 PPO 的 80% 的开发筛选，协议升 v6。已完成的合规开发对局保存复用；旧协议/日志归档 `pre_p10_gate_v5/`，15 项定向测试通过。未使用最终确认种子。依据：`evaluations/development_20k/`、`status.json`、`tests/test_local_correction.py`。尚未恢复队列。
