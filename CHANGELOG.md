@@ -2,6 +2,7 @@
 
 ## 2026-10-14
 
+- 完成 PPO 30M 多候选反事实试点：复用 V2 训练组快照，冻结 46 个状态、368 个合法候选，从同快照 PPO 续控 256/1000 块并逐分支原子保存。按同一 A 类标准，多候选在 9 个状态找到 28 个动作，BC 单候选在 4 个状态找到 4 个；24 个 A 动作非 BC，20 个来自 PPO Top5。多候选每 CPU 小时 A 状态产出低于 BC 对照，按预设门槛停止第二批，不启动训练。详见 `reports/experiments/ppo_multiaction_counterfactual_results.md`。
 - 局部纠错主动反事实 V2 完成 556 条：新增 A 22（训练 19、独立样本验证 3），通过率 3.96%，低于 V1 的 9.42%；合并后训练/验证 A 仅 37/6，停止下一轮正式模型训练。新增近死窗口与远距/右截断分层、534 条 B 类拒绝原因、V2 Hold 真实方块序列变化及不可变数据集哈希复核。详见 `reports/experiments/local_correction_counterfactual_v2.md` 和 `local_correction_dataset_v2.md`。
 - V2 反事实完成后自动从各原子分支生成不可变的 `dataset_rows.jsonl.gz`，补齐 Episode ID、PPO 原动作概率、离线死亡距离标记、逐条哈希与数据分片 SHA；后台收尾程序生成报告、记录状态并推送 Git。
 - 补充局部纠错 V1 的 Hold／Next 一步公开状态核查、四消深井粗代理、202 条 B 类首因与重叠拒绝原因统计，以及逐条专家动作概率/排名和过拟合曲线；新增 V2 反事实、诊断、数据版本三份报告生成器。

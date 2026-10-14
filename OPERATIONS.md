@@ -68,6 +68,9 @@
 
 ## 记录约定
 
+- 2026-10-14 22:48–22:50 CST｜冻结 PPO30M 多候选反事实试点协议与 46 个训练组状态，校验原模型和 V2 快照；启动独立 `tmux` 队列 `ppo-multiaction-pilot`，单进程逐分支原子保存。首 5 个状态已完成；Python 相关测试 16 通过，Parity 6 通过，JS 61 通过。依据：`runs/ppo30m_multiaction_counterfactual/protocol.json`、`selection.json`、`queue.log`，`tests/test_ppo_multiaction_counterfactual.py`。
+- 2026-10-14 23:15–23:16 CST｜多候选反事实队列完成 46/46 状态、368/368 原子分支，无失败；同标准 A 类动作 28 个，覆盖 9 状态，BC 对照覆盖 4 状态。生成报告及全部结果 SHA256 清单；未达到预设第二批计算效率门槛，停止扩大且不训练。Python 全量 162 测试和 35 子测试、Parity 6、JS 61 通过，新增定向测试 4 通过。依据：`runs/ppo30m_multiaction_counterfactual/completed.json`、`summary.json`、`dataset_manifest.json`、`reports/experiments/ppo_multiaction_counterfactual_results.md`。
+
 - 重要代码修改：记录做了什么、测试结果和 commit。
 - 训练或评测操作：记录启动、暂停、恢复、失败、完成及对应的 run／checkpoint。
 - 性能或模型结论：注明实测范围和结果文件；估算必须标成估算。
