@@ -4,6 +4,7 @@
 
 ## 2026-10-14
 
+- 16:56｜推送 RNG 恢复修复 Git `1c92592`，将失败时状态、日志与收尾状态归档 `failed_rng_resume_v5/`；重新启动 `tetris-local-correction` 与收尾发布程序，继续 v5 已保存的开发对照。依据：`runs/ppo30m_local_correction/status.json`、tmux 会话。
 - 16:55｜v5 恢复时 PyTorch 将已保存的 CPU RNG 字节张量映射到 CUDA，`set_rng_state` 拒绝 GPU 张量，后台队列按预期失败并停止；已把恢复输入转回 CPU，直接从 epoch 3 checkpoint 恢复验证通过，15 项定向测试通过。已完成数据、模型和 9 局 PPO 开发对照均保留，尚未恢复评测。依据：`runs/ppo30m_local_correction/status.json`、`training/V1/history.json`、`tests/test_local_correction.py`。
 - 16:52｜PPO 30M 局部纠错后台队列失败；保留已提交的局与 checkpoint，未把不完整结果作为结论。依据：`runs/ppo30m_local_correction/status.json`、`queue.log`。
 - 16:52｜推送四消保留门槛修订 Git `b17d119` 并恢复后台队列；v5 直接复用 20 局合规轨迹、全部标签、三轮训练 checkpoint 与已完成的纯 PPO 开发对局。依据：`runs/ppo30m_local_correction/status.json`、`protocol.json`、tmux 会话。
