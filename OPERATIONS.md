@@ -4,6 +4,7 @@
 
 ## 2026-10-14
 
+- 21:20–21:23｜V2 20 个种子的 556 条新反事实全部完成并通过不可变清单与压缩数据逐条哈希复核：A 22、B 534；训练/验证新增 A 19/3，合并 V1 后 37/6。V2 通过率 3.96%，低于 V1 的 9.42%；429 条新分支不在原 PPO 死亡前 1000 块内或原局触顶，均无 A。补齐 V2 B 类首因及 Hold 实际方块状态差异，判断数据不足，未启动新模型训练。依据：`active_v2/dataset_manifest.json`、`dataset_rows.json`、`readiness.json`、`reports/experiments/local_correction_counterfactual_v2.md`。
 - 21:20｜局部纠错主动反事实 V2 队列完成：新分支 556，新增训练/验证 A 19/3，就绪判断 `insufficient_quality_data`；未自动训练。依据：`runs/ppo30m_local_correction/active_v2/status.json`、`dataset_manifest.json`、`readiness.json` 及三份 V2 报告。
 - 20:59–21:01｜完成仅在内存中的固定批次 KL 系数敏感性诊断：同一初始 PPO、24 次更新、系数 0/1/3/10 时训练 A Top-1 都为 4/18，验证 A 均 0/3；正常状态对 PPO 一致率分别为 91.67%/91.89%/92.29%/93.55%。未保存模型或做游戏评测，结果仅说明更强 KL 可略减短程漂移。依据：`runs/ppo30m_local_correction/active_v2/loss_sensitivity.json`。
 - 20:38–20:42｜新增 V2 独立收尾 tmux 程序；阶段性诊断报告 Git `643a043`、收尾程序 Git `3baff89`、梯度复核 Git `4ce15f4` 已推送。补充数据集物化步骤，待分支全部完成后生成带 Episode ID/逐条哈希的压缩分片；当前队列仍在运行，尚未把中间进度当作最终通过率。依据：`active_v2/status.json`、tmux 会话、`training/evaluation/local_correction_v2_materialize.py`。

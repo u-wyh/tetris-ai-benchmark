@@ -2,10 +2,14 @@
 import collections
 import json
 import statistics
+from datetime import datetime
 
 from training.evaluation.local_correction_active_v2 import SEEDS, V2
+from training.evaluation.local_correction_hold_audit import _well
 from training.local_correction_data import RUN, TRAIN, VALIDATION
+from training.tetris_core.legal_placements import get_legal_placements
 from training.train_ppo import ROOT
+from training.traditional.v2 import simulate_public
 
 REPORTS = ROOT / "reports/experiments"
 
@@ -233,8 +237,10 @@ def generate():
     if records:
         a = [x for x in records if x["evidence"]["category"] == "A"]
         lines.extend(["", f"已原子完成新分支 {len(records)} 条：A {len(a)}、B {len(records)-len(a)}；"
-                      f"当前通过率 {len(a)/len(records):.2%}。原 V1 为 21/223 = {21/223:.2%}。"
-                      "若队列未完成，这些仅是进度，不用于判断采样效率。", ""])
+                      f"{'最终' if status['state']=='completed' else '当前'}通过率 {len(a)/len(records):.2%}。"
+                      f"原 V1 为 21/223 = {21/223:.2%}。" +
+                      ("" if status["state"] == "completed" else
+                       "队列未完成时仅代表进度，不用于判断采样效率。"), ""])
         for hold in (False, True):
             subset = [x for x in records if x["evidence"]["hold_changed"] == hold]
             if subset:
@@ -243,12 +249,53 @@ def generate():
         lines.append("")
     if status["state"] == "completed":
         decision = _read(V2 / "readiness.json")
+        finished = datetime.fromisoformat(status["updated_at"])
+        protocol_mtime = datetime.fromtimestamp((V2 / "protocol.json").stat().st_mtime,
+                                                tz=finished.tzinfo)
+        elapsed_minutes = (finished - protocol_mtime).total_seconds() / 60
+        v1_all = trusted + rejected
+        def near_v1(x):
+            distance = x["death_distance"]
+            return distance is not None and distance <= 1000
+        def near_v2(x):
+            distance = x["row"]["death_distance"]
+            return distance is not None and distance <= 1000
+        lines.extend(["## 主动采样效率与瓶颈", "",
+                      "| 数据批次 | 死亡前 ≤1000 块 A/验证 | 其他或右截断 A/验证 | 总体 A/验证 |",
+                      "|---|---:|---:|---:|"])
+        for label, items, pred, is_a in (("V1", v1_all, near_v1,
+                                         lambda x: x["evidence"]["category"] == "A"),
+                                        ("V2 新分支", records, near_v2,
+                                         lambda x: x["evidence"]["category"] == "A")):
+            near = [x for x in items if pred(x)]
+            far = [x for x in items if not pred(x)]
+            lines.append(f"| {label} | {sum(is_a(x) for x in near)}/{len(near)} | "
+                         f"{sum(is_a(x) for x in far)}/{len(far)} | "
+                         f"{sum(is_a(x) for x in items)}/{len(items)} |")
+        v2_b = [{"evidence": x["evidence"]} for x in records if x["evidence"]["category"] == "B"]
+        v2_primary = collections.Counter(_reasons(x)[0] for x in v2_b)
+        v2_overlap = collections.Counter(reason for x in v2_b for reason in _reasons(x))
+        lines.extend(["", f"V2 新增 {len(v2_b)} 条 B 类的拒绝原因：", "",
+                      "| 条件未满足 | 首因条数 | 涉及条数 |", "|---|---:|---:|"])
+        for key in ("无明确危险触发", "BC 一步安全改善不足", "可见下一步空间不足",
+                    "PPO 观察窗内未死亡或右截断", "BC 未多活 250 块",
+                    "共同区间得分低于 80%", "共同区间四消低于 75%"):
+            lines.append(f"| {key} | {v2_primary[key]} | {v2_overlap[key]} |")
+        lines.extend(["", "新批次中 429/556 条不在原 PPO 死亡前 1,000 块内或该局触顶；"
+                      "这些状态 0 条获 A。临死窗口内新批次 22/127 获 A（17.32%），"
+                      "仍低于 V1 同类 21/65（32.31%）。"
+                      "固定每局最多 30 条、仅相隔 10 块的选择没有提高总体可信标签获取率；"
+                      "两批来自相同源 episode 且非随机对照，不能把差异解释成单一规则的因果效果。"
+                      f"本轮从冻结协议文件落盘到队列完成约 {elapsed_minutes:.1f} 分钟，"
+                      "本批预算止于 556 条，不继续扩大低收益的远死亡状态分支。", ""])
         lines.extend([f"最终判断：`{decision['state']}`；训练/验证新增 A "
                       f"{decision['train_A_new']}/{decision['validation_A_new']}，"
+                      f"与 V1 合并后为 {18+decision['train_A_new']}/{3+decision['validation_A_new']}；"
                       f"训练 A 覆盖 {decision['train_A_episodes']} 局，"
                       f"其中非 Hold {decision['train_A_non_hold']} 条。"
                       "只有训练 A ≥100、验证 A ≥30、训练覆盖 ≥8 局、非 Hold A ≥30"
-                      "才允许提出后续小规模训练 smoke；本次不自动训练。", ""])
+                      "才允许提出后续小规模训练 smoke；这是一条只看新增样本的保守门槛。"
+                      "本次不自动训练。", ""])
         if decision["state"] != "ready_for_smoke_only":
             lines.extend(["当前不具备再次训练的预设数据条件。保留 V1/V2 全部已验证分支，"
                           "下一轮应优先针对 B 类首因补充不同 episode 的真实危险状态，"
@@ -288,6 +335,21 @@ def generate():
                       "死亡距离字段只供离线筛选，在线推理不得使用。", ""])
     if status["state"] == "completed":
         a = [x for x in records if x["evidence"]["category"] == "A"]
+        train_new = sum(x["seed"] in TRAIN for x in a)
+        val_new = len(a) - train_new
+        one_step = []
+        for item in a:
+            row = item["row"]
+            placements = {p["actionId"]: p for p in get_legal_placements(row["public"])}
+            after = [simulate_public(row["public"], placements[row[f"{name}_action"]])[0]
+                     for name in ("ppo", "bc")]
+            def future(state):
+                current = state["currentPiece"]
+                return (current["type"] if current else None, state["hold"], tuple(state["next"]))
+            one_step.append({"hold_flag": item["evidence"]["hold_changed"],
+                             "future_changed": future(after[0]) != future(after[1]),
+                             "ppo_well": _well(after[0]["board"]),
+                             "bc_well": _well(after[1]["board"])})
         def distance_band(x):
             distance = x["row"]["death_distance"]
             return ("≤250" if distance is not None and distance <= 250 else
@@ -297,12 +359,24 @@ def generate():
         trigger = collections.Counter(x["evidence"]["trigger"] or "无可信危险触发" for x in a)
         lines.extend(["## A 类覆盖", "", f"新增 A {len(a)}/{len(records)}；改变 Hold "
                       f"{sum(x['evidence']['hold_changed'] for x in a)} 条。"
+                      f"训练/验证新增 A {train_new}/{val_new}，"
+                      f"连同 V1 的 18/3，分别共 {18+train_new}/{3+val_new} 条。"
                       f"死亡距离分布：≤250 为 {death_bins['≤250']}，251–1000 为 "
                       f"{death_bins['251–1000']}，>1000/截断为 {death_bins['>1000/截断']}。", "",
                       f"全部新分支的死亡距离分布：≤250 为 {all_bins['≤250']}，"
                       f"251–1000 为 {all_bins['251–1000']}，>1000/截断为 {all_bins['>1000/截断']}。"
                       f"新增 A 的触发类型：明显高危 {trigger['obvious_danger']}，"
                       f"快速增高 {trigger['rapid_growth']}，无可信危险触发 {trigger['无可信危险触发']}。", "",
+                      f"新 A 中 Hold 标志不同 {sum(x['hold_flag'] for x in one_step)} 条，"
+                      f"但下一步 Current/Hold/Next 方块状态实际不同 "
+                      f"{sum(x['future_changed'] for x in one_step)} 条。"
+                      "Hold 标志不同组的一步后深井粗代理 PPO/BC 均值 "
+                      f"{statistics.mean(x['ppo_well'] for x in one_step if x['hold_flag']):.2f}/"
+                      f"{statistics.mean(x['bc_well'] for x in one_step if x['hold_flag']):.2f}；"
+                      "非 Hold 组为 "
+                      f"{statistics.mean(x['ppo_well'] for x in one_step if not x['hold_flag']):.2f}/"
+                      f"{statistics.mean(x['bc_well'] for x in one_step if not x['hold_flag']):.2f}。"
+                      "深井代理仅描述一步形状，不能证明后续四消因果。", "",
                       "此数据集仅能证明固定窗口和固定续控下的局部证据；"
                       "Hold 分支可能改变方块消耗顺序，不能把两条轨迹当成完全相同的未来。", ""])
     (REPORTS / "local_correction_dataset_v2.md").write_text("\n".join(lines))

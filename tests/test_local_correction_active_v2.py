@@ -1,10 +1,13 @@
 """V2 active selection and resumed branch invariants on frozen V1 data."""
+import gzip
+import hashlib
 import json
 
 from training.evaluation.local_correction_active_v2 import (MIN_SPACING, RANDOM_QUOTA,
                                                              SEEDS, V2, _load_seed, choose)
 from training.evaluation.local_correction_v2_report import _reasons
-from training.evaluation.local_correction_v2_materialize import normalize
+from training.evaluation.local_correction_v2_materialize import _canonical, main as materialize, normalize
+from training.imitation_dataset import digest
 
 
 def test_active_selection_is_isolated_diverse_and_deterministic():
@@ -55,3 +58,19 @@ def test_materialized_record_identity_and_offline_only_field():
     assert row["bc_action"] in row["legal_action_ids"]
     assert len(row["record_sha256"]) == 64
     assert 0 <= row["ppo_action_probability"] <= 1
+
+
+def test_complete_dataset_manifest_and_resume_are_immutable():
+    manifest = json.loads((V2 / "dataset_manifest.json").read_text())
+    assert manifest["branch_count"] == 556
+    assert all(digest(V2 / path) == sha for path, sha in manifest["branch_hashes"].items())
+    before = digest(V2 / "dataset_rows.jsonl.gz")
+    meta = materialize()
+    assert meta["dataset_sha256"] == before == digest(V2 / "dataset_rows.jsonl.gz")
+    assert meta["source_manifest_sha256"] == digest(V2 / "dataset_manifest.json")
+    with gzip.open(V2 / "dataset_rows.jsonl.gz", "rt") as stream:
+        records = [json.loads(line) for line in stream]
+    assert len(records) == 556
+    for record in records:
+        expected = record.pop("record_sha256")
+        assert hashlib.sha256(_canonical(record).encode()).hexdigest() == expected
