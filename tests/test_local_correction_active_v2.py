@@ -3,6 +3,7 @@ import json
 
 from training.evaluation.local_correction_active_v2 import (MIN_SPACING, RANDOM_QUOTA,
                                                              SEEDS, V2, _load_seed, choose)
+from training.evaluation.local_correction_v2_report import _reasons
 
 
 def test_active_selection_is_isolated_diverse_and_deterministic():
@@ -28,3 +29,15 @@ def test_completed_branch_identity_and_original_label_version():
         assert row["seed"] == seed and row["step"] == step
         assert row["source_sha256"] == selection["source_sha256"]
         assert row["evidence"]["category"] in {"A", "B"}
+        assert 0 <= row["ppo_action_probability"] <= 1
+
+
+def test_hold_audit_public_next_and_rejection_reason_coverage():
+    hold = json.loads((V2 / "hold_audit.json").read_text())["records"]
+    assert len(hold) == 21
+    assert sum(row["hold_flag_differs"] for row in hold) == 12
+    assert all(not row["future_piece_state_differs"] for row in hold
+               if not row["hold_flag_differs"])
+    diagnosis = json.loads((V2 / "diagnosis.json").read_text())
+    assert len(diagnosis["rejected"]) == 202
+    assert all(_reasons(row) for row in diagnosis["rejected"])

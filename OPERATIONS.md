@@ -4,6 +4,7 @@
 
 ## 2026-10-14
 
+- 20:33–20:38｜V2 概率字段修订 Git `189604e` 已推送并恢复独立 tmux 队列。完成 21 条 V1 A 类的一步公开 Hold/Next 审计：12 条 Hold 标志不同中仅 3 条使后续 Current/Hold/Next 方块状态实际不同；以邻列差作为深井粗代理时，BC 动作在 Hold 与非 Hold 两组均使井变浅，尚无长期因果结论。新增三份阶段性报告生成器及 3 个固定案例；Python 定向 12 项、Parity 6 项、JS 61 项通过。依据：`active_v2/hold_audit.json`、`reports/experiments/local_correction_*.md`、tmux `tetris-local-correction-v2`。
 - 20:30–20:32｜启动 V2 独立 tmux 反事实队列后，在正式扩充前发现原子分支记录尚缺 PPO 对原动作的概率字段；停止队列并归档旧日志、状态及 5 条 smoke 分支到 `active_v2/pre_probability_field/`。为新分支增加合法掩码下的 PPO 动作概率与恢复校验，重新验证 `730015` 的 5 条分支。旧归档不计入 V2 新数据集，原 V1 保持不变。依据：`active_v2/pre_probability_field/`、`branches/seed_730015/`。
 - 20:28–20:29｜完成 V1 训练机制诊断：18 条训练 A 类在仅用纠错损失的隔离实验中经 80 次更新达到 18/18 Top-1；正式 epoch 3 为 5/18，独立样本 0/3 但平均专家概率上升。梯度存在且 Actor 更新，参考 PPO 冻结。主动采样首版 20 块间距在早死 seed `730008` 不足 25 条，未执行该选择的反事实；选择文件归档 `active_v2/invalid_selection_spacing20/`。修订为每局最多 30 条、间距 10 块，20 局共冻结 556 条，其中随机配额 108 条。`730015` 的 5 条分支 smoke 及断点复用校验通过；定向测试 11 项通过。依据：`runs/ppo30m_local_correction/active_v2/diagnosis.json`、`selection/`、`branches/seed_730015/`、`tests/test_local_correction_active_v2.py`。
 - 19:47–19:50｜补齐局部纠错失败报告的训练诊断、四消门槛解释、共同存活区间得分及 32 个开发种子逐局配对；重新生成报告。定向 Python 15 项、Parity 6 项和 JS 61 项回归通过。依据：`reports/experiments/ppo30m_local_correction_*.md`、`tests/test_local_correction.py`、`tests/parity/` 及 Node test 输出。
