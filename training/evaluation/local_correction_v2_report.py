@@ -96,6 +96,16 @@ def generate():
                   ("、".join(f"{r['seed']}:{r['step']}" for r in down) if down else "无") +
                   f"。Top-1 选中动作改变 {len(changed)}/21 条。"
                   "验证集仅 3 条，0/3 Top-1 不能单独证明无泛化；其平均专家概率及 NLL 仍在改善。", "",
+                  "按 Hold 标志分组的专家动作概率变化：", "",
+                  "| Hold 标志不同 | 样本数 | 原 PPO 平均概率 | Epoch 3 平均概率 | Epoch 3 Top-1 |",
+                  "|---|---:|---:|---:|---:|"])
+    for flag in (False, True):
+        group = [r for r in details if r["hold_changed"] == flag]
+        lines.append(f"| {'是' if flag else '否'} | {len(group)} | "
+                     f"{statistics.mean(r['epochs'][0]['expert_probability'] for r in group):.4f} | "
+                     f"{statistics.mean(r['epochs'][3]['expert_probability'] for r in group):.4f} | "
+                     f"{sum(r['epochs'][3]['top1'] for r in group)} |")
+    lines.extend(["",
                   "## 梯度与损失机制", ""])
     for name in ("gradient_baseline", "gradient_epoch3"):
         g = diagnosis[name]
@@ -200,7 +210,10 @@ def generate():
                  "每局最多 30 条、相距至少 10 块，优先死亡前约 500 块及快速增高，"
                  "每局保留最多 6 条随机候选。没有生成新普通轨迹。")
     selection = [_read(V2 / "selection" / f"seed_{seed}.json") for seed in SEEDS]
-    lines.append(f"冻结新候选 {sum(len(x['steps']) for x in selection)} 条；"
+    original_candidates = sum(_read(RUN / "trajectories" / f"seed_{seed}.json")["risky_candidates"]
+                              for seed in SEEDS)
+    lines.append(f"V1 原始保留风险候选 {original_candidates} 条；"
+                 f"冻结新候选 {sum(len(x['steps']) for x in selection)} 条；"
                  f"其中随机配额 {sum(x['random_count'] for x in selection)} 条。"
                  "原 V1 223 条已分支状态被排除；少数早死局候选不足 30 条，没有用相邻状态补齐。")
     branch_files = sorted((V2 / "branches").glob("seed_*/step_*.json"))
@@ -224,6 +237,16 @@ def generate():
                       f"其中非 Hold {decision['train_A_non_hold']} 条。"
                       "只有训练 A ≥100、验证 A ≥30、训练覆盖 ≥8 局、非 Hold A ≥30"
                       "才允许提出后续小规模训练 smoke；本次不自动训练。", ""])
+        if decision["state"] != "ready_for_smoke_only":
+            lines.extend(["当前不具备再次训练的预设数据条件。保留 V1/V2 全部已验证分支，"
+                          "下一轮应优先针对 B 类首因补充不同 episode 的真实危险状态，"
+                          "并按实际方块序列改变与深井损失区分 Hold 标签；不降低 A 类安全门槛。"
+                          "正常状态保持机制也需先通过动作一致率和四消布局检查。", ""])
+        else:
+            lines.extend(["数据数量门槛通过，但 V1 正常状态策略曾明显漂移。"
+                          "只建议先设计更强的正常状态保留约束、分层 Hold 标签，"
+                          "随后用少量 batch smoke 核对梯度和正常状态动作变化；"
+                          "本次仍不启动正式模型训练。", ""])
     (REPORTS / "local_correction_counterfactual_v2.md").write_text("\n".join(lines))
 
     lines = ["# 局部纠错高质量数据集 V2", "",
@@ -253,15 +276,21 @@ def generate():
                       "死亡距离字段只供离线筛选，在线推理不得使用。", ""])
     if status["state"] == "completed":
         a = [x for x in records if x["evidence"]["category"] == "A"]
-        death_bins = collections.Counter("≤250" if x["row"]["death_distance"] is not None and
-                                         x["row"]["death_distance"] <= 250 else
-                                         "251–1000" if x["row"]["death_distance"] is not None and
-                                         x["row"]["death_distance"] <= 1000 else ">1000/截断"
-                                         for x in a)
+        def distance_band(x):
+            distance = x["row"]["death_distance"]
+            return ("≤250" if distance is not None and distance <= 250 else
+                    "251–1000" if distance is not None and distance <= 1000 else ">1000/截断")
+        death_bins = collections.Counter(distance_band(x) for x in a)
+        all_bins = collections.Counter(distance_band(x) for x in records)
+        trigger = collections.Counter(x["evidence"]["trigger"] or "无可信危险触发" for x in a)
         lines.extend(["## A 类覆盖", "", f"新增 A {len(a)}/{len(records)}；改变 Hold "
                       f"{sum(x['evidence']['hold_changed'] for x in a)} 条。"
                       f"死亡距离分布：≤250 为 {death_bins['≤250']}，251–1000 为 "
                       f"{death_bins['251–1000']}，>1000/截断为 {death_bins['>1000/截断']}。", "",
+                      f"全部新分支的死亡距离分布：≤250 为 {all_bins['≤250']}，"
+                      f"251–1000 为 {all_bins['251–1000']}，>1000/截断为 {all_bins['>1000/截断']}。"
+                      f"新增 A 的触发类型：明显高危 {trigger['obvious_danger']}，"
+                      f"快速增高 {trigger['rapid_growth']}，无可信危险触发 {trigger['无可信危险触发']}。", "",
                       "此数据集仅能证明固定窗口和固定续控下的局部证据；"
                       "Hold 分支可能改变方块消耗顺序，不能把两条轨迹当成完全相同的未来。", ""])
     (REPORTS / "local_correction_dataset_v2.md").write_text("\n".join(lines))
