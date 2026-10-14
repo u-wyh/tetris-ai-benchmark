@@ -4,6 +4,7 @@
 
 ## 2026-10-14
 
+- 16:09｜推送分支目标修订 Git `fad9057` 并恢复 `tetris-local-correction`；v3 仅复用校验通过的 20 局 PPO 轨迹，重放目标状态后重新做反事实筛选。旧 v2 标签不参与训练。依据：`runs/ppo30m_local_correction/status.json`、`invalid_branch_selection_v2/`、tmux 会话。
 - 16:07｜分支筛选前 4 局 48 个目标仅有 4 个 PPO 分支在 1000 块观察窗内死亡、A 类 0；据此停止 v2 分支队列并归档 4 份标签与协议，保留 20 局已合规采集轨迹。将离线目标选择改为优先 PPO 真实死亡前约 500 块的风险状态，重放时校验公开状态哈希和 PPO 动作；协议升至 v3，新增选择与重放测试，6 项定向测试通过。未使用开发或确认种子调规则。依据：`runs/ppo30m_local_correction/invalid_branch_selection_v2/`、`tests/test_local_correction.py`、新 `protocol.json`。
 - 15:44｜推送采样器修复 Git `a9e7390`，按 v2 协议重新启动 `tetris-local-correction`；归档的 3 局 v1 数据不参与新结果。依据：`runs/ppo30m_local_correction/status.json`、tmux 会话、`invalid_sampler_v1/`。
 - 15:43｜发现采样池未满时错误替换样本，3 局已完成的采集分片不符合目标抽样协议；停止 `tetris-local-correction`，将旧协议、日志和 3 局分片原样移至 `runs/ppo30m_local_correction/invalid_sampler_v1/` 保存证据。修复后协议升至 v2，新增未满容量时全部保留的测试并通过 4 项定向测试；尚未恢复队列。依据：归档目录、`tests/test_local_correction.py`、新 `protocol.json`。
