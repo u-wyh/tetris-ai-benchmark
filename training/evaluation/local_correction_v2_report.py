@@ -74,6 +74,7 @@ def generate():
     trusted = diagnosis["trusted"]
     rejected = diagnosis["rejected"]
     hold_audit = _read(V2 / "hold_audit.json")["records"]
+    sweep = _read(V2 / "gradient_sweep.json")
     REPORTS.mkdir(parents=True, exist_ok=True)
     lines = ["# PPO 30M 局部纠错失败诊断", "",
              "本报告审计已冻结 V1 的 18 条训练 A 类与 3 条独立样本验证 A 类。"
@@ -103,9 +104,13 @@ def generate():
                      f"余弦 {g['gradient_cosine']:.3f}，裁剪前合成范数 "
                      f"{g['combined_gradient_preclip_norm']:.3f}，一次 Actor 更新 L2 "
                      f"{g['actor_update_l2']:.5f}；参考 PPO 冻结={g['reference_frozen']}。")
-    lines.extend(["", "A/C 各 8 条按 batch 均值相加，原始 A:C 样本数 18:11,448 不会直接把 A 梯度按此比例稀释；"
-                  "少量 A 样本被反复抽取。Epoch 3 固定 batch 上 C 梯度与 A 梯度略相反，"
-                  "但 C/A 范数仅约 2.7%，不足以单独解释 5/18。Actor 参数确有梯度及更新，"
+    lines.extend(["", f"另取 {len(sweep['rows'])} 个固定 8A+8C batch："
+                  f"{sweep['negative_cosine_batches']}/{len(sweep['rows'])} 的 A/C 梯度余弦为负，"
+                  f"余弦中位数 {sweep['median_cosine']:.3f}，"
+                  f"C/A 梯度范数比中位数 {sweep['median_C_to_A_ratio']:.1%}。"
+                  "保持损失确有方向冲突，但通常小于纠错梯度；单个 batch 的 2.7% 不是总体代表值。", "",
+                  "A/C 各 8 条按 batch 均值相加，原始 A:C 样本数 18:11,448 不会直接把 A 梯度按此比例稀释；"
+                  "少量 A 样本被反复抽取。Actor 参数确有梯度及更新，"
                   "合法动作掩码参与 log-prob 和 KL，未见交叉熵失效的实现证据。"
                   "A 梯度占主导而网络参数共享，少量纠错更新也可能改变大量正常状态；"
                   "这与验证 C 对 PPO 一致率降到 92.07%、masked KL 升至 0.04756 一致，"
@@ -117,7 +122,7 @@ def generate():
         lines.append(f"| {row['updates']} | {row['top1']} | {row['mean_probability']:.4f} | "
                      f"{row['mean_nll']:.3f} |")
     lines.extend(["", "取消 C 损失并用 1e-4 学习率时，80 次更新可记住全部 18 条；"
-                  "正式 V1 仅三个短 epoch、每轮少量更新且学习率 5e-5。"
+                  "正式 V1 仅三个短 epoch、每轮 8 个 batch 共 24 次更新，学习率 5e-5。"
                   "这支持训练预算与有限标签是关键限制；不能由记忆测试推断游戏表现。", "",
                   "## Hold 与非 Hold 可信标签", "",
                   "- 改变 Hold：" + _group_stats([x for x in trusted if x["hold_changed"]]),
