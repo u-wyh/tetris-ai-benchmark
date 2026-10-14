@@ -6,6 +6,7 @@ from training.evaluation.hybrid_queue import load_models
 from training.imitation_bc import batch
 from training.train_local_correction import masked_kl
 from training.env.fast_candidate_env import FastCandidateTetrisEnv
+from training.evaluation.local_correction_queue import _healthy, _promising
 
 
 def test_masked_kl_and_legal_actions():
@@ -128,3 +129,14 @@ def test_rapid_growth_requires_branch_and_score_evidence():
     evidence["common_score_ratio"] = 1.0
     row["ppo_risk"]["height_growth"] = 2
     assert data._grade(row, evidence)["category"] == "B"
+
+
+def test_development_gate_preserves_four_clear_strategy():
+    ppo = {"mean_pieces": 70000, "p10_pieces": 20000,
+           "mean_score": 10_000_000_000, "four_fraction": .93}
+    candidate = {"mean_pieces": 72000, "p10_pieces": 25000,
+                 "mean_score": 10_000_000_000, "four_fraction": .89}
+    assert _healthy(candidate, ppo)
+    assert not _promising(candidate, ppo)
+    candidate["four_fraction"] = .87
+    assert not _healthy(candidate, ppo)

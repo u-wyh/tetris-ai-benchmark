@@ -150,14 +150,14 @@ def evaluate(phase, variant, seeds, cap, checkpoint=None):
 def _healthy(candidate, ppo):
     return (candidate["mean_pieces"] >= .9 * ppo["mean_pieces"] and
             candidate["mean_score"] >= .9 * ppo["mean_score"] and
-            candidate["four_fraction"] >= .85 * ppo["four_fraction"])
+            candidate["four_fraction"] >= ppo["four_fraction"] - .05)
 
 
 def _promising(candidate, ppo):
     return (candidate["mean_pieces"] > ppo["mean_pieces"] and
             candidate["p10_pieces"] > ppo["p10_pieces"] and
             candidate["mean_score"] >= .95 * ppo["mean_score"] and
-            candidate["four_fraction"] >= .9 * ppo["four_fraction"])
+            candidate["four_fraction"] >= ppo["four_fraction"] - .03)
 
 
 def _report(state, choice=None):
