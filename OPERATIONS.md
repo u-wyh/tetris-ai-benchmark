@@ -4,6 +4,8 @@
 
 ## 2026-10-14
 
+- 19:46｜PPO 30M 局部纠错队列结束，结果状态为 `v1_failed_short_validation`；数据、训练及比较报告已生成。依据：`runs/ppo30m_local_correction/status.json`、`reports/experiments/ppo30m_local_correction_comparison.md`。
+- 19:32｜推送 P10 筛选门槛修订 Git `d3bfe0a`，恢复 `tetris-local-correction` 独立队列；启动后校验既有 20 局轨迹和反事实标签，进入已保存的 V1 三轮训练恢复流程。开发评测将复用合规已完成对局，当前尚无新的完整候选结果。依据：`runs/ppo30m_local_correction/status.json`、`queue.log`、tmux 会话。
 - 17:25｜首个 Local-BC V1 epoch 在 32 个 20K 开发种子上平均存活 17,221、P10 4,977、平均分 5.26 亿，对照 PPO 分别为 18,406、18,119、5.73 亿；因原继续门槛漏掉严重低分位退步，在仅完成 V1 epoch 2 的 3 局时中断队列，增加 P10 至少保留 PPO 的 80% 的开发筛选，协议升 v6。已完成的合规开发对局保存复用；旧协议/日志归档 `pre_p10_gate_v5/`，15 项定向测试通过。未使用最终确认种子。依据：`evaluations/development_20k/`、`status.json`、`tests/test_local_correction.py`。尚未恢复队列。
 - 16:56｜推送 RNG 恢复修复 Git `1c92592`，将失败时状态、日志与收尾状态归档 `failed_rng_resume_v5/`；重新启动 `tetris-local-correction` 与收尾发布程序，继续 v5 已保存的开发对照。依据：`runs/ppo30m_local_correction/status.json`、tmux 会话。
 - 16:55｜v5 恢复时 PyTorch 将已保存的 CPU RNG 字节张量映射到 CUDA，`set_rng_state` 拒绝 GPU 张量，后台队列按预期失败并停止；已把恢复输入转回 CPU，直接从 epoch 3 checkpoint 恢复验证通过，15 项定向测试通过。已完成数据、模型和 9 局 PPO 开发对照均保留，尚未恢复评测。依据：`runs/ppo30m_local_correction/status.json`、`training/V1/history.json`、`tests/test_local_correction.py`。
