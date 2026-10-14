@@ -4,6 +4,7 @@
 
 ## 2026-10-14
 
+- 20:28–20:29｜完成 V1 训练机制诊断：18 条训练 A 类在仅用纠错损失的隔离实验中经 80 次更新达到 18/18 Top-1；正式 epoch 3 为 5/18，独立样本 0/3 但平均专家概率上升。梯度存在且 Actor 更新，参考 PPO 冻结。主动采样首版 20 块间距在早死 seed `730008` 不足 25 条，未执行该选择的反事实；选择文件归档 `active_v2/invalid_selection_spacing20/`。修订为每局最多 30 条、间距 10 块，20 局共冻结 556 条，其中随机配额 108 条。`730015` 的 5 条分支 smoke 及断点复用校验通过；定向测试 11 项通过。依据：`runs/ppo30m_local_correction/active_v2/diagnosis.json`、`selection/`、`branches/seed_730015/`、`tests/test_local_correction_active_v2.py`。
 - 19:47–19:50｜补齐局部纠错失败报告的训练诊断、四消门槛解释、共同存活区间得分及 32 个开发种子逐局配对；重新生成报告。定向 Python 15 项、Parity 6 项和 JS 61 项回归通过。依据：`reports/experiments/ppo30m_local_correction_*.md`、`tests/test_local_correction.py`、`tests/parity/` 及 Node test 输出。
 - 19:46｜V1 三个 epoch 的 32-seed、20K 开发评测全部完成；第 1、2 轮 P10 未过门槛，第 3 轮四消占比 87.65% 对 PPO 92.84%，降幅 5.19 个百分点、略超 5 点门槛。队列按协议停止为 `v1_failed_short_validation`，没有启动 V2、长局或确认种子；收尾程序提交并推送 Git `74e004a`。依据：`runs/ppo30m_local_correction/status.json`、`publish_status.json`、`evaluations/development_20k/*/summary.json`。
 - 19:46｜PPO 30M 局部纠错队列结束，结果状态为 `v1_failed_short_validation`；数据、训练及比较报告已生成。依据：`runs/ppo30m_local_correction/status.json`、`reports/experiments/ppo30m_local_correction_comparison.md`。

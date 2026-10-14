@@ -251,9 +251,10 @@ def _branch_targets(rows):
     return sorted(chosen)
 
 
-def _replay_snapshots(seed, rows, targets, models, source_sha):
-    path = RUN / "branch_snapshots" / f"seed_{seed}.pkl"
-    meta_path = RUN / "branch_snapshots" / f"seed_{seed}.json"
+def _replay_snapshots(seed, rows, targets, models, source_sha, cache_root=None):
+    cache_root = cache_root or RUN / "branch_snapshots"
+    path = cache_root / f"seed_{seed}.pkl"
+    meta_path = cache_root / f"seed_{seed}.json"
     if meta_path.exists():
         meta = json.loads(meta_path.read_text())
         if (meta["source_sha256"] != source_sha or meta["steps"] != targets or
