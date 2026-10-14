@@ -81,18 +81,22 @@ def test_full_core_snapshot_preserves_hold_next_and_sequence():
         second.close()
 
 
-def test_frozen_model_loads_reproduce_actions():
+def test_frozen_model_save_load_reproduces_actions(tmp_path):
     from training.evaluation.hybrid_queue import load_models, verify_models
+    from sb3_contrib import MaskablePPO
 
     verify_models()
-    left, right = load_models(), load_models()
+    models = load_models()
     env = FastCandidateTetrisEnv(max_pieces=10)
     try:
         obs, _ = env.reset(seed=710201)
         mask = env.action_masks()
         for label in ("ppo", "bc"):
-            a = int(left[label].predict(obs, deterministic=True, action_masks=mask)[0])
-            b = int(right[label].predict(obs, deterministic=True, action_masks=mask)[0])
+            path = tmp_path / f"{label}.zip"
+            models[label].save(str(path))
+            restored = MaskablePPO.load(str(path), device="cpu")
+            a = int(models[label].predict(obs, deterministic=True, action_masks=mask)[0])
+            b = int(restored.predict(obs, deterministic=True, action_masks=mask)[0])
             assert a == b and mask[a]
     finally:
         env.close()
