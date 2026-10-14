@@ -4,6 +4,8 @@
 
 ## 2026-10-14
 
+- 16:52｜PPO 30M 局部纠错后台队列失败；保留已提交的局与 checkpoint，未把不完整结果作为结论。依据：`runs/ppo30m_local_correction/status.json`、`queue.log`。
+- 16:52｜推送四消保留门槛修订 Git `b17d119` 并恢复后台队列；v5 直接复用 20 局合规轨迹、全部标签、三轮训练 checkpoint 与已完成的纯 PPO 开发对局。依据：`runs/ppo30m_local_correction/status.json`、`protocol.json`、tmux 会话。
 - 16:51｜Local-BC V1 已完成三轮训练，开始开发评测后在新模型对局前停止队列，将四消保留门槛从相对 85% 收紧为短局至多下降 5 个百分点、正式确认前至多下降 3 个百分点；当时只完成 9 局纯 PPO 开发对照，均原子保存复用。协议升为 v5，旧协议和日志归档 `pre_gate_v4/`，14 项定向测试通过。依据：`runs/ppo30m_local_correction/evaluations/development_20k/ppo/`、新 `protocol.json`、`tests/test_local_correction.py`。尚未恢复队列。
 - 16:49｜Local-BC V1 三个短 epoch 监督训练完成，保存每轮模型、优化器和 RNG；训练集 A 类动作命中从 0/18 到 5/18，独立样本验证仍为 0/3，正常状态对原 PPO 一致率从 100% 降到约 92.1%（验证 masked KL 约 0.0476）。队列已开始 32-seed、20K 开发评测；当前不能判定长局效果。依据：`runs/ppo30m_local_correction/training/V1/history.json`、`status.json`。
 - 16:47｜局部纠错 v4 20 局反事实筛选完成；训练 A/C 样本 18/11,448，独立样本验证 A/C 为 3/1,752。全部 20 局标签按源分片 SHA256 保存，已进入小规模 Actor 监督训练；未启动 PPO 续训。依据：`runs/ppo30m_local_correction/dataset_summary.json`、`labels/`、`status.json`。
