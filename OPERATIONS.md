@@ -4,6 +4,11 @@
 
 ## 2026-10-14
 
+- 10:06｜冻结 C1/C2 设计与独立种子协议，新增可恢复评测和最终报告／推送程序；Python 定向回归 30 项、Parity 6 项含 35 子测试、JS 语法检查通过。尚未启动新开发长局评测。依据：`reports/experiments/hybrid_v2_design.md`、`tests/test_hybrid_v2.py`、本次测试输出。
+- 10:02｜六个 B12 失败局完成确定性重放与选定位置同状态双分支；生成诊断报告。六局 1131 次 BC 动作中，753 次 Hold 用法与 PPO 候选不同、77 次 BC 候选新增洞更多；关键单点结论及不确定性见报告。依据：`runs/hybrid_v2/failure_analysis/`、`reports/experiments/hybrid_b12_failure_analysis.md`。
+- 09:52｜`700016` 的旧 B12 轨迹与终局重放一致。为缩短剩余五局离线反事实耗时，中断串行分析并改为最多 4 个 CPU 进程并行后恢复；已完成且字段齐全的局不重跑。依据：`runs/hybrid_v2/failure_analysis/seed_700016.json`、`failure.log`。
+- 09:47｜启动独立 B12 失败局确定性重放与同 Core 状态反事实分析；`700026` 原局分数和存活重放一致。首次拦截位置改用 PPO 动作、之后同用 B12 时，5000 块观察窗内仍存活；原 BC 分支在第 1715 块结束。该单点结果只作诊断。依据：`runs/hybrid_v2/failure_analysis/seed_700026.json`。
+- 09:48｜为补充每次拦截的消行／Hold 和末段棋盘指标，中断并重启尚在进行的失败分析后台进程；已保存结果会按字段校验后复用或重放，未动原始评测。依据：`runs/hybrid_v2/failure.log`、`training/evaluation/hybrid_failure.py`。
 - 02:34｜Hybrid 调参及独立确认评测完成，最终报告已生成并准备提交推送。依据：`runs/candidate_ppo30m_bc_hybrid/status.json`、`reports/experiments/candidate_ppo30m_bc_hybrid.md`。
 ## 2026-10-13
 
