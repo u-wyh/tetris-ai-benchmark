@@ -244,6 +244,13 @@ def generate():
                   "V2 只扩充风险反事实证据，正常 C 样本仍可引用 V1 冻结分片。"
                   "分支输出逐文件原子提交，完成后 `dataset_manifest.json` 记录每个文件 SHA256；"
                   "重复运行会验证模型、来源、规则和选择身份后跳过完成分支。", ""])
+    meta_path = V2 / "dataset_rows.json"
+    if meta_path.exists():
+        meta = _read(meta_path)
+        lines.extend([f"训练读取用 `dataset_rows.jsonl.gz` 含 {meta['records']} 条记录，"
+                      "显式保存 Episode ID、逐条 SHA256、源文件及规则版本；"
+                      f"压缩数据 SHA256：`{meta['dataset_sha256']}`。"
+                      "死亡距离字段只供离线筛选，在线推理不得使用。", ""])
     if status["state"] == "completed":
         a = [x for x in records if x["evidence"]["category"] == "A"]
         death_bins = collections.Counter("≤250" if x["row"]["death_distance"] is not None and

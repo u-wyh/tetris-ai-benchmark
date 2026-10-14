@@ -6,6 +6,7 @@ import traceback
 
 from training.evaluation.hybrid_publish import record
 from training.evaluation.local_correction_active_v2 import V2
+from training.evaluation.local_correction_v2_materialize import main as materialize
 from training.evaluation.local_correction_v2_report import generate
 from training.train_ppo import ROOT, atomic_json, now
 
@@ -27,6 +28,7 @@ def main():
         time.sleep(20)
     try:
         if status["state"] == "completed":
+            materialize()
             generate()
             decision = json.loads((V2 / "readiness.json").read_text())
             record(f"局部纠错主动反事实 V2 队列完成：新分支 {decision['verified_new']}，"

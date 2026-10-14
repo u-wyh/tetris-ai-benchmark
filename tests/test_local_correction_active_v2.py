@@ -4,6 +4,7 @@ import json
 from training.evaluation.local_correction_active_v2 import (MIN_SPACING, RANDOM_QUOTA,
                                                              SEEDS, V2, _load_seed, choose)
 from training.evaluation.local_correction_v2_report import _reasons
+from training.evaluation.local_correction_v2_materialize import normalize
 
 
 def test_active_selection_is_isolated_diverse_and_deterministic():
@@ -41,3 +42,16 @@ def test_hold_audit_public_next_and_rejection_reason_coverage():
     diagnosis = json.loads((V2 / "diagnosis.json").read_text())
     assert len(diagnosis["rejected"]) == 202
     assert all(_reasons(row) for row in diagnosis["rejected"])
+
+
+def test_materialized_record_identity_and_offline_only_field():
+    path = next((V2 / "branches").glob("seed_*/step_*.json"))
+    branch = json.loads(path.read_text())
+    row = normalize(branch)
+    assert row == normalize(branch)
+    assert row["episode_id"] == f"seed_{branch['seed']}_episode_0"
+    assert row["step"] == branch["step"]
+    assert row["ppo_action"] in row["legal_action_ids"]
+    assert row["bc_action"] in row["legal_action_ids"]
+    assert len(row["record_sha256"]) == 64
+    assert 0 <= row["ppo_action_probability"] <= 1
