@@ -111,3 +111,20 @@ def test_selected_state_replay_matches_public_hash(monkeypatch, tmp_path):
     targets = data._branch_targets(rows)
     snapshots = data._replay_snapshots(730904, rows, targets, models, meta["shard_sha256"])
     assert sorted(snapshots) == targets
+
+
+def test_rapid_growth_requires_branch_and_score_evidence():
+    row = {"ppo_risk": {"lock_out": False, "central_top4": 0, "height": 8,
+                        "height_growth": 3, "new_holes": 0, "bumpiness": 19},
+           "bc_risk": {"lock_out": False, "central_top4": 0, "height": 4,
+                       "height_growth": 0, "new_holes": 0, "bumpiness": 9}}
+    evidence = {"continuation_ok": True, "common_score_ratio": 1.0,
+                "common_four_clears": {"ppo": 10, "bc": 10},
+                "branches": {"ppo": {"pieces": 500, "game_over": True},
+                             "bc": {"pieces": 1000, "game_over": False}}}
+    assert data._grade(row, evidence)["category"] == "A"
+    evidence["common_score_ratio"] = .7
+    assert data._grade(row, evidence)["category"] == "B"
+    evidence["common_score_ratio"] = 1.0
+    row["ppo_risk"]["height_growth"] = 2
+    assert data._grade(row, evidence)["category"] == "B"

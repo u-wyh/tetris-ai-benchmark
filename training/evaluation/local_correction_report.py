@@ -50,9 +50,11 @@ def generate(state, choice=None):
              f"A 类可信纠错 {sum(x['A'] for x in labels):,}，"
              f"B 类不确定 {sum(x['B'] for x in labels):,}。"
              f"每个分支最多跟踪 {HORIZON} 块，触及上限右截断。", "",
-             "A 类必须同时满足：PPO 一步明显危险、BC 一步显著更安全、可见下一步空间未显著缩水、"
+             "A 类必须同时满足：PPO 一步高位危险或单步最高列增长至少 3 格、"
+             "BC 一步显著更安全、可见下一步空间未显著缩水、"
              "PPO 分支在观察窗内死亡、BC 至少多活 250 块、共同存活区间得分保留 ≥80%、"
-             "四消次数保留 ≥75%。这只是筛选证据，不等于证明 BC 动作全局最优。", "",
+             "四消次数保留 ≥75%。快速增高触发在前 4 个训练种子分支后冻结，"
+             "没有使用样本验证或开发评测结果选规则；这仍只是局部证据，不等于证明 BC 动作全局最优。", "",
              f"训练 A/C 分组：{summary.get('train_A', 0)}/{summary.get('train_C', 0)}；"
              f"样本验证 A/C 分组：{summary.get('validation_A', 0)}/{summary.get('validation_C', 0)}。", "",
              "PPO 与 BC 的 Hold 可能改变实际轨迹及未来方块使用顺序；两个分支从同一完整 Core/RNG 快照出发，"

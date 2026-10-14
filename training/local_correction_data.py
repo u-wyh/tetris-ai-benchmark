@@ -37,8 +37,9 @@ def audit():
                     if not path.is_relative_to(RUN):
                         raise RuntimeError(f"Previously used seed {seed}: {path}")
     protocol = {"models": HASHES, "seeds": groups, "cap": CAP,
-                "branch_horizon": HORIZON, "version": 3,
-                "branch_selection": "death_distance_near_500_with_100_piece_spacing_v1"}
+                "branch_horizon": HORIZON, "version": 4,
+                "branch_selection": "death_distance_near_500_with_100_piece_spacing_v1",
+                "trusted_trigger": "obvious_danger_or_rapid_growth_3_v1"}
     path = RUN / "protocol.json"
     if path.exists() and json.loads(path.read_text()) != protocol:
         raise RuntimeError("Frozen local-correction protocol changed")
@@ -184,7 +185,6 @@ def _branch(models, snapshot, action):
 
 def classify(row, snapshot, models):
     p, b = row["ppo_risk"], row["bc_risk"]
-    precondition = obvious_danger(p) and materially_safer(p, b)
     from training.tetris_core.legal_placements import get_legal_placements
     env = FastCandidateTetrisEnv(max_pieces=CAP)
     try:
@@ -208,17 +208,29 @@ def classify(row, snapshot, models):
                    max(1, ps["scores"][common - 1] - row["score"]))
     four_p = ps["fours"][common - 1]
     four_b = bs["fours"][common - 1]
-    reliable = (precondition and continuation_ok and ps["game_over"] and
-                bs["pieces"] >= ps["pieces"] + 250 and score_ratio >= .8 and
-                four_b >= .75 * four_p)
     for value in branches.values():
         del value["scores"], value["fours"]
-    return {"category": "A" if reliable else "B", "precondition": precondition,
-            "continuation_ok": continuation_ok, "hold_changed": hold_changed,
+    evidence = {"continuation_ok": continuation_ok, "hold_changed": hold_changed,
             "next_legal": {"ppo": pn, "bc": bn},
             "common_pieces": common, "common_score_ratio": score_ratio,
             "common_four_clears": {"ppo": four_p, "bc": four_b},
             "branches": branches}
+    return _grade(row, evidence)
+
+
+def _grade(row, evidence):
+    p, b = row["ppo_risk"], row["bc_risk"]
+    trigger = ("obvious_danger" if obvious_danger(p) else
+               "rapid_growth" if p["height_growth"] >= 3 else None)
+    precondition = trigger is not None and materially_safer(p, b)
+    ps, bs = evidence["branches"]["ppo"], evidence["branches"]["bc"]
+    fours = evidence["common_four_clears"]
+    reliable = (precondition and evidence["continuation_ok"] and ps["game_over"] and
+                bs["pieces"] >= ps["pieces"] + 250 and
+                evidence["common_score_ratio"] >= .8 and
+                fours["bc"] >= .75 * fours["ppo"])
+    return {**evidence, "category": "A" if reliable else "B",
+            "precondition": precondition, "trigger": trigger}
 
 
 def _branch_targets(rows):
@@ -283,19 +295,27 @@ def filter_seed(seed, models=None):
     if output.exists():
         saved = json.loads(output.read_text())
         if (saved["source_sha256"] != meta["shard_sha256"] or
-                saved.get("selection_version") != 3):
+                saved.get("selection_version") != 4):
             raise RuntimeError("Label source changed")
         return saved
     models = models or load_models()
     with gzip.open(shard, "rt", encoding="utf8") as stream:
         rows = {row["step"]: row for row in map(json.loads, stream)}
     targets = _branch_targets(rows)
-    states = _replay_snapshots(seed, rows, targets, models, meta["shard_sha256"])
-    labels = {}
-    for step, snapshot in states.items():
-        labels[str(step)] = classify(rows[step], snapshot, models)
+    previous = RUN / "initial_trigger_v3" / "labels" / f"seed_{seed}.json"
+    if previous.exists():
+        old = json.loads(previous.read_text())
+        if (old["source_sha256"] != meta["shard_sha256"] or
+                old["selection_version"] != 3 or old["branch_steps"] != targets):
+            raise RuntimeError("Archived branch evidence differs from v4 source")
+        labels = {step: _grade(rows[int(step)], evidence)
+                  for step, evidence in old["labels"].items()}
+    else:
+        states = _replay_snapshots(seed, rows, targets, models, meta["shard_sha256"])
+        labels = {str(step): classify(rows[step], snapshot, models)
+                  for step, snapshot in states.items()}
     result = {"seed": seed, "source_sha256": meta["shard_sha256"],
-              "horizon": HORIZON, "selection_version": 3,
+              "horizon": HORIZON, "selection_version": 4,
               "branch_steps": targets, "labels": labels,
               "A": sum(v["category"] == "A" for v in labels.values()),
               "B": sum(v["category"] == "B" for v in labels.values()),
