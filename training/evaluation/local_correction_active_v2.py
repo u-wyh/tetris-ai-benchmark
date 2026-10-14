@@ -10,6 +10,7 @@ from multiprocessing import get_context
 import torch
 
 from training.evaluation.hybrid_queue import HASHES, load_models, verify_models
+from training.imitation_bc import batch
 from training.imitation_dataset import digest
 from training.local_correction_data import (RUN, TRAIN, VALIDATION, HORIZON, _paths,
                                             _replay_snapshots, classify)
@@ -113,9 +114,19 @@ def _run_seed(seed):
             prior = json.loads(path.read_text())
             if any(prior.get(k) != v for k, v in identity.items()):
                 raise RuntimeError(f"Completed branch identity mismatch {seed}:{step}")
+            if (prior["row"]["state_sha256"] != rows[step]["state_sha256"] or
+                    not 0 <= prior["ppo_action_probability"] <= 1 or
+                    prior["evidence"]["category"] not in ("A", "B")):
+                raise RuntimeError(f"Completed branch content mismatch {seed}:{step}")
         else:
             evidence = classify(rows[step], states[step], MODELS)
+            probability_row = {**rows[step], "action": rows[step]["ppo_action"]}
+            observation, mask, action = batch([probability_row], "cpu")
+            with torch.no_grad():
+                distribution = MODELS["ppo"].policy.get_distribution(observation, action_masks=mask)
+                ppo_probability = float(distribution.log_prob(action).exp()[0])
             atomic_json(path, {**identity, "row": rows[step], "evidence": evidence,
+                               "ppo_action_probability": ppo_probability,
                                "completed_at": now()})
         completed += 1
     return {"seed": seed, "completed": completed}
