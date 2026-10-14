@@ -4,6 +4,7 @@
 
 ## 2026-10-14
 
+- 15:36｜实现独立 PPO 30M 局部纠错数据、反事实筛选、Actor 监督训练和可恢复分阶段评测；冻结模型 SHA、版本与独立种子组校验通过。定向 Python 10 项、Parity 21 项及 35 子测试、JS 语法检查通过；额外 Python 全量测试运行 7 分 16 秒已有 136 项通过，无失败，但因包含耗时训练事务测试而主动中断。CUDA 16 样本反向传播烟雾测试通过，峰值约 24.1 MiB。依据：`tests/test_local_correction.py`、`reports/experiments/ppo30m_local_correction_dataset.md`、本次测试输出。尚未启动正式数据采集或训练。
 - 14:34｜Hybrid V2 独立 32-seed 确认评测完成，最终比较报告已生成并提交推送。依据：`runs/hybrid_v2/status.json`、`reports/experiments/hybrid_v2_comparison.md`。
 - 10:09｜补充冻结 PPO/BC 模型经临时 Save/Load 后的确定性动作一致性测试，两模型均通过；新测试文件共 6 项通过，未修改原 checkpoint。依据：`tests/test_hybrid_v2.py`、本次 pytest 输出。
 - 10:07｜提交并推送 B12 失败分析、冻结 C1/C2 设计及独立 V2 评测实现（Git `1ee5800`）；启动 `tetris-hybrid-v2` 可恢复后台队列和独立收尾推送程序。烟雾阶段已开始；不会启动任何 PPO、BC、DAgger 或蒸馏训练。依据：`runs/hybrid_v2/status.json`、tmux 会话、Git `1ee5800`。
