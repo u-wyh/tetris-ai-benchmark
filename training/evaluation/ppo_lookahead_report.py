@@ -40,7 +40,10 @@ def render():
             row = json.loads(path.read_text())
             common, pairs = common_score_ratio(phase, variant)
             ratio = f"{common:.3f} ({pairs})" if common is not None else "—"
-            lines.append(f"| {variant} | {row['games']} | {row['mean_pieces']:.0f} | {row['p10_pieces']:.0f} | {row['capped']}/{row['games']} | {row['mean_score']:.0f} | {row['four_fraction']:.1%} | {row['top1_retention']:.1%} | {row['search_trigger']:.1%} | {row['mean_nodes']:.1f} | {row['mean_ms']:.2f} | {row['p95_game_ms']:.2f} | {ratio} |")
+            top1 = f"{row['top1_retention']:.1%}" if variant in ("ppo", "S1", "S2") else "—"
+            trigger = f"{row['search_trigger']:.1%}" if variant == "S2" else "—"
+            nodes = f"{row['mean_nodes']:.1f}" if variant in ("S1", "S2") else "—"
+            lines.append(f"| {variant} | {row['games']} | {row['mean_pieces']:.0f} | {row['p10_pieces']:.0f} | {row['capped']}/{row['games']} | {row['mean_score']:.0f} | {row['four_fraction']:.1%} | {top1} | {trigger} | {nodes} | {row['mean_ms']:.2f} | {row['p95_game_ms']:.2f} | {ratio} |")
         lines.append("")
     decision = RUN / "decision.json"
     if decision.exists():

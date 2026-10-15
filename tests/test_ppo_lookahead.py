@@ -30,6 +30,28 @@ def test_public_simulation_matches_core_and_does_not_mutate_branch():
         env.close()
 
 
+def test_visible_three_step_simulation_stops_at_unknown():
+    env = FastCandidateTetrisEnv(max_pieces=4)
+    try:
+        env.reset(seed=990004)
+        public = env.core.get_public_observation()
+        for index in range(3):
+            placement = next(p for p in get_legal_placements(public) if not p["hold"])
+            child, _ = simulate_public(public, placement)
+            env.step(placement["actionId"])
+            actual = env.core.get_public_observation()
+            assert child["board"] == actual["board"]
+            assert child["score"] == actual["score"]
+            assert child["hold"] == actual["hold"]
+            if child["phase"] == "unknown":
+                assert index == 2
+                break
+            assert child["currentPiece"]["type"] == actual["currentPiece"]["type"]
+            public = child
+    finally:
+        env.close()
+
+
 def test_unknown_is_not_death_and_hold_is_in_key():
     env = FastCandidateTetrisEnv(max_pieces=2)
     try:
@@ -70,3 +92,12 @@ def test_hidden_bag_rng_does_not_change_search_decision():
         assert mask[original[0]]
     finally:
         env.close()
+
+
+def test_failed_four_clear_screen_stops_long_extension(monkeypatch):
+    from training.evaluation import ppo_lookahead_queue as queue
+    monkeypatch.setattr(queue, "common_score_ratio", lambda *args: 1.0)
+    baseline = {"four_fraction": 0.93, "p10_pieces": 10000,
+                "mean_score": 500_000_000, "top1_retention": 1.0}
+    failed = {**baseline, "four_fraction": 0.88, "mean_score": 510_000_000}
+    assert not queue.plausible_for_50k({"ppo": baseline, "S1": failed, "S2": failed})

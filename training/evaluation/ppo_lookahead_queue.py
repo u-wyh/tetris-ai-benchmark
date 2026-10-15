@@ -201,6 +201,19 @@ def decision(results, phase_name):
     return winners
 
 
+def plausible_for_50k(results):
+    base = results["ppo"]
+    for variant in ("S1", "S2"):
+        row = results[variant]
+        if (row["four_fraction"] >= base["four_fraction"]-0.03 and
+            row["p10_pieces"] >= 0.9*base["p10_pieces"] and
+            row["mean_score"] >= 0.9*base["mean_score"] and
+            row["top1_retention"] >= 0.8 and
+            common_score_ratio("development_20k", variant) >= 0.95):
+            return True
+    return False
+
+
 def run():
     try:
         spec = protocol()
@@ -211,7 +224,7 @@ def run():
             return
         development = phase("development_20k", ["ppo", "B12", "S1", "S2"], DEV, 20000, models)
         judged_phase = "development_20k"
-        if development["ppo"]["capped"] >= 12:
+        if development["ppo"]["capped"] >= 12 and plausible_for_50k(development):
             development = phase("development_50k", ["ppo", "B12", "S1", "S2"], DEV, 50000, models)
             judged_phase = "development_50k"
         winners = decision(development, judged_phase)
