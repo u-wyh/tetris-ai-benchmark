@@ -215,6 +215,8 @@ def quality(name, results, seeds):
     base = results["ppo"]
     outcome = {}
     for variant in V3_CONFIGS:
+        if variant not in results:
+            continue  # An earlier safety gate may already have eliminated this variant.
         row = results[variant]
         shared = common_ratio(name, variant, seeds)
         severe = []

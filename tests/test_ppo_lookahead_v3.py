@@ -4,7 +4,9 @@ import pytest
 
 from training.env.fast_candidate_env import FastCandidateTetrisEnv
 from training.evaluation.ppo_lookahead_queue import load_models
+from training.evaluation.ppo_lookahead_queue import CONFIGS
 from training.evaluation.ppo_lookahead_v3_audit import RUN, terms
+from training.ppo_lookahead_policy import LookaheadController
 from training.ppo_lookahead_v3 import V3Config, V3Controller
 from training.tetris_core.legal_placements import get_legal_placements
 from training.traditional.v2 import simulate_public
@@ -79,3 +81,36 @@ def test_snapshot_restores_exact_next_piece_and_rng():
     finally:
         left.close()
         right.close()
+
+
+def test_known_early_death_action_is_not_repeated():
+    model = load_models()["ppo"]
+    old = LookaheadController(model, CONFIGS["S1"])
+    variants = [V3Controller(model, V3Config("V3A")),
+                V3Controller(model, V3Config("V3B", hold_extra_margin=0.45))]
+    env = FastCandidateTetrisEnv(max_pieces=20000)
+    try:
+        observation, _ = env.reset(seed=990109)
+        while env.pieces < 2849:
+            action, _ = old.decide(observation, env.action_masks(),
+                                   env.core.get_public_observation(), env._placement_cache)
+            observation, _, over, capped, _ = env.step(action)
+            assert not over and not capped
+        mask, public = env.action_masks(), env.core.get_public_observation()
+        original, decision = old.decide(observation, mask, public, env._placement_cache)
+        assert (original, decision["ppo_action"]) == (249, 383)
+        for controller in variants:
+            action, detail = controller.decide(observation, mask, public, env._placement_cache)
+            assert action == detail["ppo_action"] == 383
+    finally:
+        env.close()
+
+
+def test_extension_gate_accepts_only_surviving_variant(monkeypatch):
+    from training.evaluation import ppo_lookahead_v3_queue as queue
+    monkeypatch.setattr(queue, "common_ratio", lambda *args: 1.0)
+    monkeypatch.setattr(queue, "read_gzip", lambda path: {"game_over": False, "pieces": 50000})
+    base = {"four_fraction": .93, "p10_pieces": 30000, "p95_game_ms": 1.0}
+    only_b = {"four_fraction": .925, "p10_pieces": 29000, "p95_game_ms": 1.1}
+    assert queue.quality("development_50k", {"ppo": base, "V3B": only_b}, [991100]) == {
+        "V3B": {"common_score_ratio": 1.0, "severe_paired_early_death": [], "passes": True}}
