@@ -68,6 +68,11 @@
 
 ## 记录约定
 
+- 2026-10-14 23:27–23:28 CST｜PPO30M 夜间微调 Raw/Risk 各完成首个 4096 样本事务试运行，原 PPO30M 作为初始化和冻结 KL 参考，单局上限 100000；两组约 500 样本/秒，GPU 峰值分配约 149 MiB。依据：`runs/ppo30m_overnight_finetune/{raw,risk}/committed/task_000001/metrics.json` 与各 `events.log`。
+- 2026-10-15 10:08 CST｜Raw/Risk 均从 Task 1 检查点恢复并提交 Task 2，累计各 8192 样本；约 508 样本/秒，GPU 峰值分配约 151 MiB。依据：两组 `transaction_state.json`、`committed/task_000002/metrics.json` 与 `events.log`。
+- 2026-10-15 10:23 CST｜队列启动命令误以普通进程运行，Raw 已提交 Task 3（12288 样本），Task 4 尚未提交；已停止该普通进程，保留 Task 3 提交指针，后续从此恢复至独立 tmux。依据：`runs/ppo30m_overnight_finetune/raw/transaction_state.json`、`events.log` 和 `runs/ppo30m_overnight_finetune/queue_status.json`。
+- 2026-10-15 10:24 CST｜独立 tmux 会话 `ppo30m-overnight-finetune` 已启动；恢复时自动废弃未提交的 Task 4，再次完成并原子提交到 Raw 16384 样本，Risk 保持 8192 样本待顺序执行。全量 Python 169 测试及 35 子测试、Parity 6、JS 61 通过。依据：`tmux list-sessions`、Raw `events.log`、`transaction_state.json` 和 `runs/ppo30m_overnight_finetune/queue.log`。
+
 - 2026-10-14 22:48–22:50 CST｜冻结 PPO30M 多候选反事实试点协议与 46 个训练组状态，校验原模型和 V2 快照；启动独立 `tmux` 队列 `ppo-multiaction-pilot`，单进程逐分支原子保存。首 5 个状态已完成；Python 相关测试 16 通过，Parity 6 通过，JS 61 通过。依据：`runs/ppo30m_multiaction_counterfactual/protocol.json`、`selection.json`、`queue.log`，`tests/test_ppo_multiaction_counterfactual.py`。
 - 2026-10-14 23:15–23:16 CST｜多候选反事实队列完成 46/46 状态、368/368 原子分支，无失败；同标准 A 类动作 28 个，覆盖 9 状态，BC 对照覆盖 4 状态。生成报告及全部结果 SHA256 清单；未达到预设第二批计算效率门槛，停止扩大且不训练。Python 全量 162 测试和 35 子测试、Parity 6、JS 61 通过，新增定向测试 4 通过。依据：`runs/ppo30m_multiaction_counterfactual/completed.json`、`summary.json`、`dataset_manifest.json`、`reports/experiments/ppo_multiaction_counterfactual_results.md`。
 - 2026-10-14 23:17 CST｜本次研究代码、测试和三份报告已提交并推送 `origin/main`，代码提交 `8f33b00`；后台试点队列已正常结束。依据：`git push origin main` 成功输出、`git log -1` 和 `tmux list-sessions`。

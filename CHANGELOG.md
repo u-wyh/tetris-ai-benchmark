@@ -1,7 +1,10 @@
 # 修改日志
 
-## 2026-10-14
+## 2026-10-15
 
+- 新增 PPO 30M 夜间 KL 强化学习微调实验：Raw 与 0.003 高度风险奖励两组均从冻结 PPO30M Actor/Critic 初始化，并以原 PPO 为 KL 参考；新实验训练单局上限 100000，8-worker、4096 样本原子任务、两阶段 503808/2002944 样本上限与独立配对长局验证。新增显存、奖励分量、梯度及冻结正常状态策略保留监控，旧模型和正式计分不变。两方案均通过完整 Task 与恢复试运行，后台队列继续执行。详见 `reports/experiments/ppo30m_overnight_finetune_design.md`。
+
+## 2026-10-14
 - 完成 PPO 30M 多候选反事实试点：复用 V2 训练组快照，冻结 46 个状态、368 个合法候选，从同快照 PPO 续控 256/1000 块并逐分支原子保存。按同一 A 类标准，多候选在 9 个状态找到 28 个动作，BC 单候选在 4 个状态找到 4 个；24 个 A 动作非 BC，20 个来自 PPO Top5。多候选每 CPU 小时 A 状态产出低于 BC 对照，按预设门槛停止第二批，不启动训练。详见 `reports/experiments/ppo_multiaction_counterfactual_results.md`。
 - 局部纠错主动反事实 V2 完成 556 条：新增 A 22（训练 19、独立样本验证 3），通过率 3.96%，低于 V1 的 9.42%；合并后训练/验证 A 仅 37/6，停止下一轮正式模型训练。新增近死窗口与远距/右截断分层、534 条 B 类拒绝原因、V2 Hold 真实方块序列变化及不可变数据集哈希复核。详见 `reports/experiments/local_correction_counterfactual_v2.md` 和 `local_correction_dataset_v2.md`。
 - V2 反事实完成后自动从各原子分支生成不可变的 `dataset_rows.jsonl.gz`，补齐 Episode ID、PPO 原动作概率、离线死亡距离标记、逐条哈希与数据分片 SHA；后台收尾程序生成报告、记录状态并推送 Git。

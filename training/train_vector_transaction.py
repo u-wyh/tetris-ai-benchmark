@@ -37,6 +37,9 @@ REQUIRED_FILES = {"model.zip", "trainer_state.pkl", "vector_env_state.pkl",
 HOLE_METRIC_FIELDS = ("mean_raw_reward", "mean_shaped_reward", "mean_new_holes",
                       "new_holes_per_100_pieces", "mean_hole_penalty")
 KL_METRIC_FIELDS = ("bc_kl", "explained_variance")
+OVERNIGHT_METRIC_FIELDS = ("reference_kl", "gradient_norm", "mean_raw_reward",
+                           "mean_shaped_reward", "mean_risk_increase",
+                           "mean_height_penalty", "gpu_peak_allocated_mib")
 
 
 def reward_settings(config):
@@ -75,9 +78,11 @@ class TransactionCandidateEnv(CandidateTetrisEnv, TransactionTetrisEnv):
 
 def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
                   base_seed=42, hole_penalty_coef=0.0, height_penalty_coef=0.0,
-                  candidate_policy=False):
+                  candidate_policy=False, max_pieces=10000):
     if device not in ("cpu", "cuda"):
         raise ValueError("device must be cpu or cuda")
+    if type(max_pieces) is not int or max_pieces < 1:
+        raise ValueError("max_pieces must be a positive integer")
     if (isinstance(hole_penalty_coef, bool) or not isinstance(hole_penalty_coef, (int, float))
             or not math.isfinite(hole_penalty_coef) or hole_penalty_coef < 0):
         raise ValueError("hole_penalty_coef must be a finite nonnegative number")
@@ -91,6 +96,7 @@ def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
     config = default_config(target=actual_target, chunk=task_steps, first_stage=actual_target,
                             eval_every=task_steps, checkpoint_every=task_steps)
     config["run_type"] = "transactional_vector_maskable_ppo"
+    config["max_pieces"] = max_pieces
     config["device"] = device
     config["task_steps"] = task_steps
     config["run_seed"] = base_seed
@@ -233,7 +239,7 @@ def restore_task(run_dir, number, config, env):
     if config.get("kl_reference"):
         reference = config["kl_reference"]
         if sha256(Path(reference["path"])) != reference["sha256"]:
-            raise RuntimeError("Frozen BC reference changed")
+            raise RuntimeError("Frozen KL reference changed")
         model.set_reference(MaskablePPO.load(reference["path"], device=config["device"]))
     for index, state in enumerate(saved):
         env.env_method("set_state", state, indices=[index])
@@ -253,8 +259,10 @@ def restore_task(run_dir, number, config, env):
 
 def rebuild_vector_metrics(run_dir, committed_task, config):
     buffer = io.StringIO()
-    columns = (FIELDS + (HOLE_METRIC_FIELDS if config.get("hole_penalty_coef", 0.0) else ())
-               + (KL_METRIC_FIELDS if config.get("kl_reference") else ()))
+    columns = tuple(dict.fromkeys(
+        FIELDS + (HOLE_METRIC_FIELDS if config.get("hole_penalty_coef", 0.0) else ())
+        + (KL_METRIC_FIELDS if config.get("kl_reference") else ())
+        + (OVERNIGHT_METRIC_FIELDS if config.get("overnight_monitor") else ())))
     writer = csv.DictWriter(buffer, fieldnames=columns)
     writer.writeheader()
     for number in range(1, committed_task + 1):
@@ -306,6 +314,16 @@ def commit_vector_task(run_dir, state, working_dir, model, env, callback, captur
                                          if "train/explained_variance" in capture.values else None)
     if config.get("hole_penalty_coef", 0.0):
         metrics.update(hole_metrics_for_task(callback, state["task_steps"]))
+    if config.get("overnight_monitor"):
+        count = state["task_steps"]
+        metrics.update(reference_kl=metrics.get("bc_kl"),
+                       gradient_norm=float(capture.values["train/gradient_norm"])
+                       if "train/gradient_norm" in capture.values else None,
+                       mean_raw_reward=callback.raw_reward_sum / count,
+                       mean_shaped_reward=callback.shaped_reward_sum / count,
+                       mean_risk_increase=callback.risk_increase_sum / count,
+                       mean_height_penalty=callback.height_penalty_sum / count,
+                       gpu_peak_allocated_mib=gpu_peak["allocated"] if gpu_peak else None)
     atomic_json(working_dir / "metrics.json", metrics)
     atomic_bytes(working_dir / "trainer_state.pkl", pickle.dumps(trainer, protocol=5))
     atomic_bytes(working_dir / "vector_env_state.pkl", pickle.dumps(saved_workers, protocol=5))
@@ -455,6 +473,10 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     raise RuntimeError("Resume initial model differs from recorded run")
                 if preset.get("kl_reference") != config.get("kl_reference"):
                     raise RuntimeError("Resume KL reference differs from recorded run")
+                if preset.get("max_pieces", 10000) != config["max_pieces"]:
+                    raise RuntimeError("Resume episode cap differs from recorded run")
+                if bool(preset.get("overnight_monitor", False)) != bool(config.get("overnight_monitor", False)):
+                    raise RuntimeError("Resume monitoring protocol differs from recorded run")
             if config.get("initial_model"):
                 initial = config["initial_model"]
                 if sha256(Path(initial["path"])) != initial["sha256"]:
@@ -485,7 +507,9 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                                        base_seed=preset["base_seed"],
                                        hole_penalty_coef=preset.get("hole_penalty_coef", 0.0),
                                        height_penalty_coef=preset.get("height_penalty_coef", 0.0),
-                                       candidate_policy=bool(preset.get("candidate_policy", False)))
+                                       candidate_policy=bool(preset.get("candidate_policy", False)),
+                                       max_pieces=preset.get("max_pieces", 10000))
+                config["overnight_monitor"] = bool(preset.get("overnight_monitor", False))
                 for key in ("transaction_retention", "milestone_interval", "validation_interval",
                             "periodic_validation_seeds", "periodic_validation_max_pieces",
                             "milestone_validation_seeds", "milestone_validation_max_pieces"):
@@ -503,7 +527,7 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                             float(reference["beta"]) < 0):
                         raise RuntimeError("KL reference integrity failed")
                     if not config.get("initial_model") or config["initial_model"]["sha256"] != reference["sha256"]:
-                        raise RuntimeError("KL run must start from the frozen BC reference")
+                        raise RuntimeError("KL run must start from its frozen reference")
                     config["kl_reference"] = reference
                     config["algorithm"] = "training.kl_maskable_ppo.KLMaskablePPO"
             else:
@@ -653,15 +677,20 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                 self.shaped_reward_sum = 0.0
                 self.new_holes_sum = 0
                 self.hole_penalty_sum = 0.0
+                self.risk_increase_sum = 0.0
+                self.height_penalty_sum = 0.0
 
             def _on_step(self):
                 for done, info in zip(self.locals["dones"], self.locals["infos"]):
                     self.cleared_lines += info.get("cleared_lines", 0)
-                    if config.get("hole_penalty_coef", 0.0):
+                    if config.get("hole_penalty_coef", 0.0) or config.get("overnight_monitor"):
                         self.raw_reward_sum += info["raw_reward"]
                         self.shaped_reward_sum += info["shaped_reward"]
                         self.new_holes_sum += info["new_holes"]
                         self.hole_penalty_sum += info["hole_penalty"]
+                    if config.get("overnight_monitor"):
+                        self.risk_increase_sum += info["risk_increase"]
+                        self.height_penalty_sum += info["height_penalty"]
                     if done:
                         self.episodes.append({"reward": info["episode_reward"],
                                               "length": info["pieces"], "score": info["score"],

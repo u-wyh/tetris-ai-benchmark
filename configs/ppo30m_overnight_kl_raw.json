@@ -1,0 +1,26 @@
+{
+  "target_total_steps": 2000000,
+  "device": "cuda",
+  "n_envs": 8,
+  "n_steps": 512,
+  "task_steps": 4096,
+  "base_seed": 880000,
+  "max_pieces": 100000,
+  "candidate_policy": true,
+  "overnight_monitor": true,
+  "transaction_retention": 3,
+  "milestone_interval": 1000000000,
+  "validation_interval": 1000000000,
+  "final_test_seeds": 100,
+  "final_test_max_pieces": 50000,
+  "step0_baseline": false,
+  "initial_model": {
+    "path": "runs/ppo_candidate_raw_30m_seed42/final/model.zip",
+    "sha256": "eb859b8989efe8f3332393ed57110036979b03bb4d3d8d8316d080cf04b2da34"
+  },
+  "kl_reference": {
+    "path": "runs/ppo_candidate_raw_30m_seed42/final/model.zip",
+    "sha256": "eb859b8989efe8f3332393ed57110036979b03bb4d3d8d8316d080cf04b2da34",
+    "beta": 0.03
+  }
+}

@@ -1,4 +1,4 @@
-"""Mask-aware PPO regularized toward a frozen, probabilistic BC actor."""
+"""Mask-aware PPO regularized toward any frozen compatible actor."""
 import numpy as np
 import torch
 from gymnasium import spaces
@@ -19,7 +19,7 @@ def masked_policy_kl(current_policy, reference_policy, observations, action_mask
 
 
 class KLMaskablePPO(MaskablePPO):
-    """Original MaskablePPO losses plus beta KL(current || frozen BC)."""
+    """Original MaskablePPO losses plus beta KL(current || frozen reference)."""
 
     def __init__(self, *args, kl_beta=0.02, **kwargs):
         self.kl_beta = float(kl_beta)
@@ -46,7 +46,7 @@ class KLMaskablePPO(MaskablePPO):
         clip_range = self.clip_range(self._current_progress_remaining)
         clip_range_vf = (self.clip_range_vf(self._current_progress_remaining)
                          if self.clip_range_vf is not None else None)
-        entropy_losses, pg_losses, value_losses, clip_fractions, bc_kls = [], [], [], [], []
+        entropy_losses, pg_losses, value_losses, clip_fractions, bc_kls, grad_norms = [], [], [], [], [], []
         continue_training = True
         loss = None
         approx_kl_divs = []
@@ -91,7 +91,9 @@ class KLMaskablePPO(MaskablePPO):
                     break
                 self.policy.optimizer.zero_grad()
                 loss.backward()
-                torch.nn.utils.clip_grad_norm_(self.policy.parameters(), self.max_grad_norm)
+                norm = torch.nn.utils.clip_grad_norm_(self.policy.parameters(), self.max_grad_norm,
+                                                      error_if_nonfinite=True)
+                grad_norms.append(norm.item())
                 self.policy.optimizer.step()
             self._n_updates += 1
             if not continue_training:
@@ -104,6 +106,8 @@ class KLMaskablePPO(MaskablePPO):
                            ("train/approx_kl", np.mean(approx_kl_divs)),
                            ("train/clip_fraction", np.mean(clip_fractions)),
                            ("train/bc_kl", np.mean(bc_kls)),
+                           ("train/reference_kl", np.mean(bc_kls)),
+                           ("train/gradient_norm", np.mean(grad_norms)),
                            ("train/loss", loss.item()),
                            ("train/explained_variance", explained_var)):
             self.logger.record(key, value)
