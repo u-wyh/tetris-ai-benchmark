@@ -81,3 +81,6 @@
 - 训练或评测操作：记录启动、暂停、恢复、失败、完成及对应的 run／checkpoint。
 - 性能或模型结论：注明实测范围和结果文件；估算必须标成估算。
 - 失败和中断也记录，不改写旧条目来掩盖历史。
+
+- 2026-10-15 13:08–13:11 CST｜启动 PPO30M 辅助风险模型训练；首次启动因缺少 scikit-learn 失败，改用本地指标实现后成功运行 CUDA 训练 5 epoch，最佳 epoch 1。复用 16 训练局、4 验证局的冻结 PPO 已执行动作轨迹；最佳模型 SHA256 `287ab77df6977a752cf5bca15e80d025a0715159cb2bceda805f5f8f7823c793`。留出局 1000 块风险 PR-AUC 0.147，低于高度加洞数 0.274；按预设门槛标记 `completed_no_go`，停止 Top-5 重排序及在线评测。依据：`runs/ppo30m_risk_predictor/{protocol.json,data_manifest.json,history.json,heldout_evaluation.json,status.json}` 与三份实验报告。
+- 2026-10-15 13:08–13:18 CST｜风险模型定向测试 5 通过；Python 全量回归 172 通过、35 subtests 通过；Parity 6 通过；JS 61 通过。依据：本次 pytest、unittest、node --test 命令输出。
