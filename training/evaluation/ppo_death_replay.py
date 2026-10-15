@@ -27,6 +27,13 @@ def load_episode(seed):
 
 def validate(seed, model=None, all_segments=False):
     meta, rows, checkpoints = load_episode(seed)
+    verified_path = RUN / "replay_validation" / f"seed_{seed}.json"
+    if verified_path.exists() and not all_segments:
+        record = json.loads(verified_path.read_text())
+        if (record.get("valid") and record.get("terminal_checked") and
+                record.get("trace_sha256") == meta["trace_sha256"] and
+                record.get("checkpoints_sha256") == meta["checkpoints_sha256"]):
+            return record
     model = model or load_ppo()
     steps = sorted(checkpoints)
     chosen = steps if all_segments else sorted({0, steps[len(steps)//2], steps[-1]})
@@ -64,5 +71,5 @@ def validate(seed, model=None, all_segments=False):
               "checkpoints_sha256": meta["checkpoints_sha256"],
               "checked_segments": chosen, "checked_actions": checked,
               "terminal_checked": steps[-1] in chosen, "valid": True}
-    atomic_json(RUN / "replay_validation" / f"seed_{seed}.json", record)
+    atomic_json(verified_path, record)
     return record

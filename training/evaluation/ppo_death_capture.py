@@ -66,8 +66,11 @@ def protocol():
             "trace": "one public pre-action state and actual post-action outcome per piece; compressed JSONL",
             "outcome": "100K cap is right-censored"}
     path = RUN / "protocol.json"
-    if path.exists() and json.loads(path.read_text()) != spec:
-        raise RuntimeError("Frozen death-analysis protocol changed")
+    if path.exists():
+        frozen = json.loads(path.read_text())
+        if any(frozen.get(key) != value for key, value in spec.items() if key != "git_commit"):
+            raise RuntimeError("Frozen death-analysis protocol changed")
+        return frozen
     if not path.exists():
         atomic_json(path, spec)
     return spec
