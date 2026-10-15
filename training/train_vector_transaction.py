@@ -40,6 +40,10 @@ KL_METRIC_FIELDS = ("bc_kl", "explained_variance")
 OVERNIGHT_METRIC_FIELDS = ("reference_kl", "gradient_norm", "mean_raw_reward",
                            "mean_shaped_reward", "mean_risk_increase",
                            "mean_height_penalty", "gpu_peak_allocated_mib")
+CURRICULUM_METRIC_FIELDS = ("snapshot_steps", "normal_steps", "true_deaths",
+                            "window_truncations", "mean_predeath_length",
+                            "origin_counts_json", "origin_episode_counts_json",
+                            "source_seed_counts_json", "death_sources_json")
 
 
 def reward_settings(config):
@@ -262,7 +266,8 @@ def rebuild_vector_metrics(run_dir, committed_task, config):
     columns = tuple(dict.fromkeys(
         FIELDS + (HOLE_METRIC_FIELDS if config.get("hole_penalty_coef", 0.0) else ())
         + (KL_METRIC_FIELDS if config.get("kl_reference") else ())
-        + (OVERNIGHT_METRIC_FIELDS if config.get("overnight_monitor") else ())))
+        + (OVERNIGHT_METRIC_FIELDS if config.get("overnight_monitor") else ())
+        + (CURRICULUM_METRIC_FIELDS if config.get("failure_curriculum") else ())))
     writer = csv.DictWriter(buffer, fieldnames=columns)
     writer.writeheader()
     for number in range(1, committed_task + 1):
@@ -324,6 +329,17 @@ def commit_vector_task(run_dir, state, working_dir, model, env, callback, captur
                        mean_risk_increase=callback.risk_increase_sum / count,
                        mean_height_penalty=callback.height_penalty_sum / count,
                        gpu_peak_allocated_mib=gpu_peak["allocated"] if gpu_peak else None)
+    if config.get("failure_curriculum"):
+        metrics.update(snapshot_steps=callback.snapshot_steps,
+                       normal_steps=callback.normal_steps,
+                       true_deaths=callback.game_overs,
+                       window_truncations=callback.window_truncations,
+                       mean_predeath_length=(sum(callback.death_lengths)/len(callback.death_lengths)
+                                             if callback.death_lengths else None),
+                       origin_counts_json=json.dumps(callback.origin_counts,sort_keys=True),
+                       origin_episode_counts_json=json.dumps(callback.origin_episode_counts,sort_keys=True),
+                       source_seed_counts_json=json.dumps(callback.source_seed_counts,sort_keys=True),
+                       death_sources_json=json.dumps(callback.death_sources,sort_keys=True))
     atomic_json(working_dir / "metrics.json", metrics)
     atomic_bytes(working_dir / "trainer_state.pkl", pickle.dumps(trainer, protocol=5))
     atomic_bytes(working_dir / "vector_env_state.pkl", pickle.dumps(saved_workers, protocol=5))
@@ -455,7 +471,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     or reward_settings(meta) != reward_settings(config)
                     or meta.get("observation_version", "237-float-public-observation-v1") != config["observation_version"]
                     or meta.get("policy", "MlpPolicy") != config["policy"]
-                    or meta.get("candidate_feature_version") != config.get("candidate_feature_version")):
+                    or meta.get("candidate_feature_version") != config.get("candidate_feature_version")
+                    or meta.get("failure_curriculum") != config.get("failure_curriculum")):
                 raise RuntimeError("Run config and metadata disagree")
             if config_file:
                 preset = json.loads(Path(config_file).read_text())
@@ -477,6 +494,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     raise RuntimeError("Resume episode cap differs from recorded run")
                 if bool(preset.get("overnight_monitor", False)) != bool(config.get("overnight_monitor", False)):
                     raise RuntimeError("Resume monitoring protocol differs from recorded run")
+                if preset.get("failure_curriculum") != config.get("failure_curriculum"):
+                    raise RuntimeError("Resume failure curriculum differs from recorded run")
             if config.get("initial_model"):
                 initial = config["initial_model"]
                 if sha256(Path(initial["path"])) != initial["sha256"]:
@@ -510,6 +529,20 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                                        candidate_policy=bool(preset.get("candidate_policy", False)),
                                        max_pieces=preset.get("max_pieces", 10000))
                 config["overnight_monitor"] = bool(preset.get("overnight_monitor", False))
+                if "failure_curriculum" in preset:
+                    from training.env.failure_curriculum_env import REWARD_VERSION, file_sha256
+                    course = preset["failure_curriculum"]
+                    if (not config.get("candidate_policy") or course.get("mode") not in ("normal","curriculum")
+                            or course.get("window_pieces") != 5000
+                            or course.get("death_penalty") != -20.0
+                            or course.get("snapshot_probability") != 0.7
+                            or not 0 < len(course.get("tiers",[])) <= 5):
+                        raise ValueError("Invalid frozen failure curriculum")
+                    if course["mode"] == "curriculum" and file_sha256(course["dataset_path"]) != course["dataset_sha256"]:
+                        raise RuntimeError("Curriculum dataset integrity failed")
+                    config["failure_curriculum"] = course
+                    config["reward_version"] = REWARD_VERSION
+                    config["reward"]["game_over"] = -20.0
                 for key in ("transaction_retention", "milestone_interval", "validation_interval",
                             "periodic_validation_seeds", "periodic_validation_max_pieces",
                             "milestone_validation_seeds", "milestone_validation_max_pieces"):
@@ -577,6 +610,7 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                          "observation_version": config["observation_version"],
                          "policy": config["policy"],
                          "candidate_feature_version": config.get("candidate_feature_version"),
+                         "failure_curriculum": config.get("failure_curriculum"),
                          "action_space_version": config["action_space_version"],
                          "resume_episode_policy": "Restore each worker exactly from committed Task."})
             atomic_json(run_dir / "metadata.json", meta)
@@ -594,11 +628,16 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
         rebuild_vector_metrics(run_dir, state["committed_task"], config)
         env_kwargs = ({"hole_penalty_coef": reward_settings(config)[1],
                        "height_penalty_coef": reward_settings(config)[2]}
-                      if any(reward_settings(config)[1:]) else None)
+                      if any(reward_settings(config)[1:]) else {})
+        if config.get("failure_curriculum"):
+            from training.env.failure_curriculum_env import FailureCurriculumEnv
+            env_kwargs["curriculum"] = config["failure_curriculum"]
+            env_class = FailureCurriculumEnv
+        else:
+            env_class = TransactionCandidateEnv if config.get("candidate_policy") else TransactionTetrisEnv
         env = make_vector_env(config["ppo"]["n_envs"], config["run_seed"],
                               config["max_pieces"],
-                              env_class=TransactionCandidateEnv if config.get("candidate_policy")
-                              else TransactionTetrisEnv,
+                              env_class=env_class,
                               env_kwargs=env_kwargs)
         atomic_json(run_dir / "logs" / "worker_pids.json",
                     {"parent": os.getpid(), "workers": [process.pid for process in env.processes]})
@@ -679,10 +718,35 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                 self.hole_penalty_sum = 0.0
                 self.risk_increase_sum = 0.0
                 self.height_penalty_sum = 0.0
+                self.snapshot_steps = 0
+                self.normal_steps = 0
+                self.window_truncations = 0
+                self.death_lengths = []
+                self.origin_counts = {}
+                self.origin_episode_counts = {}
+                self.source_seed_counts = {}
+                self.death_sources = {}
 
             def _on_step(self):
                 for done, info in zip(self.locals["dones"], self.locals["infos"]):
                     self.cleared_lines += info.get("cleared_lines", 0)
+                    if config.get("failure_curriculum"):
+                        origin = info["curriculum_origin"]
+                        label = origin["tier"]
+                        if label == "normal":
+                            self.normal_steps += 1
+                        else:
+                            self.snapshot_steps += 1
+                        self.origin_counts[label] = self.origin_counts.get(label, 0) + 1
+                        if info["curriculum_episode_start"]:
+                            self.origin_episode_counts[label] = self.origin_episode_counts.get(label, 0) + 1
+                        if origin["source_seed"] is not None:
+                            key = str(origin["source_seed"])
+                            self.source_seed_counts[key] = self.source_seed_counts.get(key, 0) + 1
+                        self.window_truncations += int(info["curriculum_window_truncated"])
+                        if info["true_game_over"]:
+                            self.death_lengths.append(info["pieces"])
+                            self.death_sources[label] = self.death_sources.get(label, 0) + 1
                     if config.get("hole_penalty_coef", 0.0) or config.get("overnight_monitor"):
                         self.raw_reward_sum += info["raw_reward"]
                         self.shaped_reward_sum += info["shaped_reward"]
