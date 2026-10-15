@@ -2,6 +2,7 @@
 
 ## 2026-10-15
 
+- 新增 PPO30M 冻结 Top-5 公开有限前瞻 S1/S2：官方合法 BFS、可见 Next/Hold 模拟、`unknown` 信息边界、状态去重、保守 PPO 概率约束与逐局可恢复的 tmux 评测队列。独立 990000/990100/990200 种子组及参数已冻结，先 smoke 再按性能和开发门槛决定是否继续。
 - 新增独立 PPO30M 辅助长期风险 MLP 与整局隔离、右截断标签、可恢复训练及留出轨迹评测。复用旧 PPO 已执行动作轨迹训练 5 epoch；最佳模型的 1000 块死亡 PR-AUC 0.147，低于高度加洞数基线 0.274，按门槛停止，不启用 Top-5 重排序或在线控制。详见 `reports/experiments/ppo30m_risk_predictor_evaluation.md`。
 - 新增 PPO 30M 夜间 KL 强化学习微调实验：Raw 与 0.003 高度风险奖励两组均从冻结 PPO30M Actor/Critic 初始化，并以原 PPO 为 KL 参考；新实验训练单局上限 100000，8-worker、4096 样本原子任务、两阶段 503808/2002944 样本上限与独立配对长局验证。新增显存、奖励分量、梯度及冻结正常状态策略保留监控，旧模型和正式计分不变。两方案均通过完整 Task 与恢复试运行，后台队列继续执行。详见 `reports/experiments/ppo30m_overnight_finetune_design.md`。
 
