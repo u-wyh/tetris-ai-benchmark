@@ -120,3 +120,11 @@
 
 - 2026-10-16T09:32:27+08:00｜死亡分析 32 局完成逐 seed 确定性重放校验。依据：runs/ppo30m_death_analysis/replay_validation/。
 - 2026-10-16 09:32 CST｜死亡分析 tmux 队列从已验证 32 局恢复（pane PID 1344065、主进程 1344067），危险课程 tmux 同步恢复等待依赖（pane PID 1344130、主进程 1344133）；同时修复课程自定义死亡奖励版本在事务恢复预设核验中的不一致，避免 smoke 后续任务无法恢复。依据：`runs/ppo30m_death_analysis/pipeline_status.json`、`runs/ppo30m_failure_curriculum/status.json`、`training/train_vector_transaction.py`。
+
+- 2026-10-16T09:33:30+08:00｜死亡窗口、对照和探索性分类完成：真实死亡 19 局，100K 右截断 13 局。依据：runs/ppo30m_death_analysis/death_analysis.json。
+
+- 2026-10-16T09:37:21+08:00｜预先确定反事实状态 120 个、合法动作分支 541 个。依据：runs/ppo30m_death_analysis/counterfactual_prepared.json。
+
+- 2026-10-16T10:08:41+08:00｜1000 块与有条件 5000 块反事实原子分支完成。依据：runs/ppo30m_death_analysis/counterfactual_{1000,5000}_completed.json。
+
+- 2026-10-16T10:18:08+08:00｜死亡机制报告与 Python、Parity、JS 回归测试完成。依据：reports/experiments/ppo30m_death_*；runs/ppo30m_death_analysis/*_tests.log。
