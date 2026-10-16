@@ -110,3 +110,10 @@
 - 2026-10-15 22:47 CST｜提交并推送自主队列代码 `9ea6df0`；独立 tmux `tetris-ppo-death-analysis-pipeline` 启动成功（pane PID 1234063、主进程 1234068），正在等待采集完成后自动执行重放、分析、反事实、报告、回归和推送。采集状态为首批 5/32 局，原 tmux 未中断。依据：`runs/ppo30m_death_analysis/{pipeline_status.json,pipeline.log,status.json}` 和 tmux pane 查询。
 - 2026-10-15 23:04 CST｜实现独立危险状态课程 PPO 环境、冻结快照数据构建、A/B 事务训练与顺序评测队列；课程环境 Core/RNG、合法 Mask、相对窗口截断和 VecEnv TimeLimit 测试通过。死亡分析采集仍在运行（首批 19/32），夜间队列计划在其完成后启动，暂未开始新训练。依据：`training/env/failure_curriculum_env.py`、`training/failure_curriculum_queue.py`、`tests/test_failure_curriculum.py`、`runs/ppo30m_death_analysis/status.json`。
 - 2026-10-15 23:05 CST｜夜间课程队列代码提交并推送 `9525981`；独立 tmux `tetris-failure-curriculum` 启动成功（pane PID 1243178、主进程 1243179），状态 `waiting_for_death_analysis`，没有与现行 4-worker 采集抢占训练资源。依据：`runs/ppo30m_failure_curriculum/{status.json,queue.log}`、tmux 和进程查询。
+
+- 2026-10-15T23:25:10+08:00｜死亡分析 32 局完成逐 seed 确定性重放校验。依据：runs/ppo30m_death_analysis/replay_validation/。
+
+- 2026-10-15T23:26:11+08:00｜死亡分析后台队列停止：ModuleNotFoundError("No module named 'matplotlib'")。依据：runs/ppo30m_death_analysis/pipeline_status.json。
+
+- 2026-10-15T23:26:13+08:00｜危险课程后台队列失败并停止依赖阶段：RuntimeError('Death-analysis queue failed; curriculum source is unvalidated')。依据：runs/ppo30m_failure_curriculum/status.json。
+- 2026-10-16 09:31 CST｜修复死亡分析图表依赖缺失：改用独立 SVG 图并从已验证轨迹生成代表性图，未更动模型或已保存的长局；首批 32 局已完成，19 局真正死亡、13 局 100K 右截断。准备恢复死亡分析和依赖队列。依据：`runs/ppo30m_death_analysis/{capture_completed.json,death_analysis.json,figures/death_seed_992012.svg}`、`training/evaluation/ppo_death_analysis.py`。

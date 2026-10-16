@@ -127,28 +127,38 @@ def analyze():
 
 
 def figures(result):
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
     death_rows = result["death_episodes"]
     if not death_rows:
         return []
-    axes_names = (("max_height", "最高列"), ("holes", "洞数"),
-                  ("deepest_well_depth", "最深井"), ("four_rate_100", "最近100块四消率"))
+    axes_names = (("max_height", "Max height"), ("holes", "Holes"),
+                  ("deepest_well_depth", "Deepest well"), ("four_rate_100", "Four-clear rate / 100"))
     representative = sorted(death_rows, key=lambda x:x["pieces"])[len(death_rows)//2]
     _, rows, _ = load_episode(representative["seed"])
     tail = rows[max(0,len(rows)-5000):]
-    fig, axes = plt.subplots(4,1,figsize=(11,9),sharex=True)
-    for ax,(key,label) in zip(axes,axes_names):
-        ax.plot([r["step"] for r in tail],[r[key] for r in tail],linewidth=.8)
-        ax.set_ylabel(label)
-    axes[-1].set_xlabel("已放置块数")
-    fig.suptitle(f"PPO 死亡前轨迹 seed {representative['seed']}")
-    fig.tight_layout()
-    output = RUN / "figures" / f"death_seed_{representative['seed']}.png"
+    # Standalone SVG avoids adding a plotting dependency to the training venv.
+    width, panel, left, right = 1000, 190, 95, 25
+    start, end = tail[0]["step"], tail[-1]["step"]
+    svg = [f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="830" viewBox="0 0 {width} 830">',
+           '<rect width="100%" height="100%" fill="white"/>',
+           f'<text x="30" y="27" font-size="20">PPO pre-death trajectory, seed {representative["seed"]}</text>']
+    for index,(key,label) in enumerate(axes_names):
+        top = 55+index*panel
+        values = [float(row[key]) for row in tail]
+        minimum, maximum = min(values), max(values)
+        span = max(1e-9, maximum-minimum)
+        points = []
+        for row,value in zip(tail,values):
+            x = left+(width-left-right)*(row["step"]-start)/max(1,end-start)
+            y = top+145-130*(value-minimum)/span
+            points.append(f"{x:.1f},{y:.1f}")
+        svg.extend([f'<text x="30" y="{top+12}" font-size="14">{label}</text>',
+                    f'<text x="30" y="{top+32}" font-size="12">{minimum:.2f}–{maximum:.2f}</text>',
+                    f'<line x1="{left}" y1="{top+150}" x2="{width-right}" y2="{top+150}" stroke="#aaa"/>',
+                    f'<polyline points="{" ".join(points)}" fill="none" stroke="#1476b8" stroke-width="1.3"/>'])
+    svg.extend([f'<text x="{left}" y="822" font-size="13">Piece {start} to {end}</text>', '</svg>'])
+    output = RUN / "figures" / f"death_seed_{representative['seed']}.svg"
     output.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(output,dpi=150)
-    plt.close(fig)
+    output.write_text("\n".join(svg))
     return [str(output)]
 
 
