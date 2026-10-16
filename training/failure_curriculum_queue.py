@@ -52,7 +52,11 @@ def wait_for_resource():
         time.sleep(60)
     while True:
         result = subprocess.run(["nvidia-smi","--query-gpu=memory.used","--format=csv,noheader,nounits"],
-                                text=True,capture_output=True,check=True)
+                                text=True,capture_output=True,check=False)
+        if result.returncode or not result.stdout.strip():
+            status("waiting_for_gpu_driver",detail=result.stderr.strip()[-300:])
+            time.sleep(60)
+            continue
         used = int(result.stdout.strip().splitlines()[0])
         if used < 500:
             break

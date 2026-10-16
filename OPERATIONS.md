@@ -128,3 +128,14 @@
 - 2026-10-16T10:08:41+08:00｜1000 块与有条件 5000 块反事实原子分支完成。依据：runs/ppo30m_death_analysis/counterfactual_{1000,5000}_completed.json。
 
 - 2026-10-16T10:18:08+08:00｜死亡机制报告与 Python、Parity、JS 回归测试完成。依据：reports/experiments/ppo30m_death_*；runs/ppo30m_death_analysis/*_tests.log。
+
+- 2026-10-16T10:24:28+08:00｜冻结危险课程数据：210 状态、21 独立死亡 seed。依据：runs/ppo30m_failure_curriculum/curriculum_manifest.json。
+
+- 2026-10-16T10:34:07+08:00｜normal 完成 4096 个环境交互样本、1 个事务任务。依据：runs/ppo30m_failure_curriculum/normal/state.json。
+
+- 2026-10-16T10:34:16+08:00｜curriculum 完成 4096 个环境交互样本、1 个事务任务。依据：runs/ppo30m_failure_curriculum/curriculum/state.json。
+
+- 2026-10-16T10:34:16+08:00｜危险课程后台队列失败并停止依赖阶段：RuntimeError('Resume reward config differs from recorded run')。依据：runs/ppo30m_failure_curriculum/status.json。
+
+- 2026-10-16T13:10:44+08:00｜危险课程后台队列失败并停止依赖阶段：CalledProcessError(9, ['nvidia-smi', '--query-gpu=memory.used', '--format=csv,noheader,nounits'])。依据：runs/ppo30m_failure_curriculum/status.json。
+- 2026-10-16 13:10–13:13 CST｜死亡机制队列已完成并推送 `bb9ad0a`（19 死亡、120 反事实状态）。课程 A/B 各完成并校验 1 个 4096 样本 smoke task；后续恢复曾因旧进程加载修复前的奖励核验代码而停止。重启队列时发现当前内核 `6.8.0-147-generic` 没有 NVIDIA 模块（已安装的 595-open 模块仅覆盖 142/146），`nvidia-smi` 与 CUDA 不可用；正式训练未启动。修改资源检查为等待驱动恢复，不使用 CPU 退化训练。依据：`runs/ppo30m_death_analysis/pipeline_status.json`、`runs/ppo30m_failure_curriculum/{status.json,normal/committed/task_000001,curriculum/committed/task_000001}`、`modinfo nvidia`、`nvidia-smi`、本次终端检查。
