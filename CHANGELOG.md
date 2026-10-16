@@ -13,6 +13,11 @@
 - 新增独立 PPO30M 辅助长期风险 MLP 与整局隔离、右截断标签、可恢复训练及留出轨迹评测。复用旧 PPO 已执行动作轨迹训练 5 epoch；最佳模型的 1000 块死亡 PR-AUC 0.147，低于高度加洞数基线 0.274，按门槛停止，不启用 Top-5 重排序或在线控制。详见 `reports/experiments/ppo30m_risk_predictor_evaluation.md`。
 - 新增 PPO 30M 夜间 KL 强化学习微调实验：Raw 与 0.003 高度风险奖励两组均从冻结 PPO30M Actor/Critic 初始化，并以原 PPO 为 KL 参考；新实验训练单局上限 100000，8-worker、4096 样本原子任务、两阶段 503808/2002944 样本上限与独立配对长局验证。新增显存、奖励分量、梯度及冻结正常状态策略保留监控，旧模型和正式计分不变。两方案均通过完整 Task 与恢复试运行，后台队列继续执行。详见 `reports/experiments/ppo30m_overnight_finetune_design.md`。
 
+## 2026-10-16
+
+- 完成 PPO30M 死亡机制研究：32 局中 19 局真实死亡、13 局 100K 右截断；完成 120 状态、541 个 1000 块及 349 个有条件 5000 块同快照分支，报告按有限窗口和右截断解释结果。
+- 危险课程数据集冻结为 210 个完整快照，Normal-Start 与 Curriculum 各有 1 个 4096 样本事务 smoke task 并通过哈希复核。正式训练受 Ubuntu `6.8.0-147` 缺失对应 NVIDIA 595-open 模块阻断；不改驱动分支、不自动重启或降级 CPU。诊断及恢复边界见 `reports/experiments/ppo30m_cuda_recovery_diagnostic.md`。
+
 ## 2026-10-14
 - 完成 PPO 30M 多候选反事实试点：复用 V2 训练组快照，冻结 46 个状态、368 个合法候选，从同快照 PPO 续控 256/1000 块并逐分支原子保存。按同一 A 类标准，多候选在 9 个状态找到 28 个动作，BC 单候选在 4 个状态找到 4 个；24 个 A 动作非 BC，20 个来自 PPO Top5。多候选每 CPU 小时 A 状态产出低于 BC 对照，按预设门槛停止第二批，不启动训练。详见 `reports/experiments/ppo_multiaction_counterfactual_results.md`。
 - 局部纠错主动反事实 V2 完成 556 条：新增 A 22（训练 19、独立样本验证 3），通过率 3.96%，低于 V1 的 9.42%；合并后训练/验证 A 仅 37/6，停止下一轮正式模型训练。新增近死窗口与远距/右截断分层、534 条 B 类拒绝原因、V2 Hold 真实方块序列变化及不可变数据集哈希复核。详见 `reports/experiments/local_correction_counterfactual_v2.md` 和 `local_correction_dataset_v2.md`。
