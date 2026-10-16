@@ -482,6 +482,9 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                 requested_version = (HOLE_HEIGHT_REWARD_VERSION if requested_height and requested_hole
                                      else HEIGHT_REWARD_VERSION if requested_height
                                      else HOLE_REWARD_VERSION if requested_hole else RAW_REWARD_VERSION)
+                if preset.get("failure_curriculum"):
+                    from training.env.failure_curriculum_env import REWARD_VERSION
+                    requested_version = REWARD_VERSION
                 if (requested_version, requested_hole, requested_height) != reward_settings(config):
                     raise RuntimeError("Resume reward config differs from recorded run")
                 if bool(preset.get("candidate_policy", False)) != bool(config.get("candidate_policy", False)):

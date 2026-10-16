@@ -117,3 +117,6 @@
 
 - 2026-10-15T23:26:13+08:00｜危险课程后台队列失败并停止依赖阶段：RuntimeError('Death-analysis queue failed; curriculum source is unvalidated')。依据：runs/ppo30m_failure_curriculum/status.json。
 - 2026-10-16 09:31 CST｜修复死亡分析图表依赖缺失：改用独立 SVG 图并从已验证轨迹生成代表性图，未更动模型或已保存的长局；首批 32 局已完成，19 局真正死亡、13 局 100K 右截断。准备恢复死亡分析和依赖队列。依据：`runs/ppo30m_death_analysis/{capture_completed.json,death_analysis.json,figures/death_seed_992012.svg}`、`training/evaluation/ppo_death_analysis.py`。
+
+- 2026-10-16T09:32:27+08:00｜死亡分析 32 局完成逐 seed 确定性重放校验。依据：runs/ppo30m_death_analysis/replay_validation/。
+- 2026-10-16 09:32 CST｜死亡分析 tmux 队列从已验证 32 局恢复（pane PID 1344065、主进程 1344067），危险课程 tmux 同步恢复等待依赖（pane PID 1344130、主进程 1344133）；同时修复课程自定义死亡奖励版本在事务恢复预设核验中的不一致，避免 smoke 后续任务无法恢复。依据：`runs/ppo30m_death_analysis/pipeline_status.json`、`runs/ppo30m_failure_curriculum/status.json`、`training/train_vector_transaction.py`。
