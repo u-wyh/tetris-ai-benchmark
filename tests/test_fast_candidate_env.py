@@ -5,6 +5,7 @@ import pytest
 
 from training.env.candidate_env import CandidateTetrisEnv
 from training.env.fast_candidate_env import FastCandidateTetrisEnv
+from training.evaluation.failure_curriculum_eval import LongCandidateTetrisEnv
 
 
 @pytest.mark.parametrize("seed", [42, 1234000, 20261013])
@@ -53,3 +54,28 @@ def test_fast_candidate_snapshot_restores_original_state():
     finally:
         fast.close()
         restored.close()
+
+
+@pytest.mark.parametrize("seed", [42, 1234000, 20261013])
+def test_long_candidate_bitboard_bfs_matches_official(seed):
+    official = FastCandidateTetrisEnv(max_pieces=100)
+    accelerated = LongCandidateTetrisEnv(max_pieces=100)
+    try:
+        left, _ = official.reset(seed=seed)
+        right, _ = accelerated.reset(seed=seed)
+        for step in range(100):
+            np.testing.assert_array_equal(left["state"], right["state"])
+            np.testing.assert_array_equal(left["candidate"], right["candidate"])
+            mask = official.action_masks()
+            np.testing.assert_array_equal(mask, accelerated.action_masks())
+            assert official.core.get_legal_placements() == accelerated._placement_cache
+            legal = np.flatnonzero(mask)
+            action = int(legal[(step * 17 + seed) % len(legal)])
+            left, _, done_a, capped_a, info_a = official.step(action)
+            right, _, done_b, capped_b, info_b = accelerated.step(action)
+            assert (done_a, capped_a, info_a) == (done_b, capped_b, info_b)
+            if done_a or capped_a:
+                break
+    finally:
+        official.close()
+        accelerated.close()

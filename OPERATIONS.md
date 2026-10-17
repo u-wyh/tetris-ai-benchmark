@@ -160,3 +160,9 @@
 - 2026-10-17 20:00:12 CST｜优化训练结束后的 300 万块长局评测：纯神经网络动作使用已核对的确定性候选 argmax；传统 V2 Hold 跳过不参与排序的模拟落下得分、无需 Beam 时跳过状态去重，并在 Core.step 复用同一步正式合法落点。28 个传统状态动作一致、4 个模型各 500 块轨迹一致；传统同 seed 1000 块正式分数与结局一致，烟测约 8.48s→5.05s；定向回归 27 passed。依据：`training/evaluation/{post_curriculum_3m.py,failure_curriculum_eval.py}`、`training/traditional/v2.py`。
 
 - 2026-10-17T20:01:29+08:00｜危险课程 A/B 训练、冻结门槛和有条件完整对局评测完成。依据：runs/ppo30m_failure_curriculum/{training_signal.json,development_gate.json,status.json}。
+
+- 2026-10-17T20:05:31+08:00｜课程训练后长局比较失败并停止。依据：runs/post_curriculum_3m/status.json。
+- 2026-10-17 20:08:59 CST｜课程训练完成后启动 300 万块/局评测；为启用经 856 个公开状态逐项对照的快速合法落点搜索，停止旧评测进程，保留并按 SHA256 清单导入 3 个已完成 PPO 局，后续又保留 1 个已完成 BC 局，未完成局重新排队；新队列 8 worker 正在运行，内存充足。神经网络 4 模型各 500 块、B12 1000 块、传统 V2 1000 块轨迹/得分对照一致；定向测试 30 passed、JS 61 passed。依据：`runs/post_curriculum_3m/{status.json,imported_canonical_games.json}`、`runs/ppo30m_failure_curriculum/post_curriculum_3m_fastbfs/`。
+
+- 2026-10-17T20:11:06+08:00｜课程训练后长局比较失败并停止。依据：runs/post_curriculum_3m/status.json。
+- 2026-10-17 20:13:00 CST｜修复长局恢复队列中本地变量遮蔽 checkpoint() 导致的启动失败，保留已完成局并恢复 8-worker 评测；每 1 万块原子保存局内 Core/RNG 与策略状态，PPO、B12、传统 V2 的同局恢复对照通过，现场检查确认快照正在写入。Parity 6 tests/29 scenarios/273 snapshots 与 JS 61 tests 通过。依据：`runs/post_curriculum_3m/status.json`、`runs/ppo30m_failure_curriculum/post_curriculum_3m_fastbfs/`。

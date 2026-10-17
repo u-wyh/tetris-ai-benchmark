@@ -1,14 +1,20 @@
 """Normal-start paired evaluation and frozen go/no-go decision for curriculum PPO."""
 import json
+import os
+import pickle
 import statistics
 import time
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from multiprocessing import get_context
+from pathlib import Path
 
 import numpy as np
+import torch
 from sb3_contrib import MaskablePPO
 
 from training.env.fast_candidate_env import FastCandidateTetrisEnv
+from training.candidate_features import candidate_features
+from training.evaluation.fast_legal import get_legal_placements as fast_placements
 from training.evaluation.hybrid_queue import BC, PPO, HASHES, digest, verify_models
 from training.evaluation.ppo_lookahead_v3_audit import policy_probs
 from training.hybrid_policy import HybridConfig, HybridController
@@ -18,6 +24,29 @@ RUN = ROOT / "runs/ppo30m_failure_curriculum"
 DEV = tuple(range(993000,993016))
 CONFIRM = tuple(range(993100,993132))
 MODELS = None
+CHECKPOINT_INTERVAL = 10000
+
+
+def atomic_pickle(path, value):
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    with temporary.open("wb") as stream:
+        pickle.dump(value, stream, protocol=pickle.HIGHEST_PROTOCOL)
+        stream.flush()
+        os.fsync(stream.fileno())
+    os.replace(temporary, path)
+
+
+class LongCandidateTetrisEnv(FastCandidateTetrisEnv):
+    """Evaluation-only placement generator; Core and action semantics stay unchanged."""
+
+    def _features_and_mask(self):
+        if self.core is None:
+            raise RuntimeError("Call reset() before requesting candidates")
+        if self._candidate_cache is None:
+            public = self.core.get_public_observation()
+            self._placement_cache = fast_placements(public)
+            self._candidate_cache = candidate_features(public, self._placement_cache)
+        return self._candidate_cache
 
 
 def audit_seeds():
@@ -42,21 +71,76 @@ def init_worker(paths):
     MODELS = {name:MaskablePPO.load(str(path),device="cpu") for name,path in paths.items()}
 
 
-def play(variant, seed, cap, model_hashes):
-    env = FastCandidateTetrisEnv(max_pieces=cap)
+def fast_action(model, observation, mask):
+    """Deterministic candidate argmax without building a 1840-way distribution."""
+    legal = np.flatnonzero(mask)
+    if not len(legal):
+        raise ValueError("No legal evaluation action")
+    policy = model.policy
+    with torch.inference_mode():
+        state = torch.as_tensor(observation["state"], dtype=torch.float32,
+                                device=policy.device).unsqueeze(0)
+        candidates = torch.as_tensor(observation["candidate"][legal],
+                                     dtype=torch.float32, device=policy.device)
+        latent = policy.state_encoder(state).expand(len(legal), -1)
+        encoded = policy.candidate_encoder(candidates / policy.candidate_scale)
+        scores = policy.score_head(torch.cat((latent, encoded), dim=1)).squeeze(-1)
+        return int(legal[int(torch.argmax(scores))])
+
+
+class _DeterministicAdapter:
+    def __init__(self, model):
+        self.model = model
+
+    def predict(self, observation, deterministic=True, action_masks=None):
+        if not deterministic or action_masks is None:
+            raise ValueError("Long-run adapter requires deterministic masked actions")
+        return np.asarray(fast_action(self.model, observation, action_masks)), None
+
+
+def play(variant, seed, cap, model_hashes, fast=False, fast_legal=False,
+         checkpoint_path=None):
+    env = (LongCandidateTetrisEnv if fast_legal else FastCandidateTetrisEnv)(max_pieces=cap)
     started = time.monotonic()
     clears = [0]*5
     milestones = []
     samples = {"count":0,"top1_same":0,"top5_kept":0,"hold_same":0,"masked_kl_sum":0.0}
-    controller = HybridController(MODELS["ppo"],MODELS["bc"],HybridConfig("B",12,8)) if variant=="B12" else None
+    if variant == "B12":
+        ppo = _DeterministicAdapter(MODELS["ppo"]) if fast else MODELS["ppo"]
+        bc = _DeterministicAdapter(MODELS["bc"]) if fast else MODELS["bc"]
+        controller = HybridController(ppo, bc, HybridConfig("B",12,8))
+    else:
+        controller = None
     try:
-        obs,_ = env.reset(seed=seed)
+        if checkpoint_path is not None and checkpoint_path.exists():
+            with checkpoint_path.open("rb") as stream:
+                saved = pickle.load(stream)
+            expected = (variant, seed, cap, model_hashes, fast, fast_legal)
+            if saved["identity"] != expected:
+                raise RuntimeError("Long game checkpoint protocol mismatch")
+            env.reset(seed=seed)
+            env.set_state(saved["env_state"])
+            if env.pieces != saved["pieces"] or env.pieces >= cap:
+                raise RuntimeError("Long game checkpoint step mismatch")
+            clears = saved["clears"]
+            milestones = saved["milestones"]
+            samples = saved["samples"]
+            if controller:
+                controller.active, controller.last_switch, controller.step = saved["controller"]
+            started -= saved["elapsed_seconds"]
+            obs = env.get_observation()
+        else:
+            obs,_ = env.reset(seed=seed)
         while True:
             mask = env.action_masks()
+            if fast_legal and (env.pieces < 100 or env.pieces % 1000 == 0):
+                if env._placement_cache != env.core.get_legal_placements():
+                    raise RuntimeError("Accelerated legal placements differ from official Core")
             if controller:
                 action,_ = controller.decide(obs,mask,env.core.get_public_observation(),env._placement_cache)
             else:
-                action = int(MODELS[variant].predict(obs,deterministic=True,action_masks=mask)[0])
+                action = (fast_action(MODELS[variant], obs, mask) if fast
+                          else int(MODELS[variant].predict(obs,deterministic=True,action_masks=mask)[0]))
             if not mask[action]:
                 raise RuntimeError("Formal evaluation action illegal")
             if variant in ("normal","curriculum") and env.pieces%500==0:
@@ -76,6 +160,15 @@ def play(variant, seed, cap, model_hashes):
             clears[info["cleared_lines"]] += 1
             if info["pieces"]%1000==0:
                 milestones.append({"pieces":info["pieces"],"score":info["score"]})
+            if (checkpoint_path is not None and info["pieces"] % CHECKPOINT_INTERVAL == 0
+                    and not (over or capped)):
+                atomic_pickle(checkpoint_path, {
+                    "identity": (variant, seed, cap, model_hashes, fast, fast_legal),
+                    "pieces": env.pieces, "env_state": env.get_state(),
+                    "clears": clears, "milestones": milestones, "samples": samples,
+                    "controller": ((controller.active, controller.last_switch, controller.step)
+                                   if controller else None),
+                    "elapsed_seconds": time.monotonic() - started})
             if over or capped:
                 break
         return {"variant":variant,"seed":seed,"cap":cap,"model_sha256":model_hashes,
@@ -87,8 +180,11 @@ def play(variant, seed, cap, model_hashes):
 
 
 def task(args):
-    variant,seed,cap,hashes = args
-    return play(variant,seed,cap,hashes)
+    variant,seed,cap,hashes,fast,fast_legal,checkpoint_path = args
+    if checkpoint_path is not None:
+        Path(checkpoint_path).parent.mkdir(parents=True, exist_ok=True)
+    return play(variant,seed,cap,hashes,fast,fast_legal,
+                None if checkpoint_path is None else Path(checkpoint_path))
 
 
 def _summary(rows):
@@ -111,7 +207,8 @@ def _common_score(a,b):
     return (a["score_milestones"][index-1]["score"], b["score_milestones"][index-1]["score"])
 
 
-def evaluate(phase, variants, seeds, cap, task_number=123):
+def evaluate(phase, variants, seeds, cap, task_number=123, workers=4,
+             fast=False, fast_legal=False):
     verify_models()
     audit_seeds()
     paths = {"ppo":PPO,"bc":BC}
@@ -123,12 +220,18 @@ def evaluate(phase, variants, seeds, cap, task_number=123):
     folder.mkdir(parents=True,exist_ok=True)
     protocol = {"phase":phase,"variants":list(variants),"seeds":list(seeds),
                 "cap":cap,"checkpoint_task":task_number,"hashes":hashes}
+    if fast:
+        protocol["deterministic_inference"] = "candidate_argmax_v1"
+    if fast_legal:
+        protocol["legal_placements"] = "bitboard_public_bfs_v1"
     config_path = folder/"protocol.json"
     if config_path.exists() and json.loads(config_path.read_text()) != protocol:
         raise RuntimeError("Frozen curriculum evaluation protocol changed")
     atomic_json(config_path,protocol)
     rows = {}
-    with ProcessPoolExecutor(max_workers=4,mp_context=get_context("spawn"),
+    if not 1 <= workers <= 8:
+        raise ValueError("Evaluation workers must be between 1 and 8")
+    with ProcessPoolExecutor(max_workers=workers,mp_context=get_context("spawn"),
                              initializer=init_worker,initargs=(paths,)) as pool:
         futures = {}
         for variant in variants:
@@ -140,11 +243,15 @@ def evaluate(phase, variants, seeds, cap, task_number=123):
                         raise RuntimeError("Existing formal game mismatches protocol")
                     rows[(variant,seed)] = row
                 else:
-                    futures[pool.submit(task,(variant,seed,cap,hashes))] = (variant,seed,path)
+                    checkpoint_file = (str(path.with_suffix(".checkpoint.pkl"))
+                                       if cap >= 1000000 else None)
+                    futures[pool.submit(task,(variant,seed,cap,hashes,fast,
+                                              fast_legal,checkpoint_file))] = (variant,seed,path)
         for future in as_completed(futures):
             variant,seed,path = futures[future]
             row = future.result()
             atomic_json(path,row)
+            path.with_suffix(".checkpoint.pkl").unlink(missing_ok=True)
             rows[(variant,seed)] = row
             atomic_json(folder/"status.json",{"completed":len(rows),"total":len(variants)*len(seeds),
                                                "last_variant":variant,"last_seed":seed,"at":now()})

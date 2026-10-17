@@ -18,13 +18,17 @@ PIECES = "IJLOSTZ"
 
 
 def board_features(board):
-    heights = []
+    heights = [0] * 10
+    seen = [False] * 10
     holes = 0
-    for x in range(10):
-        first = next((y for y in range(20) if board[y][x] is not None), 20)
-        heights.append(20 - first)
-        if first < 20:
-            holes += sum(board[y][x] is None for y in range(first + 1, 20))
+    for y, row in enumerate(board):
+        for x, cell in enumerate(row):
+            if cell is not None:
+                if not seen[x]:
+                    seen[x] = True
+                    heights[x] = 20 - y
+            elif seen[x]:
+                holes += 1
     bumpiness = sum(abs(a - b) for a, b in zip(heights, heights[1:]))
     wells = sum(max(0, min(20 if x == 0 else heights[x - 1],
                             20 if x == 9 else heights[x + 1]) - height)

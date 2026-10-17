@@ -98,11 +98,13 @@ def _drop_distance(observation, placement):
     return distance
 
 
-def simulate_public(observation, placement):
+def simulate_public(observation, placement, compute_score=True):
     """Apply one canonical placement using visible pieces only.
 
     After all visible Next pieces are consumed, phase='unknown': further
     lookahead must stop, while the real Core may draw another hidden piece.
+    compute_score=False skips drop points for board-only action ranking; callers
+    requiring an exact simulated score must retain the default.
     """
     visible = list(observation["next"])
     held = observation["hold"]
@@ -115,7 +117,8 @@ def simulate_public(observation, placement):
     else:
         piece_type = current
     board = [row[:] for row in observation["board"]]
-    score = observation["score"] + _drop_distance(observation, placement)*2
+    score = (observation["score"] + _drop_distance(observation, placement)*2
+             if compute_score else observation["score"])
     lines = observation["lines"]
     level = observation["level"]
     occupied = placement["occupiedCells"]
@@ -167,25 +170,30 @@ class V2:
         if not candidates:
             raise ValueError("V2 has no allowed legal placement")
         evaluated, simulate_ns, future_legal_ns = [], 0, 0
+        best_one_step = None
         for placement in candidates:
             began = perf_counter_ns()
-            state, cleared = simulate_public(observation, placement)
+            state, cleared = simulate_public(observation, placement, compute_score=False)
             value = board_score(state["board"], cleared, self.config.weights)
             if state["gameOver"]:
                 value -= self.config.death_penalty
             simulate_ns += perf_counter_ns() - began
-            evaluated.append((value, placement["actionId"], state))
-        # Dedup equivalent visible states, retaining the smallest Action ID.
-        unique = {}
-        for value, action, state in evaluated:
-            key = _state_key(state)
-            old = unique.get(key)
-            if old is None or (value, -action) > (old[0], -old[1]):
-                unique[key] = (value, action, state)
-        ranked = sorted(unique.values(), key=lambda item: (-item[0], item[1]))
+            action = placement["actionId"]
+            if self.config.mode == "beam":
+                evaluated.append((value, action, state))
+            elif best_one_step is None or (value, -action) > (best_one_step[0], -best_one_step[1]):
+                best_one_step = (value, action)
         if self.config.mode != "beam":
-            chosen = ranked[0][1]
+            chosen = best_one_step[1]
         else:
+            # Beam search must deduplicate equivalent visible states.
+            unique = {}
+            for value, action, state in evaluated:
+                key = _state_key(state)
+                old = unique.get(key)
+                if old is None or (value, -action) > (old[0], -old[1]):
+                    unique[key] = (value, action, state)
+            ranked = sorted(unique.values(), key=lambda item: (-item[0], item[1]))
             best = None
             cache = {}
             for value, action, state in ranked[:self.config.beam_width]:
@@ -201,7 +209,7 @@ class V2:
                         second_best = float("-inf")
                         for placement in second:
                             began = perf_counter_ns()
-                            next_state, cleared = simulate_public(state, placement)
+                            next_state, cleared = simulate_public(state, placement, compute_score=False)
                             score = board_score(next_state["board"], cleared, self.config.weights)
                             if next_state["gameOver"]:
                                 score -= self.config.death_penalty
