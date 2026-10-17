@@ -1,5 +1,7 @@
 """Bitboard collision acceleration for the unchanged public placement BFS."""
 
+from functools import lru_cache
+
 from training.tetris_core.actions import encode_action
 from training.tetris_core.pieces import CELLS, I_KICKS, JLSTZ_KICKS, ROTATIONS, make_piece
 
@@ -29,6 +31,7 @@ def _branch(observation, hold, board_rows):
     bounds = [BOUNDS[kind, r] for r in range(4)]
     row_shapes = [SHAPES[kind, r] for r in range(4)]
 
+    @lru_cache(maxsize=None)
     def collides(rotation, x, y):
         low_x, high_x, _, high_y = bounds[rotation]
         if x + low_x < 0 or x + high_x >= 10 or y + high_y >= 20:

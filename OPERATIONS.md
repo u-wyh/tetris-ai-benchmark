@@ -166,3 +166,5 @@
 
 - 2026-10-17T20:11:06+08:00｜课程训练后长局比较失败并停止。依据：runs/post_curriculum_3m/status.json。
 - 2026-10-17 20:13:00 CST｜修复长局恢复队列中本地变量遮蔽 checkpoint() 导致的启动失败，保留已完成局并恢复 8-worker 评测；每 1 万块原子保存局内 Core/RNG 与策略状态，PPO、B12、传统 V2 的同局恢复对照通过，现场检查确认快照正在写入。Parity 6 tests/29 scenarios/273 snapshots 与 JS 61 tests 通过。依据：`runs/post_curriculum_3m/status.json`、`runs/ppo30m_failure_curriculum/post_curriculum_3m_fastbfs/`。
+
+- 2026-10-17T22:01:39+08:00｜为课程后 300 万块长局评测启用每状态碰撞缓存：46 个公开状态的合法落点耗时 3.118→2.669 ms/状态、结果逐项一致；快速环境回归 7 passed。按已有每 1 万块 Core/RNG 检查点停止并重启 8-worker tmux 队列，已完成对局保持不变，新 PID 328315，BC 7 局及 B12 1 局从检查点继续。依据：training/evaluation/fast_legal.py、runs/post_curriculum_3m/status.json、runs/ppo30m_failure_curriculum/post_curriculum_3m_fastbfs/。
