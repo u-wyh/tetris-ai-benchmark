@@ -14,6 +14,7 @@ from sb3_contrib import MaskablePPO
 
 from training.env.fast_candidate_env import FastCandidateTetrisEnv
 from training.candidate_features import candidate_features
+from training.evaluation.fast_candidate_features import candidate_features as fast_candidate_features
 from training.evaluation.fast_legal import get_legal_placements as fast_placements
 from training.evaluation.hybrid_queue import BC, PPO, HASHES, digest, verify_models
 from training.evaluation.ppo_lookahead_v3_audit import policy_probs
@@ -45,7 +46,7 @@ class LongCandidateTetrisEnv(FastCandidateTetrisEnv):
         if self._candidate_cache is None:
             public = self.core.get_public_observation()
             self._placement_cache = fast_placements(public)
-            self._candidate_cache = candidate_features(public, self._placement_cache)
+            self._candidate_cache = fast_candidate_features(public, self._placement_cache)
         return self._candidate_cache
 
 

@@ -6,6 +6,10 @@ import pytest
 from training.env.candidate_env import CandidateTetrisEnv
 from training.env.fast_candidate_env import FastCandidateTetrisEnv
 from training.evaluation.failure_curriculum_eval import LongCandidateTetrisEnv
+from training.candidate_features import candidate_features
+from training.evaluation.fast_candidate_features import candidate_features as fast_candidate_features
+from training.tetris_core import TetrisCore
+from training.tetris_core.pieces import make_piece
 
 
 @pytest.mark.parametrize("seed", [42, 1234000, 20261013])
@@ -79,3 +83,27 @@ def test_long_candidate_bitboard_bfs_matches_official(seed):
     finally:
         official.close()
         accelerated.close()
+
+
+@pytest.mark.parametrize("fixture", ["single_clear", "lock_out", "partial_lock"])
+def test_fast_candidate_features_match_scoring_and_topout_edges(fixture):
+    core = TetrisCore(42)
+    if fixture == "single_clear":
+        core.current = make_piece("O")
+        for x in range(10):
+            if x not in (3, 4):
+                core.board[19][x] = "Z"
+    elif fixture == "lock_out":
+        core.current = make_piece("I")
+        core.current["y"] = -2
+        for x in range(3, 7):
+            core.board[0][x] = "Z"
+    else:
+        core.current = make_piece("O")
+        core.current["x"], core.current["y"] = 0, -1
+        core.board[1][0] = "Z"
+    public = core.get_public_observation()
+    placements = core.get_legal_placements()
+    for original, accelerated in zip(candidate_features(public, placements),
+                                     fast_candidate_features(public, placements)):
+        np.testing.assert_array_equal(original, accelerated)
