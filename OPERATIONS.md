@@ -176,3 +176,19 @@
 - 2026-10-17T23:54:07+08:00｜按用户授权建立 PPO 30M 三训练种子固定预算跟进：每种子普通与危险课程各 503808 样本；当前 300 万块传统 V2 评测结束后才训练，并在 16 个新评测种子上加入传统 V2 Hold 对照。冻结 PPO、BC、课程数据与 V2 代码哈希，评测种子冲突审计为零；传统 V2 50 块 smoke、相关定向测试 18 passed、新队列测试 3 passed。依据：runs/ppo30m_multiseed_followup/protocol.json、training/evaluation/ppo30m_multiseed_followup.py、reports/experiments/ppo30m_multiseed_followup_design.md。
 
 - 2026-10-17T23:54:28+08:00｜已启动独立 tmux `tetris-ppo30m-multiseed-followup`，PID 355611；现场验证队列处于 `waiting_for_3m_evaluation`，等待传统 300 万块评测完成后自动训练，当前没有争用高负载资源。依据：runs/ppo30m_multiseed_followup/status.json、runs/ppo30m_multiseed_followup/queue.log。
+
+- 2026-10-18T02:35:22+08:00｜完成课程训练后六策略、每局上限 300 万块的 8 种子长局比较。依据：runs/post_curriculum_3m/summary.json。
+
+- 2026-10-18T02:51:19+08:00｜多种子训练 normal_994101 完成 503808 样本，事务 checkpoint 校验通过。依据：runs/ppo30m_multiseed_followup/training/normal_994101/committed/task_000123/model.zip。
+
+- 2026-10-18T03:07:19+08:00｜多种子训练 curriculum_994101 完成 503808 样本，事务 checkpoint 校验通过。依据：runs/ppo30m_multiseed_followup/training/curriculum_994101/committed/task_000123/model.zip。
+
+- 2026-10-18T03:23:11+08:00｜多种子训练 normal_994202 完成 503808 样本，事务 checkpoint 校验通过。依据：runs/ppo30m_multiseed_followup/training/normal_994202/committed/task_000123/model.zip。
+
+- 2026-10-18T03:39:14+08:00｜多种子训练 curriculum_994202 完成 503808 样本，事务 checkpoint 校验通过。依据：runs/ppo30m_multiseed_followup/training/curriculum_994202/committed/task_000123/model.zip。
+
+- 2026-10-18T03:55:05+08:00｜多种子训练 normal_994303 完成 503808 样本，事务 checkpoint 校验通过。依据：runs/ppo30m_multiseed_followup/training/normal_994303/committed/task_000123/model.zip。
+
+- 2026-10-18T04:11:07+08:00｜多种子训练 curriculum_994303 完成 503808 样本，事务 checkpoint 校验通过。依据：runs/ppo30m_multiseed_followup/training/curriculum_994303/committed/task_000123/model.zip。
+
+- 2026-10-18T05:45:29+08:00｜PPO 30M 三训练种子、普通与危险课程、传统 V2 同种子对照完成。依据：runs/ppo30m_multiseed_followup/summary.json。
