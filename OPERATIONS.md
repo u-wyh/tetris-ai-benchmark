@@ -144,3 +144,19 @@
 
 - 2026-10-17T18:26:27+08:00｜冻结危险课程数据：210 状态、21 独立死亡 seed。依据：runs/ppo30m_failure_curriculum/curriculum_manifest.json。
 - 2026-10-17 18:26 CST｜机器现运行旧内核 6.8.0-146-generic，NVIDIA 595.91.07 的 RTX 3050 在 `nvidia-smi` 正常、PyTorch CUDA 可用且 GPU 张量加法通过。复核 210 快照数据集、冻结 PPO SHA256、Normal/Curriculum 各 1 个 4096 样本事务 manifest 完整；确认无其他训练进程后，独立 tmux `tetris-failure-curriculum` 从已提交事务恢复（pane PID 268176、主进程 268181），先运行既定回归测试，未清空或重训已提交任务。依据：`runs/ppo30m_failure_curriculum/{status.json,queue.log,curriculum_manifest.json,normal/transaction_state.json,curriculum/transaction_state.json}`、本次 CUDA/事务校验输出。
+
+- 2026-10-17T18:35:55+08:00｜normal 完成 4096 个环境交互样本、1 个事务任务。依据：runs/ppo30m_failure_curriculum/normal/state.json。
+
+- 2026-10-17T18:35:55+08:00｜curriculum 完成 4096 个环境交互样本、1 个事务任务。依据：runs/ppo30m_failure_curriculum/curriculum/state.json。
+
+- 2026-10-17T18:51:45+08:00｜normal 完成 503808 个环境交互样本、123 个事务任务。依据：runs/ppo30m_failure_curriculum/normal/state.json。
+
+- 2026-10-17T19:07:46+08:00｜curriculum 完成 503808 个环境交互样本、123 个事务任务。依据：runs/ppo30m_failure_curriculum/curriculum/state.json。
+- 2026-10-17 19:34:42 CST｜启动独立 `tetris-post-curriculum-3m` 队列；首次启动因日志目录尚不存在而退出，创建目录后重启并确认处于 `waiting_for_curriculum`，尚未进行高负载对局。定向测试 8 passed。依据：`runs/post_curriculum_3m/{status.json,protocol.json,queue.log}`、`training/evaluation/post_curriculum_3m.py`。
+- 2026-10-17 19:35:54 CST｜按用户澄清停止尚未开局的旧 30×10 万队列，冻结为 4 个相同新种子、每局 300 万块上限，加入传统 V2 Hold 并重启独立 tmux 队列；当前仍等待课程实验完成。依据：`runs/post_curriculum_3m/{superseded_protocol.json,protocol.json,status.json}`；传统 V2 5 块烟测通过。
+- 2026-10-17 19:39:45 CST｜按用户要求将尚未开局的 300 万块/局评测从每模型 4 个种子扩至 8 个，停止旧等待会话并重启同名 tmux，会话和新协议已验证，仍未进行高负载对局。依据：`runs/post_curriculum_3m/{protocol.json,status.json,superseded_protocol_4.json}`。
+- 2026-10-17 19:41:24 CST｜修正长局评测排队方式：传统 V2 Hold 从 8 局串行改为 4 个独立种子进程并发，逐局原子保存；重启并验证独立 tmux 仍等待训练完成，定向测试 8 passed。依据：`training/evaluation/post_curriculum_3m.py`、`runs/post_curriculum_3m/status.json`。
+- 2026-10-17 19:44:58 CST｜根据 8 个物理 CPU 核和现有 worker 约 760 MiB RSS，将训练结束后的独立长局评测配置为 8 个 CPU worker（课程实验当前 4-worker 评测保持原状）；重启并验证等待队列，定向测试 8 passed。依据：`runs/post_curriculum_3m/{protocol.json,status.json}`、`training/evaluation/failure_curriculum_eval.py`。
+- 2026-10-17 20:00:12 CST｜优化训练结束后的 300 万块长局评测：纯神经网络动作使用已核对的确定性候选 argmax；传统 V2 Hold 跳过不参与排序的模拟落下得分、无需 Beam 时跳过状态去重，并在 Core.step 复用同一步正式合法落点。28 个传统状态动作一致、4 个模型各 500 块轨迹一致；传统同 seed 1000 块正式分数与结局一致，烟测约 8.48s→5.05s；定向回归 27 passed。依据：`training/evaluation/{post_curriculum_3m.py,failure_curriculum_eval.py}`、`training/traditional/v2.py`。
+
+- 2026-10-17T20:01:29+08:00｜危险课程 A/B 训练、冻结门槛和有条件完整对局评测完成。依据：runs/ppo30m_failure_curriculum/{training_signal.json,development_gate.json,status.json}。
