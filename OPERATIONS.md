@@ -174,3 +174,5 @@
 - 2026-10-17T22:09:24+08:00｜在长局评测专用合法落点 BFS 中按原顺序展开 Left/Right/RotateCW/Down 邻居扩展，动作、路径和规则保持一致。84 状态搜索耗时约 2.996→2.760 ms/状态；PPO 同种子 500 块整局 A/B 两轮约快 4%，得分和消行一致。定向环境测试 10 passed；保留已完成局，从原子 Core/RNG 快照重启 8-worker tmux 队列，PID 332916。依据：training/evaluation/fast_legal.py、tests/test_fast_candidate_env.py、runs/post_curriculum_3m/status.json。
 
 - 2026-10-17T23:54:07+08:00｜按用户授权建立 PPO 30M 三训练种子固定预算跟进：每种子普通与危险课程各 503808 样本；当前 300 万块传统 V2 评测结束后才训练，并在 16 个新评测种子上加入传统 V2 Hold 对照。冻结 PPO、BC、课程数据与 V2 代码哈希，评测种子冲突审计为零；传统 V2 50 块 smoke、相关定向测试 18 passed、新队列测试 3 passed。依据：runs/ppo30m_multiseed_followup/protocol.json、training/evaluation/ppo30m_multiseed_followup.py、reports/experiments/ppo30m_multiseed_followup_design.md。
+
+- 2026-10-17T23:54:28+08:00｜已启动独立 tmux `tetris-ppo30m-multiseed-followup`，PID 355611；现场验证队列处于 `waiting_for_3m_evaluation`，等待传统 300 万块评测完成后自动训练，当前没有争用高负载资源。依据：runs/ppo30m_multiseed_followup/status.json、runs/ppo30m_multiseed_followup/queue.log。
