@@ -5,7 +5,6 @@ from functools import lru_cache
 from training.tetris_core.actions import encode_action
 from training.tetris_core.pieces import CELLS, I_KICKS, JLSTZ_KICKS, ROTATIONS, make_piece
 
-STEPS = ("Left", "Right", "RotateCW", "Down")
 SHAPES = {}
 BOUNDS = {}
 for _piece in "IJLOSTZ":
@@ -87,32 +86,39 @@ def _branch(observation, hold, board_rows):
                         "occupiedCells": [{"x": cx, "y": cy} for cx, cy in cells],
                         "path": steps,
                     }
-        for step in STEPS:
-            nx, ny, nr = x, y, rotation
-            if step == "Left":
-                nx -= 1
-                if collides(nr, nx, ny):
-                    continue
-            elif step == "Right":
-                nx += 1
-                if collides(nr, nx, ny):
-                    continue
-            elif step == "RotateCW":
-                rotated = rotate(nr, nx, ny)
-                if rotated is None:
-                    continue
-                nx, ny, nr = rotated
-            else:
-                ny += 1
-                if collides(nr, nx, ny):
-                    continue
+        nx, ny, nr = x - 1, y, rotation
+        if not collides(nr, nx, ny):
             top = ny + bounds[nr][2]
-            if not -6 <= top <= 19:
-                continue
-            state = nx, ny, nr
-            if state not in visited:
-                visited.add(state)
-                nodes.append((nx, ny, nr, head, step))
+            if -6 <= top <= 19:
+                state = nx, ny, nr
+                if state not in visited:
+                    visited.add(state)
+                    nodes.append((nx, ny, nr, head, "Left"))
+        nx, ny, nr = x + 1, y, rotation
+        if not collides(nr, nx, ny):
+            top = ny + bounds[nr][2]
+            if -6 <= top <= 19:
+                state = nx, ny, nr
+                if state not in visited:
+                    visited.add(state)
+                    nodes.append((nx, ny, nr, head, "Right"))
+        rotated = rotate(rotation, x, y)
+        if rotated is not None:
+            nx, ny, nr = rotated
+            top = ny + bounds[nr][2]
+            if -6 <= top <= 19:
+                state = nx, ny, nr
+                if state not in visited:
+                    visited.add(state)
+                    nodes.append((nx, ny, nr, head, "RotateCW"))
+        nx, ny, nr = x, y + 1, rotation
+        if not collides(nr, nx, ny):
+            top = ny + bounds[nr][2]
+            if -6 <= top <= 19:
+                state = nx, ny, nr
+                if state not in visited:
+                    visited.add(state)
+                    nodes.append((nx, ny, nr, head, "Down"))
         head += 1
     return sorted(by_cells.values(), key=lambda placement: placement["actionId"])
 

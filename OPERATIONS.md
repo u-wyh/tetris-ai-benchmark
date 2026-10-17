@@ -170,3 +170,5 @@
 - 2026-10-17T22:01:39+08:00｜为课程后 300 万块长局评测启用每状态碰撞缓存：46 个公开状态的合法落点耗时 3.118→2.669 ms/状态、结果逐项一致；快速环境回归 7 passed。按已有每 1 万块 Core/RNG 检查点停止并重启 8-worker tmux 队列，已完成对局保持不变，新 PID 328315，BC 7 局及 B12 1 局从检查点继续。依据：training/evaluation/fast_legal.py、runs/post_curriculum_3m/status.json、runs/ppo30m_failure_curriculum/post_curriculum_3m_fastbfs/。
 
 - 2026-10-17T22:05:50+08:00｜优化长局评测专用候选特征计算：以公开棋盘位掩码计算与正式特征逐项相同的 1840×16 uint8 矩阵和合法掩码，不改训练特征或 TetrisCore。97 状态特征基准约 1.04→0.62 ms/状态；PPO 同种子 500 块 A/B 两轮约 3.49→3.13 秒，正式得分和消行一致。Python 定向测试 20 passed、Parity 6 passed/29 scenarios/273 snapshots、JS 61 passed。保留已完成局，从每 1 万块 Core/RNG 快照重启 8-worker tmux 队列，PID 330976。依据：training/evaluation/fast_candidate_features.py、tests/test_fast_candidate_env.py、runs/post_curriculum_3m/status.json。
+
+- 2026-10-17T22:09:24+08:00｜在长局评测专用合法落点 BFS 中按原顺序展开 Left/Right/RotateCW/Down 邻居扩展，动作、路径和规则保持一致。84 状态搜索耗时约 2.996→2.760 ms/状态；PPO 同种子 500 块整局 A/B 两轮约快 4
