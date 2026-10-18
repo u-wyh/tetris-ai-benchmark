@@ -206,3 +206,5 @@
 - 2026-10-18T21:11:28+08:00｜独立 32-seed PPO 候选 100K 评测完成；预冻结门槛未通过。依据：runs/ppo30m_independent_confirmation/summary.json。
 
 - 2026-10-18T23:26:19+08:00｜Hybrid B12 机制研究独立 tmux `tetris-b12-death-study` 已启动，PID 79364，现场确认进入 16 局重放阶段；13 项定向测试通过。依据：runs/hybrid_b12_death_study/status.json、runs/hybrid_b12_death_study/queue.log。
+
+- 2026-10-18T23:40:49+08:00｜Hybrid B12 独立失败机制研究完成：16 局重放、46 个状态、92 条反事实分支。依据：runs/hybrid_b12_death_study/summary.json。

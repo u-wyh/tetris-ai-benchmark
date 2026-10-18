@@ -132,3 +132,5 @@
 - 新增 Hybrid B12 独立失败机制研究：13 个死亡 seed 与 3 个触顶对照，逐局确定性重放、每 5000 块可恢复 Core/RNG 快照、最多每局 4 个同状态双动作反事实；不训练或调整策略。
 
 - PPO 30M 独立 32-seed、100K 确认评测完成：normal_994303 预冻结门槛未通过；完整配对结果见 reports/experiments/ppo30m_independent_confirmation.md。
+
+- Hybrid B12 独立失败机制研究完成：13 个死亡、3 个触顶对照；有害拦截证据 3 个 seed，有益拦截证据 1 个 seed。详见 reports/experiments/hybrid_b12_death_study.md。
