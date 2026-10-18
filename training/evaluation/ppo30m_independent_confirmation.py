@@ -60,7 +60,6 @@ def freeze():
     versions = verify_models()
     manifest = json.loads(SOURCE.read_text())
     hashes = {"ppo": digest(PPO), "bc": digest(BC)}
-    paths = {"ppo": PPO, "bc": BC}
     for name in ("normal_994303", "normal_994202"):
         path = Path(manifest[name]["path"])
         if digest(path) != manifest[name]["sha256"]:
@@ -68,12 +67,11 @@ def freeze():
         run_dir = path.parents[2]
         verify_task(path.parent, 123, json.loads((run_dir / "config.json").read_text()))
         hashes[name] = manifest[name]["sha256"]
-        paths["normal" if name == "normal_994303" else "normal_994202"] = path
     # The existing evaluator uses its `normal` model key for either selected run.
     paths_by_variant = {
         "ppo": {"ppo": PPO}, "bc": {"bc": BC}, "B12": {"ppo": PPO, "bc": BC},
-        "normal_994303": {"normal": Path(manifest["normal_994303"]["path"])},
-        "normal_994202": {"normal": Path(manifest["normal_994202"]["path"])},
+        "normal_994303": {"ppo": PPO, "normal": Path(manifest["normal_994303"]["path"])},
+        "normal_994202": {"ppo": PPO, "normal": Path(manifest["normal_994202"]["path"])},
     }
     for name in ("normal_994303", "normal_994202"):
         model = MaskablePPO.load(str(manifest[name]["path"]), device="cpu")
@@ -236,11 +234,15 @@ def write_report(result, rows):
         lines.append(f"相对 {target}：平均已观测存活差 {x['pieces']['mean']:.0f} 块（按 seed 配对 Bootstrap 95% 区间 {x['pieces']['ci95'][0]:.0f} 至 {x['pieces']['ci95'][1]:.0f}）；平均总分差 {x['score']['mean']/1e8:.2f} 亿（区间 {x['score']['ci95'][0]/1e8:.2f} 至 {x['score']['ci95'][1]/1e8:.2f} 亿）；共同存活得分比 {x['common_score_ratio']:.3f}。")
     lines += ["", "Bootstrap 以 32 个 seed 为抽样单位。共同存活分数在双方较短寿命向下取整至最近 1000 块的里程碑比较；不同寿命的总分受等级增长影响。100K 触顶不等于真实寿命。",
               "", "## 逐 seed 对照", "",
-              "| Seed | PPO 存活/亿分 | B12 存活/亿分 | 994303 存活/亿分 | 994202 存活/亿分 | BC 存活/亿分 | 994303−PPO 存活 | 994303−B12 存活 |",
-              "|---:|---:|---:|---:|---:|---:|---:|---:|"]
+              "| Seed | PPO 存活/亿分 | B12 存活/亿分 | 994303 存活/亿分 | 994202 存活/亿分 | BC 存活/亿分 | 994303−PPO 存活 | 994303−B12 存活 | 共同得分比/PPO | 共同得分比/B12 |",
+              "|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for i, seed in enumerate(SEEDS):
         cells = [f"{rows[v][i]['pieces']}{'*' if rows[v][i]['capped'] else ''}/{rows[v][i]['score']/1e8:.2f}" for v in ("ppo", "B12", "normal_994303", "normal_994202", "bc")]
-        lines.append(f"| {seed} | " + " | ".join(cells) + f" | {p['ppo']['by_seed'][i]['pieces_delta']:+d} | {p['B12']['by_seed'][i]['pieces_delta']:+d} |")
+        rppo = p['ppo']['by_seed'][i]
+        rb12 = p['B12']['by_seed'][i]
+        ratio_ppo = "—" if rppo["common_score_ratio"] is None else f"{rppo['common_score_ratio']:.3f}"
+        ratio_b12 = "—" if rb12["common_score_ratio"] is None else f"{rb12['common_score_ratio']:.3f}"
+        lines.append(f"| {seed} | " + " | ".join(cells) + f" | {rppo['pieces_delta']:+d} | {rb12['pieces_delta']:+d} | {ratio_ppo} | {ratio_b12} |")
     lines += ["", "`*` 表示 100K 右截断。完整逐局消行、共同存活得分和模型哈希在 `runs/ppo30m_independent_confirmation/`。",
               "", "## 结论", ""]
     if result["gate_pass"]:
@@ -251,6 +253,14 @@ def write_report(result, rows):
     c = s["normal_994303"]
     lines.append(f"与 B12 比较：候选平均存活差 {c['mean_pieces']-b12['mean_pieces']:.0f} 块，P10 差 {c['p10_pieces']-b12['p10_pieces']:.0f} 块，平均总分差 {(c['mean_score']-b12['mean_score'])/1e8:.2f} 亿。")
     lines.append(f"异常早死（<10000 块）：候选 {[r['seed'] for r in rows['normal_994303'] if r['pieces']<10000]}；PPO {[r['seed'] for r in rows['ppo'] if r['pieces']<10000]}。")
+    development = json.loads((ROOT / "runs/ppo30m_multiseed_followup/summary.json").read_text())["summary"]
+    lines.append(f"开发组 normal_994303：平均存活 {development['normal_994303']['mean_pieces']:.0f}、P10 {development['normal_994303']['p10_pieces']:.0f}、触顶 {development['normal_994303']['capped']}/16、平均得分 {development['normal_994303']['mean_score']/1e8:.2f} 亿。本组为独立 32-seed 确认，不能与开发组混合作为 48 个独立确认样本。")
+    ci = p["ppo"]["pieces"]["ci95"]
+    lines.append("相对原版 PPO 的平均存活配对 95% 区间"
+                 + ("全高于零，支持在本协议下的稳定改善。" if ci[0] > 0
+                    else "包含零，不能断言稳定超越；通过预设方向门槛也不等于统计证据充分。"))
+    lines.append(f"四消占比变化 {100*(c['four_fraction']-s['ppo']['four_fraction']):+.2f} 个百分点；共同存活得分比 {p['ppo']['common_score_ratio']:.3f}。")
+    lines.append(f"本协议存活参考：BC 平均已观测存活 {s['bc']['mean_pieces']:.0f}、触顶 {s['bc']['capped']}/32；高分候选结论仅限 100K，不代表 300 万块极限寿命。")
     REPORT.write_text("\n".join(lines) + "\n")
 
 

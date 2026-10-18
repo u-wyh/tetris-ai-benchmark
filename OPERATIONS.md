@@ -196,3 +196,5 @@
 - 2026-10-18｜冻结 PPO 30M 新候选独立确认协议：32 个种子 `1421000..1421031` 精确用途审计无冲突；原版 PPO、BC、normal_994303 与 normal_994202 模型 SHA256 和训练事务校验通过；100K 上限、预设门槛与 8 worker 配置已保存。依据：runs/ppo30m_independent_confirmation/seed_audit.json、runs/ppo30m_independent_confirmation/protocol.json。
 
 - 2026-10-18T19:49:19+08:00｜独立 tmux `tetris-ppo30m-confirmation` 已启动并现场核验 PID 37034 处于 PPO 评测；Python 定向测试 9 passed、Parity 6 passed（35 subtests）、JS 61 passed。依据：runs/ppo30m_independent_confirmation/status.json、runs/ppo30m_independent_confirmation/queue.log。
+
+- 2026-10-18T19:53:00+08:00｜独立确认队列暂停：审计发现 normal 评测依赖同时加载原 PPO 参考模型以计算排序诊断；保留已原子提交的 9 局 PPO 结果及在途快照，修正 worker 模型路径后恢复。依据：training/evaluation/ppo30m_independent_confirmation.py、runs/ppo30m_independent_confirmation/evaluation/ppo/。
