@@ -201,4 +201,8 @@
 
 - 2026-10-18T19:53:09+08:00｜修正 normal 模型 worker 加载原 PPO 参考模型后，独立评测从已提交的 9 局 PPO 结果恢复；50 块 normal_994303、normal_994202、B12 烟测均正常触顶。独立 tmux 收尾会话负责完成后的测试、报告提交与 push。依据：runs/ppo30m_independent_confirmation/status.json、runs/ppo30m_independent_confirmation/finalize.sh。
 
+- 2026-10-18｜建立 Hybrid B12 事后机制研究协议：冻结 PPO/BC 与 13 死亡、3 触顶原始记录 SHA256；50 块策略烟测及 1421014 全局重放严格匹配原评测。1421014:183 双分支烟测通过；带烟测标签的临时分支已清除，正式队列将按冻结标签运行。依据：runs/hybrid_b12_death_study/protocol.json、training/evaluation/hybrid_b12_death_study.py。
+
 - 2026-10-18T21:11:28+08:00｜独立 32-seed PPO 候选 100K 评测完成；预冻结门槛未通过。依据：runs/ppo30m_independent_confirmation/summary.json。
+
+- 2026-10-18T23:26:19+08:00｜Hybrid B12 机制研究独立 tmux `tetris-b12-death-study` 已启动，PID 79364，现场确认进入 16 局重放阶段；13 项定向测试通过。依据：runs/hybrid_b12_death_study/status.json、runs/hybrid_b12_death_study/queue.log。
