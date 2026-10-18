@@ -129,3 +129,5 @@
 ## 2026-10-18
 
 - 新增 PPO 30M 新候选的一次性 32-seed 独立确认评测队列：冻结模型与协议、精确种子审计、每局 10000 块可恢复快照、原子逐局结果、配对 Bootstrap 和预设通过门槛；评测只读既有模型。
+
+- PPO 30M 独立 32-seed、100K 确认评测完成：normal_994303 预冻结门槛未通过；完整配对结果见 reports/experiments/ppo30m_independent_confirmation.md。
