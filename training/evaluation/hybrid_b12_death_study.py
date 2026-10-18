@@ -466,8 +466,21 @@ def report(protocol, replays, selection):
         labels = sorted({x["classification"] for x in matches})
         if not labels:
             labels = ["no_action_difference"]
+        w = windows(replays[seed]["data"]["metrics"], replays[seed]["pieces"])
+        late = [x for x in matches if x["item"]["label"] == "late"]
+        hypotheses = []
+        if w["100"]["height_end"]-w["100"]["height_start"] >= 5 and w["100"]["fours"] == 0:
+            hypotheses.append("A_rapid_stack_without_four_signal")
+        if "bc_harmful" in labels:
+            hypotheses.append("B_harmful_intercept_evidence")
+        if any(x["actual"]["game_over"] and x["alternate"]["game_over"]
+               and abs(x["actual"]["pieces_after"]-x["alternate"]["pieces_after"]) < 500
+               for x in late):
+            hypotheses.append("C_both_tested_actions_fail_late")
+        if not hypotheses:
+            hypotheses.append("undetermined")
         by_seed[str(seed)] = {"classifications": labels,
-                "windows": windows(replays[seed]["data"]["metrics"], replays[seed]["pieces"]),
+                "hypotheses": hypotheses, "windows": w,
                 "case_count": len(matches)}
     report_json = {"protocol": protocol, "replays": {str(s): {k:r[k] for k in
              ("pieces","score","game_over","capped","source_sha256")}
@@ -478,11 +491,11 @@ def report(protocol, replays, selection):
              "基于独立确认组的事后机制分析；这 32 个种子以后不能用作据此设计的 B12 V3 独立确认集。冻结 PPO、BC 和 B12 参数，未训练或调参。",
              "", f"验证重放：{len(replays)} 局（13 真正死亡，3 触顶对照），最终存活、得分和四消次数逐局与原记录一致。反事实状态 {len(selection['states'])} 个，分支 {2*len(selection['states'])} 条，每支最多 5000 块；触窗右截断。",
              "", "## 死亡局及窗口", "",
-             "| Seed | 死亡块数 | BC 动作 | 有差异拦截 | 首次高 15/18 | 末 5000 高度 | 末 5000 洞数 | 末 5000 四消 | 证据分类 |",
-             "|---:|---:|---:|---:|---:|---|---|---:|---|"]
+             "| Seed | 死亡块数 | BC 动作 | 有差异拦截 | 首次高 15/18 | 末 5000 高度 | 末 5000 洞数 | 末 5000 四消 | 反事实证据 | 机制信号 |",
+             "|---:|---:|---:|---:|---:|---|---|---:|---|---|"]
     for seed in DEATHS:
         r = replays[seed]; d = r["data"]; w = by_seed[str(seed)]["windows"]["5000"]
-        lines.append(f"| {seed} | {r['pieces']} | {d['bc_actions']} | {d['different_bc_actions']} | {d['first_height15']}/{d['first_height18']} | {w['height_start']}→{w['height_end']} | {w['holes_start']}→{w['holes_end']} | {w['fours']} | {', '.join(by_seed[str(seed)]['classifications'])} |")
+        lines.append(f"| {seed} | {r['pieces']} | {d['bc_actions']} | {d['different_bc_actions']} | {d['first_height15']}/{d['first_height18']} | {w['height_start']}→{w['height_end']} | {w['holes_start']}→{w['holes_end']} | {w['fours']} | {', '.join(by_seed[str(seed)]['classifications'])} | {', '.join(by_seed[str(seed)]['hypotheses'])} |")
     lines += ["", "分类可重叠；一次 seed 只在每类统计一次。高度、洞数、四消中断属于伴随现象，不能单独证明致死原因。完整 5000/1000/500/100/20 窗口与截断对照位于 `runs/hybrid_b12_death_study/summary.json`。", "", "## 同状态反事实", "",
               "| Seed:块 | 位置 | B12 动作 | 替代动作 | 原分支存活 | 替代分支存活 | 原/替代得分增量 | 原/替代四消 | Hold 首步 | 分类 |",
               "|---|---|---:|---:|---:|---:|---:|---:|---|---|"]
@@ -491,6 +504,9 @@ def report(protocol, replays, selection):
         lines.append(f"| {i['seed']}:{i['step']} | {i['label']} | {a['action']} | {b['action']} | {a['pieces_after']}{'+' if a['censored'] else ''} | {b['pieces_after']}{'+' if b['censored'] else ''} | {a['score_gain']}/{b['score_gain']} | {a['clears_0_to_4'][4]}/{b['clears_0_to_4'][4]} | {a['first_state']['hold']}/{b['first_state']['hold']} | {x['classification']} |")
     counts = {key:sum(key in item["classifications"] for item in by_seed.values())
               for key in ("bc_harmful","bc_helpful","insufficient","no_action_difference")}
+    all_events = [e for seed in SEEDS for e in replays[seed]["data"]["events"]]
+    hold_changed = sum(e["ppo_hold"] != e["bc_hold"] for e in all_events)
+    bc_more_holes = sum(e["bc_risk"]["new_holes"] > e["ppo_risk"]["new_holes"] for e in all_events)
     lines += ["", "## 触顶对照", "",
               "| Seed | 已观测存活 | BC 动作 | 有差异拦截 | 首次高 15/18 | 最后 5000 高度 | 最后 5000 洞数 |",
               "|---:|---:|---:|---:|---:|---|---|"]
@@ -499,6 +515,8 @@ def report(protocol, replays, selection):
         lines.append(f"| {seed} | {r['pieces']}+ | {d['bc_actions']} | {d['different_bc_actions']} | {d['first_height15']}/{d['first_height18']} | {w['height_start']}→{w['height_end']} | {w['holes_start']}→{w['holes_end']} |")
     lines += ["", "## 解释与建议", "",
               f"独立死亡 seed 数：有害拦截证据 {counts['bc_harmful']}，有益拦截证据 {counts['bc_helpful']}，证据不足 {counts['insufficient']}，无可利用动作差异 {counts['no_action_difference']}。",
+              f"16 局共观察 BC 采用动作 {len(all_events)} 次，其中与 PPO Hold 用法不同 {hold_changed} 次、BC 候选新增洞多于 PPO {bc_more_holes} 次。这些单步特征只用于定位，不直接代表长期因果。",
+              "机制信号 A 为最后 100 块无四消且最高列增长至少 5；B 仅在同状态反事实支持有害拦截时标记；C 仅表示选中的临终 PPO/BC 两个动作在 5000 块内均死亡且差距不足 500。A/C 均不能证明其他合法动作无效，也不能把所有死亡归因于 BC。",
               "此前六局中，700017:329 与 700026:268 发现有害拦截；本轮未重复这两个旧状态。应以本轮新的同状态结果判断能否跨 seed 复现，不能用不同模型的整局寿命直接归因。",
               "所有同状态分支只改变首动作，之后由冻结 B12 续控。Hold 差异会改变后续方块使用顺序；相同 Core/RNG 起点不保证两支经历完全相同的出块。", ""]
     if counts["bc_harmful"] >= 2:
