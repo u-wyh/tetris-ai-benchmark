@@ -214,3 +214,5 @@
 - 2026-10-19T00:01:07+08:00｜冻结 Hybrid B12 V3-A 规则、PPO/BC/Core 哈希、新开发与独立确认种子及预设门槛；全仓库种子用途审计无冲突。14 项相关 Python 测试通过，四策略 100 块 Smoke 全部合法触顶。旧反事实位置只用于规则假设，不用作确认结果。依据：runs/hybrid_b12_v3/protocol.json、runs/hybrid_b12_v3/seed_audit.json、runs/hybrid_b12_v3/smoke/。
 
 - 2026-10-19T00:01:40+08:00｜独立 tmux `tetris-b12-v3` 已启动并现场核验 PID 90482 进入 16-seed 开发 20K 阶段；收尾会话 `tetris-b12-v3-finalize` 已启动，达不到冻结门槛将不访问确认组。依据：runs/hybrid_b12_v3/status.json、runs/hybrid_b12_v3/queue.log、runs/hybrid_b12_v3/finalize.sh。
+
+- 2026-10-19T00:17:55+08:00｜Hybrid B12 V3-A 队列完成：stopped_after_20k，独立确认未通过或未启动；逐局 SHA256 与 Python/Parity/JS 回归测试通过。依据：runs/hybrid_b12_v3/status.json、reports/experiments/hybrid_b12_v3.md。
