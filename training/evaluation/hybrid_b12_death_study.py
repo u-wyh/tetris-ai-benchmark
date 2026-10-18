@@ -519,6 +519,15 @@ def report(protocol, replays, selection):
               "机制信号 A 为最后 100 块无四消且最高列增长至少 5；B 仅在同状态反事实支持有害拦截时标记；C 仅表示选中的临终 PPO/BC 两个动作在 5000 块内均死亡且差距不足 500。A/C 均不能证明其他合法动作无效，也不能把所有死亡归因于 BC。",
               "此前六局中，700017:329 与 700026:268 发现有害拦截；本轮未重复这两个旧状态。应以本轮新的同状态结果判断能否跨 seed 复现，不能用不同模型的整局寿命直接归因。",
               "所有同状态分支只改变首动作，之后由冻结 B12 续控。Hold 差异会改变后续方块使用顺序；相同 Core/RNG 起点不保证两支经历完全相同的出块。", ""]
+    for label, description in (("bc_harmful", "代表性有害拦截"),
+                               ("bc_helpful", "代表性有益拦截")):
+        cases = [x for x in results if x["classification"] == label]
+        if cases:
+            best = max(cases, key=lambda x: abs(x["alternate"]["pieces_after"]-x["actual"]["pieces_after"]))
+            item, a, b = best["item"], best["actual"], best["alternate"]
+            lines.append(f"{description}：{item['seed']}:{item['step']}（{item['label']}），B12 当步动作 {a['action']} 后续 {a['pieces_after']}{'+' if a['censored'] else ''} 块；改用 PPO 动作 {b['action']} 后续 {b['pieces_after']}{'+' if b['censored'] else ''} 块。`+` 为 5000 块观察窗右截断。")
+        else:
+            lines.append(f"{description}：本轮所选状态中未发现达到预设 500 块差距的案例。")
     if counts["bc_harmful"] >= 2:
         lines.append("多个独立死亡 seed 发现有害拦截，值得另开新开发种子研究 B12 V3 的拦截条件；本组不能用于 V3 确认，也不能据短窗结果断言 V3 会提高 100K 存活。")
     else:
