@@ -216,3 +216,5 @@
 - 2026-10-19T00:01:40+08:00｜独立 tmux `tetris-b12-v3` 已启动并现场核验 PID 90482 进入 16-seed 开发 20K 阶段；收尾会话 `tetris-b12-v3-finalize` 已启动，达不到冻结门槛将不访问确认组。依据：runs/hybrid_b12_v3/status.json、runs/hybrid_b12_v3/queue.log、runs/hybrid_b12_v3/finalize.sh。
 
 - 2026-10-19T00:17:55+08:00｜Hybrid B12 V3-A 队列完成：stopped_after_20k，独立确认未通过或未启动；逐局 SHA256 与 Python/Parity/JS 回归测试通过。依据：runs/hybrid_b12_v3/status.json、reports/experiments/hybrid_b12_v3.md。
+
+- 2026-10-19T00:18:18+08:00｜Hybrid B12 V3-A 20K 初筛失败并自动停止：P10 与早死数量未过冻结门槛；100K 开发及 32-seed 独立确认未运行。完善报告中按块归一的推理耗时；逐局数据 SHA256、Python/Parity 33 passed（35 subtests）、JS 61 passed。依据：runs/hybrid_b12_v3/development_20k_gate.json、runs/hybrid_b12_v3/finalize.log、reports/experiments/hybrid_b12_v3.md。

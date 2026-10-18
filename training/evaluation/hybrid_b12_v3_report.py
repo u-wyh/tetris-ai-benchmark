@@ -48,11 +48,11 @@ def write_report(protocol,outcome):
     for phase,seeds in phases:
         summaries[phase]={v:json.loads((RUN/phase/v/"summary.json").read_text()) for v in protocol["variants"]}
         lines += [f"### {phase}","",
-            "| 策略 | 平均存活 | P10 | 触顶 | <10K 死亡 | 平均得分（亿） | 四消占比 | BC 提议 | V3 拒绝 | 平均推理秒/局 |",
+            "| 策略 | 平均存活 | P10 | 触顶 | <10K 死亡 | 平均得分（亿） | 四消占比 | BC 提议 | V3 拒绝 | 推理毫秒/块 |",
             "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|"]
         for v in protocol["variants"]:
             s=summaries[phase][v]
-            lines.append(f"| {v} | {s['mean_pieces']:.0f} | {s['p10_pieces']:.0f} | {s['capped']}/{s['games']} | {s['early_under_10000']} | {s['mean_score']/1e8:.2f} | {s['four_fraction']:.1%} | {s['bc_proposed']} | {s['bc_rejected']} | {s['mean_inference_seconds']:.1f} |")
+            lines.append(f"| {v} | {s['mean_pieces']:.0f} | {s['p10_pieces']:.0f} | {s['capped']}/{s['games']} | {s['early_under_10000']} | {s['mean_score']/1e8:.2f} | {s['four_fraction']:.1%} | {s['bc_proposed']} | {s['bc_rejected']} | {1000*s['mean_inference_seconds']/s['mean_pieces']:.3f} |")
         lines.append("")
         if phase!="confirmation_100k":
             gate=json.loads((RUN/f"{phase}_gate.json").read_text())
