@@ -210,3 +210,5 @@
 - 2026-10-18T23:40:49+08:00｜Hybrid B12 独立失败机制研究完成：16 局重放、46 个状态、92 条反事实分支。依据：runs/hybrid_b12_death_study/summary.json。
 
 - 2026-10-18T23:43:51+08:00｜Hybrid B12 机制研究已完成并推送；16 局重放、46 个同状态快照和 92 条分支完整性复查通过。为 16 份重放结果补齐逐文件 SHA256 seal，复核模型和原始记录哈希，相关定向测试 13 passed。依据：runs/hybrid_b12_death_study/replays/、runs/hybrid_b12_death_study/summary.json、runs/hybrid_b12_death_study/final_commit.txt。
+
+- 2026-10-19T00:01:07+08:00｜冻结 Hybrid B12 V3-A 规则、PPO/BC/Core 哈希、新开发与独立确认种子及预设门槛；全仓库种子用途审计无冲突。14 项相关 Python 测试通过，四策略 100 块 Smoke 全部合法触顶。旧反事实位置只用于规则假设，不用作确认结果。依据：runs/hybrid_b12_v3/protocol.json、runs/hybrid_b12_v3/seed_audit.json、runs/hybrid_b12_v3/smoke/。
