@@ -134,3 +134,5 @@
 - PPO 30M 独立 32-seed、100K 确认评测完成：normal_994303 预冻结门槛未通过；完整配对结果见 reports/experiments/ppo30m_independent_confirmation.md。
 
 - Hybrid B12 独立失败机制研究完成：13 个死亡、3 个触顶对照；有害拦截证据 3 个 seed，有益拦截证据 1 个 seed。详见 reports/experiments/hybrid_b12_death_study.md。
+
+- Hybrid B12 机制研究重放结果增加逐文件 SHA256 校验记录；已有 16 份重放结果完成校验并补齐 seal。

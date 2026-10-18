@@ -164,6 +164,13 @@ def replay(seed, protocol):
                 or result["model_sha256"] != protocol["model_sha256"]
                 or result["pieces"] != old["pieces"] or result["score"] != old["score"]):
             raise RuntimeError(f"Completed replay mismatch: {seed}")
+        seal_path = result_path.with_suffix(".sha256.json")
+        if seal_path.exists():
+            seal = json.loads(seal_path.read_text())
+            if seal["sha256"] != digest(result_path):
+                raise RuntimeError(f"Completed replay checksum mismatch: {seed}")
+        else:
+            atomic_json(seal_path, {"sha256": digest(result_path), "seed": seed})
         return result
     env, obs = new_env(seed)
     control = controller()
@@ -228,6 +235,8 @@ def replay(seed, protocol):
                   "wall_seconds_this_attempt": time.monotonic()-started, "completed_at": now()}
         result_path.parent.mkdir(parents=True, exist_ok=True)
         atomic_json(result_path, result)
+        atomic_json(result_path.with_suffix(".sha256.json"),
+                    {"sha256": digest(result_path), "seed": seed})
         return result
     finally:
         env.close()

@@ -208,3 +208,5 @@
 - 2026-10-18T23:26:19+08:00｜Hybrid B12 机制研究独立 tmux `tetris-b12-death-study` 已启动，PID 79364，现场确认进入 16 局重放阶段；13 项定向测试通过。依据：runs/hybrid_b12_death_study/status.json、runs/hybrid_b12_death_study/queue.log。
 
 - 2026-10-18T23:40:49+08:00｜Hybrid B12 独立失败机制研究完成：16 局重放、46 个状态、92 条反事实分支。依据：runs/hybrid_b12_death_study/summary.json。
+
+- 2026-10-18T23:43:51+08:00｜Hybrid B12 机制研究已完成并推送；16 局重放、46 个同状态快照和 92 条分支完整性复查通过。为 16 份重放结果补齐逐文件 SHA256 seal，复核模型和原始记录哈希，相关定向测试 13 passed。依据：runs/hybrid_b12_death_study/replays/、runs/hybrid_b12_death_study/summary.json、runs/hybrid_b12_death_study/final_commit.txt。
