@@ -225,3 +225,4 @@
 - 2026-10-19 15:40–15:55 +08:00：`tetris-b12-v2-rescue` tmux 会话已启动并验证存在，4 CPU worker；16 种子 20K 初筛完成且通过预冻结得分、四消和早死门槛，自动进入 32 种子 100K 开发评测。20K 数据：B12/救援平均存活 18066/18282，平均得分 5.34/5.46 亿，早死均 1 局；V2 调用 68 次、改动作 27 次。依据：`runs/hybrid_b12_v2_rescue/development_20k_gate.json`、`runs/hybrid_b12_v2_rescue/status.json`。
 
 - 2026-10-19 17:45 +0800｜B12 + V2 单步救援队列完成；评测结论见 `runs/hybrid_b12_v2_rescue/status.json`、报告 `reports/experiments/hybrid_b12_v2_rescue.md`，Python/Parity/JS 测试日志位于实验目录。
+- 2026-10-19 18:35 +08:00：冻结 B12＋V2 救援归因协议，核对五个开发种子的原始结果 SHA256；`1440024` Rescue 重放烟测与原存活、得分和两次 V2 替换严格一致。首次 V2 替换前完整 Core/RNG 快照可恢复，B12 首步短窗分支合法执行。证据：`runs/hybrid_b12_rescue_attribution/{protocol.json,replays/Rescue/seed_1440024.json,states/seed_1440024_step_17450.pkl,branches_5000/seed_1440024_step_17450_b12_then_b12.json}`。
