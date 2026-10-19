@@ -223,3 +223,5 @@
 - 2026-10-19 10:39–10:41 +08:00：`tetris-b12-v2-expert` 队列完成 49 个状态、112 条唯一动作反事实；49 个候选与 112 条分支 SHA256 均校验通过。3 个死亡 seed 有 V2 独立短窗救援，1 个 seed 有明显有害动作；完成报告，队列已退出。定向 Python 9 项、Parity 6 项及 35 子测试、JS 61 项通过。队列中旧的 `npm test` 调用因仓库根目录无 `package.json` 失败，随后使用正确的 `node --test tests/*.test.cjs` 命令通过。证据：`runs/hybrid_b12_v2_expert_study/{status.json,summary.json,queue.log}`、`reports/experiments/hybrid_b12_v2_expert_study.md`。
 - 2026-10-19 15:38 +08:00：完成 B12 + V2 单步救援规则、模型和新种子审计，`1440000..1440031` 及 `1441000..1441031` 无历史用途冲突。旧 3 个救援状态均触发，旧有害例与有益 BC 拦截不触发；四方案 100 块 smoke 均合法触顶，7 项定向测试通过。冻结协议见 `runs/hybrid_b12_v2_rescue/protocol.json`，smoke 见同目录 `smoke/`。
 - 2026-10-19 15:40–15:55 +08:00：`tetris-b12-v2-rescue` tmux 会话已启动并验证存在，4 CPU worker；16 种子 20K 初筛完成且通过预冻结得分、四消和早死门槛，自动进入 32 种子 100K 开发评测。20K 数据：B12/救援平均存活 18066/18282，平均得分 5.34/5.46 亿，早死均 1 局；V2 调用 68 次、改动作 27 次。依据：`runs/hybrid_b12_v2_rescue/development_20k_gate.json`、`runs/hybrid_b12_v2_rescue/status.json`。
+
+- 2026-10-19 17:45 +0800｜B12 + V2 单步救援队列完成；评测结论见 `runs/hybrid_b12_v2_rescue/status.json`、报告 `reports/experiments/hybrid_b12_v2_rescue.md`，Python/Parity/JS 测试日志位于实验目录。
