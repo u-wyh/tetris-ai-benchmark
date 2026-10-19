@@ -144,3 +144,5 @@
 - Hybrid B12 V3-A 分阶段评测完成：stopped_after_20k，独立确认未通过或未启动；未修改 PPO/BC 权重、Core 或网页默认 AI。
 
 - 2026-10-19：新增传统 V2 Hold 对 Hybrid B12 危险状态的探索性反事实研究。复用已核验快照，按 Action ID 去重并在 tmux 后台执行，结果见 `reports/experiments/hybrid_b12_v2_expert_study.md`。
+
+- 2026-10-19：新增冻结的 Hybrid B12 + V2 Hold 单步救援候选和分阶段、可恢复评测队列。仅在公开棋盘高度与凹凸度达标、V2 合法独立动作不立即 Lock Out 时接管当前一步；后续由原 B12 决策。
