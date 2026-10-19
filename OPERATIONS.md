@@ -226,3 +226,5 @@
 
 - 2026-10-19 17:45 +0800｜B12 + V2 单步救援队列完成；评测结论见 `runs/hybrid_b12_v2_rescue/status.json`、报告 `reports/experiments/hybrid_b12_v2_rescue.md`，Python/Parity/JS 测试日志位于实验目录。
 - 2026-10-19 18:35 +08:00：冻结 B12＋V2 救援归因协议，核对五个开发种子的原始结果 SHA256；`1440024` Rescue 重放烟测与原存活、得分和两次 V2 替换严格一致。首次 V2 替换前完整 Core/RNG 快照可恢复，B12 首步短窗分支合法执行。证据：`runs/hybrid_b12_rescue_attribution/{protocol.json,replays/Rescue/seed_1440024.json,states/seed_1440024_step_17450.pkl,branches_5000/seed_1440024_step_17450_b12_then_b12.json}`。
+
+- 2026-10-19 22:57 +0800｜B12＋V2 正负差异归因后台队列完成。五局重放、短窗及 100K 反事实和 SHA256 校验见 `runs/hybrid_b12_rescue_attribution/`；报告见 `reports/experiments/hybrid_b12_rescue_attribution.md`，Python/Parity/JS 结果见相应测试日志。
