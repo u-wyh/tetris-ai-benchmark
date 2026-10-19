@@ -228,3 +228,4 @@
 - 2026-10-19 18:35 +08:00：冻结 B12＋V2 救援归因协议，核对五个开发种子的原始结果 SHA256；`1440024` Rescue 重放烟测与原存活、得分和两次 V2 替换严格一致。首次 V2 替换前完整 Core/RNG 快照可恢复，B12 首步短窗分支合法执行。证据：`runs/hybrid_b12_rescue_attribution/{protocol.json,replays/Rescue/seed_1440024.json,states/seed_1440024_step_17450.pkl,branches_5000/seed_1440024_step_17450_b12_then_b12.json}`。
 
 - 2026-10-19 22:57 +0800｜B12＋V2 正负差异归因后台队列完成。五局重放、短窗及 100K 反事实和 SHA256 校验见 `runs/hybrid_b12_rescue_attribution/`；报告见 `reports/experiments/hybrid_b12_rescue_attribution.md`，Python/Parity/JS 结果见相应测试日志。
+- 2026-10-19 22:58 +08:00：B12＋V2 救援归因报告补充首次替换、后续多次干预与公开状态反例。10 局重放、15 个完整状态快照、15 个候选记录、45 条短窗及 18 条长窗分支均逐文件通过 SHA256 校验；Python 13 项、Parity 6 项及 35 子测试、JS 61 项通过，tmux 队列已退出。证据：`runs/hybrid_b12_rescue_attribution/`、`reports/experiments/hybrid_b12_rescue_attribution.md`。
