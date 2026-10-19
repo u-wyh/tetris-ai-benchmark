@@ -233,3 +233,4 @@
 - 2026-10-20 00:09 +08:00：独立 tmux 会话 `tetris-b12-expert-dataset` 已启动并核验存在，固定 4 个 CPU worker；队列顺序为 32 局训练候选组、16 局探索验证组、入选状态双分支、统计与测试。已完成首局及分支烟测，未来确认组不在任务列表中。证据：`runs/hybrid_b12_expert_dataset/{queue.sh,status.json,protocol.json}`。
 
 - 2026-10-20 01:11 +0800｜三专家危险决策数据集固定 48 局及 5000 块反事实队列完成；状态、校验和及统计见 `runs/hybrid_b12_expert_dataset/`，报告见 `reports/experiments/hybrid_b12_expert_dataset.md`，Python/Parity/JS 回归见实验测试日志。
+- 2026-10-20 01:12 +08:00：复核三专家数据集 48 局、133 个入选状态快照、202 条分支逐文件 SHA256，失败 0；预留 `1452000..1452031` 无输出文件。补充报告中的验证组零明确救援、落点特征反例与数据不足结论；冻结采集器源码未改。证据：`runs/hybrid_b12_expert_dataset/{status.json,analysis.json,episodes/,states/,branches/}`、`reports/experiments/hybrid_b12_expert_dataset.md`。
