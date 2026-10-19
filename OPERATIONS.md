@@ -218,3 +218,5 @@
 - 2026-10-19T00:17:55+08:00｜Hybrid B12 V3-A 队列完成：stopped_after_20k，独立确认未通过或未启动；逐局 SHA256 与 Python/Parity/JS 回归测试通过。依据：runs/hybrid_b12_v3/status.json、reports/experiments/hybrid_b12_v3.md。
 
 - 2026-10-19T00:18:18+08:00｜Hybrid B12 V3-A 20K 初筛失败并自动停止：P10 与早死数量未过冻结门槛；100K 开发及 32-seed 独立确认未运行。完善报告中按块归一的推理耗时；逐局数据 SHA256、Python/Parity 33 passed（35 subtests）、JS 61 passed。依据：runs/hybrid_b12_v3/development_20k_gate.json、runs/hybrid_b12_v3/finalize.log、reports/experiments/hybrid_b12_v3.md。
+
+- 2026-10-19 10:34 +08:00：冻结 V2 Hold 诊断协议，复用 B12 46 个死亡状态并选 3 个触顶对照；单状态合法性和恢复烟测通过，9 项定向 Python 测试通过。证据：`runs/hybrid_b12_v2_expert_study/protocol.json`、`runs/hybrid_b12_v2_expert_study/candidates/seed_1421001_step_606.json`。

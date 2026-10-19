@@ -142,3 +142,5 @@
 - 新增 Hybrid B12 V3-A 定向拦截规则及分阶段评测队列：保留 B12 触发，审查 BC 落点行转换与改变 Hold 后的安全下一步落点；冻结新开发/确认种子和门槛，失败自动停止，不训练模型。
 
 - Hybrid B12 V3-A 分阶段评测完成：stopped_after_20k，独立确认未通过或未启动；未修改 PPO/BC 权重、Core 或网页默认 AI。
+
+- 2026-10-19：新增传统 V2 Hold 对 Hybrid B12 危险状态的探索性反事实研究。复用已核验快照，按 Action ID 去重并在 tmux 后台执行，结果见 `reports/experiments/hybrid_b12_v2_expert_study.md`。
