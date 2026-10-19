@@ -220,3 +220,4 @@
 - 2026-10-19T00:18:18+08:00｜Hybrid B12 V3-A 20K 初筛失败并自动停止：P10 与早死数量未过冻结门槛；100K 开发及 32-seed 独立确认未运行。完善报告中按块归一的推理耗时；逐局数据 SHA256、Python/Parity 33 passed（35 subtests）、JS 61 passed。依据：runs/hybrid_b12_v3/development_20k_gate.json、runs/hybrid_b12_v3/finalize.log、reports/experiments/hybrid_b12_v3.md。
 
 - 2026-10-19 10:34 +08:00：冻结 V2 Hold 诊断协议，复用 B12 46 个死亡状态并选 3 个触顶对照；单状态合法性和恢复烟测通过，9 项定向 Python 测试通过。证据：`runs/hybrid_b12_v2_expert_study/protocol.json`、`runs/hybrid_b12_v2_expert_study/candidates/seed_1421001_step_606.json`。
+- 2026-10-19 10:39–10:41 +08:00：`tetris-b12-v2-expert` 队列完成 49 个状态、112 条唯一动作反事实；49 个候选与 112 条分支 SHA256 均校验通过。3 个死亡 seed 有 V2 独立短窗救援，1 个 seed 有明显有害动作；完成报告，队列已退出。定向 Python 9 项、Parity 6 项及 35 子测试、JS 61 项通过。队列中旧的 `npm test` 调用因仓库根目录无 `package.json` 失败，随后使用正确的 `node --test tests/*.test.cjs` 命令通过。证据：`runs/hybrid_b12_v2_expert_study/{status.json,summary.json,queue.log}`、`reports/experiments/hybrid_b12_v2_expert_study.md`。

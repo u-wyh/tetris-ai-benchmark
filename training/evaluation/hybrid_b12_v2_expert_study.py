@@ -190,19 +190,29 @@ def report(summary, candidates):
     deaths = set(old.DEATHS)
     rescue_seeds = sorted({x["seed"] for x in outcomes if x["rescue"] and x["seed"] in deaths})
     harm_seeds = sorted({x["seed"] for x in outcomes if x["harm"]})
+    both_fail = [x for x in outcomes if x["independent"] and
+                 x["branches"]["ppo"]["game_over"] and x["branches"]["bc"]["game_over"]]
+    both_fail_rescued = [x for x in both_fail if x["rescue"]]
     sealed(RUN / "summary.json", {"states": outcomes, "rescue_death_seeds": rescue_seeds,
-                                   "harm_seeds": harm_seeds})
+                                   "harm_seeds": harm_seeds,
+                                   "both_experts_failed_states": len(both_fail),
+                                   "both_experts_failed_rescued": len(both_fail_rescued)})
     lines = ["# 传统 V2 Hold 对 B12 危险状态的探索性救援研究", "",
              "冻结 PPO、BC、B12 和 V2 Hold；复用 13 个死亡 seed 的 46 个已核验状态，并加入 3 个触顶对照状态。每支最多续控 5000 块，触窗为右截断。历史种子仅供机制研究。", "",
              f"独立 V2 动作状态：{sum(x['independent'] for x in outcomes)}/{len(outcomes)}；救援死亡 seed：{len(rescue_seeds)} {rescue_seeds}；明显有害 seed：{len(harm_seeds)} {harm_seeds}。", "",
+             f"PPO 与 BC 分支都在 5000 块内真正死亡、且 V2 动作独立的状态有 {len(both_fail)} 个；其中 {len(both_fail_rescued)} 个满足短窗救援标准，覆盖 {len({x['seed'] for x in both_fail_rescued})} 个死亡 seed。",
+             "救援标准：原 B12 分支真正死亡，V2 多存活至少 500 块，且 V2 分支四消次数不少于原分支的 90%。因寿命不等，四消次数不能直接等同于共同存活区间四消效率。", "",
              "| Seed:块 | B12/PPO/BC/V2 动作 | V2 独立 | B12/V2 存活 | B12/V2 得分增量 | B12/V2 四消 | 判定 |", "|---|---|---|---|---|---|---|",]
     for x in outcomes:
         a,b=x["branches"]["b12"],x["branches"]["v2"]
         fmt=lambda z:f"{z['pieces_after']}{'+' if z['censored'] else ''}"
         mark="救援" if x["rescue"] else "有害" if x["harm"] else "证据不足"
         lines.append(f"| {x['seed']}:{x['step']} | {x['actions']} | {x['independent']} | {fmt(a)}/{fmt(b)} | {a['score_gain']}/{b['score_gain']} | {a['clears_0_to_4'][4]}/{b['clears_0_to_4'][4]} | {mark} |")
-    lines += ["", "救援判定仅指当前候选动作、冻结 B12 续控和 5000 块观察窗。不同寿命的总分不可直接解释为共同存活期间效率；本实验未保存逐块共同窗口得分，因此得分结论受限。离线结果不能成为线上可见信号。", "",
-              "跨 seed 救援若不足，停止三专家方向；即使有重复案例，下一阶段也须先研究仅用公开棋盘特征识别调用时机，并在全新种子验证。本轮不开发混合策略或训练。", ""]
+    lines += ["", "## 解释与下一阶段", "",
+              "救援判定仅指当前候选动作、冻结 B12 续控和 5000 块观察窗。不同寿命的总分不可直接解释为共同存活期间效率；本实验未保存逐块共同窗口得分，因此得分结论受限。离线结果不能成为线上可见信号。", "",
+              ("存在跨 seed 的探索性救援证据，值得单独研究如何**事前**识别 V2 值得调用的状态。先只用公开棋盘高度、洞数、表面凹凸和 V2 与两神经策略的动作差异建立预注册触发假设；使用全新开发种子筛查，并保留全新独立确认组。不可把历史结果直接编码成在线门槛。"
+               if len(rescue_seeds) >= 2 else "跨 seed 救援证据不足，停止三专家方向。"),
+              "本轮不开发混合策略或训练；这些历史 seed 不再是未来策略的独立确认数据。", ""]
     REPORT.write_text("\n".join(lines))
     atomic_json(RUN / "status.json", {"stage": "completed", "states": len(outcomes),
                  "rescue_death_seeds": rescue_seeds, "harm_seeds": harm_seeds, "at": now()})
@@ -219,5 +229,6 @@ if __name__ == "__main__":
         run()
     else:
         summary, _ = freeze()
-        candidates = [json.loads(p.read_text()) for p in (RUN / "candidates").glob("*.json")]
+        candidates = [json.loads(p.read_text()) for p in (RUN / "candidates").glob("*.json")
+                      if not p.name.endswith(".sha256.json")]
         report(summary, candidates)
