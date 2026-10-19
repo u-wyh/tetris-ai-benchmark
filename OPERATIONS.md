@@ -229,3 +229,4 @@
 
 - 2026-10-19 22:57 +0800｜B12＋V2 正负差异归因后台队列完成。五局重放、短窗及 100K 反事实和 SHA256 校验见 `runs/hybrid_b12_rescue_attribution/`；报告见 `reports/experiments/hybrid_b12_rescue_attribution.md`，Python/Parity/JS 结果见相应测试日志。
 - 2026-10-19 22:58 +08:00：B12＋V2 救援归因报告补充首次替换、后续多次干预与公开状态反例。10 局重放、15 个完整状态快照、15 个候选记录、45 条短窗及 18 条长窗分支均逐文件通过 SHA256 校验；Python 13 项、Parity 6 项及 35 子测试、JS 61 项通过，tmux 队列已退出。证据：`runs/hybrid_b12_rescue_attribution/`、`reports/experiments/hybrid_b12_rescue_attribution.md`。
+- 2026-10-20 00:08 +08:00：冻结三专家数据集协议和源码 SHA256。审计新采集 `1450000..1450031`、探索验证 `1451000..1451015`、预留确认 `1452000..1452031` 无历史冲突，未来确认组不运行。首局 `1450000` B12 死亡于 72665 块，事前选 2 个状态；同状态 B12/V2 分支的 2/5000+ 块结果与状态恢复、合法掩码一致。定向 Python 7 项通过。证据：`runs/hybrid_b12_expert_dataset/{protocol.json,seed_audit.json,episodes/train/seed_1450000.json,branches/}`。
