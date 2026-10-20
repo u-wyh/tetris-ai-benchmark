@@ -234,3 +234,4 @@
 
 - 2026-10-20 01:11 +0800｜三专家危险决策数据集固定 48 局及 5000 块反事实队列完成；状态、校验和及统计见 `runs/hybrid_b12_expert_dataset/`，报告见 `reports/experiments/hybrid_b12_expert_dataset.md`，Python/Parity/JS 回归见实验测试日志。
 - 2026-10-20 01:12 +08:00：复核三专家数据集 48 局、133 个入选状态快照、202 条分支逐文件 SHA256，失败 0；预留 `1452000..1452031` 无输出文件。补充报告中的验证组零明确救援、落点特征反例与数据不足结论；冻结采集器源码未改。证据：`runs/hybrid_b12_expert_dataset/{status.json,analysis.json,episodes/,states/,branches/}`、`reports/experiments/hybrid_b12_expert_dataset.md`。
+- 2026-10-20 09:33 +08:00：冻结扩充批次协议和源码 SHA256；审计新采集 `1460000..1460031`、新探索验证 `1461000..1461015` 无历史冲突，原正式确认 `1452000..1452031` 仍预留。单局 `1460000` B12 于 48940 块真正死亡，入选 2 状态，首个双分支烟测完成；扩充批次 6 项定向测试通过。独立 tmux `tetris-b12-expert-dataset-extension` 启动并核验 PID 434628、4 CPU worker，正在采集组。证据：`runs/hybrid_b12_expert_dataset_extension/{protocol.json,seed_audit.json,status.json,episodes/train/seed_1460000.json,branches/,queue.sh}`。
