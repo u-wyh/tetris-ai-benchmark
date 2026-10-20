@@ -252,3 +252,4 @@
 - 2026-10-20 22:21 +0800：按用户继续开发授权，冻结完整事务训练缓存对照协议：新种子 1493000–1493003，普通/缓存环境各两个 4096 步 CPU 事务，第二事务从 checkpoint 恢复，比较参数、非计时指标、吞吐和内存。若不一致立即停止，不将单环境微基准当训练加速。CUDA 仍不可用，网页服务保持运行。依据：`reports/experiments/autonomous_rl_followup_design.md`、`training/evaluation/full_train_cache_benchmark.py`。
 
 - 2026-10-20 22:12 +0800：自主研究队列结束，状态 stopped_dev_20k；Python/Parity/JS 回归通过，详细结果和限制见 `runs/autonomous_rl_research/status.json`、`reports/experiments/autonomous_rl_results.md`。
+- 2026-10-20 22:25 +0800：`tetris-cache-train-benchmark` 完成普通/缓存环境各两个 4096 步事务，第二事务从 checkpoint 恢复；各对应事务策略参数与非计时指标精确一致，墙钟 20.312/20.315 秒对 17.562/17.400 秒，合计吞吐 1.162×，峰值 RSS 654588 KiB。历史 PPO 死亡反事实仅 19 个独立死亡 seed，明显负例不足，本轮停止排序训练设想，未使用确认种子。证据：`runs/autonomous_rl_research/full_train_cache_benchmark/summary.json`、`reports/experiments/autonomous_rl_followup_results.md`。

@@ -168,3 +168,4 @@
 - 2026-10-20：完成 PPO、BC、B12 真实 HTTP＋网页 BFS 长局逐步一致性验证及 BC 长期压力测试；原子恢复、性能和右截断结果见 `reports/experiments/web_longrun_validation.md`。
 
 - 2026-10-20：自主研究队列按预设边界结束，实际结果与停止原因见 `reports/experiments/autonomous_rl_final_summary.md`。
+- 2026-10-20：完成缓存合法落点环境的完整 PPO 事务对照；两组各 8192 步含 checkpoint 恢复，模型参数和非计时指标完全一致，实际训练吞吐约 1.16×。审计历史死亡反事实标签后因负例和独立 episode 不足，未启动动作排序训练；见 `reports/experiments/autonomous_rl_followup_results.md`。
