@@ -165,3 +165,5 @@
 - 2026-10-20：新增真实 HTTP＋网页 BFS＋Python Core 逐步长局校验器，每 500 块原子保存恢复快照与 SHA256。修复神经 AI 刷新恢复时页面脚本加载顺序导致的决策未启动问题；冻结模型和正式规则保持不变。
 
 - 2026-10-20：完成 PPO、BC、B12 真实 HTTP＋网页 BFS 长局逐步一致性验证及 BC 长期压力测试；原子恢复、性能和右截断结果见 `reports/experiments/web_longrun_validation.md`。
+
+- 2026-10-20：自主研究队列按预设边界结束，实际结果与停止原因见 `reports/experiments/autonomous_rl_final_summary.md`。
