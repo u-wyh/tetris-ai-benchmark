@@ -128,3 +128,21 @@ test("refresh restores a neural game after legal scripts finish loading", async 
   assert.equal(restored.run("placedCount"), 1);
   assert.equal(restored.run("aiPlanning || aiPlan.length > 0"), true);
 });
+
+test("inference timeout stops the AI and offers Retry", async () => {
+  const g = prepare();
+  g.run(`globalThis.timeoutCallback = null;
+    setTimeout = callback => { timeoutCallback = callback; return 1; };
+    fetch = (_, options) => new Promise((_, reject) => {
+      options.signal.onabort = () => reject({name:"AbortError"});
+    });
+    AbortController = class {
+      constructor() { this.signal = {onabort:null}; }
+      abort() { this.signal.onabort?.(); }
+    };
+    setMode("ppo"); resetGame({seed:12345}); timeoutCallback();`);
+  await flush();
+  assert.equal(g.run("aiRequestFailed"), true);
+  assert.equal(g.run("retryAIButton.hidden"), false);
+  assert.match(g.run("aiStatus.textContent"), /请求超时/);
+});
