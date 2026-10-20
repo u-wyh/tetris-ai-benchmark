@@ -240,3 +240,5 @@
 - 2026-10-20 11:52 +08:00：长局网页链路烟测：Seed 12345 的 PPO 100 块逐步校验并从 checkpoint 续跑至 700 块；发现并修复刷新恢复时神经 AI 在合法落点脚本加载前发起决策的时序问题。服务重启后从 650 块续跑到 700 块，8080 持续正常；两个并发网页会话 PPO/BC 各 200 块逐步校验通过。原子 SHA256 及恢复检查见 `runs/web_longrun_validation/{smoke_ppo,concurrent_ppo,concurrent_bc}/`；神经模式刷新、暂停、切换、错误重试及请求超时定向 JS 7 项通过。
 
 - 2026-10-20 10:33 +0800｜三专家数据扩充队列完成：48 局、148 个入选状态、254 条分支逐文件 SHA256 校验通过；Python/Parity/JS 日志通过，预留确认种子无输出。证据：`runs/hybrid_b12_expert_dataset_extension/`、`reports/experiments/hybrid_b12_expert_dataset_extension.md`。
+
+- 2026-10-20 12:57 +0800｜网页长局端到端队列完成：PPO/BC/B12 各最多 10K 与 BC 最多 100K；逐 500 块 SHA256 原子快照和完整状态对照通过，Python/Parity/JS 回归日志通过，结论见 `reports/experiments/web_longrun_validation.md`，证据位于 `runs/web_longrun_validation/`。
