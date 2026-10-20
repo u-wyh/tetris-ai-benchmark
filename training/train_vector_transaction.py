@@ -24,6 +24,7 @@ from training.train_transaction import (
 )
 from training.env import TetrisEnv
 from training.env.candidate_env import CandidateTetrisEnv, OBSERVATION_VERSION
+from training.env.fast_candidate_env import FastCandidateTetrisEnv
 from training.candidate_features import FEATURE_VERSION
 from training.candidate_policy import CandidateScoringPolicy
 from training.env.tetris_env import (HEIGHT_REWARD_VERSION, HOLE_HEIGHT_REWARD_VERSION,
@@ -78,6 +79,10 @@ class TransactionTetrisEnv(TetrisEnv):
 
 class TransactionCandidateEnv(CandidateTetrisEnv, TransactionTetrisEnv):
     """Candidate observation with the same transaction metadata hooks."""
+
+
+class TransactionFastCandidateEnv(FastCandidateTetrisEnv, TransactionTetrisEnv):
+    """Opt-in reuse of already validated legal placements during training steps."""
 
 
 def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
@@ -501,6 +506,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     raise RuntimeError("Resume failure curriculum differs from recorded run")
                 if preset.get("ppo_overrides", {}) != config.get("ppo_overrides", {}):
                     raise RuntimeError("Resume PPO overrides differ from recorded run")
+                if bool(preset.get("fast_candidate_env", False)) != bool(config.get("fast_candidate_env", False)):
+                    raise RuntimeError("Resume Candidate environment differs from recorded run")
             if config.get("initial_model"):
                 initial = config["initial_model"]
                 if sha256(Path(initial["path"])) != initial["sha256"]:
@@ -542,6 +549,9 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     raise ValueError("Invalid PPO GAE override")
                 config["ppo_overrides"] = overrides
                 config["ppo"].update(overrides)
+                if preset.get("fast_candidate_env", False) and not preset.get("candidate_policy", False):
+                    raise ValueError("Fast Candidate environment requires Candidate policy")
+                config["fast_candidate_env"] = bool(preset.get("fast_candidate_env", False))
                 config["overnight_monitor"] = bool(preset.get("overnight_monitor", False))
                 if "failure_curriculum" in preset:
                     from training.env.failure_curriculum_env import REWARD_VERSION, file_sha256
@@ -648,7 +658,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
             env_kwargs["curriculum"] = config["failure_curriculum"]
             env_class = FailureCurriculumEnv
         else:
-            env_class = TransactionCandidateEnv if config.get("candidate_policy") else TransactionTetrisEnv
+            env_class = (TransactionFastCandidateEnv if config.get("fast_candidate_env")
+                         else TransactionCandidateEnv) if config.get("candidate_policy") else TransactionTetrisEnv
         env = make_vector_env(config["ppo"]["n_envs"], config["run_seed"],
                               config["max_pieces"],
                               env_class=env_class,

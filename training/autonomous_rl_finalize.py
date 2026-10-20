@@ -19,7 +19,7 @@ def main():
     steps = train.get("committed_steps", 0)
     task = train.get("committed_task", 0)
     model = RUN / f"training/committed/task_{task:06d}/model.zip"
-    best = str(model.relative_to(ROOT)) if model.exists() else "当前事务模型未保留；见训练 manifest"
+    latest = str(model.relative_to(ROOT)) if model.exists() else "当前事务模型未保留；见训练 manifest"
     blocks = []
     for label in ("smoke", "dev_20k", "dev_100k", "confirm_100k"):
         summary = read(RUN / "evaluation" / label / "summary.json")
@@ -29,8 +29,9 @@ def main():
                        "|---|---:|---:|---:|---:|---:|---:|"]
             for name in ("ppo", "B12", "bc", "candidate"):
                 r = summary[name]
+                early = r["early_under_10000"] if label != "smoke" else "不适用"
                 blocks.append(f"| {name} | {r['mean_pieces']:.1f} | {r['p10_pieces']:.1f} | "
-                              f"{r['capped']}/{r['games']} | {r['early_under_10000']} | "
+                              f"{r['capped']}/{r['games']} | {early} | "
                               f"{r['mean_score']:.0f} | {r['four_fraction']:.1%} |")
             blocks.append(f"\n候选相对 PPO 的共同存活得分比："
                           f"{summary['candidate'].get('common_score_ratio_to_ppo')}。"
@@ -39,7 +40,7 @@ def main():
     final.write_text("\n".join([
         "# 自主强化学习最终汇总", "",
         f"队列状态：`{status.get('stage', 'unknown')}`。已提交训练步数：**{steps:,}**，"
-        f"共 {task} 个 4096 步事务；最佳可用的新模型路径：`{best}`。",
+        f"共 {task} 个 4096 步事务；最后提交的新模型路径：`{latest}`。",
         "", "## V2 与发布", "",
         "历史 V2 哈希对应 `0598b9f`；后续差异只在 V2 算法评分与去重加速。"
         "Core 和评测器未变；三个 seed 各 200 步的动作/得分/消行成为固定语义回归，"
@@ -51,11 +52,14 @@ def main():
         "本轮选择延长 PPO 折扣与 GAE 并保留 KL 锚定，未修改奖励和游戏规则。"
         "阶段是否通过以预冻结门槛和逐 seed 结果为准；状态为停止或失败时，"
         "不得从烟测推断长期提升。", *blocks, "",
+        "若候选四消占比下降超过预设 3 个百分点，按开发门槛停止；"
+        "独立确认组未运行时不能宣称泛化成功。", "",
         "## 恢复与下一步", "",
         "事务状态、配置、模型、优化器、RNG、worker 状态以及逐 seed 原子结果位于 "
         "`runs/autonomous_rl_research/`。若队列因异常中止，在源码与模型哈希不变且磁盘、"
         "网页服务正常时，重新运行 `.venv/bin/python -m training.autonomous_rl_queue`；"
-        "协议不符会拒绝恢复。研究设计与预设门槛见 "
+        "协议不符会拒绝恢复；后续工程优化已改变研究源码，若确需恢复原训练，"
+        "先检出冻结提交 `17d0025` 并核验 `protocol.json`。研究设计与预设门槛见 "
         "[设计](autonomous_rl_design.md)，完整阶段报告见 "
         "[结果](autonomous_rl_results.md)。若训练路线未达门槛，下一优先方向是量化并"
         "复用训练环境的合法落点缓存，以降低 CPU rollout 成本；须先做同动作/同分数"
