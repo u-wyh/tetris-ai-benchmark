@@ -47,6 +47,9 @@
               <option value="legacy" hidden>Original web V1 · legacy save</option>
               <option value="hold" selected>V2 Hold-only · 推荐</option>
               <option value="beam">V2 Beam-8 · 实验</option>
+              <option value="ppo">PPO 30M · 强化学习</option>
+              <option value="bc">BC Champion · 生存优先</option>
+              <option value="b12">Hybrid B12 · 高分混合</option>
             </select>
           </label>
           <label>固定 Seed <input id="seedInput" type="number" min="0" max="4294967295" step="1" placeholder="随机"></label>
@@ -54,7 +57,10 @@
           <div class="ai-control-row">
             <button id="pauseButton" type="button">暂停 / 继续</button>
             <button id="restartButton" type="button">重新开始</button>
+            <button id="retryAIButton" type="button" hidden>重试 AI</button>
           </div>
+          <p id="aiDecisionInfo" class="ai-decision-info">决策耗时：—</p>
+          <p id="hybridInfo" class="ai-decision-info" hidden>本步：— · PPO 0 / BC 0</p>
         </section>
         <section class="panel next-panel">
           <div class="panel-heading">
@@ -95,11 +101,11 @@
               <strong id="speed">1.0×</strong>
             </div>
             <div class="stat">
-              <span>放置方块</span>
+              <span id="placedLabel">放置方块</span>
               <strong id="placedCount">0</strong>
             </div>
             <div class="stat">
-              <span>存活时间</span>
+              <span id="elapsedLabel">存活时间（真实）</span>
               <strong id="elapsedTime">0:00</strong>
             </div>
           </div>
@@ -114,6 +120,16 @@
           <div class="key-row"><span><kbd>C</kbd></span><span>暂存方块</span></div>
           <div class="key-row"><span><kbd>P</kbd></span><span>暂停</span></div>
           <div class="key-row ai-hint"><span><kbd>AI</kbd></span><span>自动挑战高分</span></div>
+        </section>
+        <section class="panel benchmark-panel">
+          <div class="panel-heading"><span>历史独立评测</span><span class="tiny-label">32 SEEDS · 100K</span></div>
+          <p>同一批 32 个种子，每局最多 10 万块。以下是历史评测，并非当前网页对局；触顶属于右截断。</p>
+          <table><thead><tr><th>算法</th><th>平均存活</th><th>触顶</th><th>平均得分</th></tr></thead><tbody>
+            <tr><td>PPO 30M</td><td>61,823</td><td>9/32</td><td>78.22 亿</td></tr>
+            <tr><td>BC</td><td>97,861</td><td>31/32</td><td>81.06 亿</td></tr>
+            <tr><td>B12</td><td>71,941</td><td>19/32</td><td>102.91 亿</td></tr>
+          </tbody></table>
+          <p>B12 得分较高但仍可能早死；BC 生存更稳，四消占比接近零。人工模式按真实时间操作，AI 对照按放置方块数统计。</p>
         </section>
       </aside>
     </section>

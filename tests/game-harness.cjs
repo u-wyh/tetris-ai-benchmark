@@ -6,7 +6,7 @@ const source = fs.readFileSync(path.join(__dirname, "../tetris-game/game.js"), "
 const placementSource = fs.readFileSync(path.join(__dirname, "../tetris-game/legal-placements.js"), "utf8");
 const traditionalSource = fs.readFileSync(path.join(__dirname, "../tetris-game/traditional-ai.js"), "utf8");
 
-function game(storage = new Map()) {
+function game(storage = new Map(), overrides = {}) {
   const context2d = () => ({
     save() {}, restore() {}, clearRect() {}, fillRect() {}, beginPath() {},
     moveTo() {}, lineTo() {}, stroke() {}, translate() {}, roundRect() {}, fill() {},
@@ -19,7 +19,9 @@ function game(storage = new Map()) {
       height: id === "gameCanvas" ? 640 : id === "nextCanvas" ? 218 : 92,
       textContent: "", lastChild: { textContent: "" },
       classList: { add() {}, remove() {}, toggle() {} },
-      setAttribute() {}, addEventListener() {}, getContext: context2d
+      setAttribute() {}, listeners: {},
+      addEventListener(type, handler) { this.listeners[type] = handler; },
+      click() { this.listeners.click?.(); }, getContext: context2d
     });
     return elements.get(id);
   };
@@ -37,7 +39,8 @@ function game(storage = new Map()) {
     },
     performance: { now: () => 1000 },
     requestAnimationFrame() {}, setInterval() {}, setTimeout(callback) { callback(); },
-    location: { search: "" }, URLSearchParams
+    location: { search: "" }, URLSearchParams,
+    ...overrides
   });
   vm.runInContext(source, sandbox);
   vm.runInContext(placementSource, sandbox);

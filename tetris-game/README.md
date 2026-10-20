@@ -60,3 +60,21 @@ tmux kill-session -t tetris-original-web         # stop
 ```
 
 当前服务若已运行，无需重复 start。通过 `http://<Tailscale IPv4>:8080/` 访问。跨语言验证可运行 `.venv/bin/python -m unittest discover -s tests/parity -v`；网页测试运行 `node --test tests/*.test.cjs`。
+
+## PPO、BC 与 Hybrid B12 网页演示
+
+网页现在还可选择 PPO 30M、BC Champion、Hybrid B12。Human、V1 Adapter、V2 Hold-only、V2 Beam-8 保持原有功能。三个神经网络模式需要独立的 Python CPU 推理服务；原 8080 静态网页服务保持原样。服务只接收网页公开状态和合法 Action ID 列表，校验冻结 checkpoint SHA256、官方掩码后返回动作，不推进游戏、不读取 Bag 或 RNG。网页按原有 BFS 路径落子。
+
+从项目根目录启动推理服务：
+
+```bash
+web_ip=$(tailscale ip -4 | head -1)
+mkdir -p runs/web_inference
+tmux new-session -d -s tetris-web-inference -c "$PWD" \
+  ".venv/bin/python -m training.web_inference --host $web_ip --port 8081 --web-origin http://$web_ip:8080 >> runs/web_inference/service.log 2>&1"
+tmux has-session -t tetris-web-inference
+```
+
+游戏本访问 `http://<Tailscale IPv4>:8080/`。推理服务只绑定指定的本机或 Tailscale 地址，浏览器请求只允许对应的 8080 来源。服务状态可访问 `http://<Tailscale IPv4>:8081/api/health`；停止命令是 `tmux kill-session -t tetris-web-inference`。模型请求超时或服务不可用时，网页会停止当前 AI 决策，用户可点击“重试 AI”、暂停或切换模式。刷新后可继续本地保存的对局；B12 的 PPO/BC 采用计数也会保存。
+
+侧栏历史结果来自独立 32-seed、每局最多 100K 的对照评测，与当前网页对局分开显示。100K 触顶是右截断。人工模式的时间为真实游玩时间，AI 模式显示真实演示时间；跨模型生存比较以放置方块数为准。

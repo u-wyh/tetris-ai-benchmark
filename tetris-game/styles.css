@@ -248,6 +248,12 @@ h1 {
 .ai-settings-panel input[type="range"] { display: block; width: 100%; margin-top: 7px; accent-color: var(--cyan); }
 .ai-control-row { display: flex; gap: 6px; padding: 7px 13px 0; }
 .ai-control-row button { flex: 1; padding: 7px 3px; border: 1px solid var(--line); border-radius: 7px; color: #dbe2ff; background: #152039; font: inherit; font-size: 10px; cursor: pointer; }
+.ai-control-row button[hidden], .ai-decision-info[hidden] { display: none; }
+.ai-decision-info, .benchmark-panel p { margin: 7px 13px; color: var(--muted); font-size: 10px; line-height: 1.5; }
+.benchmark-panel { padding-bottom: 10px; }
+.benchmark-panel table { width: calc(100% - 26px); margin: 5px 13px; border-collapse: collapse; font-size: 9px; }
+.benchmark-panel th, .benchmark-panel td { padding: 5px 2px; border-bottom: 1px solid var(--line); text-align: right; }
+.benchmark-panel th:first-child, .benchmark-panel td:first-child { text-align: left; }
 
 .tiny-label { color: #69769f; font-size: 8px; letter-spacing: .17em; }
 
