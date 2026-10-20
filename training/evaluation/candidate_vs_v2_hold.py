@@ -11,6 +11,7 @@ from pathlib import Path
 
 from training.evaluation.champion_pipeline import bootstrap, percentile
 from training.evaluation.traditional_v2 import code_digest, run as run_v2
+from training.evaluation.v2_semantic_identity import verify_historical_hold
 from training.long_run import SEEDS_FILE
 from training.train_ppo import ROOT, atomic_json, now
 from training.train_vector_transaction import sha256
@@ -38,10 +39,9 @@ def preflight():
             or sha256(CHAMPION / "model.zip") != champion["model_sha256"]):
         raise RuntimeError("Frozen Champion or existing final test failed integrity checks")
     historical = json.loads(REFERENCE.read_text())
-    if (historical["strategy"] != VERSION or historical["policy"]["mode"] != "hold"
-            or historical["code_sha256"] != code_digest()):
-        raise RuntimeError("V2 Hold-only implementation differs from the validated reference")
-    policy = V2Config(**historical["policy"])
+    if historical["strategy"] != VERSION or historical["policy"]["mode"] != "hold":
+        raise RuntimeError("V2 Hold-only historical protocol changed")
+    policy = verify_historical_hold(historical, code_digest())
     if asdict(policy) != historical["policy"]:
         raise RuntimeError("V2 Hold-only parameter mismatch")
     protocol = {"seeds": seeds, "max_pieces": 50000,
@@ -51,6 +51,7 @@ def preflight():
                 "traditional_version": VERSION, "traditional_mode": "hold",
                 "traditional_policy": historical["policy"],
                 "traditional_code_sha256": code_digest(),
+                "historical_traditional_code_sha256": historical["code_sha256"],
                 "tetris_core": "training.tetris_core.TetrisCore",
                 "deterministic": True, "same_seed_cap_score_rules": True,
                 "candidate_final_reused": True}

@@ -499,6 +499,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     raise RuntimeError("Resume monitoring protocol differs from recorded run")
                 if preset.get("failure_curriculum") != config.get("failure_curriculum"):
                     raise RuntimeError("Resume failure curriculum differs from recorded run")
+                if preset.get("ppo_overrides", {}) != config.get("ppo_overrides", {}):
+                    raise RuntimeError("Resume PPO overrides differ from recorded run")
             if config.get("initial_model"):
                 initial = config["initial_model"]
                 if sha256(Path(initial["path"])) != initial["sha256"]:
@@ -531,6 +533,15 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                                        height_penalty_coef=preset.get("height_penalty_coef", 0.0),
                                        candidate_policy=bool(preset.get("candidate_policy", False)),
                                        max_pieces=preset.get("max_pieces", 10000))
+                overrides = preset.get("ppo_overrides", {})
+                if set(overrides) - {"gamma", "gae_lambda"}:
+                    raise ValueError("Unsupported PPO override")
+                if "gamma" in overrides and not 0.99 < overrides["gamma"] < 1:
+                    raise ValueError("Invalid PPO gamma override")
+                if "gae_lambda" in overrides and not 0.9 <= overrides["gae_lambda"] <= 1:
+                    raise ValueError("Invalid PPO GAE override")
+                config["ppo_overrides"] = overrides
+                config["ppo"].update(overrides)
                 config["overnight_monitor"] = bool(preset.get("overnight_monitor", False))
                 if "failure_curriculum" in preset:
                     from training.env.failure_curriculum_env import REWARD_VERSION, file_sha256
