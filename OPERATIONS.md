@@ -242,3 +242,5 @@
 - 2026-10-20 10:33 +0800｜三专家数据扩充队列完成：48 局、148 个入选状态、254 条分支逐文件 SHA256 校验通过；Python/Parity/JS 日志通过，预留确认种子无输出。证据：`runs/hybrid_b12_expert_dataset_extension/`、`reports/experiments/hybrid_b12_expert_dataset_extension.md`。
 
 - 2026-10-20 12:57 +0800｜网页长局端到端队列完成：PPO/BC/B12 各最多 10K 与 BC 最多 100K；逐 500 块 SHA256 原子快照和完整状态对照通过，Python/Parity/JS 回归日志通过，结论见 `reports/experiments/web_longrun_validation.md`，证据位于 `runs/web_longrun_validation/`。
+- 2026-10-20 14:06 +0800：执行 v1.0.0 发布检查：本地 `main` 与 `origin/main` 均为 `ab21d69`，本地和远端无 `v1.0.0` 标签；两份冻结模型 SHA256 与 `training/evaluation/hybrid_queue.py` 一致，`verify_models()` 通过；8080 静态页和 Tailscale 8081 `/api/health` 返回正常。Python 定向 6 项、Parity 6 项、JS 68 项通过。其他任务未提交文件未触碰；发布说明记录了独立备份未核验。证据：`reports/releases/v1.0.0.md`、本次 Git 提交。
+- 2026-10-20 14:09 +0800：扩大 Python 回归发现历史 V2 Hold 配置代码哈希与当前实现不符，`tests/test_candidate_vs_v2_hold.py` 两项失败；全量测试中止时 64 通过、1 跳过。发布相关定向 Python 28 项另行通过。未修改历史配置、规则或权重；暂缓创建 `v1.0.0` 标签。证据：`reports/releases/v1.0.0.md`。

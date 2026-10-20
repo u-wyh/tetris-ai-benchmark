@@ -1,5 +1,26 @@
 # Tetris AI Benchmark
 
+## v1.0.0 网页展示与复现
+
+网页提供 Human 人工游玩、V1 Adapter、V2 Hold-only、V2 Beam-8，以及 PPO 30M、BC Champion、Hybrid B12 三种冻结神经 AI。JavaScript 网页是 Benchmark v1.0 正式规则参考实现；Python Core 用于训练、评测和跨语言核对。两端使用相同的 1840 Action ID 与正式合法落点规则。PPO 与 BC 从本地冻结 checkpoint 推理；B12 依据公开棋盘和两个候选落点的风险决定是否采用 BC 动作，不读取隐藏方块。模型权重不在 Git 仓库中，复现前须按[发布清单](reports/releases/v1.0.0.md)核对 SHA256。
+
+在项目根目录安装依赖并启动服务：
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+web_ip=$(tailscale ip -4 | head -1)
+tmux new-session -d -s tetris-original-web -c "$PWD" \
+  "python3 -m http.server 8080 --bind $web_ip --directory tetris-game"
+mkdir -p runs/web_inference
+tmux new-session -d -s tetris-web-inference -c "$PWD" \
+  ".venv/bin/python -m training.web_inference --host $web_ip --port 8081 --web-origin http://$web_ip:8080 >> runs/web_inference/service.log 2>&1"
+tmux ls
+curl -fsS "http://$web_ip:8081/api/health"
+```
+
+在已连接同一 Tailscale 网络的设备上打开 `http://<Tailscale IPv4>:8080/`。网页可输入固定 Seed 并点击“重新开始”；同一模型、Seed 和版本可复现对局。8080 是静态网页，8081 是仅绑定指定地址并校验 Origin 的 CPU 推理服务。若已有同名 tmux 会话，不要重复启动；用 `tmux ls` 检查，用 `tmux attach -t tetris-web-inference` 查看会话，退出查看按 `Ctrl+B`、`D`。请求失败或超时时，网页暂停自动决策；检查 `runs/web_inference/service.log` 与 `/api/health`，恢复服务后点击“重试 AI”。刷新页面可从浏览器保存的局面继续。详细操作见 [网页说明](tetris-game/README.md)，长期链路验证见[报告](reports/experiments/web_longrun_validation.md)。
+
 `tetris-game/` 中的 JavaScript 网页是 Benchmark v1.0 规则参考实现；`training/tetris_core/` 是通过 JS/Python Parity Test 的 Python 训练规则核心。Python Core 必须继续通过 Parity Test 才视为有效。
 
 `training/env/tetris_env.py` 提供 Gymnasium `TetrisEnv`：Observation 为固定 237 维 `float32`，Action 为 `Discrete(1840)`，`action_masks()` 返回 1840 个布尔值。一步对应一个完整方块的合法最终 placement；默认 `max_pieces=10000`，达到上限且未 Game Over 时截断。环境直接调用 Core，RL reward 与正式游戏分数分开计算。
