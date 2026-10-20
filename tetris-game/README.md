@@ -78,3 +78,11 @@ tmux has-session -t tetris-web-inference
 游戏本访问 `http://<Tailscale IPv4>:8080/`。推理服务只绑定指定的本机或 Tailscale 地址，浏览器请求只允许对应的 8080 来源。服务状态可访问 `http://<Tailscale IPv4>:8081/api/health`；停止命令是 `tmux kill-session -t tetris-web-inference`。模型请求超时或服务不可用时，网页会停止当前 AI 决策，用户可点击“重试 AI”、暂停或切换模式。刷新后可继续本地保存的对局；B12 的 PPO/BC 采用计数也会保存。
 
 侧栏历史结果来自独立 32-seed、每局最多 100K 的对照评测，与当前网页对局分开显示。100K 触顶是右截断。人工模式的时间为真实游玩时间，AI 模式显示真实演示时间；跨模型生存比较以放置方块数为准。
+
+长局网页链路验证使用 `tests/integration/web-ai-longrun.cjs`，通过真实 8081 HTTP、网页 BFS 执行和逐步 Python Core 对照，每 500 块原子保存可恢复快照及校验和。例如从项目根目录运行：
+
+```bash
+node tests/integration/web-ai-longrun.cjs ppo 10000 12345 "$(tailscale ip -4 | head -1)" runs/web_longrun_validation/manual_ppo
+```
+
+该脚本以不渲染动画的大步进运行，测得的是验证吞吐量；网页正常播放的速度仍由演示滑块控制。正式长局测试结果见 `reports/experiments/web_longrun_validation.md`。

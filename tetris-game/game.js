@@ -955,6 +955,9 @@ function restoreGame() {
       overlay.classList.add("hidden");
       if (aiEnabled) {
         if (legacyAI) planAI();
+        else if (neuralMode()) setTimeout(() => {
+          if (state === "playing" && aiEnabled && neuralMode()) planTraditional();
+        }, 0);
         else planTraditional();
         aiStatus.textContent = "已恢复对局";
       }

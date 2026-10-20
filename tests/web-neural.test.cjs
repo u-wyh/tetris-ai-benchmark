@@ -86,3 +86,45 @@ test("failed inference pauses automatic requests until Retry AI is clicked", asy
   assert.equal(g.run("aiRequestFailed"), false);
   assert.ok(g.run("aiPlan.length") > 0);
 });
+
+test("old responses cannot act after mode switch or game restart", async () => {
+  const g = prepare();
+  g.run(`globalThis.pending = [];
+    fetch = () => new Promise(resolve => pending.push(resolve));
+    setMode("ppo"); resetGame({seed:12345});
+    setMode("bc"); resetGame({seed:67890});`);
+  assert.equal(g.run("pending.length"), 3);
+  g.run(`pending[0]({ok:true,json:async()=>({actionId:21,source:"ppo",decisionMs:3})});
+    pending[1]({ok:true,json:async()=>({actionId:21,source:"bc",decisionMs:3})});`);
+  await flush();
+  assert.equal(g.run("aiPlan.length"), 0);
+  assert.equal(g.run("placedCount"), 0);
+  g.run(`pending[2]({ok:true,json:async()=>({
+    actionId:getLegalPlacements()[0].actionId,source:"bc",decisionMs:3
+  })});`);
+  await flush();
+  assert.ok(g.run("aiPlan.length") > 0);
+  assert.equal(g.run("aiMode"), "bc");
+});
+
+test("refresh restores a neural game after legal scripts finish loading", async () => {
+  const g = prepare();
+  g.run(`fetch = async () => ({ok:true,json:async()=>({
+    actionId:getLegalPlacements()[0].actionId,source:"ppo",decisionMs:4
+  })}); setMode("ppo"); resetGame({seed:12345});`);
+  await flush();
+  g.run(`while (placedCount === 0) updateTraditional(1000); saveGame()`);
+  let restored;
+  restored = game(g.storage, {
+    fetch: async () => ({ok:true,json:async()=>({
+      actionId:restored.run("getLegalPlacements()[0].actionId"),source:"ppo",decisionMs:4
+    })}),
+    AbortController, setTimeout, clearTimeout,
+    location: {protocol:"http:",hostname:"100.91.227.47",search:""}
+  });
+  await new Promise(resolve => setTimeout(resolve, 10));
+  assert.equal(restored.run("state"), "playing");
+  assert.equal(restored.run("aiMode"), "ppo");
+  assert.equal(restored.run("placedCount"), 1);
+  assert.equal(restored.run("aiPlanning || aiPlan.length > 0"), true);
+});
