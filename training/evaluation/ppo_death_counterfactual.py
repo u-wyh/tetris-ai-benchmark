@@ -10,7 +10,7 @@ import numpy as np
 
 from training.candidate_features import board_features
 from training.env.fast_candidate_env import FastCandidateTetrisEnv
-from training.evaluation.hybrid_queue import HASHES, digest, load_models
+from training.evaluation.hybrid_queue import HASHES, digest, load_models, verify_models
 from training.evaluation.ppo_death_capture import CAP, RUN, public_hash
 from training.evaluation.ppo_death_replay import load_episode
 from training.evaluation.ppo_lookahead_v3_audit import policy_probs
@@ -118,8 +118,14 @@ def candidates(item, rows, models):
     path = RUN / "counterfactual_candidates" / f"seed_{seed}_step_{step}.json"
     if path.exists():
         result = json.loads(path.read_text())
-        if result["source_trace_sha256"] != item["source_trace_sha256"]:
-            raise RuntimeError("Frozen candidate source changed")
+        expected = {"seed": seed, "step": step, "death_distance": item["death_distance"],
+                    "tier": item["tier"], "source_trace_sha256": item["source_trace_sha256"],
+                    "snapshot_sha256": digest(_snapshot_path(seed, step)),
+                    "public_hash": rows[step]["public_hash"],
+                    "ppo_action": rows[step]["action"], "start_score": rows[step]["score"]}
+        if any(result.get(key) != value for key, value in expected.items()):
+            raise RuntimeError("Frozen candidate task identity changed")
+        verify_models()
         return result
     with gzip.open(_snapshot_path(seed, step), "rb") as file:
         state = pickle.load(file)  # Trusted local experiment snapshot.
@@ -203,7 +209,19 @@ def branch(seed, step, choice, horizon, models):
         record = json.loads(seal.read_text())
         if digest(path) != record["sha256"] or record["snapshot_sha256"] != digest(_snapshot_path(seed, step)):
             raise RuntimeError(f"Completed branch changed: {path}")
-        return json.loads(path.read_text())
+        result = json.loads(path.read_text())
+        expected = {"seed": seed, "step": step, "first_action": action, "horizon": horizon,
+                    "snapshot_sha256": record["snapshot_sha256"], "choice": choice}
+        if any(result.get(key) != value for key, value in expected.items()):
+            raise RuntimeError(f"Completed branch task identity changed: {path}")
+        if (result.get("model_sha256", HASHES) != HASHES or
+                result["censored"] == result["game_over"] or
+                not 0 < result["pieces"] <= horizon or
+                len(result["scores"]) != result["pieces"] or
+                len(result["four_counts"]) != result["pieces"]):
+            raise RuntimeError(f"Completed branch protocol changed: {path}")
+        verify_models()
+        return result
     with gzip.open(_snapshot_path(seed, step), "rb") as file:
         snapshot = pickle.load(file)
     # A counterfactual may pass the observational episode's 100K cap.
@@ -248,6 +266,7 @@ def branch(seed, step, choice, horizon, models):
             if over or capped:
                 break
         result = {"seed": seed, "step": step, "first_action": action, "horizon": horizon,
+                  "model_sha256": HASHES,
                   "snapshot_sha256": digest(_snapshot_path(seed, step)),
                   "initial_public_hash": public_hash(start_public), "initial_score": initial_score,
                   "choice": choice, "pieces": len(scores), "game_over": bool(over),
