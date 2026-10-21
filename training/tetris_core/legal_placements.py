@@ -1,7 +1,7 @@
 """Geometry-only BFS equivalent to tetris-game/legal-placements.js."""
 
 from .actions import ACTION_COUNT, encode_action
-from .pieces import CELLS, ROTATIONS, collides, make_piece, rotate_cw
+from .pieces import CELLS, ROTATIONS, I_KICKS, JLSTZ_KICKS, collides, make_piece
 
 STEPS = ("Left", "Right", "RotateCW", "Down")
 
@@ -14,7 +14,28 @@ def _branch(observation, hold):
         return []
     piece_type = piece["type"]
     rotation = ROTATIONS.index(piece["rotation"])
-    if collides(board, piece_type, rotation, piece["x"], piece["y"]):
+    collisions = {}
+
+    def blocked(r, x, y):
+        state = r, x, y
+        result = collisions.get(state)
+        if result is None:
+            result = collides(board, piece_type, r, x, y)
+            collisions[state] = result
+        return result
+
+    def clockwise(r, x, y):
+        target = (r + 1) % 4
+        if piece_type == "O":
+            return x, y, target
+        kicks = I_KICKS if piece_type == "I" else JLSTZ_KICKS
+        for dx, dy_up in kicks[r]:
+            nx, ny = x + dx, y - dy_up
+            if not blocked(target, nx, ny):
+                return nx, ny, target
+        return None
+
+    if blocked(rotation, piece["x"], piece["y"]):
         return []
     shapes = [CELLS[piece_type, index] for index in range(4)]
     bounds = [(min(x for x, _ in cells), min(y for _, y in cells)) for cells in shapes]
@@ -25,7 +46,7 @@ def _branch(observation, hold):
     head = 0
     while head < len(nodes):
         x, y, rotation, _, _ = nodes[head]
-        if collides(board, piece_type, rotation, x, y + 1):
+        if blocked(rotation, x, y + 1):
             min_x, min_y = bounds[rotation]
             final_x, final_y = x + min_x, y + min_y
             if 0 <= final_x < 10 and -3 <= final_y <= 19:
@@ -54,20 +75,20 @@ def _branch(observation, hold):
             nx, ny, nr = x, y, rotation
             if step == "Left":
                 nx -= 1
-                if collides(board, piece_type, nr, nx, ny):
+                if blocked(nr, nx, ny):
                     continue
             elif step == "Right":
                 nx += 1
-                if collides(board, piece_type, nr, nx, ny):
+                if blocked(nr, nx, ny):
                     continue
             elif step == "RotateCW":
-                rotated = rotate_cw(board, piece_type, nr, nx, ny)
+                rotated = clockwise(nr, nx, ny)
                 if rotated is None:
                     continue
                 nx, ny, nr = rotated
             else:
                 ny += 1
-                if collides(board, piece_type, nr, nx, ny):
+                if blocked(nr, nx, ny):
                     continue
             top = ny + bounds[nr][1]
             if not -6 <= top <= 19:
