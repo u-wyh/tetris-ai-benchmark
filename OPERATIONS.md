@@ -253,3 +253,4 @@
 
 - 2026-10-20 22:12 +0800：自主研究队列结束，状态 stopped_dev_20k；Python/Parity/JS 回归通过，详细结果和限制见 `runs/autonomous_rl_research/status.json`、`reports/experiments/autonomous_rl_results.md`。
 - 2026-10-20 22:25 +0800：`tetris-cache-train-benchmark` 完成普通/缓存环境各两个 4096 步事务，第二事务从 checkpoint 恢复；各对应事务策略参数与非计时指标精确一致，墙钟 20.312/20.315 秒对 17.562/17.400 秒，合计吞吐 1.162×，峰值 RSS 654588 KiB。历史 PPO 死亡反事实仅 19 个独立死亡 seed，明显负例不足，本轮停止排序训练设想，未使用确认种子。证据：`runs/autonomous_rl_research/full_train_cache_benchmark/summary.json`、`reports/experiments/autonomous_rl_followup_results.md`。
+- 2026-10-21 22:54 +0800：在隔离检出中为 Python 合法落点 BFS 添加单次搜索内的碰撞结果缓存，保持正式规则和输出不变；尚未合入正在执行反事实采集的研究分支。242 个冻结公开状态的完整合法落点 JSON SHA256 在原版和缓存版同为 `33686768d78f206dfda40f088638c1e8ba072cb8dfdbf82f424fb7bf111a6ccd`；5 次遍历中位耗时 0.699→0.589 秒，约 1.19×。Parity 6 项、相关 Python 12 项通过（2 跳过）、JS 68 项通过。状态样本仅用于性能和语义验证，不作模型评测；原始样本临时文件 `/tmp/tetris_geometry_states.json`。
