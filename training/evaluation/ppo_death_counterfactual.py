@@ -116,17 +116,16 @@ def materialize_state(item, rows, checkpoints):
 def candidates(item, rows, models):
     seed, step = item["seed"], item["step"]
     path = RUN / "counterfactual_candidates" / f"seed_{seed}_step_{step}.json"
-    if path.exists():
-        result = json.loads(path.read_text())
+    existing = json.loads(path.read_text()) if path.exists() else None
+    if existing is not None:
         expected = {"seed": seed, "step": step, "death_distance": item["death_distance"],
                     "tier": item["tier"], "source_trace_sha256": item["source_trace_sha256"],
                     "snapshot_sha256": digest(_snapshot_path(seed, step)),
                     "public_hash": rows[step]["public_hash"],
                     "ppo_action": rows[step]["action"], "start_score": rows[step]["score"]}
-        if any(result.get(key) != value for key, value in expected.items()):
+        if any(existing.get(key) != value for key, value in expected.items()):
             raise RuntimeError("Frozen candidate task identity changed")
         verify_models()
-        return result
     with gzip.open(_snapshot_path(seed, step), "rb") as file:
         state = pickle.load(file)  # Trusted local experiment snapshot.
     env = FastCandidateTetrisEnv(max_pieces=CAP)
@@ -167,7 +166,11 @@ def candidates(item, rows, models):
                   "snapshot_sha256": digest(_snapshot_path(seed, step)),
                   "public_hash": rows[step]["public_hash"], "ppo_action": rows[step]["action"],
                   "start_score": rows[step]["score"], "choices": choices[:MAX_CANDIDATES]}
-        atomic_json(path, result)
+        if existing is not None:
+            if existing != result:
+                raise RuntimeError("Frozen candidate choices changed")
+        else:
+            atomic_json(path, result)
         return result
     finally:
         env.close()

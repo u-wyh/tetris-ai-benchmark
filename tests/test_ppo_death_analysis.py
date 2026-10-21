@@ -84,6 +84,11 @@ def test_counterfactual_branch_snapshot_isolation_and_censoring(tmp_path, monkey
     candidate_path.write_text(json.dumps(candidate))
     with pytest.raises(RuntimeError, match="task identity"):
         cf.candidates(item, rows, models)
+    candidate["ppo_action"] = rows[18]["action"]
+    candidate["choices"][0]["sources"] = ["tampered"]
+    candidate_path.write_text(json.dumps(candidate))
+    with pytest.raises(RuntimeError, match="choices changed"):
+        cf.candidates(item, rows, models)
 
 
 def test_common_survival_score_and_right_censor():
