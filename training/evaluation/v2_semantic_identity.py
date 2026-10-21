@@ -9,13 +9,16 @@ from training.traditional.v2 import V2, V2Config
 FIXTURE = Path(__file__).parent / "fixtures/v2_hold_historical_prefix.json"
 HISTORICAL_SHA256 = "6dc6c6d31fc3d02fdc3ee0bd369dbd07aac438b14f98bce2803da546c4a469f4"
 OPTIMIZED_SHA256 = "23e4872dbe45d9ec3717f8306c6e53076d7fd3c0cbb8d7c4ceedf97637fe5e0e"
+CACHED_LEGAL_SHA256 = "11ec3adb30b0b17aa09a80489090864676d16d62f329326f0e2fef1e7f4129ea"
 
 
 def verify_historical_hold(reference, current_digest):
     """Require a known source version and replay its frozen action/score prefixes."""
     if reference["code_sha256"] != HISTORICAL_SHA256:
         raise RuntimeError("Historical V2 Hold source identity changed")
-    if current_digest not in (HISTORICAL_SHA256, OPTIMIZED_SHA256):
+    # The cached legal-placement implementation repeats collision results within
+    # one immutable board search. It must still replay the frozen V2 prefix below.
+    if current_digest not in (HISTORICAL_SHA256, OPTIMIZED_SHA256, CACHED_LEGAL_SHA256):
         raise RuntimeError("V2 Hold source version is not semantically verified")
     fixture = json.loads(FIXTURE.read_text())
     if (fixture["source_code_sha256"] != HISTORICAL_SHA256 or
