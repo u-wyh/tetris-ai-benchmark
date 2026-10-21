@@ -1,5 +1,6 @@
 import gzip
 import json
+import pytest
 
 from training.evaluation import ppo_death_capture as capture
 from training.evaluation import ppo_death_replay as replay
@@ -66,6 +67,23 @@ def test_counterfactual_branch_snapshot_isolation_and_censoring(tmp_path, monkey
     assert first["initial_public_hash"] == snapshot["public_hash"]
     assert cf.branch(992098, 18, choices[0], 12, models) == first
     assert cf.materialize_state(item, rows, checkpoints) == snapshot
+
+    branch_path = cf._branch_path(992098, 18, choices[0]["action"], 12)
+    seal_path = branch_path.with_suffix(".sha256.json")
+    changed = dict(first, horizon=1000)
+    branch_path.write_text(json.dumps(changed))
+    seal = json.loads(seal_path.read_text())
+    seal["sha256"] = cf.digest(branch_path)
+    seal_path.write_text(json.dumps(seal))
+    with pytest.raises(RuntimeError, match="task identity"):
+        cf.branch(992098, 18, choices[0], 12, models)
+
+    candidate_path = tmp_path / "counterfactual_candidates" / "seed_992098_step_18.json"
+    candidate = json.loads(candidate_path.read_text())
+    candidate["ppo_action"] = -1
+    candidate_path.write_text(json.dumps(candidate))
+    with pytest.raises(RuntimeError, match="task identity"):
+        cf.candidates(item, rows, models)
 
 
 def test_common_survival_score_and_right_censor():

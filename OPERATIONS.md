@@ -253,3 +253,4 @@
 
 - 2026-10-20 22:12 +0800：自主研究队列结束，状态 stopped_dev_20k；Python/Parity/JS 回归通过，详细结果和限制见 `runs/autonomous_rl_research/status.json`、`reports/experiments/autonomous_rl_results.md`。
 - 2026-10-20 22:25 +0800：`tetris-cache-train-benchmark` 完成普通/缓存环境各两个 4096 步事务，第二事务从 checkpoint 恢复；各对应事务策略参数与非计时指标精确一致，墙钟 20.312/20.315 秒对 17.562/17.400 秒，合计吞吐 1.162×，峰值 RSS 654588 KiB。历史 PPO 死亡反事实仅 19 个独立死亡 seed，明显负例不足，本轮停止排序训练设想，未使用确认种子。证据：`runs/autonomous_rl_research/full_train_cache_benchmark/summary.json`、`reports/experiments/autonomous_rl_followup_results.md`。
+- 2026-10-21 22:57 +0800：在隔离分支修复 PPO 死亡反事实任务的历史结果复用校验：候选记录核对完整状态身份，已封存分支核对 seed、step、首动作、观察窗口、choice、模型身份与结果数组长度。未改动历史文件或正式规则。定向测试 4 项通过，另从旧数据直接恢复 `992000:26404` 的 1000 块分支通过；新增重封存但更改窗口或候选动作的拒绝测试。正在运行的全新 PPO 数据任务使用独立代码和目录，未受影响。
