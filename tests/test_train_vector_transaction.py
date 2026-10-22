@@ -15,10 +15,30 @@ import torch
 from sb3_contrib import MaskablePPO
 
 from training.env import TetrisEnv
-from training.train_vector_transaction import TransactionTetrisEnv, restore_task, vector_config
+from training.train_vector_transaction import (
+    TRAINING_SOURCE_FILES, TransactionTetrisEnv, restore_task,
+    training_source_identity, vector_config, verify_training_source_identity,
+)
 from training.vector_env import make_vector_env
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def test_training_source_identity_rejects_changed_environment(tmp_path):
+    for name in TRAINING_SOURCE_FILES:
+        target = tmp_path / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes((ROOT / name).read_bytes())
+    meta = {"training_source_sha256": training_source_identity(tmp_path)}
+    verify_training_source_identity(meta, tmp_path)
+    changed = tmp_path / "training/tetris_core/legal_placements.py"
+    changed.write_bytes(changed.read_bytes() + b"\n# changed\n")
+    with pytest.raises(RuntimeError, match="training/tetris_core/legal_placements.py"):
+        verify_training_source_identity(meta, tmp_path)
+
+
+def test_training_source_identity_keeps_legacy_resume_compatible():
+    verify_training_source_identity({})
 
 
 def invoke(run_dir, *arguments, succeeds=True):

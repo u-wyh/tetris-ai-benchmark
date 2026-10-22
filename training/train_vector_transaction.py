@@ -33,6 +33,27 @@ from training.long_run import SEEDS_FILE, post_commit
 from training.vector_env import make_vector_env, worker_seeds
 
 DEFAULT_RUN = ROOT / "runs" / "ppo_transaction_vec8_cuda_test_seed42"
+TRAINING_SOURCE_FILES = (
+    "training/train_vector_transaction.py",
+    "training/train_transaction.py",
+    "training/train_ppo.py",
+    "training/vector_env.py",
+    "training/long_run.py",
+    "training/evaluation/hybrid_queue.py",
+    "training/candidate_policy.py",
+    "training/candidate_features.py",
+    "training/env/__init__.py",
+    "training/env/tetris_env.py",
+    "training/env/candidate_env.py",
+    "training/env/fast_candidate_env.py",
+    "training/env/failure_curriculum_env.py",
+    "training/tetris_core/__init__.py",
+    "training/tetris_core/actions.py",
+    "training/tetris_core/core.py",
+    "training/tetris_core/legal_placements.py",
+    "training/tetris_core/pieces.py",
+    "training/tetris_core/rng.py",
+)
 REQUIRED_FILES = {"model.zip", "trainer_state.pkl", "vector_env_state.pkl",
                   "metrics.json", "task_meta.json"}
 HOLE_METRIC_FIELDS = ("mean_raw_reward", "mean_shaped_reward", "mean_new_holes",
@@ -157,6 +178,23 @@ def sha256(path):
         for chunk in iter(lambda: file.read(1 << 20), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def training_source_identity(root=ROOT):
+    """Record the code that advances and observes a training environment."""
+    return {name: sha256(root / name) for name in TRAINING_SOURCE_FILES}
+
+
+def verify_training_source_identity(meta, root=ROOT):
+    recorded = meta.get("training_source_sha256")
+    if recorded is None:
+        # Runs created before source manifests existed retain their old resume protocol.
+        return
+    current = training_source_identity(root)
+    if recorded != current:
+        changed = sorted(name for name in recorded.keys() | current.keys()
+                         if recorded.get(name) != current.get(name))
+        raise RuntimeError(f"Training source changed since run creation: {changed}")
 
 
 def write_manifest(task_dir):
@@ -467,6 +505,7 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
             config = json.loads(config_path.read_text())
             state = read_state(run_dir)
             meta = json.loads((run_dir / "metadata.json").read_text())
+            verify_training_source_identity(meta)
             if (run_dir / "continuation.json").exists():
                 from training.extend_candidate import verify_continuation
                 verify_continuation(run_dir, config, state, meta)
@@ -605,6 +644,7 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                 (run_dir / name).mkdir(exist_ok=True)
             atomic_json(config_path, config)
             meta = metadata(torch, gymnasium, stable_baselines3, sb3_contrib)
+            meta["training_source_sha256"] = training_source_identity()
             try:
                 driver = subprocess.run(["nvidia-smi", "--query-gpu=driver_version",
                                          "--format=csv,noheader,nounits"],
