@@ -15,6 +15,7 @@ from training.evaluation.hybrid_queue import PPO, digest, load_models, verify_mo
 from training.evaluation.ppo_fresh_counterfactual import branch
 from training.evaluation.ppo_transition_branches import grade, options
 from training.evaluation.ppo_transition_capture import PPO_SHA256, public_hash
+from training.evaluation.ppo_top2_generalization_audit import audit_capture
 from training.evaluation.ppo_top2_generalization_capture import (CAP, DEV_SEEDS, RUN, TRAIN_SEEDS,
                                                                    checkpoint_paths, episode_path,
                                                                    verify_checkpoint, verify_episode)
@@ -206,6 +207,9 @@ def main():
         return
     if capture_status["stage"] != "complete":
         raise RuntimeError("Capture incomplete")
+    audit = audit_capture()
+    if audit["candidate_deaths"] < 3:
+        raise RuntimeError("Insufficient audited candidate deaths")
     for name in ("selected_states", "candidates", "branches", "comparisons"):
         (RUN / name).mkdir(exist_ok=True)
     protocol = {"version": VERSION, "seeds": list(TRAIN_SEEDS + DEV_SEEDS),
