@@ -19,7 +19,7 @@ log="$state_dir/$stamp.log"
   printf 'started=%s host=%s branch=%s\n' "$(date -Is)" "$(hostname)" "$(git -C "$repo" branch --show-current)"
   set +e
   timeout --signal=TERM --kill-after=60s 10800s \
-    /home/wyh/.local/bin/codex exec --approve-for-me -s workspace-write \
+    /home/wyh/.local/bin/codex exec --approve-for-me \
     -C "$repo" - < "$repo/ops/unattended_research_prompt.md"
   result=$?
   set -e
