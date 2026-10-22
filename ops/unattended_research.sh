@@ -3,14 +3,8 @@ set -euo pipefail
 
 repo=/home/wyh/projects/tetris-ai-benchmark-branch-perf
 state_dir=/home/wyh/projects/tetris-ai-benchmark/runs/unattended_research
-deadline=2026-10-28T00:00:00+08:00
 interval_seconds=18000
 mkdir -p "$state_dir"
-
-# Cron is kept installed so the audit trail remains visible after the five days.
-if (( $(date +%s) >= $(date -d "$deadline" +%s) )); then
-  exit 0
-fi
 
 exec 9>"$state_dir/agent.lock"
 flock -n 9 || exit 0

@@ -1,4 +1,4 @@
-在用户离开实验室的 2026-10-23 至 2026-10-27 期间，继续 Tetris AI Benchmark 的有界自主研发。当前工作目录是研究 worktree `codex/ppo-branch-throughput`。先读取项目 AGENTS.md，并检查 git、tmux、现有实验和网页服务；避免重复正在运行或已完成的任务。
+用户不在实验室期间及其后，只要额度可用，按每 5 小时的唤醒周期继续 Tetris AI Benchmark 的有界自主研发。当前工作目录是研究 worktree `codex/ppo-branch-throughput`。先读取项目 AGENTS.md，并检查 git、tmux、现有实验和网页服务；避免重复正在运行或已完成的任务。
 
 按证据推进一项有价值的工作，优先顺序：
 1. 收尾 PPO 反事实分支加速实验：测试、tmux 基准、等价性/吞吐/内存报告、OPERATIONS 记录、提交并推送研究分支。已有文件 `training/evaluation/fast_counterfactual.py`、`benchmark_fast_counterfactual.py` 和设计报告，先审计当前状态。
