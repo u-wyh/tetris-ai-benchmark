@@ -10,3 +10,7 @@
 - 这三个 seed 及状态是**看过死亡结局后选出的**，结果不可作为总体救援率、规则门槛、训练标签的独立验证，也不能在这些 seed 上反复修改采样或模型。若证据不足，停止这条纠错路线；如出现跨 seed 同类机制，再用全新种子设计事前采样。
 
 不修改正式 Core、动作空间、冻结权重或网页。代码：`training/evaluation/ppo_transition_terminal.py`；数据仅保存到 `runs/ppo30m_transition_counterfactual/terminal_exploratory/`。
+
+## 有界延长观察（2026-10-22 追加，运行前冻结）
+
+首轮 3 个死亡 seed 在死亡前 500 块的 PPO Top-2 分支均触及 2000 块右截断。为判断优势是否仅持续很短时间，对每个 seed **只延长这一条预先指定的 Top-2 分支**，最多续控 10,000 块，总计最多 3 条扩展。原 PPO 对应分支的真实死亡位置已精确重放，不重复运行。延长结果前 2000 块的逐块累计得分与四消必须与已提交的短分支完全一致；不一致即停止。10K 触顶仍按右截断处理，不把它视为长期生存证明。程序：`training/evaluation/ppo_transition_extend.py`，结果独立保存在 `terminal_exploratory/extended_top2/`。这些 seed 和动作仍是事后探索，不能用于独立确认。
