@@ -4,6 +4,7 @@ set -euo pipefail
 repo=/home/wyh/projects/tetris-ai-benchmark-branch-perf
 state_dir=/home/wyh/projects/tetris-ai-benchmark/runs/unattended_research
 deadline=2026-10-28T00:00:00+08:00
+interval_seconds=18000
 mkdir -p "$state_dir"
 
 # Cron is kept installed so the audit trail remains visible after the five days.
@@ -13,6 +14,18 @@ fi
 
 exec 9>"$state_dir/agent.lock"
 flock -n 9 || exit 0
+if [[ -f "$state_dir/quota_exhausted" ]]; then
+  exit 0
+fi
+now_epoch=$(date +%s)
+if [[ -f "$state_dir/last_attempt_epoch" ]]; then
+  last_epoch=$(<"$state_dir/last_attempt_epoch")
+  if [[ "$last_epoch" =~ ^[0-9]+$ ]] && (( now_epoch - last_epoch < interval_seconds )); then
+    exit 0
+  fi
+fi
+printf '%s\n' "$now_epoch" > "$state_dir/last_attempt_epoch.tmp"
+mv "$state_dir/last_attempt_epoch.tmp" "$state_dir/last_attempt_epoch"
 stamp=$(date +%Y%m%dT%H%M%S%z)
 log="$state_dir/$stamp.log"
 {
@@ -24,5 +37,9 @@ log="$state_dir/$stamp.log"
   result=$?
   set -e
   printf 'finished=%s exit=%s\n' "$(date -Is)" "$result"
-  exit "$result"
 } >> "$log" 2>&1
+if grep -Eiq 'insufficient_quota|quota exceeded|usage limit reached|hit your usage limit|out of credits|not enough credits' "$log"; then
+  printf 'detected=%s log=%s\n' "$(date -Is)" "$log" > "$state_dir/quota_exhausted.tmp"
+  mv "$state_dir/quota_exhausted.tmp" "$state_dir/quota_exhausted"
+fi
+exit "$result"
