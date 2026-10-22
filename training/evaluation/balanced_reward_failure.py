@@ -8,6 +8,7 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from multiprocessing import get_context
 from pathlib import Path
 
+import torch
 from sb3_contrib import MaskablePPO
 
 from training.candidate_features import board_features
@@ -17,7 +18,7 @@ from training.train_ppo import atomic_json, now
 
 SEEDS = (1521000, 1521003, 1521004, 1521007, 1521009, 1521012, 1521013)
 CAP = 20000
-OUT = RUN / "failure_diagnostic"
+OUT = RUN / "failure_diagnostic_v2"
 WINDOWS = (100, 500, 1000, 5000)
 
 
@@ -37,6 +38,7 @@ def windows(samples):
 
 
 def replay(seed, hashes):
+    torch.set_num_threads(1)
     rows = {}
     models = {name: MaskablePPO.load(path, device="cpu")
               for name, path in (("ppo", PPO), ("candidate", MODEL))}
