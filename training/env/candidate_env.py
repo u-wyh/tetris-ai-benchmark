@@ -11,8 +11,9 @@ OBSERVATION_VERSION = "candidate-dict-state237-features16-v1"
 
 
 class CandidateTetrisEnv(TetrisEnv):
-    def __init__(self, max_pieces=10000, hole_penalty_coef=0.0, height_penalty_coef=0.0):
-        super().__init__(max_pieces, hole_penalty_coef, height_penalty_coef)
+    def __init__(self, max_pieces=10000, hole_penalty_coef=0.0, height_penalty_coef=0.0,
+                 reward_profile="default"):
+        super().__init__(max_pieces, hole_penalty_coef, height_penalty_coef, reward_profile)
         self.observation_space = gym.spaces.Dict({
             "state": gym.spaces.Box(0.0, 1.0, shape=(237,), dtype=np.float32),
             "candidate": gym.spaces.Box(0, 255,

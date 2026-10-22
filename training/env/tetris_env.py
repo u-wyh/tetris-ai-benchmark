@@ -14,6 +14,8 @@ RAW_REWARD_VERSION = "placement-reward-v1"
 HOLE_REWARD_VERSION = "placement-reward-hole-v1"
 HEIGHT_REWARD_VERSION = "placement-reward-height-v1"
 HOLE_HEIGHT_REWARD_VERSION = "placement-reward-hole-height-v1"
+BALANCED_REWARD_VERSION = "placement-reward-survival-balanced-v1"
+BALANCED_LINE_REWARDS = (0.0, 1.0, 2.4, 3.8, 5.2)
 
 
 def count_holes(board):
@@ -43,17 +45,22 @@ def board_max_height(board):
     return max((20 - y for y, row in enumerate(board) if any(row)), default=0)
 
 
-def placement_reward(cleared_lines, game_over):
+def placement_reward(cleared_lines, game_over, reward_profile="default"):
     """RL reward is independent of the Benchmark game's score."""
     if not 0 <= cleared_lines <= 4:
         raise ValueError("A placement can clear zero through four lines")
+    if reward_profile == "survival_balanced_v1":
+        return 0.001 + BALANCED_LINE_REWARDS[cleared_lines] - (10.0 if game_over else 0.0)
+    if reward_profile != "default":
+        raise ValueError("Unknown reward profile")
     return 0.001 + LINE_REWARDS[cleared_lines] - (2.0 if game_over else 0.0)
 
 
 class TetrisEnv(gym.Env):
     metadata = {"render_modes": []}
 
-    def __init__(self, max_pieces=10000, hole_penalty_coef=0.0, height_penalty_coef=0.0):
+    def __init__(self, max_pieces=10000, hole_penalty_coef=0.0, height_penalty_coef=0.0,
+                 reward_profile="default"):
         super().__init__()
         if type(max_pieces) is not int or max_pieces < 1:
             raise ValueError("max_pieces must be a positive integer")
@@ -66,7 +73,13 @@ class TetrisEnv(gym.Env):
                 or not math.isfinite(height_penalty_coef) or height_penalty_coef < 0):
             raise ValueError("height_penalty_coef must be a finite nonnegative number")
         self.height_penalty_coef = float(height_penalty_coef)
-        self.reward_version = (HOLE_HEIGHT_REWARD_VERSION if self.height_penalty_coef and self.hole_penalty_coef
+        if reward_profile not in ("default", "survival_balanced_v1"):
+            raise ValueError("Unknown reward profile")
+        if reward_profile != "default" and (self.hole_penalty_coef or self.height_penalty_coef):
+            raise ValueError("Balanced reward cannot combine with legacy risk penalties")
+        self.reward_profile = reward_profile
+        self.reward_version = (BALANCED_REWARD_VERSION if reward_profile == "survival_balanced_v1"
+                               else HOLE_HEIGHT_REWARD_VERSION if self.height_penalty_coef and self.hole_penalty_coef
                                else HEIGHT_REWARD_VERSION if self.height_penalty_coef
                                else HOLE_REWARD_VERSION if self.hole_penalty_coef
                                else RAW_REWARD_VERSION)
@@ -129,7 +142,8 @@ class TetrisEnv(gym.Env):
         if self.core is None:
             raise RuntimeError("Call reset() before snapshotting")
         return {"core": copy.deepcopy(self.core), "max_pieces": self.max_pieces,
-                "reward_version": self.reward_version, "hole_penalty_coef": self.hole_penalty_coef,
+                "reward_version": self.reward_version, "reward_profile": self.reward_profile,
+                "hole_penalty_coef": self.hole_penalty_coef,
                 "height_penalty_coef": self.height_penalty_coef,
                 "episode_seed": self.episode_seed, "episode_count": self.episode_count,
                 "pieces": self.pieces, "episode_reward": self.episode_reward,
@@ -142,6 +156,7 @@ class TetrisEnv(gym.Env):
         if state["max_pieces"] != self.max_pieces:
             raise ValueError("Checkpoint max_pieces differs from environment")
         if (state.get("reward_version", RAW_REWARD_VERSION) != self.reward_version
+                or state.get("reward_profile", "default") != self.reward_profile
                 or state.get("hole_penalty_coef", 0.0) != self.hole_penalty_coef
                 or state.get("height_penalty_coef", 0.0) != self.height_penalty_coef):
             raise ValueError("Checkpoint reward configuration differs from environment")
@@ -179,7 +194,7 @@ class TetrisEnv(gym.Env):
         self.pieces += 1
         truncated = self.pieces >= self.max_pieces and not terminated
         self._finished = terminated or truncated
-        raw_reward = placement_reward(cleared_lines, terminated)
+        raw_reward = placement_reward(cleared_lines, terminated, self.reward_profile)
         holes_after = count_holes(self.core.board)
         height_after = board_max_height(self.core.board)
         reward, new_holes, hole_penalty = shape_reward(

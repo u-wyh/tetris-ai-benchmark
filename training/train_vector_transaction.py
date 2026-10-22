@@ -27,7 +27,7 @@ from training.env.candidate_env import CandidateTetrisEnv, OBSERVATION_VERSION
 from training.env.fast_candidate_env import FastCandidateTetrisEnv
 from training.candidate_features import FEATURE_VERSION
 from training.candidate_policy import CandidateScoringPolicy
-from training.env.tetris_env import (HEIGHT_REWARD_VERSION, HOLE_HEIGHT_REWARD_VERSION,
+from training.env.tetris_env import (BALANCED_REWARD_VERSION, HEIGHT_REWARD_VERSION, HOLE_HEIGHT_REWARD_VERSION,
                                      HOLE_REWARD_VERSION, RAW_REWARD_VERSION)
 from training.long_run import SEEDS_FILE, post_commit
 from training.vector_env import make_vector_env, worker_seeds
@@ -108,7 +108,7 @@ class TransactionFastCandidateEnv(FastCandidateTetrisEnv, TransactionTetrisEnv):
 
 def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
                   base_seed=42, hole_penalty_coef=0.0, height_penalty_coef=0.0,
-                  candidate_policy=False, max_pieces=10000):
+                  candidate_policy=False, max_pieces=10000, reward_profile="default"):
     if device not in ("cpu", "cuda"):
         raise ValueError("device must be cpu or cuda")
     if type(max_pieces) is not int or max_pieces < 1:
@@ -119,6 +119,10 @@ def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
     if (isinstance(height_penalty_coef, bool) or not isinstance(height_penalty_coef, (int, float))
             or not math.isfinite(height_penalty_coef) or height_penalty_coef < 0):
         raise ValueError("height_penalty_coef must be a finite nonnegative number")
+    if reward_profile not in ("default", "survival_balanced_v1"):
+        raise ValueError("Unknown reward profile")
+    if reward_profile != "default" and (hole_penalty_coef or height_penalty_coef):
+        raise ValueError("Balanced reward cannot combine with legacy risk penalties")
     seeds = worker_seeds(base_seed, n_envs)
     if 4096 % n_envs or task_steps != 4096 or target_steps < task_steps:
         raise ValueError("Each Task must equal one 4096-sample rollout")
@@ -153,7 +157,9 @@ def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
                    "evaluation_seed_sha256": sha256(SEEDS_FILE),
                    "validation_seed_set": seed_sets["validation"],
                    "final_test_seed_set": seed_sets["final_test"],
-                   "reward_version": (HOLE_HEIGHT_REWARD_VERSION if height_penalty_coef and hole_penalty_coef
+                   "reward_profile": reward_profile,
+                   "reward_version": (BALANCED_REWARD_VERSION if reward_profile == "survival_balanced_v1"
+                                      else HOLE_HEIGHT_REWARD_VERSION if height_penalty_coef and hole_penalty_coef
                                       else HEIGHT_REWARD_VERSION if height_penalty_coef
                                       else HOLE_REWARD_VERSION if hole_penalty_coef
                                       else RAW_REWARD_VERSION),
@@ -165,6 +171,9 @@ def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
     if height_penalty_coef:
         config["height_penalty_coef"] = height_penalty_coef
         config["reward"]["height_risk_penalty_coef"] = height_penalty_coef
+    if reward_profile == "survival_balanced_v1":
+        config["reward"]["line_clear"] = [0.0, 1.0, 2.4, 3.8, 5.2]
+        config["reward"]["game_over"] = -10.0
     if candidate_policy:
         config.update({"policy": "CandidateScoringPolicy", "candidate_policy": True,
                        "observation_version": OBSERVATION_VERSION,
@@ -523,7 +532,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                 requested_hole = preset.get("hole_penalty_coef", 0.0)
                 requested_height = preset.get("height_penalty_coef", 0.0)
                 requested_coef = (requested_hole, requested_height)
-                requested_version = (HOLE_HEIGHT_REWARD_VERSION if requested_height and requested_hole
+                requested_version = (BALANCED_REWARD_VERSION if preset.get("reward_profile") == "survival_balanced_v1"
+                                     else HOLE_HEIGHT_REWARD_VERSION if requested_height and requested_hole
                                      else HEIGHT_REWARD_VERSION if requested_height
                                      else HOLE_REWARD_VERSION if requested_hole else RAW_REWARD_VERSION)
                 if preset.get("failure_curriculum"):
@@ -547,6 +557,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     raise RuntimeError("Resume PPO overrides differ from recorded run")
                 if bool(preset.get("fast_candidate_env", False)) != bool(config.get("fast_candidate_env", False)):
                     raise RuntimeError("Resume Candidate environment differs from recorded run")
+                if preset.get("reward_profile", "default") != config.get("reward_profile", "default"):
+                    raise RuntimeError("Resume reward profile differs from recorded run")
             if config.get("initial_model"):
                 initial = config["initial_model"]
                 if sha256(Path(initial["path"])) != initial["sha256"]:
@@ -577,6 +589,7 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                                        base_seed=preset["base_seed"],
                                        hole_penalty_coef=preset.get("hole_penalty_coef", 0.0),
                                        height_penalty_coef=preset.get("height_penalty_coef", 0.0),
+                                       reward_profile=preset.get("reward_profile", "default"),
                                        candidate_policy=bool(preset.get("candidate_policy", False)),
                                        max_pieces=preset.get("max_pieces", 10000))
                 overrides = preset.get("ppo_overrides", {})
@@ -669,6 +682,7 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                          "final_test_seed_set": config["final_test_seed_set"],
                          "reward_definition": config["reward"],
                          "reward_version": config["reward_version"],
+                         "reward_profile": config.get("reward_profile", "default"),
                          "hole_penalty_coef": reward_settings(config)[1],
                          "height_penalty_coef": reward_settings(config)[2],
                          "observation_version": config["observation_version"],
@@ -693,6 +707,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
         env_kwargs = ({"hole_penalty_coef": reward_settings(config)[1],
                        "height_penalty_coef": reward_settings(config)[2]}
                       if any(reward_settings(config)[1:]) else {})
+        if config.get("reward_profile", "default") != "default":
+            env_kwargs["reward_profile"] = config["reward_profile"]
         if config.get("failure_curriculum"):
             from training.env.failure_curriculum_env import FailureCurriculumEnv
             env_kwargs["curriculum"] = config["failure_curriculum"]
