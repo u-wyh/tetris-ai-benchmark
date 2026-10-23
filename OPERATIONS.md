@@ -358,3 +358,4 @@
 2026-10-23 19:44 +0800：核查已完成清行节奏反事实数据的代码来源：采样与分支脚本自各自首次提交后无修改，所查主要依赖自首个脚本提交后无后续提交；运行前源码哈希未保存，不能据此证明历史执行字节或提升证据等级。未重跑评测或训练。证据：reports/experiments/ppo_clear_cadence_code_provenance.md、git diff/log、sha256sum。
 2026-10-24 00:48 +0800 | 为清行节奏后续新采样/分支记录增加执行源码与依赖版本清单，写盘前和恢复时核对；旧数据不补造来源、不重跑。定向编译和篡改哈希拒绝检查通过；旧记录只读审计通过（8 局、22 状态、44 分支）。证据：`reports/experiments/ppo_clear_cadence_future_provenance.md`、`training/evaluation/source_provenance.py`。
 2026-10-24 00:50 +0800 | 独立清行节奏记录审计增加新记录的执行来源清单校验；既有 8 局、22 状态、44 分支审计通过，内存篡改 Core 哈希被拒绝，8080/8081 均 HTTP 200。未重跑评测或训练，旧记录不补造来源。证据：`training/evaluation/audit_clear_cadence_records.py`、`reports/experiments/ppo_clear_cadence_audit_provenance.md`。
+2026-10-24 00:52 +0800 | 清行节奏历史记录只读审计增加快照恢复后的正式 Core 合法落点、环境掩码与候选集合三方核验；22/22 状态通过，44 分支汇总仍为 0 救援、1 误伤；8080/8081 均 HTTP 200。未重跑 PPO 或训练。证据：`reports/experiments/ppo_clear_cadence_candidate_legality_audit.md`、`training/evaluation/audit_clear_cadence_records.py`。

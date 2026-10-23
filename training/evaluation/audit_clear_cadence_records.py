@@ -1,10 +1,14 @@
 """Audit saved clear-cadence records without replaying the PPO policy."""
 
 import hashlib
+import gzip
 import json
+import pickle
 from pathlib import Path
 
 from training.evaluation.source_provenance import verify as verify_source
+from training.evaluation.failure_curriculum_eval import LongCandidateTetrisEnv
+from training.tetris_core.legal_placements import get_legal_placements
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -51,10 +55,23 @@ def audit():
             choice_path = RUN / "candidates" / f"{prefix}.json"
             choice = read(choice_path)
             check(digest(snapshot) == state["snapshot_sha256"] == choice["snapshot_sha256"], f"snapshot {prefix}")
+            saved_state = pickle.loads(gzip.decompress(snapshot.read_bytes()))
+            check(saved_state["episode_seed"] == seed and saved_state["pieces"] == step, f"snapshot state {prefix}")
+            env = LongCandidateTetrisEnv(max_pieces=saved_state["max_pieces"])
+            try:
+                env.reset(seed=seed)
+                env.set_state(saved_state)
+                public = env.core.get_public_observation()
+                legal = {p["actionId"] for p in get_legal_placements(public)}
+                mask = env.action_masks()
+                check(legal == {i for i, allowed in enumerate(mask) if allowed}, f"Core mask {prefix}")
+            finally:
+                env.close()
             check(choice["ppo_sha256"] == episode["ppo_sha256"] and choice["design_sha256"] == episode["design_sha256"], f"candidate identity {prefix}")
             actions = (choice["original_action"], choice["alternative_action"])
             check(None not in actions and len(set(actions)) == 2, f"actions {prefix}")
             ranked = choice["ranked_legal_actions"]
+            check({r["action"] for r in ranked} == legal and len(ranked) == len(legal), f"candidate legality {prefix}")
             check(ranked == sorted(ranked, key=lambda r: r["rank_key"]), f"ranking {prefix}")
             check(actions[0] in [r["action"] for r in ranked] and actions[1] == next(r["action"] for r in ranked if r["action"] != actions[0]), f"choice {prefix}")
             outcomes = []
