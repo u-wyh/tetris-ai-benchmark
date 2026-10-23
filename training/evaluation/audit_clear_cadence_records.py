@@ -4,6 +4,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from training.evaluation.source_provenance import verify as verify_source
+
 
 ROOT = Path(__file__).resolve().parents[2]
 RUN = ROOT / "runs/ppo_clear_cadence_counterfactual"
@@ -22,11 +24,18 @@ def check(condition, message):
         raise ValueError(message)
 
 
+def check_provenance(row):
+    """Validate provenance for new records; legacy records have no manifest."""
+    if "execution_provenance" in row:
+        verify_source(ROOT, row["execution_provenance"])
+
+
 def audit():
     episodes = states = branches = rescues = harms = 0
     instability_seeds = control_seeds = 0
     for seed in range(1550000, 1550008):
         episode = read(RUN / "episodes" / f"seed_{seed}.json")
+        check_provenance(episode)
         check(episode["seed"] == seed and episode["cap"] == 20000, f"episode {seed}")
         check(episode["design_sha256"] == digest(ROOT / "reports/experiments/ppo_clear_cadence_counterfactual_design.md"), f"design {seed}")
         check(0 < episode["pieces"] <= 20000 and len(episode["states"]) <= 4, f"bounds {seed}")
@@ -51,6 +60,7 @@ def audit():
             outcomes = []
             for action in actions:
                 branch = read(RUN / "branches" / f"{prefix}_action_{action}.json")
+                check_provenance(branch)
                 outcome = branch["outcome"]
                 check(branch["candidate_sha256"] == digest(choice_path) and branch["snapshot_sha256"] == state["snapshot_sha256"] and branch["ppo_sha256"] == episode["ppo_sha256"], f"branch identity {prefix}:{action}")
                 n = outcome["pieces"]
