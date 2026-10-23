@@ -312,3 +312,5 @@
 2026-10-23 12:37 +0800：评测专用井深循环优化完成；三快照候选矩阵/mask 完全一致，10 项定向测试通过；孤立特征旧/新 6.971/6.095 秒（1.144×），两条冻结 PPO 1000 步完整评测结果一致，旧/新 4.974/4.862 秒（1.023×）。保留改动；正式 Core、模型、网页未改。证据：runs/ppo_feature_wells_20261023/{protocol.json,result.json,tests.log,full_eval_protocol.json,full_eval_result.json}、reports/experiments/ppo_feature_wells_result.md。
 2026-10-23 12:39 +0800：冻结三历史快照、五次交替各 1000 调用的评测特征方块编号查找配对协议；仅试改评测辅助模块，正式 Core/模型不变。证据：runs/ppo_feature_piece_index_20261023/protocol.json、training/evaluation/fast_candidate_features.py。
 2026-10-23 12:40 +0800：三快照方块编号预计算配对完成，候选矩阵/mask 完全一致，旧/新 5.948/5.872 秒（1.013×），低于预定 1.03× 门槛；撤回评测代码。首次导入路径失败后设置 PYTHONPATH 重跑，未计入计时。证据：runs/ppo_feature_piece_index_20261023/{protocol.json,result.json}、reports/experiments/ppo_feature_piece_index_result.md。
+2026-10-23 12:41 +0800：冻结三历史快照、五次交替各 1000 调用的评测特征行列位图单扫描协议；正式 Core/模型/网页不变。证据：runs/ppo_feature_board_scan_20261023/protocol.json。
+2026-10-23 12:42 +0800：评测特征行列位图单扫描完成，三快照矩阵/mask 逐项一致；旧/新合计 5.920/5.704 秒（1.038×），各快照未退化，12 项定向测试通过。保留评测辅助改动；正式 Core/模型/网页不变。证据：runs/ppo_feature_board_scan_20261023/{protocol.json,result.json}、reports/experiments/ppo_feature_board_scan_result.md。

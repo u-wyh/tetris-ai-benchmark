@@ -8,10 +8,16 @@ from training.tetris_core import ACTION_COUNT
 
 def candidate_features(public, placements):
     board = public["board"]
-    rows = [sum(1 << x for x, cell in enumerate(row) if cell is not None)
-            for row in board]
-    columns = [sum(1 << (19 - y) for y, row in enumerate(board)
-                   if row[x] is not None) for x in range(10)]
+    rows = []
+    columns = [0] * 10
+    for y, board_row in enumerate(board):
+        bits = 0
+        column_bit = 1 << (19 - y)
+        for x, cell in enumerate(board_row):
+            if cell is not None:
+                bits |= 1 << x
+                columns[x] |= column_bit
+        rows.append(bits)
     before_heights = [col.bit_length() for col in columns]
     before_holes = sum(height - col.bit_count()
                        for height, col in zip(before_heights, columns))
