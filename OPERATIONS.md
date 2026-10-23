@@ -295,3 +295,8 @@
 - 2026-10-23 11:14 +0800：审计无人值守计划发现 cron 于 00:00/05:00/10:00 触发，但三个 Codex 探测均因 cron 未继承交互 shell 的本地代理而 120 秒超时，研发任务未启动；不是额度耗尽。为定时脚本显式配置服务器现有 127.0.0.1:10809 代理，并增加仅供人工恢复错过周期的 `--force` 参数；使用近似 cron 的空环境进行真实 Codex 探测，成功返回 READY。证据：`runs/unattended_research/20261023T{000001,050001,100001}+0800.*`、`runs/unattended_research/cron_proxy_probe_last.txt`、`ops/unattended_research.sh`。
 - 2026-10-23 11:15 +0800：从近似 cron 的空环境经 tmux `tetris-unattended-research` 强制补跑一次漏掉的五小时任务（包装器 PID 3367976），额度探测真实返回 READY，随后 Codex 研发进程 PID 3368261 启动并仍运行；8080/8081 健康检查均 200。定时入口调整为每 5 分钟检查一次本地时间门控，以使实际研发启动间隔接近 5 小时，而不是整点门控造成最多 6 小时间隔；文件锁仍防重复。证据：`runs/unattended_research/20261023T111402+0800.{probe.log,probe.reply,log}`、`crontab -l`、`tmux list-sessions`。
 - 2026-10-23 11:17 +0800：实时复核发现 11:14 补跑的 Codex 任务虽完成额度探测并进入项目，但于 11:15 误将自身 tmux/进程视为其他正在运行的研发作业，未执行新里程碑便退出（exit 0）；已修正无人值守提示，明确排除当前包装器与当前 Codex 自身，且标明 1.433× 基准已完成。此条纠正上一条“仍运行”的时点描述；下一步需要重新补跑验证。证据：`runs/unattended_research/20261023T111402+0800.log`、`ops/unattended_research_prompt.md`。
+2026-10-23 11:19 +0800：冻结 2000 步历史 seed 的 PPO 评测性能剖析协议；模型哈希已核验，正式 Core/模型未改。证据：runs/ppo_eval_profile_20261023/protocol.json。
+2026-10-23 11:19 +0800：性能剖析首次启动失败，研究 worktree 无本地 .venv，尚无评测步；改用主检出既有虚拟环境。证据：本次命令退出码 127。
+2026-10-23 11:20 +0800：针对剖析瓶颈调整评测专用合法落点 BFS，在已访问状态上跳过重复碰撞查询；开始原版/改版配对验证。证据：training/evaluation/fast_legal.py、runs/ppo_eval_profile_20261023/profile.txt。
+2026-10-23 11:21 +0800：定向环境测试 13 项通过；Parity 因当前非交互 PATH 缺少 node 而无法启动，未发现算法断言失败；改用已安装 Node 的绝对路径重跑。
+2026-10-23 11:21 +0800：完成已访问状态碰撞检查优化。两历史 seed 的八条 1000 步评测动作与最终状态逐组完全一致；旧/新总耗时 9.670/9.145 秒（1.057×）。定向与 Parity 16 项及 29 子场景通过。证据：runs/ppo_eval_profile_20261023/{paired.json,tests.log}、reports/experiments/ppo_eval_visited_state_results.md。

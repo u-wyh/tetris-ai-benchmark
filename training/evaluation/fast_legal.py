@@ -87,7 +87,7 @@ def _branch(observation, hold, board_rows):
                         "path": steps,
                     }
         nx, ny, nr = x - 1, y, rotation
-        if not collides(nr, nx, ny):
+        if (nx, ny, nr) not in visited and not collides(nr, nx, ny):
             top = ny + bounds[nr][2]
             if -6 <= top <= 19:
                 state = nx, ny, nr
@@ -95,7 +95,7 @@ def _branch(observation, hold, board_rows):
                     visited.add(state)
                     nodes.append((nx, ny, nr, head, "Left"))
         nx, ny, nr = x + 1, y, rotation
-        if not collides(nr, nx, ny):
+        if (nx, ny, nr) not in visited and not collides(nr, nx, ny):
             top = ny + bounds[nr][2]
             if -6 <= top <= 19:
                 state = nx, ny, nr
@@ -112,7 +112,7 @@ def _branch(observation, hold, board_rows):
                     visited.add(state)
                     nodes.append((nx, ny, nr, head, "RotateCW"))
         nx, ny, nr = x, y + 1, rotation
-        if not collides(nr, nx, ny):
+        if (nx, ny, nr) not in visited and not collides(nr, nx, ny):
             top = ny + bounds[nr][2]
             if -6 <= top <= 19:
                 state = nx, ny, nr
