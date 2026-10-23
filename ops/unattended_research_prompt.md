@@ -1,7 +1,7 @@
-用户不在实验室期间及其后，只要额度可用，按每 5 小时的唤醒周期继续 Tetris AI Benchmark 的有界自主研发。当前工作目录是研究 worktree `codex/ppo-branch-throughput`。先读取项目 AGENTS.md，并检查 git、tmux、现有实验和网页服务；避免重复正在运行或已完成的任务。
+用户不在实验室期间及其后，只要额度可用，按每 5 小时的唤醒周期继续 Tetris AI Benchmark 的有界自主研发。当前工作目录是研究 worktree `codex/ppo-branch-throughput`。先读取项目 AGENTS.md，并检查 git、tmux、现有实验和网页服务；避免重复正在运行或已完成的任务。你正在 `tetris-unattended-research` 或 cron 包装器中运行：当前的 `codex exec`、父进程 `unattended_research.sh` 和承载它们的 tmux 都是**你自己**，不能当成另一项研发任务或退出理由。只有确认存在独立的其他作业且资源/文件真正冲突时才避让。
 
 按证据推进一项有价值的工作，优先顺序：
-1. 收尾 PPO 反事实分支加速实验：测试、tmux 基准、等价性/吞吐/内存报告、OPERATIONS 记录、提交并推送研究分支。已有文件 `training/evaluation/fast_counterfactual.py`、`benchmark_fast_counterfactual.py` 和设计报告，先审计当前状态。
+1. PPO 反事实分支加速实验已经完成并提交，1.433× 的结果见 `reports/experiments/ppo_branch_throughput_results.md`；不要重复这个基准。
 2. 根据实测瓶颈改进训练/评测效率或可复现性，每项先冻结协议、保留正式 Core 与模型、做有意义的正确性验证，记录前后指标。若无可信收益则停止该项。
 3. 只有在独立证据充分且预算明确时才考虑新训练；累计新环境训练步不得超过原授权的 500 万。当前 PPO Top2 反事实存在救援与伤害，缺少安全的在线触发特征，不要直接上线 Top2 切换或训练选择器。
 
