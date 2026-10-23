@@ -10,6 +10,7 @@ from training.candidate_features import candidate_features
 from training.evaluation.fast_candidate_features import candidate_features as fast_candidate_features
 from training.tetris_core import TetrisCore
 from training.tetris_core.pieces import make_piece
+from training.evaluation.fast_legal import get_legal_placements as fast_legal_placements
 
 
 @pytest.mark.parametrize("seed", [42, 1234000, 20261013])
@@ -124,3 +125,34 @@ def test_fast_candidate_features_match_multiline_clears(line_count):
     np.testing.assert_array_equal(original_mask, accelerated_mask)
     np.testing.assert_array_equal(original, accelerated)
     assert np.any(original[:, 5] == line_count)
+
+
+@pytest.mark.parametrize("kind", "IJLOSTZ")
+@pytest.mark.parametrize("board_case", range(4))
+@pytest.mark.parametrize("hold_case", range(3))
+def test_fast_legal_matches_core_on_fixed_edge_boards(kind, board_case, hold_case):
+    core = TetrisCore(42)
+    core.current = make_piece(kind)
+    core.hold = None if hold_case == 2 else "T"
+    core.hold_used = hold_case == 0
+    if board_case == 1:
+        for y in range(15, 20):
+            for x in range(10):
+                if x not in ((y + 1) % 10, (y + 5) % 10):
+                    core.board[y][x] = "Z"
+    elif board_case == 2:
+        for y in range(8, 20):
+            for x in range(10):
+                if x != 4 and (y + 2 * x) % 7 != 0:
+                    core.board[y][x] = "Z"
+    elif board_case == 3:
+        for y in (2, 4, 7, 11, 16, 19):
+            for x in range(10):
+                if (3 * x + y) % 5 < 2:
+                    core.board[y][x] = "Z"
+    public = core.get_public_observation()
+    expected = core.get_legal_placements()
+    if board_case == 0:
+        assert expected
+        assert any(placement["hold"] for placement in expected) == (hold_case != 0)
+    assert fast_legal_placements(public) == expected
