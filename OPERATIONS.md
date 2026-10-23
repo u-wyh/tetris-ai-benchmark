@@ -306,3 +306,5 @@
 2026-10-23 12:29 +0800：冻结三份历史快照的合法落点搜索配对微基准；仅试验评测专用 BFS 的冗余访问集检查，正式 Core/模型不变。证据：runs/ppo_legal_visited_20261023/protocol.json。
 2026-10-23 12:30 +0800：三份历史快照配对微基准合法落点输出逐项一致，旧/新 CPU 加速 1.035×、1.013×、1.007×，后两份低于预定 1.03× 门槛；撤回评测专用代码改动，仅保留负结果。首次导入路径失败后修正，不影响结果。证据：runs/ppo_legal_visited_20261023/{protocol.json,result.json}、reports/experiments/ppo_legal_redundant_visited_result.md。
 2026-10-23 12:32 +0800：完成已归档 PPO 分支吞吐基准的只读完整性审计：3 案例、18 次计时及 1.432843933929417× 汇总均一致；临时副本篡改被检出，无重跑或模型/服务更改。证据：training/evaluation/audit_branch_benchmark.py、reports/experiments/ppo_branch_throughput_integrity.md、runs/ppo_branch_throughput_benchmark/{protocol.json,summary.json}。
+2026-10-23 12:34 +0800：冻结三个历史快照的评测专用碰撞缓存移除配对协议，保存原版；仅修改评测辅助模块，开始验证，正式 Core/模型不变。证据：runs/ppo_collision_cache_20261023/{protocol.json,fast_legal_before.py,benchmark.py}。
+2026-10-23 12:34 +0800：评测 BFS 碰撞缓存移除实验完成。三个历史快照合法落点完整输出一致，但新版速度仅为原版的 0.869×/0.914×/0.891×；未达 1.03× 门槛，已撤回代码。首次导入路径失败后设置 PYTHONPATH 重跑，不计入计时。证据：runs/ppo_collision_cache_20261023/{protocol.json,result.json}、reports/experiments/ppo_collision_cache_result.md。
