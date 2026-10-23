@@ -314,3 +314,5 @@
 2026-10-23 12:40 +0800：三快照方块编号预计算配对完成，候选矩阵/mask 完全一致，旧/新 5.948/5.872 秒（1.013×），低于预定 1.03× 门槛；撤回评测代码。首次导入路径失败后设置 PYTHONPATH 重跑，未计入计时。证据：runs/ppo_feature_piece_index_20261023/{protocol.json,result.json}、reports/experiments/ppo_feature_piece_index_result.md。
 2026-10-23 12:41 +0800：冻结三历史快照、五次交替各 1000 调用的评测特征行列位图单扫描协议；正式 Core/模型/网页不变。证据：runs/ppo_feature_board_scan_20261023/protocol.json。
 2026-10-23 12:42 +0800：评测特征行列位图单扫描完成，三快照矩阵/mask 逐项一致；旧/新合计 5.920/5.704 秒（1.038×），各快照未退化，12 项定向测试通过。保留评测辅助改动；正式 Core/模型/网页不变。证据：runs/ppo_feature_board_scan_20261023/{protocol.json,result.json}、reports/experiments/ppo_feature_board_scan_result.md。
+2026-10-23 12:44 +0800：冻结评测特征方块行列单扫描的端到端配对协议；两历史 seed、各 1000 步、三次交替，先核验冻结模型/源码哈希，再比较完整结果。正式 Core/模型/网页不变。证据：runs/ppo_feature_board_scan_20261023/full_eval_protocol.json。
+2026-10-23 12:45 +0800：特征扫描端到端配对完成，六对结果逐字段一致，旧/新 14.552/14.477 秒（1.005×）；收益不足，撤回该处评测辅助代码。定向测试 12 项通过；8080 根路径和 8081 `/api/health` 均 200。无训练、正式 Core/模型/网页改动。证据：runs/ppo_feature_board_scan_20261023/{full_eval_protocol.json,full_eval_result.json}、reports/experiments/ppo_feature_board_scan_full_eval.md。
