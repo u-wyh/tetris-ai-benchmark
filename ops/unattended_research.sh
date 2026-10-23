@@ -4,6 +4,16 @@ set -euo pipefail
 repo=/home/wyh/projects/tetris-ai-benchmark-branch-perf
 state_dir=/home/wyh/projects/tetris-ai-benchmark/runs/unattended_research
 interval_seconds=18000
+# Cron does not load ~/.bashrc. Codex needs the same local proxy used by the
+# interactive terminal on this server.
+export HTTP_PROXY=http://127.0.0.1:10809
+export HTTPS_PROXY="$HTTP_PROXY"
+export ALL_PROXY="$HTTP_PROXY"
+export http_proxy="$HTTP_PROXY"
+export https_proxy="$HTTP_PROXY"
+export all_proxy="$HTTP_PROXY"
+export NO_PROXY=localhost,127.0.0.1,::1
+export no_proxy="$NO_PROXY"
 mkdir -p "$state_dir"
 
 exec 9>"$state_dir/agent.lock"
@@ -14,7 +24,7 @@ fi
 now_epoch=$(date +%s)
 if [[ -f "$state_dir/last_attempt_epoch" ]]; then
   last_epoch=$(<"$state_dir/last_attempt_epoch")
-  if [[ "$last_epoch" =~ ^[0-9]+$ ]] && (( now_epoch - last_epoch < interval_seconds )); then
+  if [[ "${1:-}" != --force ]] && [[ "$last_epoch" =~ ^[0-9]+$ ]] && (( now_epoch - last_epoch < interval_seconds )); then
     exit 0
   fi
 fi
