@@ -13,6 +13,7 @@ from training.candidate_features import board_features
 from training.env.tetris_env import board_max_height
 from training.evaluation.failure_curriculum_eval import LongCandidateTetrisEnv, fast_action
 from training.evaluation.hybrid_queue import PPO, HASHES, digest
+from training.evaluation.source_provenance import snapshot as source_snapshot, verify as verify_source
 from training.train_ppo import ROOT, atomic_bytes, atomic_json, now
 
 RUN = ROOT / "runs/ppo_clear_cadence_counterfactual"
@@ -35,6 +36,8 @@ def verify_episode(seed, row):
             or row["ppo_sha256"] != HASHES["ppo"]
             or row["design_sha256"] != digest(DESIGN)):
         raise RuntimeError(f"Episode identity mismatch: {seed}")
+    if "execution_provenance" in row:
+        verify_source(ROOT, row["execution_provenance"])
     if len(row["states"]) > 4 or len({s["step"] for s in row["states"]}) != len(row["states"]):
         raise RuntimeError(f"Invalid state count: {seed}")
     for state in row["states"]:
@@ -52,6 +55,7 @@ def capture(seed):
     path = episode_path(seed)
     if path.exists():
         return verify_episode(seed, json.loads(path.read_text()))
+    provenance = source_snapshot(ROOT)
     torch.set_num_threads(1)
     model = MaskablePPO.load(str(PPO), device="cpu")
     env = LongCandidateTetrisEnv(max_pieces=CAP)
@@ -107,9 +111,11 @@ def capture(seed):
             if dead or capped:
                 break
         row = {"version": VERSION, "design_sha256": digest(DESIGN), "ppo_sha256": HASHES["ppo"],
+               "execution_provenance": provenance,
                "seed": seed, "cap": CAP, "pieces": env.pieces, "game_over": bool(dead),
                "capped": bool(capped), "score": env.core.score, "clears": clears,
                "counts": counts, "states": states, "completed_at": now()}
+        verify_source(ROOT, provenance)
         atomic_json(path, row)
         return verify_episode(seed, row)
     finally:

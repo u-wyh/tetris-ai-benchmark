@@ -13,9 +13,10 @@ from training.evaluation.fast_counterfactual import fast_branch
 from training.evaluation.failure_curriculum_eval import LongCandidateTetrisEnv, fast_action
 from training.evaluation.hybrid_queue import HASHES, PPO, digest
 from training.evaluation.ppo_clear_cadence_capture import RUN, SEEDS, DESIGN, state_path, episode_path, verify_episode
+from training.evaluation.source_provenance import snapshot as source_snapshot, verify as verify_source
 from training.tetris_core.legal_placements import get_legal_placements
 from training.traditional.v2 import simulate_public
-from training.train_ppo import atomic_json, now
+from training.train_ppo import ROOT, atomic_json, now
 
 VERSION = "clear_cadence_branches_v1"
 HORIZON = 3000
@@ -54,6 +55,7 @@ def candidates(snapshot):
 
 
 def run_state(seed, item):
+    provenance = source_snapshot(ROOT)
     path = state_path(seed, item["step"])
     if digest(path) != item["snapshot_sha256"]:
         raise RuntimeError("Snapshot checksum mismatch")
@@ -80,9 +82,13 @@ def run_state(seed, item):
             row = json.loads(out.read_text())
             if any(row.get(k) != v for k, v in identity.items()):
                 raise RuntimeError("Branch identity mismatch")
+            if "execution_provenance" in row:
+                verify_source(ROOT, row["execution_provenance"])
         else:
             row = {**identity, "outcome": fast_branch(snapshot, action, {"ppo": candidates.model}, HORIZON),
+                   "execution_provenance": provenance,
                    "completed_at": now()}
+            verify_source(ROOT, provenance)
             atomic_json(out, row)
         results[action] = row["outcome"]
     base, alt = (results[choice[k]] for k in ("original_action", "alternative_action"))
