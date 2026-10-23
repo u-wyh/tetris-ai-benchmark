@@ -342,3 +342,5 @@
 2026-10-23 14:12 +0800：开发 seed 1550001 采样完成，20,000 块触顶；失稳 0 状态、已恢复对照 2 状态。快照哈希与恢复调用核验通过；无反事实分支或训练步。证据：runs/ppo_clear_cadence_counterfactual/episodes/seed_1550001.json、reports/experiments/ppo_clear_cadence_capture_seed1550001.md。
 2026-10-23 14:14 +0800：按已冻结协议启动 seed 1550001 两个已采样状态的 PPO 原动作/固定合法替代动作配对分支，每支最多 3000 块，单线程且支持原子恢复。证据：runs/ppo_clear_cadence_counterfactual/、/tmp/ppo_clear_cadence_1550001_branches.log。
 2026-10-23 14:14 +0800：seed 1550001 两状态四分支完成，均达到 3000 块；共同窗口一处替代动作少 287,500 分及 8 次四消，另一处相同，寿命均未定。候选、分支及比较文件已保存；重复调用核验并直接返回相同结果。无训练步。证据：`reports/experiments/ppo_clear_cadence_seed1550001_branches.md`、`runs/ppo_clear_cadence_counterfactual/{candidates,branches,comparisons}/seed_1550001*`。
+2026-10-23 14:17 +0800：按冻结清行节奏协议启动开发 seed 1550002 的 20K 上限采样，随后仅对入选状态运行每支最多 3K 的双分支；单线程、原子记录。证据：runs/ppo_clear_cadence_counterfactual/。
+2026-10-23 14:18 +0800：seed 1550002 采样和两状态四分支完成；原子记录经重复调用校验，两个对照均双支触顶，得分和四消方向相反；8080/8081 均 HTTP 200。累计三个独立 episode，失稳状态仅见于 seed 1550000；无训练或确认种子使用。证据：runs/ppo_clear_cadence_counterfactual/{episodes,states,candidates,branches,comparisons}/seed_1550002*、reports/experiments/ppo_clear_cadence_seed1550002_results.md。
