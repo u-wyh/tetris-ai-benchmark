@@ -321,3 +321,5 @@
 2026-10-23 12:52 +0800：评测候选特征双、三、四行消除差分验证完成；完整矩阵/mask 一致，定向测试 13/13 通过，8080/8081 均 HTTP 200。无训练步或性能收益主张。证据：runs/ppo_feature_multiline_parity_20261023/tests.log、reports/experiments/ppo_feature_multiline_parity_result.md。
 2026-10-23 12:54 +0800：冻结评测专用合法落点搜索的边界状态差分协议：7 种方块、4 种固定棋盘、3 种 hold 状态，共 84 个公开状态；逐项比较正式 Core 的完整落点字典，随后运行现有定向测试。正式 Core/模型/网页不变。证据：`reports/experiments/ppo_fast_legal_edge_parity_design.md`。
 2026-10-23 12:54 +0800：评测合法落点边界差分完成：7 方块 × 4 固定棋盘 × 3 hold 状态共 84 例与正式 Core 的有序完整落点字典一致；现有定向测试合计 97/97 通过（2.47 秒），8080/8081 均 HTTP 200。只新增回归覆盖，无训练步或性能收益主张。证据：`runs/ppo_fast_legal_edge_parity_20261023/tests.log`、`reports/experiments/ppo_fast_legal_edge_parity_result.md`。
+2026-10-23 12:56 +0800：冻结评测候选特征边界与历史快照差分协议；计划比较 84 个固定边界状态和 3 个已归档开发快照的完整矩阵与掩码，正式 Core/模型/网页不变。证据：`reports/experiments/ppo_fast_feature_edge_parity_design.md`。
+2026-10-23 12:57 +0800：评测候选特征差分完成：84 个固定边界状态及 3 个已归档开发快照的 1840 动作完整矩阵/掩码均与正式参考实现一致；固定状态中空落点 0 例，定向测试 97/97 通过（2.68 秒），8080/8081 均 HTTP 200。无新增训练步、模型或正式 Core 改动。证据：`runs/ppo_fast_feature_edge_parity_20261023_{tests.log,snapshots.json}`、`reports/experiments/ppo_fast_feature_edge_parity_result.md`。

@@ -156,3 +156,7 @@ def test_fast_legal_matches_core_on_fixed_edge_boards(kind, board_case, hold_cas
         assert expected
         assert any(placement["hold"] for placement in expected) == (hold_case != 0)
     assert fast_legal_placements(public) == expected
+    reference, reference_mask = candidate_features(public, expected)
+    accelerated, accelerated_mask = fast_candidate_features(public, expected)
+    np.testing.assert_array_equal(accelerated_mask, reference_mask)
+    np.testing.assert_array_equal(accelerated, reference)
