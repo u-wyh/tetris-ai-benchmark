@@ -303,3 +303,5 @@
 - 2026-10-23 12:27 +0800：按用户再次澄清，把无人值守策略改为“额度可用时连续执行有界研发里程碑，只有额度耗尽后等待 18,000 秒再探测”；其他连接/任务错误等待 900 秒；无安全有价值工作时等待五小时避免空转。cron 每五分钟只充当 tmux 看门狗，worker 在服务器持续运行并通过文件锁防重叠；仍保留单轮最多 3 小时。现有工作树已清洁，下一步启动新循环验证。证据：`ops/unattended_research.sh`、`ops/unattended_research_prompt.md`、`crontab -l`。
 2026-10-23 12:27 +0800：冻结 3 个历史快照、5 次交替、每次 1000 次特征计算的配对协议；修改评测专用候选特征满行检查，仅检查落子触及行。正式 Core/模型未改。证据：runs/ppo_feature_rows_20261023/benchmark.py、training/evaluation/fast_candidate_features.py。
 2026-10-23 12:27 +0800：评测特征满行检查优化在三份历史快照上输出逐项一致，但 5 次交替配对合计旧版 6.732 秒、新版 6.761 秒（0.996×）；无可信收益，已撤回代码，仅保留负结果报告。证据：runs/ppo_feature_rows_20261023/{protocol.json,result.json}、reports/experiments/ppo_feature_touched_rows_result.md。
+2026-10-23 12:29 +0800：冻结三份历史快照的合法落点搜索配对微基准；仅试验评测专用 BFS 的冗余访问集检查，正式 Core/模型不变。证据：runs/ppo_legal_visited_20261023/protocol.json。
+2026-10-23 12:30 +0800：三份历史快照配对微基准合法落点输出逐项一致，旧/新 CPU 加速 1.035×、1.013×、1.007×，后两份低于预定 1.03× 门槛；撤回评测专用代码改动，仅保留负结果。首次导入路径失败后修正，不影响结果。证据：runs/ppo_legal_visited_20261023/{protocol.json,result.json}、reports/experiments/ppo_legal_redundant_visited_result.md。
