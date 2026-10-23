@@ -300,3 +300,4 @@
 2026-10-23 11:20 +0800：针对剖析瓶颈调整评测专用合法落点 BFS，在已访问状态上跳过重复碰撞查询；开始原版/改版配对验证。证据：training/evaluation/fast_legal.py、runs/ppo_eval_profile_20261023/profile.txt。
 2026-10-23 11:21 +0800：定向环境测试 13 项通过；Parity 因当前非交互 PATH 缺少 node 而无法启动，未发现算法断言失败；改用已安装 Node 的绝对路径重跑。
 2026-10-23 11:21 +0800：完成已访问状态碰撞检查优化。两历史 seed 的八条 1000 步评测动作与最终状态逐组完全一致；旧/新总耗时 9.670/9.145 秒（1.057×）。定向与 Parity 16 项及 29 子场景通过。证据：runs/ppo_eval_profile_20261023/{paired.json,tests.log}、reports/experiments/ppo_eval_visited_state_results.md。
+- 2026-10-23 12:27 +0800：按用户再次澄清，把无人值守策略改为“额度可用时连续执行有界研发里程碑，只有额度耗尽后等待 18,000 秒再探测”；其他连接/任务错误等待 900 秒；无安全有价值工作时等待五小时避免空转。cron 每五分钟只充当 tmux 看门狗，worker 在服务器持续运行并通过文件锁防重叠；仍保留单轮最多 3 小时。现有工作树已清洁，下一步启动新循环验证。证据：`ops/unattended_research.sh`、`ops/unattended_research_prompt.md`、`crontab -l`。
