@@ -340,3 +340,5 @@
 2026-10-23 14:09 +0800：首次提交推送组合命令被自动审批拒绝，原因是尚未核实 origin 归属；已只读核查 origin 为既有 `git@github.com:u-wyh/tetris-ai-benchmark.git`，当前分支跟踪同名远端。未发生远端写入。证据：git remote -v、git branch -vv。
 2026-10-23 14:11 +0800：开始按冻结协议采集开发 seed 1550001，冻结 PPO、单线程、20K 上限；整局和快照原子保存。证据：runs/ppo_clear_cadence_counterfactual/episodes/seed_1550001.json。
 2026-10-23 14:12 +0800：开发 seed 1550001 采样完成，20,000 块触顶；失稳 0 状态、已恢复对照 2 状态。快照哈希与恢复调用核验通过；无反事实分支或训练步。证据：runs/ppo_clear_cadence_counterfactual/episodes/seed_1550001.json、reports/experiments/ppo_clear_cadence_capture_seed1550001.md。
+2026-10-23 14:14 +0800：按已冻结协议启动 seed 1550001 两个已采样状态的 PPO 原动作/固定合法替代动作配对分支，每支最多 3000 块，单线程且支持原子恢复。证据：runs/ppo_clear_cadence_counterfactual/、/tmp/ppo_clear_cadence_1550001_branches.log。
+2026-10-23 14:14 +0800：seed 1550001 两状态四分支完成，均达到 3000 块；共同窗口一处替代动作少 287,500 分及 8 次四消，另一处相同，寿命均未定。候选、分支及比较文件已保存；重复调用核验并直接返回相同结果。无训练步。证据：`reports/experiments/ppo_clear_cadence_seed1550001_branches.md`、`runs/ppo_clear_cadence_counterfactual/{candidates,branches,comparisons}/seed_1550001*`。
