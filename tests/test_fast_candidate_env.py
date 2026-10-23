@@ -160,3 +160,22 @@ def test_fast_legal_matches_core_on_fixed_edge_boards(kind, board_case, hold_cas
     accelerated, accelerated_mask = fast_candidate_features(public, expected)
     np.testing.assert_array_equal(accelerated_mask, reference_mask)
     np.testing.assert_array_equal(accelerated, reference)
+
+
+@pytest.mark.parametrize("kind", "IJLOSTZ")
+@pytest.mark.parametrize("hold_case", range(3))
+def test_fast_legal_matches_core_when_spawn_is_blocked(kind, hold_case):
+    core = TetrisCore(42)
+    core.current = make_piece(kind)
+    core.hold = None if hold_case == 2 else "T"
+    core.hold_used = hold_case == 0
+    for y in (0, 1):
+        core.board[y] = ["Z"] * 10
+    public = core.get_public_observation()
+    expected = core.get_legal_placements()
+    assert expected == []
+    assert fast_legal_placements(public) == expected
+    reference, reference_mask = candidate_features(public, expected)
+    accelerated, accelerated_mask = fast_candidate_features(public, expected)
+    np.testing.assert_array_equal(accelerated_mask, reference_mask)
+    np.testing.assert_array_equal(accelerated, reference)

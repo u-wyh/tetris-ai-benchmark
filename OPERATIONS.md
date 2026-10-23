@@ -326,3 +326,4 @@
 2026-10-23 13:00 +0800：冻结两份既有真实终局 PPO 分支快照与归档输出的完整一致性协议，准备比较旧版与评测专用快速重放；无新训练、正式 Core/模型/网页修改。证据：`runs/ppo_fast_branch_terminal_20261023/protocol.json`。
 2026-10-23 13:01 +0800：终局差分首次启动在归档 horizon 身份断言处停止，未运行分支；原协议误把实际死亡长度 500 当作分支上限，归档上限实为 10000。保留 v1 并在重放前冻结修订 v2。证据：`runs/ppo_fast_branch_terminal_20261023/{protocol_v1.json,protocol.json}`。
 2026-10-23 13:01 +0800：修订协议下两份既有真实终局分支的旧版、快速版及归档完整输出逐字段相同，均在 500 块死亡；单次耗时分别为 1.691/1.083 秒、1.696/1.076 秒，仅作为诊断，不更新正式吞吐估计。证据：`runs/ppo_fast_branch_terminal_20261023/result.json`、`reports/experiments/ppo_fast_branch_terminal_parity.md`。
+2026-10-23 13:03 +0800：冻结并完成 21 个阻塞出生棋盘的评测专用空合法落点差分：7 方块 × 3 hold 状态的正式 Core 落点均为空，快速落点、候选矩阵与掩码逐项一致；包含既有边界状态的定向测试 105/105 通过，8080/8081 均 HTTP 200。只增加回归测试，无训练步、正式 Core/模型/网页改动。证据：`runs/ppo_empty_legal_20261023/{protocol.json,tests.log}`、`reports/experiments/ppo_empty_legal_parity.md`。
