@@ -1,7 +1,6 @@
 """Prospective clear-cadence sampling under the frozen PPO protocol."""
 
 import gzip
-import hashlib
 import json
 import pickle
 from collections import deque
@@ -29,6 +28,16 @@ def state_path(seed, step):
 
 def episode_path(seed):
     return RUN / "episodes" / f"seed_{seed}.json"
+
+
+def save_snapshot(path, snapshot):
+    raw = pickle.dumps(snapshot, protocol=pickle.HIGHEST_PROTOCOL)
+    if path.exists():
+        if gzip.decompress(path.read_bytes()) != raw:
+            raise RuntimeError(f"Orphan snapshot mismatch: {path}")
+    else:
+        atomic_bytes(path, gzip.compress(raw, compresslevel=3, mtime=0))
+    return digest(path)
 
 
 def verify_episode(seed, row):
@@ -89,18 +98,13 @@ def capture(seed):
                         counts[group]["spacing_excluded"] += 1
                     else:
                         snapshot = env.get_state()
-                        payload = gzip.compress(pickle.dumps(snapshot, protocol=pickle.HIGHEST_PROTOCOL), compresslevel=3)
                         snapshot_file = state_path(seed, step)
-                        if snapshot_file.exists():
-                            if digest(snapshot_file) != hashlib.sha256(payload).hexdigest():
-                                raise RuntimeError(f"Orphan snapshot mismatch: {snapshot_file}")
-                        else:
-                            atomic_bytes(snapshot_file, payload)
+                        snapshot_sha256 = save_snapshot(snapshot_file, snapshot)
                         states.append({"step": step, "stratum": group, "height": height,
                                        "holes": holes, "prior_fours": prior_fours,
                                        "last_fours": last_fours,
                                        "recent_height_peak": max(recent_heights, default=0),
-                                       "snapshot_sha256": digest(snapshot_file)})
+                                       "snapshot_sha256": snapshot_sha256})
             obs, mask = env.get_observation(), env.action_masks()
             action = fast_action(model, obs, mask)
             _, _, dead, capped, info = env.step(action)
