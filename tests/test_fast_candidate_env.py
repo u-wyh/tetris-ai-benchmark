@@ -107,3 +107,20 @@ def test_fast_candidate_features_match_scoring_and_topout_edges(fixture):
     for original, accelerated in zip(candidate_features(public, placements),
                                      fast_candidate_features(public, placements)):
         np.testing.assert_array_equal(original, accelerated)
+
+
+@pytest.mark.parametrize("line_count", [2, 3, 4])
+def test_fast_candidate_features_match_multiline_clears(line_count):
+    core = TetrisCore(42)
+    core.current = make_piece("I")
+    for y in range(20 - line_count, 20):
+        for x in range(10):
+            if x != 4:
+                core.board[y][x] = "Z"
+    public = core.get_public_observation()
+    placements = core.get_legal_placements()
+    original, original_mask = candidate_features(public, placements)
+    accelerated, accelerated_mask = fast_candidate_features(public, placements)
+    np.testing.assert_array_equal(original_mask, accelerated_mask)
+    np.testing.assert_array_equal(original, accelerated)
+    assert np.any(original[:, 5] == line_count)
