@@ -202,3 +202,29 @@ def test_fast_legal_matches_core_from_rotated_wall_states(kind, rotation, board_
         core.current["x"] = x
         public = core.get_public_observation()
         assert fast_legal_placements(public) == core.get_legal_placements()
+
+
+def test_fast_evaluation_matches_reachable_core_states():
+    verified = 0
+    actions = 0
+    for seed in range(6100, 6112):
+        core = TetrisCore(seed)
+        for step in range(40):
+            public = core.get_public_observation()
+            placements = core.get_legal_placements()
+            assert fast_legal_placements(public) == placements
+            reference, reference_mask = candidate_features(public, placements)
+            accelerated, accelerated_mask = fast_candidate_features(public, placements)
+            np.testing.assert_array_equal(accelerated_mask, reference_mask)
+            np.testing.assert_array_equal(accelerated, reference)
+            verified += 1
+            actions += len(placements)
+            if not placements:
+                break
+            action = placements[(seed + 17 * step) % len(placements)]["actionId"]
+            result = core.step(action)
+            if result["gameOver"]:
+                break
+    assert verified >= 100
+    assert actions >= 1000
+    print(f"reachable states={verified}, legal actions={actions}")

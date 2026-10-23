@@ -1,0 +1,3 @@
+# Reachable state parity protocol
+
+Frozen 2026-10-23 13:08 +0800. Generate legal trajectories in the formal `TetrisCore` for seeds 6100 through 6111, at most 40 placements per seed. Select the next action from the full legal list using `(seed + 17 * step) % count`; stop at a terminal state. Before every placement compare the complete ordered legal placement dictionaries from the formal Core and evaluation fast search, then compare all 1840 candidate feature rows and action masks from the formal and evaluation implementations. Record the count of verified states and actions. A mismatch fails the run. This uses no training steps and changes no model, formal Core, or web service.
