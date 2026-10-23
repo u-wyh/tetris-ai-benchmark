@@ -51,9 +51,12 @@ def candidate_features(public, placements):
         aggregate = sum(heights)
         height = max(heights)
         bumpiness = sum(abs(a - b) for a, b in zip(heights, heights[1:]))
-        wells = sum(max(0, min(20 if x == 0 else heights[x - 1],
-                                20 if x == 9 else heights[x + 1]) - h)
-                    for x, h in enumerate(heights))
+        wells = max(0, heights[1] - heights[0])
+        for x in range(1, 9):
+            depth = min(heights[x - 1], heights[x + 1]) - heights[x]
+            if depth > 0:
+                wells += depth
+        wells += max(0, heights[8] - heights[9])
         top_four = sum((col >> 16).bit_count() for col in placed_columns)
         values = (PIECES.index(held_kind if placement["hold"] else current_kind),
                   placement["hold"], placement["rotation"], placement["x"],
