@@ -9,7 +9,7 @@ from training.evaluation.failure_curriculum_eval import LongCandidateTetrisEnv
 from training.candidate_features import candidate_features
 from training.evaluation.fast_candidate_features import candidate_features as fast_candidate_features
 from training.tetris_core import TetrisCore
-from training.tetris_core.pieces import make_piece
+from training.tetris_core.pieces import CELLS, MATRICES, ROTATIONS, make_piece
 from training.evaluation.fast_legal import get_legal_placements as fast_legal_placements
 
 
@@ -179,3 +179,26 @@ def test_fast_legal_matches_core_when_spawn_is_blocked(kind, hold_case):
     accelerated, accelerated_mask = fast_candidate_features(public, expected)
     np.testing.assert_array_equal(accelerated_mask, reference_mask)
     np.testing.assert_array_equal(accelerated, reference)
+
+
+@pytest.mark.parametrize("kind", "IJLOSTZ")
+@pytest.mark.parametrize("rotation", range(4))
+@pytest.mark.parametrize("board_case", range(2))
+def test_fast_legal_matches_core_from_rotated_wall_states(kind, rotation, board_case):
+    core = TetrisCore(42)
+    if board_case:
+        for y in range(11, 20):
+            for x in range(10):
+                if (x + 2 * y) % 5 < 2:
+                    core.board[y][x] = "Z"
+    core.current = make_piece(kind)
+    core.current["rotation"] = ROTATIONS[rotation]
+    core.current["matrix"] = [list(row) for row in MATRICES[kind, rotation]]
+    core.current["y"] = 5
+    core.hold_used = True
+    xs = [x for x, _ in CELLS[kind, rotation]]
+    left, right = -min(xs), 9 - max(xs)
+    for x in (left, (left + right) // 2, right):
+        core.current["x"] = x
+        public = core.get_public_observation()
+        assert fast_legal_placements(public) == core.get_legal_placements()
