@@ -27,6 +27,7 @@ def _branch(observation, hold, board_rows):
         return []
     kind = piece["type"]
     shapes = [CELLS[kind, r] for r in range(4)]
+    sorted_shapes = [sorted(shapes[r], key=lambda cell: (cell[1], cell[0])) for r in range(4)]
     bounds = [BOUNDS[kind, r] for r in range(4)]
     row_shapes = [SHAPES[kind, r] for r in range(4)]
 
@@ -65,8 +66,7 @@ def _branch(observation, hold, board_rows):
             min_x, _, min_y, _ = bounds[rotation]
             final_x, final_y = x + min_x, y + min_y
             if 0 <= final_x < 10 and -3 <= final_y <= 19:
-                cells = sorted(((x + dx, y + dy) for dx, dy in shapes[rotation]),
-                               key=lambda cell: (cell[1], cell[0]))
+                cells = [(x + dx, y + dy) for dx, dy in sorted_shapes[rotation]]
                 key = tuple(cy * 10 + cx for cx, cy in cells)
                 action_id = encode_action(hold, rotation, final_x, final_y)
                 previous = by_cells.get(key)
