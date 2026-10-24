@@ -378,3 +378,4 @@
 2026-10-24 16:29 +0800 | 候选特征完整分支基准首次启动失败：当前 worktree 无 `.venv/bin/python`，未执行评测；改用主项目虚拟环境。证据：命令退出码 127。
 2026-10-24 16:30 +0800 | 启动有界成对基准：三个既有开发 episode 归档状态，旧/新特征值域实现在相同冻结 PPO 快速分支各运行 2 次、每支最多 500 块，单线程；协议先原子保存。结果待写入 `runs/ppo_fast_feature_limits_branch_20261024/`，不使用新种子或训练步。
 2026-10-24 16:31 +0800 | 完成候选特征完整分支复核：三个独立归档 episode 共六对，分支结果逐项一致；旧版 6.631 秒、新版 6.473 秒，吞吐 1.024×。语法与 diff 检查通过，8080/8081 均 HTTP 200；无训练步、新种子或正式规则变更。证据：`runs/ppo_fast_feature_limits_branch_20261024/summary.json`、`reports/experiments/ppo_fast_feature_limits_branch_20261024.md`。
+2026-10-24 16:32 +0800 | 完成候选特征完整分支基准只读完整性审计：3 个归档 episode、6 组成对计时的模型/源码/输入/结果哈希及汇总值一致；无新评测、训练或 seed。证据：`training/evaluation/audit_feature_limits_branch.py`、`reports/experiments/ppo_feature_limits_branch_integrity_audit_20261024.md`。
