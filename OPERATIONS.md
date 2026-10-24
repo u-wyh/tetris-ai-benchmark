@@ -396,3 +396,5 @@
 2026-10-24 16:55 +0800 | 清行节奏归档审计增加磁盘冻结 PPO 文件哈希及逐局模型身份核验；既有 8 局、22 状态、44 分支审计通过，救援 0、误伤 1。仅核查归档，无分支重算或训练。证据：`reports/experiments/ppo_clear_cadence_model_identity_audit_20261024.md`、`training/evaluation/audit_clear_cadence_records.py`。
 2026-10-24 16:57 +0800 | 启动当前评测代码三局归档分支剖析：每局原 PPO 动作最多 500 块、单线程；结果写入 runs/ppo_current_branch_profile_20261024/，不使用新种子或训练步。
 2026-10-24 16:59 +0800 | 完成当前评测代码三局归档 PPO 分支剖析：各 500 块得分/四消与历史前缀完全一致；合法落点占 profile 总时 62.0%–64.9%，候选特征占 25.3%–27.6%；8080/8081 均 HTTP 200。无新种子、训练步或规则改动。证据：reports/experiments/ppo_current_branch_profile_20261024.md、runs/ppo_current_branch_profile_20261024/。
+2026-10-24 17:00 +0800 | 启动评测专用合法落点方块占格预排序实验：使用三个既有开发 episode 归档状态，Core 差分与有界成对分支基准；无新种子或训练步。证据：runs/ppo_fast_legal_sorted_cells_20261024/。
+2026-10-24 17:01 +0800 | 完成评测专用方块占格预排序实验：175 项 Core 差分通过，3 个独立归档 episode 的 6 对分支输出一致，旧/新合计 6.0650/6.0114 秒（1.0089×）；恢复复核未重算，8080/8081 均 HTTP 200。无新种子或训练步。证据：reports/experiments/ppo_fast_legal_sorted_cells_20261024.md、runs/ppo_fast_legal_sorted_cells_20261024/。

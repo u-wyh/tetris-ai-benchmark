@@ -6,6 +6,7 @@ from training.tetris_core.actions import encode_action
 from training.tetris_core.pieces import CELLS, I_KICKS, JLSTZ_KICKS, ROTATIONS, make_piece
 
 SHAPES = {}
+SORTED_CELLS = {}
 BOUNDS = {}
 for _piece in "IJLOSTZ":
     for _rotation in range(4):
@@ -14,6 +15,7 @@ for _piece in "IJLOSTZ":
         for _x, _y in _cells:
             _rows[_y] = _rows.get(_y, 0) | (1 << _x)
         SHAPES[_piece, _rotation] = tuple(sorted(_rows.items()))
+        SORTED_CELLS[_piece, _rotation] = tuple(sorted(_cells, key=lambda cell: (cell[1], cell[0])))
         BOUNDS[_piece, _rotation] = (min(x for x, _ in _cells),
                                      max(x for x, _ in _cells),
                                      min(y for _, y in _cells),
@@ -26,8 +28,7 @@ def _branch(observation, hold, board_rows):
     if piece is None:
         return []
     kind = piece["type"]
-    shapes = [CELLS[kind, r] for r in range(4)]
-    sorted_shapes = [sorted(shapes[r], key=lambda cell: (cell[1], cell[0])) for r in range(4)]
+    sorted_shapes = [SORTED_CELLS[kind, r] for r in range(4)]
     bounds = [BOUNDS[kind, r] for r in range(4)]
     row_shapes = [SHAPES[kind, r] for r in range(4)]
 
