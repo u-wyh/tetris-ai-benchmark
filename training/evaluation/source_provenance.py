@@ -7,6 +7,8 @@ from pathlib import Path
 
 SOURCE_PATHS = (
     "training/candidate_features.py",
+    "training/env/candidate_env.py",
+    "training/env/fast_candidate_env.py",
     "training/env/tetris_env.py",
     "training/evaluation/failure_curriculum_eval.py",
     "training/evaluation/fast_candidate_features.py",

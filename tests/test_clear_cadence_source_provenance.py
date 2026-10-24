@@ -6,6 +6,8 @@ from training.evaluation import source_provenance
 
 
 @pytest.mark.parametrize("path", [
+    "training/env/candidate_env.py",
+    "training/env/fast_candidate_env.py",
     "training/evaluation/fast_candidate_features.py",
     "training/evaluation/fast_legal.py",
 ])
