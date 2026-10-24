@@ -390,3 +390,5 @@
 2026-10-24 16:46 +0800 | 启动评测专用向下碰撞检查复用实验：三个既有独立 episode，各 500 块，旧/新各两次交替；先执行 Core 差分测试，协议和结果写入 runs/ppo_fast_legal_down_collision_20261024/，不使用新种子或训练步。
 2026-10-24 16:47 +0800 | 完成评测专用向下碰撞检查复用实验：175 项 Core 差分测试通过，三个独立 episode 六对完整 PPO 分支结果相同，旧/新累计 6.2693/6.0175 秒，吞吐 1.0418×；8080/8081 均 HTTP 200。无新种子、训练步或正式规则变动。证据：reports/experiments/ppo_fast_legal_down_collision_20261024.md、runs/ppo_fast_legal_down_collision_20261024/。
 2026-10-24 16:49 +0800 | 新增向下碰撞检查基准归档完整性审计，并修正旧落点排序审计对已更新当前源码的过期断言；两项归档审计通过，速度比分别为 1.041848× 与 1.041547×，8080/8081 均 HTTP 200。未重跑 PPO、训练或使用种子。证据：`reports/experiments/ppo_fast_legal_down_collision_integrity_audit_20261024.md`、`training/evaluation/audit_fast_legal_down_collision.py`。
+2026-10-24 16:51 +0800 | 启动评测专用清行检查实验：仅检查本次落块触及的行是否满行，先做 Core 差分和旧/新归档状态计时；未使用新种子或训练步。证据待写入 `reports/experiments/ppo_fast_feature_touched_rows_20261024.md`。
+2026-10-24 16:52 +0800 | 完成评测清行检查有界实验：175 项差分通过，3 个独立 episode 的 6 对完整分支输出一致；旧/新累计 6.010125/6.009811 秒（1.00005×），无可见收益，已撤回正式评测代码改动。8080/8081 均 HTTP 200；无新种子、训练步或规则改动。证据：`reports/experiments/ppo_fast_feature_touched_rows_20261024.md`、`runs/ppo_fast_feature_touched_rows_branch_20261024/`。
