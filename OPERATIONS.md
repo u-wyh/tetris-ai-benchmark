@@ -367,3 +367,4 @@
 2026-10-24 16:04 +0800 | 评测合法落点预位移掩码实验：175 项差分测试与 22 个归档快照完整落点比较通过；6 轮配对函数计时中位仅 1.011×，撤回实现并记录负结果。首次恢复快照因环境上限不匹配被拒绝，修正基准环境后完成；8080/8081 均 HTTP 200。无新 seed、训练或正式 Core/模型改动。证据：`reports/experiments/ppo_fast_legal_shifted_masks_20261024.md`。
 2026-10-24 16:06 +0800 | 对既有三个独立 episode 的 PPO 反事实分支 cProfile 原件做只读热点细分；`_branch` 自身约占合法落点累计耗时 55%，碰撞和旋转各约 10%。未重跑评测、训练或修改代码；证据：`reports/experiments/ppo_fast_branch_hotspot_audit_20261024.md`、`runs/ppo_branch_profile_replication_20261024/*.prof`。
 2026-10-24 16:09 +0800 | 评估离线快速合法落点搜索的重复 visited 查询消除：175 项差分测试、22 个归档快照完整落点一致；8 轮交替计时中位仅 1.001×，撤回代码改动。无新 seed、训练或正式规则变动。证据：`reports/experiments/ppo_fast_legal_duplicate_lookup_20261024.md`。
+2026-10-24 16:11 +0800 | 在临时副本评估离线合法落点碰撞缓存改用字典：22 个归档状态完整落点一致，8 轮交替计时原实现/字典版中位为 0.927×；因减速未采纳。8080/8081 均 HTTP 200；无新 seed、训练或正式代码变更。证据：`reports/experiments/ppo_fast_legal_collision_cache_20261024.md`、`/tmp/bench_collision_dict.py`。
