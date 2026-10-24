@@ -401,3 +401,4 @@
 2026-10-24 17:02 +0800 | 启动评测专用合法落点碰撞缓存手工字典实验：三局既有开发 episode 快照，每局 500 块，旧/新各两次交替；先做 Core 合法落点差分，再做完整 PPO 分支成对计时。协议及结果存 runs/ppo_fast_legal_collision_cache_20261024/；无新种子、训练步或正式规则变更。
 2026-10-24 17:03 +0800 | 完成评测碰撞缓存有界实验：3 个开发 seed 的 Core 合法落点差分通过；3 个独立归档 episode 六对完整冻结 PPO 分支相同。手工字典缓存 6.2159 秒，原 lru_cache 6.0203 秒，吞吐比 0.9685×，不采纳候选。8080/8081 均 HTTP 200；无新种子或训练步。证据：reports/experiments/ppo_fast_legal_collision_cache_20261024.md、runs/ppo_fast_legal_collision_cache_20261024/。
 2026-10-24 17:04 +0800 | 复核发现本方向在 16:11 已有函数级负结果，启动前漏检旧报告；本次只新增完整分支验证，不再继续该方向。旧报告原文保留并追加补充节。证据：reports/experiments/ppo_fast_legal_collision_cache_20261024.md。
+2026-10-24 17:06 +0800 | 汇总冻结 PPO 分支效率研究的归档正负结果和后续排重门槛；仅整理现有证据，未重跑评测、训练或使用新 seed。核查研究分支无独立冲突作业，8080/8081 监听。证据：reports/experiments/ppo_branch_efficiency_decision_20261024.md。
