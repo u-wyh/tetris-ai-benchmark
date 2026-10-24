@@ -368,3 +368,5 @@
 2026-10-24 16:06 +0800 | 对既有三个独立 episode 的 PPO 反事实分支 cProfile 原件做只读热点细分；`_branch` 自身约占合法落点累计耗时 55%，碰撞和旋转各约 10%。未重跑评测、训练或修改代码；证据：`reports/experiments/ppo_fast_branch_hotspot_audit_20261024.md`、`runs/ppo_branch_profile_replication_20261024/*.prof`。
 2026-10-24 16:09 +0800 | 评估离线快速合法落点搜索的重复 visited 查询消除：175 项差分测试、22 个归档快照完整落点一致；8 轮交替计时中位仅 1.001×，撤回代码改动。无新 seed、训练或正式规则变动。证据：`reports/experiments/ppo_fast_legal_duplicate_lookup_20261024.md`。
 2026-10-24 16:11 +0800 | 在临时副本评估离线合法落点碰撞缓存改用字典：22 个归档状态完整落点一致，8 轮交替计时原实现/字典版中位为 0.927×；因减速未采纳。8080/8081 均 HTTP 200；无新 seed、训练或正式代码变更。证据：`reports/experiments/ppo_fast_legal_collision_cache_20261024.md`、`/tmp/bench_collision_dict.py`。
+2026-10-24 16:13 +0800 | 开始有界评测实验：在临时副本试验快速合法落点搜索的整数 visited 状态，使用既有 22 个清行节奏快照做完整落点差分和交替计时；不运行 PPO 新分支或训练。证据计划：runs/ppo_fast_legal_integer_visited_20261024/。
+2026-10-24 16:13 +0800 | 完成整数 visited 评测实验：22 个归档状态完整落点一致，8 轮交替计时中位原版 0.7177 秒、整数版 0.8149 秒，因减速未采纳；8080/8081 均 HTTP 200。无新种子、训练或正式实现改动。证据：`reports/experiments/ppo_fast_legal_integer_visited_20261024.md`、`runs/ppo_fast_legal_integer_visited_20261024/`。
