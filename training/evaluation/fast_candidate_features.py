@@ -5,6 +5,8 @@ import numpy as np
 from training.candidate_features import FEATURE_NAMES, FEATURE_SCALE, PIECES
 from training.tetris_core import ACTION_COUNT
 
+FEATURE_LIMITS = tuple(int(scale) for scale in FEATURE_SCALE)
+
 
 def candidate_features(public, placements):
     board = public["board"]
@@ -63,8 +65,8 @@ def candidate_features(public, placements):
                   placement["y"] + 3, cleared, holes, aggregate, height, bumpiness,
                   wells, max(0, holes - before_holes), max(0, before_holes - holes),
                   before_height, top_four, int(not visible))
-        if any(value < 0 or value > scale or value > 255
-               for value, scale in zip(values, FEATURE_SCALE)):
+        if any(value < 0 or value > limit
+               for value, limit in zip(values, FEATURE_LIMITS)):
             raise OverflowError(f"Candidate feature exceeds uint8 range: {values}")
         matrix[action] = values
     return matrix, mask
