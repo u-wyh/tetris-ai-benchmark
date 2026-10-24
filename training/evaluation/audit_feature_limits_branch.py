@@ -3,11 +3,40 @@
 import hashlib
 import json
 import math
+import re
 import statistics
 import subprocess
 
 from training.evaluation.hybrid_queue import PPO, digest
 from training.train_ppo import ROOT
+
+
+def check_case(row, seed, step, *, data=None, horizon=500):
+    """Reject a stale or damaged case before a resumed benchmark uses it."""
+    data = data or ROOT / "runs/ppo_clear_cadence_counterfactual"
+    name = f"seed_{seed}_step_{step}.json"
+    candidate_path = data / "candidates" / name
+    candidate = json.loads(candidate_path.read_text())
+    snapshot = data / "states" / name.replace(".json", ".pkl.gz")
+    expected_order = [(0, "old"), (0, "new"), (1, "new"), (1, "old")]
+    timings = row.get("timings", [])
+    valid = (
+        (row.get("seed"), row.get("step")) == (seed, step)
+        and row.get("candidate_sha256") == digest(candidate_path)
+        and row.get("snapshot_sha256") == candidate["snapshot_sha256"] == digest(snapshot)
+        and row.get("action") == candidate["original_action"]
+        and isinstance(row.get("outcome_sha256"), str)
+        and re.fullmatch(r"[0-9a-f]{64}", row["outcome_sha256"]) is not None
+        and isinstance(row.get("pieces"), int) and 0 <= row["pieces"] <= horizon
+        and isinstance(row.get("game_over"), bool)
+        and len(timings) == len(expected_order)
+        and all((item.get("repeat"), item.get("variant")) == expected
+                and isinstance(item.get("seconds"), (int, float))
+                and math.isfinite(item["seconds"]) and item["seconds"] > 0
+                for item, expected in zip(timings, expected_order))
+    )
+    if not valid:
+        raise ValueError(f"Invalid archived benchmark case: {seed}:{step}")
 
 
 def audit():
@@ -37,7 +66,7 @@ def audit():
         path = run / name
         assert digest(path) == summary["result_sha256"][name]
         row = json.loads(path.read_text())
-        assert (row["seed"], row["step"]) == (seed, step)
+        check_case(row, seed, step, data=data, horizon=protocol["horizon"])
         candidate_path = data / "candidates" / name
         candidate = json.loads(candidate_path.read_text())
         assert digest(candidate_path) == row["candidate_sha256"]

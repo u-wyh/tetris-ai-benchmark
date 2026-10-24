@@ -14,6 +14,7 @@ from sb3_contrib import MaskablePPO
 import training.evaluation.failure_curriculum_eval as evaluation
 from training.evaluation.fast_candidate_features import candidate_features as current_features
 from training.evaluation.fast_counterfactual import fast_branch
+from training.evaluation.audit_feature_limits_branch import check_case
 from training.evaluation.hybrid_queue import PPO, digest
 from training.train_ppo import ROOT, atomic_json, now
 
@@ -54,8 +55,7 @@ def main():
             path = RUN / f"seed_{seed}_step_{step}.json"
             if path.exists():
                 row = json.loads(path.read_text())
-                if row["seed"] != seed or row["step"] != step or len(row["timings"]) != 2 * REPEATS:
-                    raise RuntimeError("Existing result identity mismatch")
+                check_case(row, seed, step, data=DATA, horizon=HORIZON)
                 rows.append(row)
                 continue
             snapshot_path = DATA / "states" / f"seed_{seed}_step_{step}.pkl.gz"
