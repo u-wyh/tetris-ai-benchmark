@@ -15,15 +15,18 @@ SOURCE_PATHS = (
     "training/evaluation/fast_counterfactual.py",
     "training/evaluation/fast_legal.py",
     "training/evaluation/hybrid_queue.py",
+    "training/evaluation/ppo_lookahead_v3_audit.py",
     "training/evaluation/ppo_clear_cadence_capture.py",
     "training/evaluation/ppo_clear_cadence_branches.py",
     "training/evaluation/source_provenance.py",
     "training/tetris_core/core.py",
+    "training/tetris_core/__init__.py",
     "training/tetris_core/actions.py",
     "training/tetris_core/legal_placements.py",
     "training/tetris_core/pieces.py",
     "training/tetris_core/rng.py",
     "training/traditional/v2.py",
+    "training/hybrid_policy.py",
     "training/train_ppo.py",
 )
 PACKAGES = ("torch", "stable-baselines3", "sb3-contrib", "numpy", "gymnasium")

@@ -10,6 +10,9 @@ from training.evaluation import source_provenance
     "training/env/fast_candidate_env.py",
     "training/evaluation/fast_candidate_features.py",
     "training/evaluation/fast_legal.py",
+    "training/evaluation/ppo_lookahead_v3_audit.py",
+    "training/tetris_core/__init__.py",
+    "training/hybrid_policy.py",
 ])
 def test_fast_branch_source_change_is_detected(tmp_path, monkeypatch, path):
     for name in source_provenance.SOURCE_PATHS:
