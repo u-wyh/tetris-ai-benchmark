@@ -375,3 +375,6 @@
 2026-10-24 16:21 +0800 | 补全新清行节奏记录的执行来源清单，纳入实际继承并调用的 `candidate_env.py` 和 `fast_candidate_env.py`；定向篡改拒绝测试 4/4 通过，历史记录只读审计为 8 局、22 状态、44 分支、救援 0、误伤 1，8080/8081 均 HTTP 200。无新评测、训练或确认种子使用。证据：`reports/experiments/ppo_clear_cadence_env_source_provenance_20261024.md`、`tests/test_clear_cadence_source_provenance.py`。
 2026-10-24 16:24 +0800 | 只读审计三个既有独立 episode 的候选特征 profile：每 1000 块累计 1.246–1.275 秒，占 profile 总时间 25.2%–27.1%；未重跑评测、训练或改正式代码。证据：reports/experiments/ppo_fast_feature_profile_audit_20261024.md、runs/ppo_branch_profile_replication_20261024/*.prof。
 2026-10-24 16:27 +0800 | 优化评测专用候选特征值域校验：22 个归档状态完整矩阵/掩码一致，8 轮交替计时中位 0.2306→0.2036 秒（1.132×），定向测试 177 项通过；无训练步或新种子。证据：`reports/experiments/ppo_fast_feature_limits_20261024.md`、`runs/ppo_fast_feature_limits_20261024/result.json`。
+2026-10-24 16:29 +0800 | 候选特征完整分支基准首次启动失败：当前 worktree 无 `.venv/bin/python`，未执行评测；改用主项目虚拟环境。证据：命令退出码 127。
+2026-10-24 16:30 +0800 | 启动有界成对基准：三个既有开发 episode 归档状态，旧/新特征值域实现在相同冻结 PPO 快速分支各运行 2 次、每支最多 500 块，单线程；协议先原子保存。结果待写入 `runs/ppo_fast_feature_limits_branch_20261024/`，不使用新种子或训练步。
+2026-10-24 16:31 +0800 | 完成候选特征完整分支复核：三个独立归档 episode 共六对，分支结果逐项一致；旧版 6.631 秒、新版 6.473 秒，吞吐 1.024×。语法与 diff 检查通过，8080/8081 均 HTTP 200；无训练步、新种子或正式规则变更。证据：`runs/ppo_fast_feature_limits_branch_20261024/summary.json`、`reports/experiments/ppo_fast_feature_limits_branch_20261024.md`。
