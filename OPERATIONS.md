@@ -386,3 +386,4 @@
 2026-10-24 16:40 +0800 | 完成该实验：六对冻结 PPO 完整分支输出相同，旧版 6.455 秒、候选 6.459 秒，速度比 0.9993×；无可见收益，已撤回评测代码改动。候选源码、原子记录和可恢复脚本保留；8080/8081 均 HTTP 200。证据：`reports/experiments/ppo_fast_legal_visited_20261024.md`、`runs/ppo_fast_legal_visited_20261024/`。无新种子或训练步。
 2026-10-24 16:42 +0800 | 启动评测专用合法落点终局占格排序消除实验：按方块预排序相对坐标，在三个既有开发 episode 的归档状态上执行 Core 差分及有界成对分支基准；无新种子或训练。证据：runs/ppo_fast_legal_landing_sort_20261024/。
 2026-10-24 16:42 +0800 | 完成评测专用终局占格预排序实验：三个独立归档 episode 六对 500 块分支输出一致，旧/新耗时 6.6204/6.3563 秒（1.0415×）；采用改动后 175 项 Core 差分通过，8080/8081 均 HTTP 200。无新种子、训练或正式规则变动。证据：reports/experiments/ppo_fast_legal_landing_sort_20261024.md、runs/ppo_fast_legal_landing_sort_20261024/。
+2026-10-24 16:45 +0800 | 对已归档落点预排序分支基准做独立只读完整性审计：3 局、6 组成对计时的模型/源码/输入身份及汇总算术一致，吞吐比 1.0415×；8080/8081 均 HTTP 200。未重跑 PPO、训练或使用新种子。证据：`training/evaluation/audit_fast_legal_landing_sort.py`、`reports/experiments/ppo_fast_legal_landing_sort_integrity_audit_20261024.md`。
