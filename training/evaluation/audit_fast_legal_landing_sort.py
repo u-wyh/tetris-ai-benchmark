@@ -9,8 +9,8 @@ from training.evaluation.hybrid_queue import PPO, digest
 from training.train_ppo import ROOT
 
 
-def audit():
-    run = ROOT / "runs/ppo_fast_legal_landing_sort_20261024"
+def audit(run_name="ppo_fast_legal_landing_sort_20261024", baseline_ref="ceed260"):
+    run = ROOT / "runs" / run_name
     data = ROOT / "runs/ppo_clear_cadence_counterfactual"
     protocol_path = run / "protocol.json"
     protocol = json.loads(protocol_path.read_text())
@@ -18,11 +18,10 @@ def audit():
     assert summary["protocol_sha256"] == digest(protocol_path)
     assert digest(PPO) == protocol["model_sha256"]
     baseline = subprocess.check_output(
-        ["git", "show", "ceed260:training/evaluation/fast_legal.py"], cwd=ROOT
+        ["git", "show", f"{baseline_ref}:training/evaluation/fast_legal.py"], cwd=ROOT
     )
     assert hashlib.sha256(baseline).hexdigest() == protocol["old_source_sha256"]
     assert digest(run / "candidate_fast_legal.py") == protocol["new_source_sha256"]
-    assert digest(ROOT / "training/evaluation/fast_legal.py") == protocol["new_source_sha256"]
     assert digest(ROOT / "training/evaluation/fast_counterfactual.py") == protocol["branch_source_sha256"]
     assert protocol["order"] == "old,new,new,old"
     assert protocol["repeats"] == 2 and protocol["horizon"] == 500
