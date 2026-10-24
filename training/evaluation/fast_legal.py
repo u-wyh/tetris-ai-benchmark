@@ -62,7 +62,8 @@ def _branch(observation, hold, board_rows):
     head = 0
     while head < len(nodes):
         x, y, rotation, _, _ = nodes[head]
-        if collides(rotation, x, y + 1):
+        down_collides = collides(rotation, x, y + 1)
+        if down_collides:
             min_x, _, min_y, _ = bounds[rotation]
             final_x, final_y = x + min_x, y + min_y
             if 0 <= final_x < 10 and -3 <= final_y <= 19:
@@ -112,7 +113,7 @@ def _branch(observation, hold, board_rows):
                     visited.add(state)
                     nodes.append((nx, ny, nr, head, "RotateCW"))
         nx, ny, nr = x, y + 1, rotation
-        if (nx, ny, nr) not in visited and not collides(nr, nx, ny):
+        if not down_collides and (nx, ny, nr) not in visited:
             top = ny + bounds[nr][2]
             if -6 <= top <= 19:
                 state = nx, ny, nr
