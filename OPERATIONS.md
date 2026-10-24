@@ -360,3 +360,5 @@
 2026-10-24 00:50 +0800 | 独立清行节奏记录审计增加新记录的执行来源清单校验；既有 8 局、22 状态、44 分支审计通过，内存篡改 Core 哈希被拒绝，8080/8081 均 HTTP 200。未重跑评测或训练，旧记录不补造来源。证据：`training/evaluation/audit_clear_cadence_records.py`、`reports/experiments/ppo_clear_cadence_audit_provenance.md`。
 2026-10-24 00:52 +0800 | 清行节奏历史记录只读审计增加快照恢复后的正式 Core 合法落点、环境掩码与候选集合三方核验；22/22 状态通过，44 分支汇总仍为 0 救援、1 误伤；8080/8081 均 HTTP 200。未重跑 PPO 或训练。证据：`reports/experiments/ppo_clear_cadence_candidate_legality_audit.md`、`training/evaluation/audit_clear_cadence_records.py`。
 2026-10-24 05:55 +0800 | 修复清行节奏采样快照在中断后因 gzip 时间戳导致的误冲突：新快照使用固定时间戳，已有快照按解压后字节校验并保留原哈希。定向测试 2 项、历史记录只读审计（8 局、22 状态、44 分支）通过，8080/8081 均 HTTP 200；未运行新评测或训练。证据：`tests/test_ppo_clear_cadence_snapshot.py`、`reports/experiments/ppo_clear_cadence_snapshot_resume_fix.md`。
+2026-10-24 15:59 +0800 | 开始对既有清行节奏快照的冻结 PPO 快速反事实续控做单线程 1000 块剖析；历史分支只读，证据：runs/ppo_branch_profile_20261024/。
+2026-10-24 16:00 +0800 | 完成既有快照的单线程 1000 块快速反事实剖析：逐块得分与四消匹配归档前缀；合法落点 2.95 秒、候选特征 1.26 秒（cProfile 总计 4.66 秒）。8080/8081 均 HTTP 200；无新种子、训练或正式代码改动。证据：runs/ppo_branch_profile_20261024/、reports/experiments/ppo_fast_branch_profile_20261024.md。
