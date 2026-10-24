@@ -21,6 +21,27 @@ def check(actual, expected, label):
         raise ValueError(f"{label}: {actual!r} != {expected!r}")
 
 
+def check_case(row, seed, step):
+    check((row["seed"], row["step"]), (seed, step), "case identity")
+    stem = f"seed_{seed}_step_{step}"
+    snapshot = DATA / "states" / f"{stem}.pkl.gz"
+    candidate = DATA / "candidates" / f"{stem}.json"
+    check(row["snapshot_sha256"], digest(snapshot), "snapshot")
+    check(row["candidate_sha256"], digest(candidate), "candidate")
+    candidate_data = json.loads(candidate.read_text())
+    check(candidate_data["snapshot_sha256"], digest(snapshot), "candidate snapshot")
+    check(row["action"], candidate_data["original_action"], "original action")
+    check([(x["variant"], x["repeat"]) for x in row["timings"]],
+          [("old", 0), ("new", 0), ("new", 1), ("old", 1)], "timing order")
+    outcome = row["outcome_sha256"]
+    if not isinstance(outcome, str) or len(outcome) != 64 or any(c not in "0123456789abcdef" for c in outcome):
+        raise ValueError("invalid outcome digest")
+    for entry in row["timings"]:
+        seconds = entry["seconds"]
+        if not isinstance(seconds, (int, float)) or not math.isfinite(seconds) or seconds <= 0:
+            raise ValueError("invalid timing")
+
+
 def main():
     protocol = json.loads((RUN / "protocol.json").read_text())
     summary = json.loads((RUN / "summary.json").read_text())
@@ -38,23 +59,9 @@ def main():
     old_times, new_times = [], []
     for seed, step in protocol["cases"]:
         row = json.loads((RUN / f"seed_{seed}_step_{step}.json").read_text())
-        check((row["seed"], row["step"]), (seed, step), "case identity")
-        stem = f"seed_{seed}_step_{step}"
-        snapshot = DATA / "states" / f"{stem}.pkl.gz"
-        candidate = DATA / "candidates" / f"{stem}.json"
-        check(row["snapshot_sha256"], digest(snapshot), "snapshot")
-        check(row["candidate_sha256"], digest(candidate), "candidate")
-        candidate_data = json.loads(candidate.read_text())
-        check(candidate_data["snapshot_sha256"], digest(snapshot), "candidate snapshot")
-        check(row["action"], candidate_data["original_action"], "original action")
-        check([(x["variant"], x["repeat"]) for x in row["timings"]],
-              [("old", 0), ("new", 0), ("new", 1), ("old", 1)], "timing order")
-        if len(row["outcome_sha256"]) != 64:
-            raise ValueError("invalid outcome digest")
+        check_case(row, seed, step)
         for entry in row["timings"]:
             seconds = entry["seconds"]
-            if not isinstance(seconds, (int, float)) or not math.isfinite(seconds) or seconds <= 0:
-                raise ValueError("invalid timing")
             (old_times if entry["variant"] == "old" else new_times).append(seconds)
     check(summary["paired_runs"], len(old_times), "pairs")
     for key, actual in (("old_seconds", sum(old_times)),

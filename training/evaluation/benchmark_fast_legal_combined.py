@@ -12,6 +12,7 @@ from sb3_contrib import MaskablePPO
 
 import training.evaluation.failure_curriculum_eval as evaluation
 from training.evaluation.fast_counterfactual import fast_branch
+from training.evaluation.audit_fast_legal_combined import check_case
 from training.evaluation.fast_legal import get_legal_placements as current_placements
 from training.evaluation.hybrid_queue import PPO, digest
 from training.train_ppo import ROOT, atomic_json, now
@@ -53,7 +54,9 @@ def main():
         for seed, step in CASES:
             path = RUN / f"seed_{seed}_step_{step}.json"
             if path.exists():
-                rows.append(json.loads(path.read_text()))
+                row = json.loads(path.read_text())
+                check_case(row, seed, step)
+                rows.append(row)
                 continue
             snapshot_path = DATA / "states" / f"seed_{seed}_step_{step}.pkl.gz"
             candidate_path = DATA / "candidates" / f"seed_{seed}_step_{step}.json"
