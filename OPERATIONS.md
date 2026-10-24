@@ -370,3 +370,4 @@
 2026-10-24 16:11 +0800 | 在临时副本评估离线合法落点碰撞缓存改用字典：22 个归档状态完整落点一致，8 轮交替计时原实现/字典版中位为 0.927×；因减速未采纳。8080/8081 均 HTTP 200；无新 seed、训练或正式代码变更。证据：`reports/experiments/ppo_fast_legal_collision_cache_20261024.md`、`/tmp/bench_collision_dict.py`。
 2026-10-24 16:13 +0800 | 开始有界评测实验：在临时副本试验快速合法落点搜索的整数 visited 状态，使用既有 22 个清行节奏快照做完整落点差分和交替计时；不运行 PPO 新分支或训练。证据计划：runs/ppo_fast_legal_integer_visited_20261024/。
 2026-10-24 16:13 +0800 | 完成整数 visited 评测实验：22 个归档状态完整落点一致，8 轮交替计时中位原版 0.7177 秒、整数版 0.8149 秒，因减速未采纳；8080/8081 均 HTTP 200。无新种子、训练或正式实现改动。证据：`reports/experiments/ppo_fast_legal_integer_visited_20261024.md`、`runs/ppo_fast_legal_integer_visited_20261024/`。
+2026-10-24 16:16 +0800 | 在临时源码副本消融快速合法落点的碰撞缓存：22 个归档状态的完整落点一致；8 轮交替计时原版/无缓存版中位 0.7294/0.8019 秒，移除缓存减速，未采纳。8080/8081 均 HTTP 200；无新种子、训练或正式实现改动。证据：`reports/experiments/ppo_fast_legal_no_collision_cache_20261024.md`、`runs/ppo_fast_legal_no_collision_cache_20261024/`。
