@@ -404,3 +404,4 @@
 2026-10-24 17:06 +0800 | 汇总冻结 PPO 分支效率研究的归档正负结果和后续排重门槛；仅整理现有证据，未重跑评测、训练或使用新 seed。核查研究分支无独立冲突作业，8080/8081 监听。证据：reports/experiments/ppo_branch_efficiency_decision_20261024.md。
 2026-10-24 17:07:43 +0800 | 启动评测合法落点三项已采纳改动的合并收益复核；先冻结协议和源码哈希。首次调用因本 worktree 无本地 `.venv` 在执行前失败，未产生分支结果；改用已存在的 Python 环境恢复。证据：`reports/experiments/ppo_fast_legal_combined_design_20261024.md`、`training/evaluation/benchmark_fast_legal_combined.py`。
 2026-10-24 17:08:15 +0800 | 完成三项评测落点改动的合并收益复核：3 个独立归档 episode 的 6 对完整 PPO 分支逐字段一致，旧/当前累计 6.4533/5.9793 秒，吞吐 1.0793×；8080/8081 均 HTTP 200。无新种子、训练步或正式规则改动。证据：`runs/ppo_fast_legal_combined_20261024/`、`reports/experiments/ppo_fast_legal_combined_20261024.md`。
+2026-10-24 17:09:50 +0800 | 完成三项落点优化合并基准的只读归档完整性审计：3 局、6 对计时的协议、模型/源码/输入哈希及汇总算术一致，速度比 1.079276×；归档未保存四次完整分支输出，故逐字段一致仍依赖原执行脚本检查。未重跑分支、训练或使用新 seed。证据：`training/evaluation/audit_fast_legal_combined.py`、`reports/experiments/ppo_fast_legal_combined_integrity_audit_20261024.md`。
