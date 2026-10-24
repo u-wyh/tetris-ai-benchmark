@@ -7,6 +7,7 @@ import pickle
 from pathlib import Path
 
 from training.evaluation.source_provenance import verify as verify_source
+from training.evaluation.hybrid_queue import PPO, HASHES
 from training.evaluation.failure_curriculum_eval import LongCandidateTetrisEnv
 from training.tetris_core.legal_placements import get_legal_placements
 
@@ -35,12 +36,14 @@ def check_provenance(row):
 
 
 def audit():
+    check(digest(PPO) == HASHES["ppo"], "frozen PPO file")
     episodes = states = branches = rescues = harms = 0
     instability_seeds = control_seeds = 0
     for seed in range(1550000, 1550008):
         episode = read(RUN / "episodes" / f"seed_{seed}.json")
         check_provenance(episode)
         check(episode["seed"] == seed and episode["cap"] == 20000, f"episode {seed}")
+        check(episode["ppo_sha256"] == HASHES["ppo"], f"frozen PPO identity {seed}")
         check(episode["design_sha256"] == digest(ROOT / "reports/experiments/ppo_clear_cadence_counterfactual_design.md"), f"design {seed}")
         check(0 < episode["pieces"] <= 20000 and len(episode["states"]) <= 4, f"bounds {seed}")
         episodes += 1
