@@ -362,3 +362,5 @@
 2026-10-24 05:55 +0800 | 修复清行节奏采样快照在中断后因 gzip 时间戳导致的误冲突：新快照使用固定时间戳，已有快照按解压后字节校验并保留原哈希。定向测试 2 项、历史记录只读审计（8 局、22 状态、44 分支）通过，8080/8081 均 HTTP 200；未运行新评测或训练。证据：`tests/test_ppo_clear_cadence_snapshot.py`、`reports/experiments/ppo_clear_cadence_snapshot_resume_fix.md`。
 2026-10-24 15:59 +0800 | 开始对既有清行节奏快照的冻结 PPO 快速反事实续控做单线程 1000 块剖析；历史分支只读，证据：runs/ppo_branch_profile_20261024/。
 2026-10-24 16:00 +0800 | 完成既有快照的单线程 1000 块快速反事实剖析：逐块得分与四消匹配归档前缀；合法落点 2.95 秒、候选特征 1.26 秒（cProfile 总计 4.66 秒）。8080/8081 均 HTTP 200；无新种子、训练或正式代码改动。证据：runs/ppo_branch_profile_20261024/、reports/experiments/ppo_fast_branch_profile_20261024.md。
+2026-10-24 16:01 +0800 | 开始跨 3 个已归档独立 episode 的冻结 PPO 快速分支单线程剖析，每支限 1000 块；只读取原数据并对照逐块归档前缀，剖析结果写 runs/ppo_branch_profile_replication_20261024/。
+2026-10-24 16:02 +0800 | 跨 3 个独立 episode 的冻结 PPO 1000 块剖析完成；三条逐块得分及四消均与历史分支前缀一致，合法落点累计 2.99–3.26 秒、候选特征 1.25–1.27 秒，8080/8081 均 HTTP 200。首次命令缺 PYTHONPATH 未运行，补齐后成功；无新种子或训练。证据：`runs/ppo_branch_profile_replication_20261024/`、`reports/experiments/ppo_fast_branch_profile_replication_20261024.md`。
