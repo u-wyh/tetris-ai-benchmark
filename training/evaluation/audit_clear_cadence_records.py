@@ -5,10 +5,15 @@ import gzip
 import json
 import pickle
 from pathlib import Path
+import math
+
+import torch
+from sb3_contrib import MaskablePPO
 
 from training.evaluation.source_provenance import verify as verify_source
 from training.evaluation.hybrid_queue import PPO, HASHES
 from training.evaluation.failure_curriculum_eval import LongCandidateTetrisEnv
+from training.evaluation.failure_curriculum_eval import fast_action
 from training.tetris_core.legal_placements import get_legal_placements
 from training.candidate_features import board_features
 from training.traditional.v2 import simulate_public
@@ -40,6 +45,8 @@ def check_provenance(row):
 
 def audit():
     check(digest(PPO) == HASHES["ppo"], "frozen PPO file")
+    torch.set_num_threads(1)
+    model = MaskablePPO.load(str(PPO), device="cpu")
     episodes = states = branches = rescues = harms = 0
     instability_seeds = control_seeds = 0
     for seed in range(1550000, 1550008):
@@ -81,11 +88,20 @@ def audit():
                       f"selection features {prefix}")
                 mask = env.action_masks()
                 check(legal == {i for i, allowed in enumerate(mask) if allowed}, f"Core mask {prefix}")
+                obs = env.get_observation()
+                predicted = fast_action(model, obs, mask)
+                tensor = {k: torch.as_tensor(v, device="cpu").unsqueeze(0) for k, v in obs.items()}
+                with torch.no_grad():
+                    probs = model.policy.get_distribution(
+                        tensor, action_masks=torch.as_tensor(mask).unsqueeze(0)
+                    ).distribution.probs[0].cpu().numpy()
             finally:
                 env.close()
             check(choice["ppo_sha256"] == episode["ppo_sha256"] and choice["design_sha256"] == episode["design_sha256"], f"candidate identity {prefix}")
             actions = (choice["original_action"], choice["alternative_action"])
             check(None not in actions and len(set(actions)) == 2, f"actions {prefix}")
+            check(actions[0] == predicted and math.isclose(float(sum(probs)), 1.0, abs_tol=1e-5),
+                  f"PPO action and probability normalization {prefix}")
             ranked = choice["ranked_legal_actions"]
             check({r["action"] for r in ranked} == legal and len(ranked) == len(legal), f"candidate legality {prefix}")
             placements = {p["actionId"]: p for p in get_legal_placements(public)}
@@ -95,7 +111,9 @@ def audit():
                 expected_key = [int(child["phase"] == "over"), -int(clear),
                                 int(height), int(holes), -row["ppo_probability"], row["action"]]
                 check(row["rank_key"] == expected_key and
-                      0 <= row["ppo_probability"] <= 1, f"candidate features {prefix}:{row['action']}")
+                      0 <= row["ppo_probability"] <= 1 and
+                      math.isclose(row["ppo_probability"], float(probs[row["action"]]), abs_tol=1e-7),
+                      f"candidate features and PPO probability {prefix}:{row['action']}")
             check(ranked == sorted(ranked, key=lambda r: r["rank_key"]), f"ranking {prefix}")
             check(actions[0] in [r["action"] for r in ranked] and actions[1] == next(r["action"] for r in ranked if r["action"] != actions[0]), f"choice {prefix}")
             outcomes = []
