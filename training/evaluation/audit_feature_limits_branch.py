@@ -51,11 +51,12 @@ def audit():
         ["git", "show", "65e5c0c:training/evaluation/fast_candidate_features.py"], cwd=ROOT
     )
     assert hashlib.sha256(old).hexdigest() == protocol["old_source_sha256"]
-    for key, path in (
-        ("new_source_sha256", "training/evaluation/fast_candidate_features.py"),
-        ("branch_source_sha256", "training/evaluation/fast_counterfactual.py"),
+    for key, revision, path in (
+        ("new_source_sha256", "d3c1819", "training/evaluation/fast_candidate_features.py"),
+        ("branch_source_sha256", "4ff3380", "training/evaluation/fast_counterfactual.py"),
     ):
-        assert digest(ROOT / path) == protocol[key]
+        source = subprocess.check_output(["git", "show", f"{revision}:{path}"], cwd=ROOT)
+        assert hashlib.sha256(source).hexdigest() == protocol[key]
     assert protocol["order"] == "old,new,new,old" and protocol["repeats"] == 2
     expected_files = {f"seed_{seed}_step_{step}.json" for seed, step in protocol["cases"]}
     assert set(summary["result_sha256"]) == expected_files
