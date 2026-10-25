@@ -410,3 +410,4 @@
 2026-10-25 08:18 +0800 | 修复特征值域分支归档审计对已变更当前源码的错误依赖：按固定提交核对历史源码哈希；既有 3 局、6 对记录只读审计通过，速度比 1.0244106396×，8080/8081 均 HTTP 200。无分支重算、训练或新 seed。证据：`reports/experiments/ppo_feature_limits_archive_audit_fix_20261025.md`、`training/evaluation/audit_feature_limits_branch.py`。
 2026-10-25 08:19:41 +0800 | 启动合并落点基准归档审计来源修复：已找到与冻结协议源码哈希一致的历史提交；拟消除审计对当前工作树源码的依赖。证据待记入 `reports/experiments/ppo_fast_legal_combined_archive_audit_fix_20261025.md`。
 2026-10-25 08:19:58 +0800 | 完成合并落点基准归档审计来源修复：固定历史提交源码哈希核对通过；既有 3 局、6 对记录只读审计通过，倍率 1.079276×，8080/8081 均 HTTP 200。未重算分支、训练或使用新 seed。证据：`reports/experiments/ppo_fast_legal_combined_archive_audit_fix_20261025.md`、`training/evaluation/audit_fast_legal_combined.py`。
+2026-10-25 08:21:44 +0800 | 加固清行节奏归档只读审计的 episode 终止、采样网格和分支得分/四消序列约束；既有 8 局、22 状态、44 分支通过，救援 0、误伤 1；8080/8081 均 HTTP 200。未重跑 PPO、训练或使用新 seed。证据：`reports/experiments/ppo_clear_cadence_series_integrity_audit_20261025.md`、`training/evaluation/audit_clear_cadence_records.py`。

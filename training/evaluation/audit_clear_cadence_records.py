@@ -46,6 +46,10 @@ def audit():
         check(episode["ppo_sha256"] == HASHES["ppo"], f"frozen PPO identity {seed}")
         check(episode["design_sha256"] == digest(ROOT / "reports/experiments/ppo_clear_cadence_counterfactual_design.md"), f"design {seed}")
         check(0 < episode["pieces"] <= 20000 and len(episode["states"]) <= 4, f"bounds {seed}")
+        check(episode["game_over"] != episode["capped"] and
+              episode["capped"] == (episode["pieces"] == 20000), f"episode terminal {seed}")
+        check(episode["score"] >= 0 and len(episode["clears"]) == 5 and
+              sum(episode["clears"]) <= episode["pieces"], f"episode totals {seed}")
         episodes += 1
         instability_seeds += any(s["stratum"] == "instability" for s in episode["states"])
         control_seeds += any(s["stratum"] == "recovered_control" for s in episode["states"])
@@ -53,6 +57,9 @@ def audit():
         check(all(b - a >= 500 for a, b in zip(sorted(steps), sorted(steps)[1:])), f"spacing {seed}")
         for state in episode["states"]:
             step = state["step"]
+            check(state["stratum"] in ("instability", "recovered_control") and
+                  250 <= step < episode["pieces"] and step % 25 == 0,
+                  f"selection bounds {seed}:{step}")
             prefix = f"seed_{seed}_step_{step}"
             snapshot = RUN / "states" / f"{prefix}.pkl.gz"
             choice_path = RUN / "candidates" / f"{prefix}.json"
@@ -87,6 +94,9 @@ def audit():
                 check(branch["action"] == outcome["action"] == action and branch["horizon"] == outcome["horizon"] == 3000, f"branch action {prefix}:{action}")
                 check(0 < n <= 3000 and len(outcome["scores"]) == len(outcome["fours"]) == n, f"series length {prefix}:{action}")
                 check(all(b >= a and b - a <= 1 for a, b in zip([0] + outcome["fours"][:-1], outcome["fours"])), f"fours {prefix}:{action}")
+                check(all(b >= a >= 0 for a, b in zip([0] + outcome["scores"][:-1], outcome["scores"])), f"scores {prefix}:{action}")
+                check(outcome["fours"][-1] <= n and outcome["game_over"] != outcome["censored"],
+                      f"branch terminal {prefix}:{action}")
                 check(outcome["censored"] == (not outcome["game_over"] and n == 3000), f"censoring {prefix}:{action}")
                 outcomes.append(outcome)
                 branches += 1
