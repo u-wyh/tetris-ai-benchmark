@@ -47,11 +47,14 @@ def main():
     summary = json.loads((RUN / "summary.json").read_text())
     check(summary["protocol_sha256"], digest(RUN / "protocol.json"), "protocol hash")
     check(protocol["model_sha256"], digest(ROOT / "runs/ppo_candidate_raw_30m_seed42/final/model.zip"), "model hash")
-    old = subprocess.check_output(["git", "show", "5cf0c74:training/evaluation/fast_legal.py"], cwd=ROOT)
-    check(protocol["old_source_sha256"], hashlib.sha256(old).hexdigest(), "old source")
-    for key, name in (("new_source_sha256", "fast_legal.py"),
-                      ("branch_source_sha256", "fast_counterfactual.py")):
-        check(protocol[key], digest(ROOT / "training/evaluation" / name), name)
+    for key, commit, name in (
+        ("old_source_sha256", "5cf0c74", "fast_legal.py"),
+        ("new_source_sha256", "d40bc756e0fb", "fast_legal.py"),
+        ("branch_source_sha256", "4ff338010bfd", "fast_counterfactual.py"),
+    ):
+        source = subprocess.check_output(
+            ["git", "show", f"{commit}:training/evaluation/{name}"], cwd=ROOT)
+        check(protocol[key], hashlib.sha256(source).hexdigest(), name)
     check(protocol["order"], "old,new,new,old", "order")
     check(protocol["repeats"], 2, "repeats")
     check(protocol["horizon"], 500, "horizon")
