@@ -415,3 +415,4 @@
 2026-10-25 08:25:38 +0800 | 完成清行节奏归档冻结策略动作与概率只读复核：8 局、22 状态全部匹配；原有 44 分支审计通过，救援 0、误伤 1，8080/8081 均 HTTP 200。未重跑分支、训练或使用新种子。证据：`reports/experiments/ppo_clear_cadence_policy_probability_audit_20261025.md`、`training/evaluation/audit_clear_cadence_records.py`。
 2026-10-25 13:28 +0800 | 根据清行节奏既有归档的独立 episode 事件数，完成精确二项区间核算；0/8 明确救援的双侧 95% 上界为 36.94%，1/8 明确误伤区间为 0.32%–52.65%。明确标注定向入选和 3000 块截断限制；未新增采样、续控、训练或 seed。证据：`reports/experiments/ppo_clear_cadence_episode_uncertainty_20261025.md`。
 2026-10-25 13:30 +0800 | 只读汇总既有清行节奏 8 局、22 状态的共同窗口代理指标：双增 10 状态/6 局，其中唯一明确误伤仍为双增；结果不支持以得分和四消同增作为安全替换充分条件。无新采样、续控、训练或 seed。证据：`reports/experiments/ppo_clear_cadence_proxy_safety_20261025.md`、`runs/ppo_clear_cadence_counterfactual/comparisons/`。
+2026-10-25T18:33:18+08:00 | 启动清行节奏事前入选规则有界重放审计：8 个既有开发 episode、单核顺序、逐局原子保存；不新增种子、分支或训练。证据：reports/experiments/ppo_clear_cadence_selection_replay_20261025.md、runs/ppo_clear_cadence_counterfactual/selection_audit/。
