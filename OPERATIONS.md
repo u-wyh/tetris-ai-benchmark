@@ -426,3 +426,4 @@
 2026-10-25T18:39:01+08:00 | 清行节奏采样规则重放审计通过：seed 1550007；核对全部检查点、入选与排除计数及终局。证据：runs/ppo_clear_cadence_counterfactual/selection_audit/seed_1550007.json。
 2026-10-25T23:36:57+08:00 | 汇总已完成的清行节奏采样规则重放审计：8/8 开发 episode 通过，22 个入选状态及各层合格、间距和配额计数与归档一致；未新增采样、反事实分支或训练。证据：reports/experiments/ppo_clear_cadence_selection_replay_20261025.md、runs/ppo_clear_cadence_counterfactual/selection_audit/seed_*.json。
 2026-10-25T23:39:20+08:00 | 只读复核清行节奏 8 局、22 状态、44 分支的最初/最后 500 块四消差：失稳层早期正差 4/6、末期正差 2/6；唯一误伤两段均为正差。无新采样、续控、训练或新 seed。证据：reports/experiments/ppo_clear_cadence_temporal_profile_20261025.md、runs/ppo_clear_cadence_counterfactual/branches/。
+2026-10-26 04:42 +0800 | 加固清行节奏入选规则重放审计恢复校验：已有 8/8 记录通过，48 个内存篡改样例被拒绝；未重跑 PPO、反事实分支或训练。证据：reports/experiments/ppo_clear_cadence_selection_resume_guard_20261026.md、training/evaluation/audit_clear_cadence_selection.py。
