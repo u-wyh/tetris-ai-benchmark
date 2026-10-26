@@ -428,3 +428,4 @@
 2026-10-25T23:39:20+08:00 | 只读复核清行节奏 8 局、22 状态、44 分支的最初/最后 500 块四消差：失稳层早期正差 4/6、末期正差 2/6；唯一误伤两段均为正差。无新采样、续控、训练或新 seed。证据：reports/experiments/ppo_clear_cadence_temporal_profile_20261025.md、runs/ppo_clear_cadence_counterfactual/branches/。
 2026-10-26 04:42 +0800 | 加固清行节奏入选规则重放审计恢复校验：已有 8/8 记录通过，48 个内存篡改样例被拒绝；未重跑 PPO、反事实分支或训练。证据：reports/experiments/ppo_clear_cadence_selection_resume_guard_20261026.md、training/evaluation/audit_clear_cadence_selection.py。
 2026-10-27T00:48:00+08:00 | 加固清行节奏采样重放审计恢复校验：要求计数逐项匹配原始 episode；8/8 既有记录通过，8/8 联动计数篡改被拒绝，8080/8081 均 HTTP 200。未重跑 PPO、分支或训练。证据：reports/experiments/ppo_clear_cadence_selection_count_guard_20261027.md、training/evaluation/audit_clear_cadence_selection.py。
+2026-10-27T00:49:55+08:00 | 加固清行节奏分支恢复校验：复用前检查逐块结果和终止语义，既有 44/44 条通过、6 个内存篡改样例被拒绝；8080/8081 均 HTTP 200。未重跑分支、训练或用新 seed。证据：reports/experiments/ppo_clear_cadence_branch_resume_guard_20261027.md、training/evaluation/ppo_clear_cadence_branches.py。

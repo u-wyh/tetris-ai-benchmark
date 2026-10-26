@@ -22,6 +22,26 @@ VERSION = "clear_cadence_branches_v1"
 HORIZON = 3000
 
 
+def verify_saved_outcome(outcome, action):
+    """Reject incomplete or inconsistent branch data before resuming."""
+    n = outcome.get("pieces")
+    scores, fours = outcome.get("scores"), outcome.get("fours")
+    if (outcome.get("action") != action or outcome.get("horizon") != HORIZON or
+            type(n) is not int or not 0 < n <= HORIZON or
+            type(scores) is not list or type(fours) is not list or
+            len(scores) != n or len(fours) != n or
+            type(outcome.get("game_over")) is not bool or
+            type(outcome.get("censored")) is not bool or
+            outcome["game_over"] == outcome["censored"] or
+            outcome["censored"] != (n == HORIZON)):
+        raise RuntimeError("Saved branch outcome invalid")
+    if (any(type(x) is not int or x < 0 for x in scores + fours) or
+            any(b < a for a, b in zip([0] + scores[:-1], scores)) or
+            any(b - a not in (0, 1) for a, b in zip([0] + fours[:-1], fours)) or
+            fours[-1] > n):
+        raise RuntimeError("Saved branch series invalid")
+
+
 def candidates(snapshot):
     env = LongCandidateTetrisEnv(max_pieces=snapshot["max_pieces"])
     try:
@@ -84,6 +104,7 @@ def run_state(seed, item):
                 raise RuntimeError("Branch identity mismatch")
             if "execution_provenance" in row:
                 verify_source(ROOT, row["execution_provenance"])
+            verify_saved_outcome(row.get("outcome", {}), action)
         else:
             row = {**identity, "outcome": fast_branch(snapshot, action, {"ppo": candidates.model}, HORIZON),
                    "execution_provenance": provenance,
