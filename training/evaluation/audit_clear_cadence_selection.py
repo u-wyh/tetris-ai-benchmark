@@ -25,7 +25,8 @@ def verify_saved_audit(saved, seed, expected, episode_digest):
             or saved["ppo_sha256"] != HASHES["ppo"]
             or saved["passed"] is not True
             or saved["selected_steps"] != steps
-            or set(saved["counts"]) != set(groups)):
+            or set(saved["counts"]) != set(groups)
+            or saved["counts"] != expected["counts"]):
         raise RuntimeError(f"stale selection audit: {seed}")
     for group in groups:
         counts = saved["counts"][group]
