@@ -431,3 +431,7 @@
 2026-10-27T00:49:55+08:00 | 加固清行节奏分支恢复校验：复用前检查逐块结果和终止语义，既有 44/44 条通过、6 个内存篡改样例被拒绝；8080/8081 均 HTTP 200。未重跑分支、训练或用新 seed。证据：reports/experiments/ppo_clear_cadence_branch_resume_guard_20261027.md、training/evaluation/ppo_clear_cadence_branches.py。
 2026-10-27T12:11:55+08:00 | 按用户明确要求暂停服务器无人值守研发：移除每五分钟 watchdog cron 条目，停止 tetris-unattended-research tmux；停止时仅有休眠包装器，无活动 Codex/训练/评测子进程。保留网页开机 cron 与 tetris-web-inference 服务；历史结果及 checkpoint 未删除。证据：crontab -l、tmux list-sessions、runs/unattended_research/status.log。
 2026-10-27T21:04:24+08:00 | BC score RL：历史前置审计完成，创建独立 codex/bc-score-rl worktree；CUDA 不可用，选择 CPU 4 workers；新种子用途审计无冲突，奖励/新 Critic 预热与保守 KL 路线及阶段门槛已事前写定。20 项定向测试通过、3 项依赖旧数据/CUDA跳过。尚未启动正式训练。证据：reports/experiments/bc_score_rl_design.md、runs/bc_score_rl/seed_audit.json。
+2026-10-27T21:06:00+08:00 | BC score RL: protocol frozen; CPU/GPU device=cpu; no old experiment restarted.
+2026-10-27T21:06:01+08:00 | BC score RL: training transactions 1..1 started
+2026-10-27T21:06:14+08:00 | BC score RL: training transactions 2..2 started
+2026-10-27T21:06:50+08:00 | BC score RL：已真实提交 task1、task2 共8192训练步，第二事务从完整状态恢复并通过manifest校验；预热Actor L2/梯度=0，Critic梯度非零，死亡0；训练约390步/秒。准备由独立tmux续跑冻结阶段队列。证据：runs/bc_score_rl/training/{transaction_state.json,metric_history/,events.log}。
