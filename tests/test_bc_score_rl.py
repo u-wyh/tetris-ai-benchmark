@@ -72,3 +72,49 @@ def test_checksum_and_common_window_exactness(tmp_path):
     assert result['pairs'][0]['common_pieces'] == 2
     assert result['common_score_ratio'] == 1.1
     assert result['pairs'][0]['survival_delta'] == -1
+
+
+def test_gate_rejects_early_death_despite_score_gain():
+    from training.bc_score_rl import gate
+    base = dict(mean_pieces=100000, p10=100000, early=0, capped=16, games=16,
+                high_fraction=0.0, mean_max_high_streak=0.0, new_holes_per_100=2.0)
+    candidate = dict(base, early=1)
+    result = {'summary':{'bc':base,'candidate':candidate},
+              'paired_to_bc':{'candidate':dict(common_score_ratio=1.1,positive_seeds=16,ratio_ci95=[1.01,1.2])}}
+    assert not gate(result,long=True,confirm=True)['passed']
+    result['summary']['candidate']['early']=0
+    assert gate(result,long=True,confirm=True)['passed']
+
+
+def test_evaluation_checkpoint_resumes_exact_score_and_board_statistics(tmp_path):
+    import hashlib, pickle
+    import pytest
+    import training.bc_score_rl as queue
+    if not queue.BC.exists():
+        pytest.skip('Frozen BC artifact unavailable')
+    queue.eval_init({'bc':str(queue.BC)})
+    identity={'smoke':True}
+    uninterrupted=queue.eval_game('bc',93,64,identity,tmp_path/'missing.pkl')
+    env=queue.LongCandidateTetrisEnv(max_pieces=64)
+    env.reset(seed=93)
+    state=dict(seed=93,variant='bc',cap=64,identity=identity,pieces=0,score=0,scores=[0],
+               clears_0_to_4=[0]*5,new_holes=0,high_steps=0,high_streak=0,max_high_streak=0,
+               inference_seconds=0.0,wall_seconds=0.0)
+    for _ in range(16):
+        action=queue.fast_action(queue.MODELS['bc'],env.get_observation(),env.action_masks())
+        _,_,over,truncated,info=env.step(action)
+        assert not over and not truncated
+        state['pieces']=info['pieces'];state['score']=info['score'];state['scores'].append(info['score'])
+        state['clears_0_to_4'][info['cleared_lines']]+=1;state['new_holes']+=info['new_holes']
+        high=info['height_after']>=17
+        state['high_steps']+=int(high)
+        state['high_streak']=state['high_streak']+1 if high else 0
+        state['max_high_streak']=max(state['max_high_streak'],state['high_streak'])
+    payload=pickle.dumps({'state':state,'env':env.get_state(),'controller':None},protocol=5)
+    checkpoint=tmp_path/'resume.pkl'
+    queue.atomic_pickle(checkpoint,{'payload':payload,'sha256':hashlib.sha256(payload).hexdigest()})
+    env.close()
+    resumed=queue.eval_game('bc',93,64,identity,checkpoint)
+    for name in ('pieces','score','scores','clears_0_to_4','new_holes','high_steps','max_high_streak',
+                 'game_over','capped','lines','final_height','final_holes'):
+        assert resumed[name]==uninterrupted[name]
