@@ -27,7 +27,7 @@ from training.env.candidate_env import CandidateTetrisEnv, OBSERVATION_VERSION
 from training.env.fast_candidate_env import FastCandidateTetrisEnv
 from training.candidate_features import FEATURE_VERSION
 from training.candidate_policy import CandidateScoringPolicy
-from training.env.tetris_env import (BALANCED_REWARD_VERSION, HEIGHT_REWARD_VERSION, HOLE_HEIGHT_REWARD_VERSION,
+from training.env.tetris_env import (BC_SCORE_REWARD_VERSION, BALANCED_REWARD_VERSION, HEIGHT_REWARD_VERSION, HOLE_HEIGHT_REWARD_VERSION,
                                      HOLE_REWARD_VERSION, RAW_REWARD_VERSION)
 from training.long_run import SEEDS_FILE, post_commit
 from training.vector_env import make_vector_env, worker_seeds
@@ -38,6 +38,7 @@ TRAINING_SOURCE_FILES = (
     "training/train_transaction.py",
     "training/train_ppo.py",
     "training/vector_env.py",
+    "training/kl_maskable_ppo.py",
     "training/long_run.py",
     "training/evaluation/hybrid_queue.py",
     "training/candidate_policy.py",
@@ -119,7 +120,7 @@ def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
     if (isinstance(height_penalty_coef, bool) or not isinstance(height_penalty_coef, (int, float))
             or not math.isfinite(height_penalty_coef) or height_penalty_coef < 0):
         raise ValueError("height_penalty_coef must be a finite nonnegative number")
-    if reward_profile not in ("default", "survival_balanced_v1"):
+    if reward_profile not in ("default", "survival_balanced_v1", "bc_score_v1"):
         raise ValueError("Unknown reward profile")
     if reward_profile != "default" and (hole_penalty_coef or height_penalty_coef):
         raise ValueError("Balanced reward cannot combine with legacy risk penalties")
@@ -158,7 +159,8 @@ def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
                    "validation_seed_set": seed_sets["validation"],
                    "final_test_seed_set": seed_sets["final_test"],
                    "reward_profile": reward_profile,
-                   "reward_version": (BALANCED_REWARD_VERSION if reward_profile == "survival_balanced_v1"
+                   "reward_version": (BC_SCORE_REWARD_VERSION if reward_profile == "bc_score_v1"
+                                      else BALANCED_REWARD_VERSION if reward_profile == "survival_balanced_v1"
                                       else HOLE_HEIGHT_REWARD_VERSION if height_penalty_coef and hole_penalty_coef
                                       else HEIGHT_REWARD_VERSION if height_penalty_coef
                                       else HOLE_REWARD_VERSION if hole_penalty_coef
@@ -319,7 +321,8 @@ def rebuild_vector_metrics(run_dir, committed_task, config):
         FIELDS + (HOLE_METRIC_FIELDS if config.get("hole_penalty_coef", 0.0) else ())
         + (KL_METRIC_FIELDS if config.get("kl_reference") else ())
         + (OVERNIGHT_METRIC_FIELDS if config.get("overnight_monitor") else ())
-        + (CURRICULUM_METRIC_FIELDS if config.get("failure_curriculum") else ())))
+        + (CURRICULUM_METRIC_FIELDS if config.get("failure_curriculum") else ())
+        + (("clears_0_to_4", "critic_warmup", "actor_l2_to_bc", "formal_score_gain", "actor_gradient_norm", "critic_gradient_norm") if config.get("bc_score_settings") else ())))
     writer = csv.DictWriter(buffer, fieldnames=columns)
     writer.writeheader()
     for number in range(1, committed_task + 1):
@@ -363,6 +366,8 @@ def commit_vector_task(run_dir, state, working_dir, model, env, callback, captur
     if len(saved_workers) != config["ppo"]["n_envs"] or not observations_equal(model._last_obs, observations):
         raise RuntimeError("Worker states and PPO observations disagree before commit")
     trainer = global_rng_state(model)
+    if config.get("bc_score_settings"):
+        trainer["run_seed"] = config["run_seed"]
     metrics = metrics_for_task(model, callback, capture, number, start_step, training_seconds)
     if config.get("kl_reference"):
         metrics["bc_kl"] = (float(capture.values["train/bc_kl"])
@@ -392,6 +397,14 @@ def commit_vector_task(run_dir, state, working_dir, model, env, callback, captur
                        origin_episode_counts_json=json.dumps(callback.origin_episode_counts,sort_keys=True),
                        source_seed_counts_json=json.dumps(callback.source_seed_counts,sort_keys=True),
                        death_sources_json=json.dumps(callback.death_sources,sort_keys=True))
+    if config.get("bc_score_settings"):
+        metrics["clears_0_to_4"] = callback.clear_counts
+        metrics["formal_score_gain"] = callback.score_gain
+        metrics["actor_gradient_norm"] = float(capture.values["train/actor_gradient_norm"])
+        metrics["critic_gradient_norm"] = float(capture.values["train/critic_gradient_norm"])
+        metrics["critic_warmup"] = model.num_timesteps <= model.critic_warmup_steps
+        metrics["actor_l2_to_bc"] = float(sum((p - dict(model.reference_policy.named_parameters())[n]).square().sum().item()
+                                             for n, p in model.policy.named_parameters() if not n.startswith("value_net.")) ** 0.5)
     atomic_json(working_dir / "metrics.json", metrics)
     atomic_bytes(working_dir / "trainer_state.pkl", pickle.dumps(trainer, protocol=5))
     atomic_bytes(working_dir / "vector_env_state.pkl", pickle.dumps(saved_workers, protocol=5))
@@ -532,7 +545,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                 requested_hole = preset.get("hole_penalty_coef", 0.0)
                 requested_height = preset.get("height_penalty_coef", 0.0)
                 requested_coef = (requested_hole, requested_height)
-                requested_version = (BALANCED_REWARD_VERSION if preset.get("reward_profile") == "survival_balanced_v1"
+                requested_version = (BC_SCORE_REWARD_VERSION if preset.get("reward_profile") == "bc_score_v1"
+                                     else BALANCED_REWARD_VERSION if preset.get("reward_profile") == "survival_balanced_v1"
                                      else HOLE_HEIGHT_REWARD_VERSION if requested_height and requested_hole
                                      else HEIGHT_REWARD_VERSION if requested_height
                                      else HOLE_REWARD_VERSION if requested_hole else RAW_REWARD_VERSION)
@@ -593,7 +607,10 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                                        candidate_policy=bool(preset.get("candidate_policy", False)),
                                        max_pieces=preset.get("max_pieces", 10000))
                 overrides = preset.get("ppo_overrides", {})
-                if set(overrides) - {"gamma", "gae_lambda"}:
+                allowed = {"gamma", "gae_lambda"}
+                if preset.get("reward_profile") == "bc_score_v1":
+                    allowed |= {"learning_rate", "n_epochs", "clip_range", "ent_coef", "target_kl"}
+                if set(overrides) - allowed:
                     raise ValueError("Unsupported PPO override")
                 if "gamma" in overrides and not 0.99 < overrides["gamma"] < 1:
                     raise ValueError("Invalid PPO gamma override")
@@ -601,6 +618,9 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     raise ValueError("Invalid PPO GAE override")
                 config["ppo_overrides"] = overrides
                 config["ppo"].update(overrides)
+                if preset.get("reward_profile") == "bc_score_v1":
+                    config["bc_score_settings"] = {"reset_critic": True, "critic_warmup_steps": 16384}
+                    config["reward"] = {"level_normalized_score_scale": 100.0, "alive": 0.02, "game_over": -20.0}
                 if preset.get("fast_candidate_env", False) and not preset.get("candidate_policy", False):
                     raise ValueError("Fast Candidate environment requires Candidate policy")
                 config["fast_candidate_env"] = bool(preset.get("fast_candidate_env", False))
@@ -745,6 +765,9 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     from training.kl_maskable_ppo import KLMaskablePPO
                     algorithm = KLMaskablePPO
                     extra_algorithm["kl_beta"] = config["kl_reference"]["beta"]
+                    if config.get("bc_score_settings"):
+                        extra_algorithm["critic_warmup_steps"] = config["bc_score_settings"]["critic_warmup_steps"]
+                        extra_algorithm["target_kl"] = ppo["target_kl"]
                 model = algorithm(
                     policy, env, policy_kwargs=policy_kwargs,
                     learning_rate=ppo["learning_rate"], gamma=ppo["gamma"],
@@ -755,8 +778,15 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     seed=config["run_seed"], device=config["device"], verbose=0,
                     **extra_algorithm)
                 if config.get("initial_model"):
+                    initial_rng = global_rng_state(model) if config.get("bc_score_settings") else None
                     source = MaskablePPO.load(config["initial_model"]["path"], device="cpu")
-                    model.policy.load_state_dict(source.policy.state_dict(), strict=True)
+                    if initial_rng is not None:
+                        restore_global_rng(initial_rng)
+                    initial_weights = source.policy.state_dict()
+                    if config.get("bc_score_settings", {}).get("reset_critic"):
+                        initial_weights = {key: (model.policy.state_dict()[key] if key.startswith("value_net.") else value)
+                                           for key, value in initial_weights.items()}
+                    model.policy.load_state_dict(initial_weights, strict=True)
                     # Preserve the fresh optimizer, timestep zero, and independent RNG.
                     if model.num_timesteps != 0:
                         raise RuntimeError("Fine-tune run must start at PPO step zero")
@@ -807,10 +837,15 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                 self.origin_episode_counts = {}
                 self.source_seed_counts = {}
                 self.death_sources = {}
+                self.clear_counts = [0] * 5
+                self.score_gain = 0.0
+
 
             def _on_step(self):
                 for done, info in zip(self.locals["dones"], self.locals["infos"]):
                     self.cleared_lines += info.get("cleared_lines", 0)
+                    self.clear_counts[info.get("cleared_lines", 0)] += 1
+                    self.score_gain += info.get("formal_score_delta", 0.0)
                     if config.get("failure_curriculum"):
                         origin = info["curriculum_origin"]
                         label = origin["tier"]

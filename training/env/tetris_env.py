@@ -14,6 +14,7 @@ RAW_REWARD_VERSION = "placement-reward-v1"
 HOLE_REWARD_VERSION = "placement-reward-hole-v1"
 HEIGHT_REWARD_VERSION = "placement-reward-height-v1"
 HOLE_HEIGHT_REWARD_VERSION = "placement-reward-hole-height-v1"
+BC_SCORE_REWARD_VERSION = "bc-level-score-death-v1"
 BALANCED_REWARD_VERSION = "placement-reward-survival-balanced-v1"
 BALANCED_LINE_REWARDS = (0.0, 1.0, 2.4, 3.8, 5.2)
 
@@ -73,12 +74,13 @@ class TetrisEnv(gym.Env):
                 or not math.isfinite(height_penalty_coef) or height_penalty_coef < 0):
             raise ValueError("height_penalty_coef must be a finite nonnegative number")
         self.height_penalty_coef = float(height_penalty_coef)
-        if reward_profile not in ("default", "survival_balanced_v1"):
+        if reward_profile not in ("default", "survival_balanced_v1", "bc_score_v1"):
             raise ValueError("Unknown reward profile")
         if reward_profile != "default" and (self.hole_penalty_coef or self.height_penalty_coef):
             raise ValueError("Balanced reward cannot combine with legacy risk penalties")
         self.reward_profile = reward_profile
-        self.reward_version = (BALANCED_REWARD_VERSION if reward_profile == "survival_balanced_v1"
+        self.reward_version = (BC_SCORE_REWARD_VERSION if reward_profile == "bc_score_v1"
+                               else BALANCED_REWARD_VERSION if reward_profile == "survival_balanced_v1"
                                else HOLE_HEIGHT_REWARD_VERSION if self.height_penalty_coef and self.hole_penalty_coef
                                else HEIGHT_REWARD_VERSION if self.height_penalty_coef
                                else HOLE_REWARD_VERSION if self.hole_penalty_coef
@@ -188,13 +190,16 @@ class TetrisEnv(gym.Env):
         holes_before = count_holes(self.core.board)
         height_before = board_max_height(self.core.board)
         previous_lines = self.core.lines
+        previous_score, previous_level = self.core.score, self.core.level
         public = self.core.step(action)
         cleared_lines = self.core.lines - previous_lines
         terminated = self.core.phase == "over"
         self.pieces += 1
         truncated = self.pieces >= self.max_pieces and not terminated
         self._finished = terminated or truncated
-        raw_reward = placement_reward(cleared_lines, terminated, self.reward_profile)
+        raw_reward = (0.02 + (self.core.score - previous_score) / (100.0 * previous_level)
+                      - (20.0 if terminated else 0.0) if self.reward_profile == "bc_score_v1"
+                      else placement_reward(cleared_lines, terminated, self.reward_profile))
         holes_after = count_holes(self.core.board)
         height_after = board_max_height(self.core.board)
         reward, new_holes, hole_penalty = shape_reward(
@@ -207,6 +212,8 @@ class TetrisEnv(gym.Env):
         info.update(raw_reward=raw_reward, shaped_reward=reward,
                     holes_before=holes_before, holes_after=holes_after,
                     new_holes=new_holes, hole_penalty=hole_penalty)
+        if self.reward_profile == "bc_score_v1":
+            info["formal_score_delta"] = self.core.score - previous_score
         info.update(height_before=height_before, height_after=height_after,
                     risk_increase=risk_increase, height_penalty=height_penalty)
         return self._encode_observation(public), reward, terminated, truncated, info

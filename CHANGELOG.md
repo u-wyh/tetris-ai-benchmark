@@ -175,3 +175,8 @@
 - 2026-10-22：生存优先候选完成 65,536 步和 16-seed 20K 配对开发评测；四消下降 4.45 个百分点，但 P10 明显下降，按冻结门槛停止，不进入 100K。
 - 2026-10-22：对生存优先候选新增死亡、获救和触顶对照做 7-seed 确定性重放；发现临终短窗清行减少、堆高和洞数增加的探索性关联，同时记录高度及四消间隔反例。
 - 2026-10-22：新增 PPO 快速堆高与高位恢复对照的全新种子在线采样方案；固定 reservoir 选择、Core/RNG 快照与 SHA256，供下一阶段有限同状态反事实使用。
+
+## BC score reinforcement learning research (2026-10-27)
+
+- Add an isolated BC-initialized score-learning route with fresh critic warmup, conservative KL-PPO updates, atomic checkpoints, paired survival/score gates, and automatic reports.
+- Preserve historical models, official rules, action IDs, and web defaults; all outcomes remain on the research branch.

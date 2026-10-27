@@ -21,7 +21,8 @@ def masked_policy_kl(current_policy, reference_policy, observations, action_mask
 class KLMaskablePPO(MaskablePPO):
     """Original MaskablePPO losses plus beta KL(current || frozen reference)."""
 
-    def __init__(self, *args, kl_beta=0.02, **kwargs):
+    def __init__(self, *args, kl_beta=0.02, critic_warmup_steps=0, **kwargs):
+        self.critic_warmup_steps = int(critic_warmup_steps)
         self.kl_beta = float(kl_beta)
         if self.kl_beta < 0:
             raise ValueError("KL coefficient must be nonnegative")
@@ -47,6 +48,7 @@ class KLMaskablePPO(MaskablePPO):
         clip_range_vf = (self.clip_range_vf(self._current_progress_remaining)
                          if self.clip_range_vf is not None else None)
         entropy_losses, pg_losses, value_losses, clip_fractions, bc_kls, grad_norms = [], [], [], [], [], []
+        actor_gradients, critic_gradients = [], []
         continue_training = True
         loss = None
         approx_kl_divs = []
@@ -78,7 +80,8 @@ class KLMaskablePPO(MaskablePPO):
                 bc_kl = masked_policy_kl(self.policy, self.reference_policy,
                                          rollout_data.observations, rollout_data.action_masks)
                 bc_kls.append(bc_kl.item())
-                loss = (policy_loss + self.ent_coef * entropy_loss + self.vf_coef * value_loss
+                loss = (self.vf_coef * value_loss if self.num_timesteps <= self.critic_warmup_steps
+                        else policy_loss + self.ent_coef * entropy_loss + self.vf_coef * value_loss
                         + self.kl_beta * bc_kl)
                 with torch.no_grad():
                     log_ratio = log_prob - rollout_data.old_log_prob
@@ -91,6 +94,9 @@ class KLMaskablePPO(MaskablePPO):
                     break
                 self.policy.optimizer.zero_grad()
                 loss.backward()
+                for prefix, collection in ((False, actor_gradients), (True, critic_gradients)):
+                    collection.append(sum(p.grad.square().sum().item() for n,p in self.policy.named_parameters()
+                                          if n.startswith("value_net.") == prefix and p.grad is not None) ** 0.5)
                 norm = torch.nn.utils.clip_grad_norm_(self.policy.parameters(), self.max_grad_norm,
                                                       error_if_nonfinite=True)
                 grad_norms.append(norm.item())
@@ -108,6 +114,8 @@ class KLMaskablePPO(MaskablePPO):
                            ("train/bc_kl", np.mean(bc_kls)),
                            ("train/reference_kl", np.mean(bc_kls)),
                            ("train/gradient_norm", np.mean(grad_norms)),
+                           ("train/actor_gradient_norm", np.mean(actor_gradients)),
+                           ("train/critic_gradient_norm", np.mean(critic_gradients)),
                            ("train/loss", loss.item()),
                            ("train/explained_variance", explained_var)):
             self.logger.record(key, value)
