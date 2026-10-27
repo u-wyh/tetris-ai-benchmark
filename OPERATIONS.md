@@ -437,3 +437,6 @@
 2026-10-27T21:06:50+08:00 | BC score RL：已真实提交 task1、task2 共8192训练步，第二事务从完整状态恢复并通过manifest校验；预热Actor L2/梯度=0，Critic梯度非零，死亡0；训练约390步/秒。准备由独立tmux续跑冻结阶段队列。证据：runs/bc_score_rl/training/{transaction_state.json,metric_history/,events.log}。
 2026-10-27T21:06:58+08:00 | BC score RL: training transactions 3..32 started
 2026-10-27T21:09:59+08:00 | BC score RL：独立tmux tetris-bc-score-rl 已实际运行（启动pane PID231411），后台训练程序PID231423；五模型64块功能烟测通过、精确共同得分与评测快照恢复通过。相关Python/Parity 26通过3跳过35子测试通过，JS68通过，新增恢复及门槛测试5通过；8080/8081均200。队列按冻结门槛自动评测/收尾，不恢复此前通用Codex无限循环。证据：runs/bc_score_rl/{queue.log,preflight_python.log,preflight_js.log,smoke/}。
+2026-10-27T21:13:10+08:00 | BC score RL: task_32_20k paired evaluation started; 16 seeds, cap 20000, pending 80
+2026-10-27T21:28:22+08:00 | BC score RL: finished reason=stopped_gate_32; committed_steps=131072; confirmation=False
+2026-10-27T21:29:05+08:00 | BC score RL: regression return codes [0, 0]; report generated; no web model changes
