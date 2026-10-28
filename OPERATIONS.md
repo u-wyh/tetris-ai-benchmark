@@ -477,3 +477,4 @@
 2026-10-28T23:06:26+08:00 | BC sequence safety: short32 gate={'passed': False, 'checks': {'survival': True, 'early': True, 'score': False, 'seeds': True, 'high': True, 'holes': True, 'streak': True, 'capped': True}}
 2026-10-28T23:07:11+08:00 | BC sequence safety: final outcome={'reason': 'stopped_short32', 'confirmation': False, 'candidate': '/home/wyh/projects/tetris-ai-benchmark-safety/runs/bc_sequence_safety/checkpoints/epoch_01/model.zip'}; regressions=[0, 0]; frozen artifacts unchanged
 2026-10-28T23:07:35+08:00 | BC sequence safety: unattended final report assembled with actual corpus, spawn-space, action and label-quality diagnostics; no new games/updates
+2026-10-28T23:08:41+08:00 | BC sequence safety: final interpretation: fresh32 candidate capped32/32, old student30/32; score +6.404% vs BC failed8% gate; four-clear share2.340% to0.481%; no further stages or experiments. Added evidence-qualified mechanism/resource conclusion and numeric changelog.

@@ -196,3 +196,5 @@
 
 - Added fixed-risk sampling, matched BC/student recovery counterfactuals and conditional safety distillation from the high-score student.
 - Preserved prior artifacts; reported all allowed stages and the pre-registered stop/confirmation decision.
+
+- Fresh32-seed20K safety candidate capped32/32 versus student30/32, but common-window score gain was6.404% versus BC, below the8% gate; four-clear share fell2.340% to0.481%. Stopped after256 actor updates; no100K stage, confirmation or champion. Python/Parity31 tests plus35 subtests and JS68 tests passed.
