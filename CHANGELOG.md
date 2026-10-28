@@ -191,3 +191,8 @@
 
 - The trained single model improved common-window official score by13.97% on all16 development seeds and raised four-clear share from0.039% to2.420%, but one9867-piece early death failed admission; no champion or independent confirmation.
 - A single exact-score death replay found height20/one-hole Block Out; BC from the fixed128-piece lookback survived512 observed pieces and flattened the board.
+
+### BC sequence safety research (2026-10-28)
+
+- Added fixed-risk sampling, matched BC/student recovery counterfactuals and conditional safety distillation from the high-score student.
+- Preserved prior artifacts; reported all allowed stages and the pre-registered stop/confirmation decision.

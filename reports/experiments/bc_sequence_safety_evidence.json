@@ -1,0 +1,2624 @@
+{
+  "protocol": {
+    "at": "2026-10-28T22:02:59+08:00",
+    "started": 1793196179.5695343,
+    "git": "ed94724b222d78aa70bbbe16968600990b6c3a97",
+    "sources": {
+      "training/bc_sequence_safety.py": "67f9a375d37c4bee3b6aa07539a382214cd2cd286b4293c9a9aef64b70bcfaeb",
+      "training/bc_sequence_safety_report.py": "1ca2cec2a479ddadd9f5ecad87d9d0d9aed6fc5d92009407e46a666c3c6ea9fc",
+      "training/bc_sequence_transfer.py": "9d3b0c402e73659ad68f482e9748fd139c3c2ca8cc34e26114797f5e1edac1a1",
+      "training/bc_sequence_supervised.py": "f932ff5f870213c4605f3be0a6801d477b495a4b6b48f8b78658e189ec837443",
+      "training/bc_score_rl.py": "e360190c06958d990c08f24f01b30954df0ff2d804a6df403fe9563f4bf89103",
+      "training/imitation_bc.py": "2d2f18c502a922b2fe099f9db00a4bfe40791f0e553f1ff72ecd10452e44ba10",
+      "training/candidate_policy.py": "bd9e22ef917fb9263e8aa6bcdc625c0c9fe895533d0dcbc1b67edd6ad17fb541",
+      "training/candidate_features.py": "f708479e9c2237813c6939bc7b33f24126f3836bbecc97afc82971e6daa950a9",
+      "training/hybrid_policy.py": "b29f7b3255ad8eea28b933fe07a0bcae7882497df0104c3d8a08ec410a91c4f5",
+      "training/evaluation/failure_curriculum_eval.py": "4c30642395ca771a22409ef37783b7d02fc52c34457428d2c4b6bc44fa1a5363",
+      "training/evaluation/fast_legal.py": "34d27181c209964cc322571458421d9cb2605a0a496b3908d3afd54113e982d6",
+      "training/evaluation/fast_candidate_features.py": "27fa613753c523f302e7552b62eb834289ff7ae588479192775612f56f15a419",
+      "reports/experiments/bc_sequence_safety_design.md": "f5f56762a569c68e558d12181fd4e44812a76cdf23bd4b404cff77472110a8b8",
+      "training/tetris_core/__init__.py": "094e2519383fae1f8f8b5ad45a07eb22da0b0df82d4b8d6ae15bedda7fd8007e",
+      "training/tetris_core/core.py": "d4257f084aff1dd50c43b1eb2593393a3951aa6b8a1ca9d0de0b7e5ce2e75495",
+      "training/tetris_core/legal_placements.py": "788cfaf85983eae91ac3d6afe2068b368206a052bfcdc146b68762dfd981628b",
+      "training/tetris_core/pieces.py": "479b3edf7a02e9ad3fcc0f1353076142fd00a1b9d93e86f6939f8cf2aa899479",
+      "training/tetris_core/rng.py": "c363caf8446908d4c782008affbd89253095ea1561129c6441444891c96c0e39",
+      "training/tetris_core/actions.py": "36bafd2dd3e2c088dcd10b02b6b394c541007438bcdc8c39a175a8bb94780962",
+      "training/env/__init__.py": "6df308447f7a5348e9111dd968476a7698f80cc5ff0e9bbd404aef091e8edb6c",
+      "training/env/failure_curriculum_env.py": "15cc0ea0c75e1da44381928118c5dbde00f5f24692813610bc55367fb208d540",
+      "training/env/candidate_env.py": "a9f181aae5f87bb6be9b6a780507dcaaf03968c78949d0d027cf06e47c4a25e8",
+      "training/env/fast_candidate_env.py": "79190128c156ccc18230240ee4685a2583e688420e1b1898dc7d29043525f940",
+      "training/env/tetris_env.py": "a51a40a5e690706c02b77ba04dd0b247aff36186208d2120d58051bf648bb35a"
+    },
+    "frozen": {
+      "runs/candidate_bc_next_stage/champion/model.zip": "5f5613cb5eb4e80a02406b70902ad3d5c571eb8fe38bec4b40f73b34289ca663",
+      "runs/ppo_candidate_raw_30m_seed42/final/model.zip": "eb859b8989efe8f3332393ed57110036979b03bb4d3d8d8316d080cf04b2da34",
+      "runs/bc_sequence_transfer/supervised/checkpoints/epoch_01/model.zip": "e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914",
+      "runs/bc_sequence_transfer/supervised/data/bc_3102802000.pkl": "5a96184791574a5b52a3392ea0540d40bb5fa15c9ecd74abc2228c08256c0820",
+      "runs/bc_sequence_transfer/supervised/data/bc_3102802001.pkl": "edcf992057fb7daed116f84c75520b7c9c1779911afc26d1ce46108ee3d407fa",
+      "runs/bc_sequence_transfer/supervised/data/bc_3102802002.pkl": "fc42a577573f555e82503c2a2075613e6b05525ff9d8857c9ca5b708da099ef7",
+      "runs/bc_sequence_transfer/supervised/data/bc_3102802003.pkl": "6a73d468ba368c9d51ed7964b9951f73acaacacf6611033e4ac3b632890de325",
+      "runs/bc_sequence_transfer/supervised/data/bc_3102802004.pkl": "3d991978a4d3eed906211f1630ce5c7571ca339098363cfd1dd9959a0bd3a5a5",
+      "runs/bc_sequence_transfer/supervised/data/bc_3102802005.pkl": "011be96847123088956942be8a9d9a498746a1dd639a6243c7b044846c2b99a9",
+      "runs/bc_sequence_transfer/supervised/data/bc_3102802006.pkl": "c7a2a53e59213d09ae7670611535fbb692b97eb670201f4e90a7e7480127ef1d",
+      "runs/bc_sequence_transfer/supervised/data/bc_3102802007.pkl": "0af22fa1da7b10fb5fe70b1d97136f6c85d655c14fff3cd16b433450ee5ef620",
+      "runs/bc_sequence_transfer/supervised/data/ppo_3102802000.pkl": "0f169e736ad01c09fc2caea26b8a5a36407a5ec7ac7f65d6bb4f618380d04829",
+      "runs/bc_sequence_transfer/supervised/data/ppo_3102802001.pkl": "daf62500a591c2956c42499f1e95b4ab346db56783cc715e802e16d9277986b6",
+      "runs/bc_sequence_transfer/supervised/data/ppo_3102802002.pkl": "ba372169d3aa52e04424dbc0e5440aec0ad4e78f7bc1156ebf6147ed233f66c8",
+      "runs/bc_sequence_transfer/supervised/data/ppo_3102802003.pkl": "56c97ca7e4eed0036717b87072c0ae0df7978533cd208930e43651df3c32f017",
+      "runs/bc_sequence_transfer/supervised/data/ppo_3102802004.pkl": "2db534089be49d6eee037a6bf6a0c698075922e2001c65c0a5983320f35809bd",
+      "runs/bc_sequence_transfer/supervised/data/ppo_3102802005.pkl": "5593fa755204841b13869458f28c3d005718cbaa3b95750451e14c6dafb854cd",
+      "runs/bc_sequence_transfer/supervised/data/ppo_3102802006.pkl": "14544b901ae22aa5c215bda432323db81734c6fc442cfa8fdf9da600c7abcd67",
+      "runs/bc_sequence_transfer/supervised/data/ppo_3102802007.pkl": "288cfb94565c2c5dbd92be521f966960acdb15d728a8f9570047f1e8b2e5a8e0",
+      "runs/bc_sequence_transfer/supervised/data/transfer_3102802000.pkl": "d3ef8b17d21ee27ba56e1b67602744dd6fbf311164c7fb4dbe47aa782b3b7387",
+      "runs/bc_sequence_transfer/supervised/data/transfer_3102802001.pkl": "1dc598f6ad05d4f19e5e4bb25c309ad1ebb6c8e32edb66443df4cc88cc61179f",
+      "runs/bc_sequence_transfer/supervised/data/transfer_3102802002.pkl": "9da9d9c9dbdfa851aaa0011b9596412f656c5c09ecb16012d5b963a32193bde6",
+      "runs/bc_sequence_transfer/supervised/data/transfer_3102802003.pkl": "53bcd994f50c1cd26ad1134379e232e53f6a9a13938f0d3ab2cb001a8a87bdbe",
+      "runs/bc_sequence_transfer/supervised/data/transfer_3102802004.pkl": "a9150e70cd8c44163031b95a645fce7c0f09ace7dfe0e8725247c9060b366280",
+      "runs/bc_sequence_transfer/supervised/data/transfer_3102802005.pkl": "83ec3ca53378a2f4447f1f9b9f0bbc7115d10f6d62651a10cff0bdc336d4df61",
+      "runs/bc_sequence_transfer/supervised/data/transfer_3102802006.pkl": "e3efef4c64797ae79953a5a8063b54c640a61eb65ff06e0f45b585ec561e4588",
+      "runs/bc_sequence_transfer/supervised/data/transfer_3102802007.pkl": "53867804dc871d813075cedf3d761e2ba640fe4b8204cb9cb34f569b640a175d",
+      "reports/experiments/bc_sequence_transfer_results.md": "ca9cb76bad3a3e9726b016c19fe48bcddbf44ac8baa0d6b22b8b4753767463f8",
+      "reports/experiments/bc_sequence_transfer_design.md": "5ea95fbfc54c5c23470c4a73a0b608456d67e3e8a090442e04d4ba96b2f46423",
+      "reports/experiments/bc_sequence_transfer_final.md": "d937aee164481dae4240ca7eb64e9ff7af331f9adb8fac2f19438da73c5e8e1b",
+      "reports/experiments/bc_sequence_transfer_supervised_design.md": "07273c299607a271390079c215d63617ec6bfdc2c1abe3bf10d83fc1a6bc266d",
+      "reports/experiments/bc_sequence_transfer_audit_design.md": "154dc11cd31d3c0fe2185bd74ac3667b9451397c545cee52c4775401a793ff7c"
+    },
+    "data_seeds": [
+      3102811000,
+      3102811001,
+      3102811002,
+      3102811003,
+      3102811004,
+      3102811005,
+      3102811006,
+      3102811007,
+      3102811008,
+      3102811009,
+      3102811010,
+      3102811011,
+      3102811012,
+      3102811013,
+      3102811014,
+      3102811015,
+      3102811016,
+      3102811017,
+      3102811018,
+      3102811019,
+      3102811020,
+      3102811021,
+      3102811022,
+      3102811023
+    ],
+    "short_seeds": [
+      3102812000,
+      3102812001,
+      3102812002,
+      3102812003,
+      3102812004,
+      3102812005,
+      3102812006,
+      3102812007,
+      3102812008,
+      3102812009,
+      3102812010,
+      3102812011,
+      3102812012,
+      3102812013,
+      3102812014,
+      3102812015,
+      3102812016,
+      3102812017,
+      3102812018,
+      3102812019,
+      3102812020,
+      3102812021,
+      3102812022,
+      3102812023,
+      3102812024,
+      3102812025,
+      3102812026,
+      3102812027,
+      3102812028,
+      3102812029,
+      3102812030,
+      3102812031
+    ],
+    "long_seeds": [
+      3102813000,
+      3102813001,
+      3102813002,
+      3102813003,
+      3102813004,
+      3102813005,
+      3102813006,
+      3102813007,
+      3102813008,
+      3102813009,
+      3102813010,
+      3102813011,
+      3102813012,
+      3102813013,
+      3102813014,
+      3102813015
+    ],
+    "confirm_seeds": [
+      3102815000,
+      3102815001,
+      3102815002,
+      3102815003,
+      3102815004,
+      3102815005,
+      3102815006,
+      3102815007,
+      3102815008,
+      3102815009,
+      3102815010,
+      3102815011,
+      3102815012,
+      3102815013,
+      3102815014,
+      3102815015,
+      3102815016,
+      3102815017,
+      3102815018,
+      3102815019,
+      3102815020,
+      3102815021,
+      3102815022,
+      3102815023,
+      3102815024,
+      3102815025,
+      3102815026,
+      3102815027,
+      3102815028,
+      3102815029,
+      3102815030,
+      3102815031
+    ],
+    "device": "cpu",
+    "seed_audit_sha256": "0f40c548fd1a6286e932db8f9656166b69ac7bba23da108beed28f380469c017"
+  },
+  "mechanism": {
+    "bc": {
+      "frames": 24000,
+      "risk_counts": {
+        "normal": 23891,
+        "moderate": 29,
+        "severe": 1,
+        "other": 79
+      },
+      "compared": 30,
+      "high_risk_comparison": true,
+      "bc_student_agreement": 0.7333333333333333,
+      "bc_to_student_kl": 1.0373826662699381
+    },
+    "ppo": {
+      "frames": 28672,
+      "risk_counts": {
+        "normal": 15829,
+        "moderate": 9992,
+        "severe": 1232,
+        "other": 1619
+      },
+      "compared": 1024,
+      "high_risk_comparison": true,
+      "bc_student_agreement": 0.7109375,
+      "bc_to_student_kl": 0.6729554138146341
+    },
+    "transfer": {
+      "frames": 1024,
+      "risk_counts": {
+        "normal": 648,
+        "moderate": 296,
+        "severe": 40,
+        "other": 40
+      },
+      "compared": 336,
+      "high_risk_comparison": true,
+      "bc_student_agreement": 0.7083333333333334,
+      "bc_to_student_kl": 0.7197952128591991
+    },
+    "bc_support_bins": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        1
+      ],
+      [
+        1,
+        1,
+        0
+      ],
+      [
+        1,
+        1,
+        1
+      ],
+      [
+        1,
+        2,
+        0
+      ],
+      [
+        1,
+        2,
+        1
+      ],
+      [
+        1,
+        3,
+        0
+      ],
+      [
+        1,
+        3,
+        1
+      ],
+      [
+        2,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        1
+      ],
+      [
+        2,
+        0,
+        2
+      ],
+      [
+        2,
+        1,
+        0
+      ],
+      [
+        2,
+        1,
+        1
+      ],
+      [
+        2,
+        1,
+        2
+      ],
+      [
+        2,
+        2,
+        0
+      ],
+      [
+        2,
+        2,
+        1
+      ],
+      [
+        2,
+        3,
+        0
+      ],
+      [
+        2,
+        3,
+        1
+      ],
+      [
+        2,
+        4,
+        0
+      ],
+      [
+        2,
+        5,
+        0
+      ],
+      [
+        3,
+        0,
+        0
+      ],
+      [
+        3,
+        0,
+        1
+      ],
+      [
+        3,
+        0,
+        2
+      ],
+      [
+        3,
+        1,
+        0
+      ],
+      [
+        3,
+        1,
+        1
+      ],
+      [
+        3,
+        1,
+        2
+      ],
+      [
+        3,
+        2,
+        0
+      ],
+      [
+        3,
+        2,
+        1
+      ],
+      [
+        3,
+        2,
+        2
+      ],
+      [
+        3,
+        3,
+        0
+      ],
+      [
+        3,
+        3,
+        1
+      ],
+      [
+        3,
+        4,
+        0
+      ],
+      [
+        3,
+        4,
+        1
+      ],
+      [
+        3,
+        5,
+        0
+      ],
+      [
+        3,
+        5,
+        1
+      ],
+      [
+        4,
+        0,
+        0
+      ],
+      [
+        4,
+        0,
+        1
+      ],
+      [
+        4,
+        0,
+        2
+      ],
+      [
+        4,
+        1,
+        0
+      ],
+      [
+        4,
+        1,
+        1
+      ],
+      [
+        4,
+        1,
+        2
+      ],
+      [
+        4,
+        1,
+        3
+      ],
+      [
+        4,
+        2,
+        1
+      ],
+      [
+        4,
+        3,
+        0
+      ],
+      [
+        4,
+        3,
+        2
+      ],
+      [
+        4,
+        7,
+        0
+      ],
+      [
+        5,
+        0,
+        2
+      ],
+      [
+        5,
+        1,
+        1
+      ],
+      [
+        6,
+        0,
+        1
+      ]
+    ],
+    "student_bc_replay": {
+      "loss": 0.6729119924704233,
+      "top1": 0.7813333333333333,
+      "teacher_probability": 0.6383678361574808,
+      "samples": 3000
+    }
+  },
+  "new_distribution": {
+    "severe": {
+      "states": 192,
+      "bc_student_agreement": 0.8229166666666666,
+      "masked_kl": 0.6073926078776518,
+      "outside_bc_support": 191
+    },
+    "moderate": {
+      "states": 191,
+      "bc_student_agreement": 0.5759162303664922,
+      "masked_kl": 1.1992774484045219,
+      "outside_bc_support": 112
+    }
+  },
+  "dataset": {
+    "counts": {
+      "train": {
+        "normal": 512,
+        "safe": 264,
+        "bc": 18000,
+        "ppo": 20480
+      },
+      "validation": {
+        "normal": 172,
+        "safe": 85,
+        "bc": 6000,
+        "ppo": 8192
+      }
+    },
+    "severe": {
+      "train": 134,
+      "validation": 43
+    },
+    "episodes": {
+      "train": [
+        3102811000,
+        3102811001,
+        3102811002,
+        3102811003,
+        3102811004,
+        3102811005,
+        3102811006,
+        3102811007,
+        3102811008,
+        3102811009,
+        3102811010,
+        3102811011,
+        3102811012,
+        3102811013,
+        3102811014,
+        3102811015,
+        3102811016,
+        3102811017
+      ],
+      "validation": [
+        3102811018,
+        3102811019,
+        3102811020,
+        3102811021,
+        3102811022,
+        3102811023
+      ]
+    },
+    "exposure": {
+      "normal": 393699,
+      "moderate": 16235,
+      "severe": 1776,
+      "other": 7472
+    },
+    "accepted": 349,
+    "rejected": 34,
+    "checks": {
+      "train": true,
+      "val": true,
+      "train_episode": true,
+      "val_episode": true,
+      "severe_train": true,
+      "severe_val": true
+    },
+    "passed": true,
+    "sha256": {
+      "episodes/seed_3102811000.pkl": "9ae8d0c8598d6637d51133381180ac6803a5fb98dbfef59706e51d3bf848fff9",
+      "episodes/seed_3102811001.pkl": "38e6edc6a3a2e98812d9f8737b3e434ba21a213d7148cade8c07cea109dd8b97",
+      "episodes/seed_3102811002.pkl": "250e7f967d7a8c93af15075ffe8f24b07f85b6cbb8c7878dd8b0133bbf37f855",
+      "episodes/seed_3102811003.pkl": "5da6432009f69475b1346a275c0aff2a70864ed4f13972cf959f7453a6467ea2",
+      "episodes/seed_3102811004.pkl": "e20e5b92a292be81007cce6810980236d3c66aca7571ed4e43b8fa02170e4821",
+      "episodes/seed_3102811005.pkl": "0e88325826ad878fe4b2f82d2e091549701ca6c000cc5143fdfcc258d7981645",
+      "episodes/seed_3102811006.pkl": "68acef61bed3800287673e7c732a78110cc0c0b28098a36cc92ef2f571ffa5a1",
+      "episodes/seed_3102811007.pkl": "3ea54b2ad381db010c0266e48261bec988a6da0fc36fadb45cbc64f3d66d7e51",
+      "episodes/seed_3102811008.pkl": "1ba7f71a58bbf5618274da9189b1336d2d28435198cc31c0eb13fa300300f270",
+      "episodes/seed_3102811009.pkl": "9497a2e4bc749420f2c571d02b982a461dab324c126724d8fb878f8a860852fc",
+      "episodes/seed_3102811010.pkl": "6e6d8b8a0c391f1b60eabf16960fee661165e9b5b2c278b33336a19c38bd1a18",
+      "episodes/seed_3102811011.pkl": "184240ed5c5d964ac7971d60a0c49870829e5db91e58673d532fdf973fcdfa42",
+      "episodes/seed_3102811012.pkl": "3768240cb631062e3cb49a2a047737efac46a6344dbb23f87f9f56ca91ca4911",
+      "episodes/seed_3102811013.pkl": "fe009757ef98fbad59beb571b6dc5b7a707b7679841c4b5fed01afeb030092ef",
+      "episodes/seed_3102811014.pkl": "3195f3b5627ba29b6e0185fa6ac2c8dc578e2cb76fa47a1dae69ac2d98c4cdda",
+      "episodes/seed_3102811015.pkl": "b57fdf7a098a27b5863ef924d793c82ee3f2944b244774e5257c57233c8fed13",
+      "episodes/seed_3102811016.pkl": "4f11573bcc73f63a6ca4a8604e5bbf2db10579c8d90d8d0d2c957fd5f51fb4d4",
+      "episodes/seed_3102811017.pkl": "a8f7cd724d5b3f2fe3f23fbc2d41e0032f8a64108b058fa3cd86ced6d8325dc5",
+      "episodes/seed_3102811018.pkl": "e4ab99f5b414c0ad328c57f9654ef8769f7bee39950a9cfda4c8ffb9194eb05a",
+      "episodes/seed_3102811019.pkl": "98d9d386c1ad5207847c722705630e767cb9ebdbf46169f1b4dea9f502ea8cfe",
+      "episodes/seed_3102811020.pkl": "35546b54a04f380996b584e72502db2d2e10778d81f636c7806a4ceb0c3dc822",
+      "episodes/seed_3102811021.pkl": "b1464f3106c51c658c303b78d6c42e7ac9850cbac798ff84028bdbeeabca9d05",
+      "episodes/seed_3102811022.pkl": "9aa160de1c984394f27d2907d09b69c554b7fdf665590eca93ac165082c09a1a",
+      "episodes/seed_3102811023.pkl": "f8f16120f72e1a9923cf04feb517d00b6f993c808c6f126b342307b3ca831dc0",
+      "counterfactuals/3102811000_1311.pkl": "dd877b57047c2253ac960a89618c43b7d63116207299bb37a2080eea1f3f4cc2",
+      "counterfactuals/3102811000_1472.pkl": "a20ebd7354e545a894c78e8e44b59d02f56ceb17aaa433f1bbc77d4adebdf899",
+      "counterfactuals/3102811000_1593.pkl": "0b3272f0b55ca29c48a678fdafa030af83a443100b5c99b7f28930fcc340ebf9",
+      "counterfactuals/3102811000_1746.pkl": "43e054b4c5b7f95c2ac74cddf8b5bb38d6f9bfac2f4a876ca9fc134c36bdc6df",
+      "counterfactuals/3102811000_1877.pkl": "711ad5bab10fa949de6f33a2ce2960d75f06a59a469b66d00e2820e94d3ec749",
+      "counterfactuals/3102811000_1887.pkl": "1b742cfdc97643724bdc01ff972f7ea80fed1e1aab87fde461a41ac34cbd3e2a",
+      "counterfactuals/3102811000_330.pkl": "aee59572e2ab44ef7993b47b160b438a605bd22504708b6075d3d2f035c2a576",
+      "counterfactuals/3102811000_4086.pkl": "c09ca15d3aafd6d3d81f5d1925f2ac46912ae0a652fa535270d1b5167a0d040d",
+      "counterfactuals/3102811000_5504.pkl": "7ca878bed7745b7d44383abf327ee1db1947e9c209f758579e99443726812323",
+      "counterfactuals/3102811000_5511.pkl": "70cf12363ea8af39a5a2162c14fc6f8d488c673cbf5902e41376bbe49d7749bb",
+      "counterfactuals/3102811000_570.pkl": "557df486f1ae2dd66da4a22e532f458db2ac4a01b1bb5dd7bf697b438555567b",
+      "counterfactuals/3102811000_602.pkl": "a9644d775c6f65aeeb0d63d2721f8ee402d6b81d2e9c99c7df8b861a6e99295d",
+      "counterfactuals/3102811000_7090.pkl": "97682998944e08b661eb13340699771396ed76ccc1cad5a5476725a3c4099be6",
+      "counterfactuals/3102811000_7094.pkl": "a60c785d1eb93584345b9a0c411d30d5c39ea10b95d0b6146dd95d2c2000d93f",
+      "counterfactuals/3102811000_7192.pkl": "d2014180c59d4a4759135b0d308f8bb3cf012599b5d73825d5399f6140aea42f",
+      "counterfactuals/3102811000_762.pkl": "71c30c479488eb6f2d2cd3cdf40399598ad9c1845eacfdb44a64f8094d191f14",
+      "counterfactuals/3102811001_1150.pkl": "76fc5702033e9cd4c9ae65359dace3a5d7795d36535152a0ad80036f52e53be3",
+      "counterfactuals/3102811001_1460.pkl": "d7ddf5ca3522682d7da62d6884265bb238a07f4d0d41522b55095edc5919c8e8",
+      "counterfactuals/3102811001_1464.pkl": "c3d0016f4838b02853765f904ab4a6979457210d72fdb5cbf5a2658f925672a9",
+      "counterfactuals/3102811001_1611.pkl": "9075844309916ae71ecbd2aa0cceec33f35476fb724856b3283e354fb13170c2",
+      "counterfactuals/3102811001_1691.pkl": "35988d82ae54bd257307c9fa7194e57963f82757874be10f2d3854c4640dd297",
+      "counterfactuals/3102811001_1857.pkl": "d792966ca30066756cf9c4aa4799d2a18b10637f8b07804f5024ebd773a14c51",
+      "counterfactuals/3102811001_3363.pkl": "9045ea324082e451cc2151a5ec0bfb2c77e84b9b51dcd0905275d6549f37b2c8",
+      "counterfactuals/3102811001_3389.pkl": "a5977fab532ddf5b4b90195a42038e3b5ec6cca62e03052de1b1a1c73c7f5de8",
+      "counterfactuals/3102811001_3393.pkl": "bd85a67c1225cdcdbea32867c9471401b674f9ac49d3749f57a0254889ef0c61",
+      "counterfactuals/3102811001_3397.pkl": "5fff7f54fd9adff160701d7058372390f9415830398d1a9d4fe82a63485256fd",
+      "counterfactuals/3102811001_3401.pkl": "4daad235a65f9f409346586ec5024d8849323b13fb599933bdd9a34d3cbe322b",
+      "counterfactuals/3102811001_3405.pkl": "6e225b92f29fbf0da7a72516de65bd98f17e10b18233edd5453ea49139230c28",
+      "counterfactuals/3102811001_385.pkl": "3071409e156ed57e90a98f4525cbce11b9c2282e5b80ac9298ab69c2e24936e0",
+      "counterfactuals/3102811001_533.pkl": "08bfafc906c78e596b69797c0975ae47a932de569225e8806dca8580fe9275ef",
+      "counterfactuals/3102811001_565.pkl": "2a0918ba1448d2bd9caf4bc71261a2553172a6cbaf37948eb02eb50736e682a3",
+      "counterfactuals/3102811001_603.pkl": "1f27dcaafcd74e6b53c6f2a9162abeef4072950ddbd6d8048c58232f4a8fbb8d",
+      "counterfactuals/3102811002_150.pkl": "d1c0d108f75840b244a2b75bef70c054d423c069c9cdc83b2bc3dc516c9253bf",
+      "counterfactuals/3102811002_1559.pkl": "3191bf6a57722c7e998813c3a0d4c6aa5a573f84fac8ba6f9e7cdbd3ebc2cc62",
+      "counterfactuals/3102811002_2500.pkl": "acb2666728779d4ec19bfaf58df971db4ef6b9b6d9ec3f7128a340eb6aeda839",
+      "counterfactuals/3102811002_318.pkl": "54a77af956bc6d2a22013a3b827d56003d844e61f243d6f7556335531840a629",
+      "counterfactuals/3102811002_395.pkl": "24111f57a2d19299e88f0ef0d322b470c7ac89eeb3efbb39cc018196d742ff23",
+      "counterfactuals/3102811002_402.pkl": "6762dead0b5e4ae1642a3e3a113f91c0cec379ff1e2628ace6f4ac7dcf4e66ad",
+      "counterfactuals/3102811002_406.pkl": "072e3a27bcf37ca8b3c0a201f9e17d467cd887eb7cea9b72ec3019dfacc949c5",
+      "counterfactuals/3102811002_4197.pkl": "7d9840c7dae6f639e34f37d686d4c78666a91d31e5df9f60ca5d46328ab5814b",
+      "counterfactuals/3102811002_442.pkl": "3dfc87cdc626cdafed4275f324046f128c655d6966e93653f5d234bd690c932c",
+      "counterfactuals/3102811002_4454.pkl": "b60e04dc0bf2b9db65b399203a3d17953d273d70a03440340f2b9621ac6cbbfe",
+      "counterfactuals/3102811002_6022.pkl": "8584b59823ca682feb9b892b550eeb48a674e80ea4ebe38ab8f122859e025050",
+      "counterfactuals/3102811002_6026.pkl": "1ce6c32ee3718d4650122e23dfcbc963d93a004290f9a682d3f3eac9d7a0bce2",
+      "counterfactuals/3102811002_709.pkl": "45977cc5f6497d35ac55686f338634d00a0d481123172a384895b4aa5467c7bb",
+      "counterfactuals/3102811002_815.pkl": "8db80cd097f49d91702df9bc3a3fb9ca36a4d51f32f60a932550d038e4cd2a7b",
+      "counterfactuals/3102811002_919.pkl": "9dc807975ec655092bfd67145cf84eeb08831660c248495777fd7ba0e929204c",
+      "counterfactuals/3102811002_963.pkl": "ff2cbf03f718f8bcec0502136169dadcbbb028ff605dc609f108d14d7cf4a3a6",
+      "counterfactuals/3102811003_1576.pkl": "0b9e6ff665b1074efbf929ffba1a251ac29e9de42db43b4d05c2a5634eaa6aa7",
+      "counterfactuals/3102811003_1584.pkl": "a931695b55347f1dc721dce1bef56c358f0a1e177d5801c835ecea00e6967801",
+      "counterfactuals/3102811003_1588.pkl": "76691e7e8d3dd8a8de59051963fca3cac0bba8712d37ee51a64821aa8c03ca43",
+      "counterfactuals/3102811003_1592.pkl": "79cda88de89eb36eb0c431e13da318c6f91c338a64c2e04eb8597eb1db522d56",
+      "counterfactuals/3102811003_1596.pkl": "79310e4fd314c60526989988cf5dc670418b376a3df8dedeec81ab6b62131cba",
+      "counterfactuals/3102811003_1601.pkl": "5911eda8eb8fa103fcac968583a71d0c1d5852550fa7ddf969ff8f64687b587e",
+      "counterfactuals/3102811003_208.pkl": "f49dabc4e2ea6156ec45ff9577ba19cc91c63b388ee6bd452ee4a2c4dda128c8",
+      "counterfactuals/3102811003_2543.pkl": "016b6839fa39b4b68773ab5f4b45015629ced2a7ecc56f2f8a32ae5e8556c406",
+      "counterfactuals/3102811003_263.pkl": "eeee341738cf83b95b854092140c7f8773050f824d0f37a838b022d26c15a525",
+      "counterfactuals/3102811003_378.pkl": "39eef467799792607a9ae3441761b33769673e35f4db5a958458cd5d953decd8",
+      "counterfactuals/3102811003_38.pkl": "cea63cf6750be23e1702efe305775956c654e92ff6f750bb0be306f4706d8783",
+      "counterfactuals/3102811003_687.pkl": "69c11ad21cb844e06d7c800352bdd879c19e4801a441ef6e0e7e6ce9197c1b6b",
+      "counterfactuals/3102811003_760.pkl": "db4e3c79a4b5627967f18042c8a0ebac09faeff05c6b9b5c5d8f04fd3abe078d",
+      "counterfactuals/3102811003_766.pkl": "17dca265db11e5557bf90c974321a0e2fdee117cce521fd217c4de2b7649135e",
+      "counterfactuals/3102811003_860.pkl": "dc6728d0870fb2955a5c30c047d04d51b21c2dbd9f89b931b8e0a65115e09295",
+      "counterfactuals/3102811003_987.pkl": "fde0f7d2f2b04093787413757e3926556af2b6d7cecfc3dbeff97c1dbe1c4b81",
+      "counterfactuals/3102811004_1035.pkl": "e8c66ae10ff3bf3392e0cb51f265a19a83b28c4135332ce47a1f837a94dfdaec",
+      "counterfactuals/3102811004_1238.pkl": "9fefffbc638b06295862a36499e2438283274816241ebcaa36da698ea0491b37",
+      "counterfactuals/3102811004_1258.pkl": "496034bca3119de654348c809899577cd7a2eeecb1cb6405807b173abcb651ab",
+      "counterfactuals/3102811004_1515.pkl": "01894786993b7f65f8435b28e0d833a462b3a8f4a87db7e12a81bd56d58ccc9b",
+      "counterfactuals/3102811004_1696.pkl": "171632ee645810eb24f084284b518fc6c6f5e84146d5e921ed45d9e3939de10e",
+      "counterfactuals/3102811004_184.pkl": "d01b2b0d442601539d4b653de5a7fe74df218a8511e72c9bdddfada8c1d084bf",
+      "counterfactuals/3102811004_190.pkl": "80ab10d0b7fc5400181673b1703b28cd1e060984b8349f0c649417c061f453f1",
+      "counterfactuals/3102811004_206.pkl": "ab312eed9eeff3e3f46f2c93cdb678aa87f44c69c8dc767576f99d1e28242b61",
+      "counterfactuals/3102811004_2072.pkl": "fdae4ebe10ed55fbc9fe8980772124b6164630e8c6234eda57763ba411bc0c11",
+      "counterfactuals/3102811004_2101.pkl": "dd18662af7849d8d742bf4b09e7afeeafc0681051defc516cc121653dee9e2cc",
+      "counterfactuals/3102811004_216.pkl": "c8dcb60c45ee2bb1bffa807b66f8f43049107e8139cc745811a424df084db16d",
+      "counterfactuals/3102811004_2191.pkl": "0ef36ca9057f22ce82bcb0673c117eeb130378d923634102f46b4354879569fe",
+      "counterfactuals/3102811004_27.pkl": "0486044878da783d17885fcb09953c06137c1ad83d1124551b82c9e040d8993a",
+      "counterfactuals/3102811004_406.pkl": "53444c85df5078d0fdf3e5744ab89a27899c9121a762ca780586211144ef8b45",
+      "counterfactuals/3102811004_438.pkl": "96b04ca378b1b2390accb4e60d41d5095301eef17ed955437e7c326094797ece",
+      "counterfactuals/3102811004_758.pkl": "ab6f98077b4e2738022849be93e7b992adb5eac267159e30a3d0723ea43cbd3a",
+      "counterfactuals/3102811005_1119.pkl": "17ca08f413c987dcb624a6b7fa0fa9c032df36282c8fbe625667fd776bce2a7e",
+      "counterfactuals/3102811005_1130.pkl": "4d2d00e22cfe180f2b6f117f2e870672198757e9383bf6a7f19d2bc449b951e8",
+      "counterfactuals/3102811005_1151.pkl": "4347f3619a27dee2bc08f4e4f842c8e9cf00f7003245ce79a14ec304a1bed40c",
+      "counterfactuals/3102811005_1152.pkl": "27221774554b7ea08b52c7921a04f6d3423d2a3fa599627e9aa35695d9fbabcd",
+      "counterfactuals/3102811005_1259.pkl": "554686bd0a18eb10db7ec9ab9cfc190528ed8011da15d64f04a28954c7cf9975",
+      "counterfactuals/3102811005_128.pkl": "87882801065b2218439db728fb4cc712f78fd861ae8cce57f82ac4177904d1f4",
+      "counterfactuals/3102811005_1353.pkl": "32016221e2d6277d322aad5c35da4d154d53026845fcf2fb501373b5d3611c74",
+      "counterfactuals/3102811005_1495.pkl": "b562446a5d6db7767fb8d0525b477b9321076c087ca21af497591c49d3d0258b",
+      "counterfactuals/3102811005_171.pkl": "fe3cea4b8dc896d6800a59ea78dbd1d4224a048aaa1f15e7b299ad13a9c9b9a2",
+      "counterfactuals/3102811005_3264.pkl": "9bf42720fdffa6e295a0e66f4520390f12bd61145ed803be1ea66928e33814e8",
+      "counterfactuals/3102811005_4074.pkl": "07e5d6d497fbc2e2848e179409e9e7c400c1dd1bf283affc8efea74f828d8807",
+      "counterfactuals/3102811005_4078.pkl": "6625e6509c9e904a82f98dbbd87e0cf4ca89e81a24add8ef7a30487f72068e3a",
+      "counterfactuals/3102811005_6552.pkl": "70efecf2bfc57cb57404962950b97904167793f9a7c4cfc00ae73699db51d2bb",
+      "counterfactuals/3102811005_802.pkl": "67a55f9fa27c2f220fd1367ac3961619c269b567647f5cbbeb91ac1c0aa48b5c",
+      "counterfactuals/3102811005_8432.pkl": "1268f483b345d6338c309b10c88bfb321fc9b96c80278798532a25930017ab84",
+      "counterfactuals/3102811005_9666.pkl": "937b7220349850ce417d3b7abdc65d74a8afb9302399728415bf9b04c532cc8d",
+      "counterfactuals/3102811006_1059.pkl": "65aac6121aa4bbdf8106042102057fe516fed451cefc8320bd1f840e9753a55d",
+      "counterfactuals/3102811006_1432.pkl": "293caa74f78eac772202105d161bd267102b7e63a4d35c638d0fdfe9ea7ea6f5",
+      "counterfactuals/3102811006_1464.pkl": "ef6550b1422905f35f616b568cc9253bd9b543e3f873202c6ae7600ae21a8e39",
+      "counterfactuals/3102811006_1756.pkl": "7f574f051cb424f47238b572306c1b8063baa260be2752de2e440e01acaa2024",
+      "counterfactuals/3102811006_2688.pkl": "9e97e86c064220768079de82accab7b1431710507e469cff5850c775b998456c",
+      "counterfactuals/3102811006_2712.pkl": "22e6d929eada3ef14d75d4da8f46a550192c395a982922b37bdb9eb5cd14c124",
+      "counterfactuals/3102811006_287.pkl": "c8e09e1a690bd892732f9218a9a74e2c20f0df13a2dcfafc4aa98458aaffd98a",
+      "counterfactuals/3102811006_465.pkl": "9f4cf25956810feff740e9746a9285c1ce83421a9a00bfbf75e07116a0ebb156",
+      "counterfactuals/3102811006_54.pkl": "8f59d4b9c1f1239aae2463f441ae4d273f0e408fe2106557c4bc20089c297c6a",
+      "counterfactuals/3102811006_7807.pkl": "e98e8fa21d45640f539798b97e810d62fdf8e9011e07920c1725d258896ad8c5",
+      "counterfactuals/3102811006_8782.pkl": "64f021f251c006a525f17610a61b0de5bc6ca8707f22c5a002b7441ba01b57ee",
+      "counterfactuals/3102811006_8786.pkl": "d62f4451dd813c940ada0b458ab4c26b81a0f44edc8039d2daaaef397ba6f898",
+      "counterfactuals/3102811006_8790.pkl": "ee38ca45fb23b2452a39bcfab94f2eb975bd47b6b8523a7f1d65252650d14468",
+      "counterfactuals/3102811006_8795.pkl": "ee5e96e2acc5621e0f0cfdd7874744b9719086f2ef6c282cfb3a7e9334214231",
+      "counterfactuals/3102811006_8807.pkl": "a5eb282640b9bcf07581e280d2bd2bad4766048a0627023fe3bfac4a8112a715",
+      "counterfactuals/3102811006_898.pkl": "c82e586caff14540fc21a0c5a990ae4501e8c05c33e6f0e5639116128e5b35bc",
+      "counterfactuals/3102811007_1001.pkl": "8126068681397882e8e126899564242ca0c49c6347fe205c63b777445ddfbd83",
+      "counterfactuals/3102811007_1005.pkl": "b475364a9162f677c534a0991bace9aa612512a60d3d4a6f4fc9e6d5d802c4eb",
+      "counterfactuals/3102811007_1009.pkl": "f47e884428d4d40231c27c7d686c2886cbe6b58043376128d95fba457015592f",
+      "counterfactuals/3102811007_1013.pkl": "947dd580e3111ec88cb6994cf2659d7a513b022ccb5e51a06a548e9d5327efe8",
+      "counterfactuals/3102811007_1017.pkl": "c36f066d9c448bed13adbeaec6b93fe1a673322415383801007049a4d25571cb",
+      "counterfactuals/3102811007_110.pkl": "b15e7cf56cf2dbebf4b4bca25a20af1516ac4387e102adfd6b5ee25fc3aa1f78",
+      "counterfactuals/3102811007_142.pkl": "9cf9e71794627970a1209e6bc44a4152439e357d17a1399ac2a05b85c6625524",
+      "counterfactuals/3102811007_413.pkl": "7ea5a271c457de074f8670425a3b0f9bcb84a6309aec5a3ef639b26b13cb7db3",
+      "counterfactuals/3102811007_486.pkl": "0fb4e940e0385843dc4c1e6f4c5b42f6de5add2130a8ba060a431d29cea9cd3d",
+      "counterfactuals/3102811007_613.pkl": "4b4f4c1d263c3f65e6129e71ff97efe40a418c76493258c14e5b62e3b7f5e6a6",
+      "counterfactuals/3102811007_657.pkl": "31f32d9c3de38ec265d807d34ff93778d832a1b412597b4ce30b8f2d9d6cb7ab",
+      "counterfactuals/3102811007_918.pkl": "b569e032e199f63bb2e8c951345fca6a380c70d6309f3252e0c6d3a9b206e7eb",
+      "counterfactuals/3102811007_959.pkl": "191875c013727ea3e3fa4df9c2256461247eb9b37cdd407cf8c52808bab6c4b2",
+      "counterfactuals/3102811007_966.pkl": "82cb99c2f3b5c8a586a65daa93eff58b4a2e335bc1f7ad821ca16737a768da54",
+      "counterfactuals/3102811007_970.pkl": "2e2d80513164291d9b9c5131b4e4b01816e941adde34c29acbc94ffbecc0a633",
+      "counterfactuals/3102811007_989.pkl": "d09fb1af8012168fd36b1c3d0db2b8d1687b53a8eaf590fd73cc4ea492c01268",
+      "counterfactuals/3102811008_1197.pkl": "b885840f2b50c851b42b6edbb4c79797589e590d5378d69456b653a666975d26",
+      "counterfactuals/3102811008_1472.pkl": "f1c6f141eb11e968eb712e6390eb8f874b7117b9e0805d02e3e34639db37f3a0",
+      "counterfactuals/3102811008_1478.pkl": "a6be1e04ba0fe65715fc76757f0af777d06760477bd9d09aeab50e16ce1eb201",
+      "counterfactuals/3102811008_152.pkl": "2f430f3b427ef827fae453f49f2e191ffecdc91945479824b6fde97857394445",
+      "counterfactuals/3102811008_204.pkl": "e09c24a0cead306af46f11285d0f217bfb6f77e8dc03c7616344b1de23c7e44e",
+      "counterfactuals/3102811008_265.pkl": "5321d351020363468752e99b390c8f70a7f08e0c3248b68620304785dda5afab",
+      "counterfactuals/3102811008_2892.pkl": "f9bf8a7602cafac3332de76f8f668b56323a6d5b17216f32fa936b665ef03edd",
+      "counterfactuals/3102811008_5146.pkl": "bee5dc14ec916738e0278ae9cfe334efbee4179eb33c177df08b39828067f710",
+      "counterfactuals/3102811008_5152.pkl": "6b397599d7b802823cb2c901a6287c6a041d36fb99400feb18b8621cc0800e16",
+      "counterfactuals/3102811008_5156.pkl": "bca4d0e9788ce41a510b45ad6515abc7fee104dc4a62f94ff157a96db9d94805",
+      "counterfactuals/3102811008_565.pkl": "96c420c547f6860d064b18b495f482d55f679244d8f450763fe21218f35a9e63",
+      "counterfactuals/3102811008_785.pkl": "f36e6a9e9a68c922799b67fb4abb908dca959d7c0ac1faef30e92adde9f58faf",
+      "counterfactuals/3102811008_793.pkl": "5ad70d36c3de46098ec2a91b6470fbd21a5f0da6390ddcec7249568803f4c133",
+      "counterfactuals/3102811008_857.pkl": "62c8d20901cbf958a6465bb39a82cc638c6b4730c36a692d175f8c50d9fe4171",
+      "counterfactuals/3102811008_889.pkl": "2852fc20c7fd1741611ca129dffc9ac492cf8c3bafeaf83dddad69fddad50c4b",
+      "counterfactuals/3102811008_909.pkl": "a3b0c510643739fcdc47c60543403ae2704199088048372166afb34a94952c32",
+      "counterfactuals/3102811009_1435.pkl": "701a36cc1699748cc820bc74f117cbe80539b7710c0dfed38184317c0c9a0ffa",
+      "counterfactuals/3102811009_1652.pkl": "4db9c26f7ab359372174d80461e2664d4b12d1d68391b110acfbda16cf8d0003",
+      "counterfactuals/3102811009_178.pkl": "2a0f3ec01c4184dc66fc8c00f84575b4d15990ff4867b4b5fac259c0f0f288bd",
+      "counterfactuals/3102811009_201.pkl": "853f8c952a137f6024b11fce51b2bd13ab0c80c22f8cc30ef8a1fd8c4c55977b",
+      "counterfactuals/3102811009_210.pkl": "a3733b8da209bf3a109e1e9839637221e8cc18c277ce0ea7219589d6e43ab2a8",
+      "counterfactuals/3102811009_2433.pkl": "26c71a9884b324d869fff917bc057a73e7f8573ce53c2615ff0b1877ff0f1a75",
+      "counterfactuals/3102811009_2811.pkl": "4057cbf51970cacc15cfabb0db989fbc9ec7220910e8bacb08125c049e04404d",
+      "counterfactuals/3102811009_319.pkl": "c32cb8662f73be010bca20474e74daa1ad03d3aa9076576c4127e748601f8f11",
+      "counterfactuals/3102811009_4476.pkl": "89f116d210442b72af4251956bd6ce0d3515d007d56270749be63e6f2ba62c4e",
+      "counterfactuals/3102811009_4482.pkl": "2943700b0b640732e48b0b7bd6116bab63e1c477c5afddd66b42dd52d1a03c0e",
+      "counterfactuals/3102811009_5253.pkl": "1852a8c99373d3bff733b1032a4384b741037c221a8f088faf7a34db8ead35d8",
+      "counterfactuals/3102811009_5257.pkl": "abe00183d02baf882591212f204233cccbaa7ac6d10cdbd3c9fc68dc58e3db82",
+      "counterfactuals/3102811009_5261.pkl": "314f433f0cb704ddd5dbd41f1beccbbc33a771d54e63ddc957e609af6a3214e4",
+      "counterfactuals/3102811009_540.pkl": "e62beb2297092318f2cd8618f3441c800bfe695b9b6f255930b56b42944feba3",
+      "counterfactuals/3102811009_579.pkl": "c0584d4ceb46fabadce4fba4e13780d571a23af51db76e48c2abf1d916721c37",
+      "counterfactuals/3102811009_973.pkl": "2c3360f95b3e516776aa6a8c6b73a97da322a5a264df316fc17ab1bba77baee8",
+      "counterfactuals/3102811010_1198.pkl": "2d9d28e32ae45183fe5b2d8e45874982e96f6a41777004506913b5c55a2a14fc",
+      "counterfactuals/3102811010_1874.pkl": "6a956c174d790234c0d21204065f489bbb2bd516739b1319dca4bc48b55de3ac",
+      "counterfactuals/3102811010_1978.pkl": "6c704239ec814cdfc125be2e61fc2acefb66ede2e4fc2390795fff9a8c228e44",
+      "counterfactuals/3102811010_1982.pkl": "dcde118d595b8a41b6b552b1c369e9aa451a8c3f3588f93c7d66f73477ee9ad3",
+      "counterfactuals/3102811010_2338.pkl": "07d39c537076a66f64bf286f69545e458d84c17d125e876f20ae54411468f5fe",
+      "counterfactuals/3102811010_2342.pkl": "9e56232817bc5619235773d03ef7bf06f4460fb07a2c8c6aa8eb0329011674fc",
+      "counterfactuals/3102811010_2984.pkl": "670207affa1b183dff00807c1ac85c42eab006a97432d6222c3ec21ee07ea86a",
+      "counterfactuals/3102811010_344.pkl": "7eeee32e1eeb6a4faa441af26830ff16ed2f86e4ca5ca9454c0229d58ae19c0a",
+      "counterfactuals/3102811010_534.pkl": "90016d3b4f02292c0b43dd7eed6c3fbcfddee547c0f331b5af29cb45b6a5d1ed",
+      "counterfactuals/3102811010_5866.pkl": "84a7a041f1dbd03760f85e6d08cb72478b15a3464837ac6402393f004fcd5b39",
+      "counterfactuals/3102811010_5874.pkl": "c0785a6d9a0be839d617df40606e4b98586efef583b17b35202faeb3318e96ca",
+      "counterfactuals/3102811010_6346.pkl": "b6048602a7f44c3441e5cbc81b9a2d0f95196b708d8da3900094a26f1e9aa48a",
+      "counterfactuals/3102811010_675.pkl": "0286ee3deeb882d00970627bc07cb0e08b8a902ed17f79c3378eb8eb487d1c34",
+      "counterfactuals/3102811010_71.pkl": "544696a3b2d2763baa72342995a1be46d59482e91f6294c96c38577aeff5ea55",
+      "counterfactuals/3102811010_906.pkl": "961b15aff4ba60135f7e86e96426de14490e8d3d66edc171ba0587f4dab7a020",
+      "counterfactuals/3102811010_947.pkl": "f37db4d77710d50e616e26ad6769a1428c88ef0f763c103daeb7b9c9888249bd",
+      "counterfactuals/3102811011_1036.pkl": "af31add62494b76cc1c15fbccb3fdf5527b1b8232bae67dfb9cd0f15157da4e9",
+      "counterfactuals/3102811011_1381.pkl": "28ca06ea30e2d6ee7783bd7a95367332df6202d9e44107ff70972fd8903b50d9",
+      "counterfactuals/3102811011_198.pkl": "1969fc656a4f32ff98edbdf675800d42f5f97174d4e0e1e57e2383847fb9fb6f",
+      "counterfactuals/3102811011_211.pkl": "81663684f19dc3b15190022c663ace91bd6b01e7c8932ad38668e8726debc4a7",
+      "counterfactuals/3102811011_2170.pkl": "1ac03bb53a701d7a7ab0c26d9c45523ab5eba8edff0b6e4d3f077d87299a6778",
+      "counterfactuals/3102811011_2174.pkl": "e50e8c37b78af9669178e47798d1bbc97f70b9fe69ac26fbba64dc6c321868ee",
+      "counterfactuals/3102811011_2178.pkl": "d0f34aaacb4c459bbb3e31cefd6d85c2de4b9cf1e56327fa61095e76196b43f0",
+      "counterfactuals/3102811011_230.pkl": "07d6035a9ebee68d9950bed9c4fddf903ca2245c0e0cd2a82ae9be246ca2f5ea",
+      "counterfactuals/3102811011_2502.pkl": "896908bcf74be3ab72fa753a1e29ebbff610b3bc258c1eeeb62562d42c1a2f2c",
+      "counterfactuals/3102811011_300.pkl": "d96f2671a517fe9ef45e7efa6dd216ff43fe51b636d5d6cb4890074b7b16636b",
+      "counterfactuals/3102811011_4136.pkl": "00f1df1353a0f9a0846948cb74da4af1a07d356bc41f79f2cd8201a1a3954032",
+      "counterfactuals/3102811011_4140.pkl": "ada6e7cd0b45c178fc3498c3ed87fedf7bbbafc21cbd2009e29f82d5465c97ee",
+      "counterfactuals/3102811011_533.pkl": "fb7b259a2870bca387a9fecfddd12530fa6e0d8c9dcef39b88b762f6a1eb5eda",
+      "counterfactuals/3102811011_613.pkl": "da61761206a7e284d0d43834a243e2befed1f7f3a271e64c5b18c7145c0a5cd2",
+      "counterfactuals/3102811011_844.pkl": "0667e48ce929fef1d8d7845d63c1a6564880f7752132189c2028c7d0556da870",
+      "counterfactuals/3102811011_883.pkl": "2e0e17c3bee818343352908220d6c093ae0bc697d1bc5e2f7672a3a1e7533fb3",
+      "counterfactuals/3102811012_1001.pkl": "93cdd38289c7412459676cc9012ea5c427fad6681494969cdcd1c2c05c3de5c0",
+      "counterfactuals/3102811012_1368.pkl": "75dcca82e401937c2c0c42b739d9953464b50f09f91760722155c87e0e674e9c",
+      "counterfactuals/3102811012_1496.pkl": "8509b1b60d3c3f7c3dbe7bf48ac2aa494f5bf6d1292c77d4c805b9edc5e1b74a",
+      "counterfactuals/3102811012_1556.pkl": "470abdc08d017838e26c43a06c9bc90a6ce8e89c606ec46042f802fbab95bbf9",
+      "counterfactuals/3102811012_1710.pkl": "12ae8e5f20b59b85e961f80558b256bea0ca7643b6ab84f0878670c76caaafc9",
+      "counterfactuals/3102811012_2114.pkl": "c498aa5ae767cfe966f14c2e22faa0245c001c2a9974c3838cc242b8adfcf9eb",
+      "counterfactuals/3102811012_2785.pkl": "56630807784352c652788198ad82863f95b6c547b455c262fc150a18277bdb97",
+      "counterfactuals/3102811012_2789.pkl": "a2aa10516e4328c51501762507225569a30fe3a4df2745bf4fd02a6ad2090570",
+      "counterfactuals/3102811012_3592.pkl": "081e69d1b37bd9cdb59c9c8d67a829d99b1a7fd465d59b7d80233aef5ed5749e",
+      "counterfactuals/3102811012_3596.pkl": "7cb000632cadda6481f40a736c1fb2ae3d449616f9ef260773753e6b452ac184",
+      "counterfactuals/3102811012_382.pkl": "3eb1f74bda96b87b7ad5ae367876d349c4683deb11446a107eb846b6d8c30dca",
+      "counterfactuals/3102811012_4215.pkl": "39451615256e92cd6cda5012c43a9be3bfa6f106b0831bff29c41b1679c0d07d",
+      "counterfactuals/3102811012_4233.pkl": "d305aeab7fc719f2a1814ec5650ccfce4c634eb5129eeac9e9b49afef57498c5",
+      "counterfactuals/3102811012_4744.pkl": "9268299713245f30b910f282caf623f9ad4c0b374f94e0b16161da9e53765cd5",
+      "counterfactuals/3102811012_60.pkl": "f2fae59a43ba471a5f0fb2f3bbd1c41a1e9afdcee48bfc4a1de0cd98ccebd856",
+      "counterfactuals/3102811012_836.pkl": "819c85936c7ba05a5db8f37ed164fc25ccf12f4c013829aac225fabb060ace4e",
+      "counterfactuals/3102811013_1031.pkl": "f74f2cc342682513631a02750ebd4a1e970da94edc7bd96c83653bb80824400e",
+      "counterfactuals/3102811013_1149.pkl": "65dc7032017680e4709860916db3e20569a4d684f916620d2025032e1daa1c0d",
+      "counterfactuals/3102811013_161.pkl": "97f95f5b32715aa1fdb797d45ead3107d4d42220c8d4f265e6fea8c9107407f0",
+      "counterfactuals/3102811013_2907.pkl": "d6b90ba03d9ce27b05bb9376e47a39c0ddf1eb6ee0afcfa8ad46aaed66e799fd",
+      "counterfactuals/3102811013_320.pkl": "eb26c203ced9b84acf8e597325646474c745b6a285239c1e320df53f654b1245",
+      "counterfactuals/3102811013_3670.pkl": "7c3ff1678335bc1c99f8161c07847c66bc7bcc6102088f717425937630e9452b",
+      "counterfactuals/3102811013_389.pkl": "e26a8b5b6708c3ef7412d8cf3bf2b3c388119c6b3936325e7cb8ed69b6907bdd",
+      "counterfactuals/3102811013_40.pkl": "9d356e3955067b7e90f7fd7734fca2341bd9a8e54d95d2ac412fb8235d5e4699",
+      "counterfactuals/3102811013_539.pkl": "ecbea3701635321ddf6b8edd5d5da53935fd7d2dfe3b0fe5766d91b35d57c653",
+      "counterfactuals/3102811013_5697.pkl": "12bb11a4e02dff493d9e9250d2c47ac9693d334758217d9c9afd948deac7c6bc",
+      "counterfactuals/3102811013_6688.pkl": "628e0aa0425f2ffb267cd0ecf1010066e6b4fd4f981187aea043742f00eb46a1",
+      "counterfactuals/3102811013_6756.pkl": "e4ab5e15f1b5d523003bfc41524d359eebce12fc17f66680c728ab5a2ecc94ac",
+      "counterfactuals/3102811013_7612.pkl": "7d604a7571bf7ff0b551a5bdc4219376efafd26ff962c80126070c703228ae6e",
+      "counterfactuals/3102811013_7618.pkl": "1ec5f7781d82c80f95959589f1cb20fdbb798bf24647c6c45d6074fca2d136f4",
+      "counterfactuals/3102811013_816.pkl": "c6a5aa544c8ae1f66ac99ff3901253e51395e4aacc8b6d8fa900e30ff82f75a8",
+      "counterfactuals/3102811013_9137.pkl": "f029b336a6708d931e11674948739ef03a16236073f547734b24bd7656cbdd73",
+      "counterfactuals/3102811014_133.pkl": "92732e03596e22860a9235a9b6a8dd748abb1164a895c43aab43c4ee771801fb",
+      "counterfactuals/3102811014_165.pkl": "85a0494c1aa19eb3c72a6ed5877d10a224ec3e7f2ebd367a99983400fa43e4b7",
+      "counterfactuals/3102811014_197.pkl": "d896516f6136397a4fdf24018e374d98a99b57ad8fa9c5fdc6ba6b821f3bd60e",
+      "counterfactuals/3102811014_199.pkl": "3e2f02ad43dd71da966e345adf5a08bf3ac0fb76907c8ee4b7162524f3fbbe4e",
+      "counterfactuals/3102811014_2080.pkl": "0a00374b3cf190a9f3ed1e79fd544441e1b5efd3abb8c0b978a62ff2d9206bfb",
+      "counterfactuals/3102811014_249.pkl": "65c72d7d44e19cead570e55681e1579a97de05875e2fd2aec0013b77108380e2",
+      "counterfactuals/3102811014_2565.pkl": "d008cf50c339b9559860bdbb130be509cba1c8390220fd2a7c77e7009e0be0f0",
+      "counterfactuals/3102811014_2570.pkl": "398e34ae9fee9f5355bed4214bc40f475c82fdc85760700065a7b92aea8d9b0b",
+      "counterfactuals/3102811014_28.pkl": "d375a35f1d731f28034acde8a69a834cf1307437a2d9c593402d4b1d6f242bfe",
+      "counterfactuals/3102811014_2886.pkl": "a2fa863fb0d80ea612992ae85b85fda109a536a7c0afb83adbfc7f2c38d4f608",
+      "counterfactuals/3102811014_3047.pkl": "5f854233420a5d80e49a51cac51fbe8a20357ba87b2e6ec92305d80b00bd9c27",
+      "counterfactuals/3102811014_437.pkl": "b6f995432c79dd2c6cbfa9c9b2a84f2063297c88d2d8635e2b9f5d4a82b7b6dc",
+      "counterfactuals/3102811014_4924.pkl": "158d5fac2dd3187916c179f99edc8e700c274ad9ea7ab1882d66c2d185d5c192",
+      "counterfactuals/3102811014_540.pkl": "9de2b626f7a85bf507ff2e29edb367b853817209836373fc805099465be09536",
+      "counterfactuals/3102811014_658.pkl": "929a01f702a958533d77b37ccbb04734409bb8f9df8a5b840f8ef4c48d55e6dd",
+      "counterfactuals/3102811014_670.pkl": "9fc4f2eec19afe83a4458c9db8230e175f122c5d3623ee35534dfe7cae39f2b0",
+      "counterfactuals/3102811015_11663.pkl": "6d356ad291c41a293077d0d18482a6423877df8ba06001d9bc1aa6f38d52e8d7",
+      "counterfactuals/3102811015_1298.pkl": "f5395046978cb3a234932c4f4e4291675a0fc2adfbccd8c1bfb27e833ea6ed4b",
+      "counterfactuals/3102811015_1382.pkl": "ed2a01d72ebe87dd2bf03da28c5a3c367051ea6cdd753222a75eeb52701da1b5",
+      "counterfactuals/3102811015_160.pkl": "31e29d697ae718bbece3b21c3ff993aa536b94d40f93b41440a45e9d8876739e",
+      "counterfactuals/3102811015_162.pkl": "f0fa39d22f89352b0b39a2da71347fa8b98741e82ae1c598a107ed8c2c318a4b",
+      "counterfactuals/3102811015_1680.pkl": "0d578960d31afa3899f8a37b4a870e41f6dcc6692bd40c8de1d8ff9f0e8a12df",
+      "counterfactuals/3102811015_199.pkl": "a3fa8d9095101ac044dc07d143d7a07df9ce0ff03ad98fd24e4a76cd2f6ccc62",
+      "counterfactuals/3102811015_5126.pkl": "deef0d5d7db7b8be22bb03a8eed508c1a565aecd0644b54dd8e3d5d268cde508",
+      "counterfactuals/3102811015_583.pkl": "6ab31a3cc07c8e97e706c7fadd661397ecb65e9648499487281d620a66a3e975",
+      "counterfactuals/3102811015_6273.pkl": "6800fe6efcd00b05f66670fb2cfd27bd4952a617d5e6ef004aac1c16417ddeaa",
+      "counterfactuals/3102811015_6277.pkl": "9f553f0aa0200dc2658e2ebe2ae648e3c9ca4211d9b5aeaa7efc1bbce026becb",
+      "counterfactuals/3102811015_7040.pkl": "5cc0a868abd0b716e82e346ce6fc99deb75aba0189e45ff20f228691924e887e",
+      "counterfactuals/3102811015_7051.pkl": "e4d21c5353b9845bd634cf9f28f68f6962b88b9310689c60b4a05ae8f4d70e3e",
+      "counterfactuals/3102811015_716.pkl": "f51f33e3180f5110d1693f86197beb9e7c7873c290d553202f874656f9017252",
+      "counterfactuals/3102811015_838.pkl": "f3ef1fe99f2c06dc1662e81c4c27cb26807fd96a68d4c05b91484b83055e085b",
+      "counterfactuals/3102811015_8452.pkl": "7d634fb10998671cc8fa5a0e01479743fde31da8f8a0c868772d9037b773357e",
+      "counterfactuals/3102811016_264.pkl": "fe508d7ab293e66581c017dd1207f9ed7b14ac30ee36b0aaba55002c32c5de8f",
+      "counterfactuals/3102811016_303.pkl": "ea5611a4c5c4a9795c6e468723c779130d1df745d293e9e9fb3094365dab49b8",
+      "counterfactuals/3102811016_305.pkl": "cc6ce2856ef30aa9567d030df8bdec696b27fc75dcf49e3450fda28732df1ebf",
+      "counterfactuals/3102811016_31.pkl": "ce642ef5af1e300febefd6af11ddcfc397f419f38f1a6ae0dd42bbb650f57f06",
+      "counterfactuals/3102811016_35.pkl": "2a33b4b3661b485b77e34057d3ac6aac80d1b05b5bc94ab6475caf8ceb42bb9d",
+      "counterfactuals/3102811016_470.pkl": "d0406f3407d85c30260c8f8f5fc9682150129c7e69eee64901407582a69e6ef6",
+      "counterfactuals/3102811016_531.pkl": "14b6ff8f4e496850c5be045bbe311b087fabc34a95a0078ade28ff77bac4d72f",
+      "counterfactuals/3102811016_542.pkl": "ec8a7c9a05249a4d8e69774cb5bcef3d04efa3da1f2deaf91983eb9b71fa8a8e",
+      "counterfactuals/3102811016_562.pkl": "e9332f31adc130a45b06bc5e9612d4732f82d05c61cec531b57048df6a97076f",
+      "counterfactuals/3102811016_564.pkl": "73edb6afcb8140d19862f9cbfb919b6a01461770f8754e007413a71bf873c503",
+      "counterfactuals/3102811016_570.pkl": "69b8610f65b2390cc11b72f72b2bfcfb8c5bc9b809f28e39fcb92828bc0ddd70",
+      "counterfactuals/3102811016_574.pkl": "026887128898a35477e56bc9e07d3bd93b74fd546e51564b5e5e6c7f70c3790e",
+      "counterfactuals/3102811016_583.pkl": "b004580d9493f1f45d5fe8d9a897e3c7d782725454d8203e2f66a12f78859a4e",
+      "counterfactuals/3102811016_587.pkl": "7484fb2d01e34271bea9b05491cc0d7f6dbed17beee4b613cf5be7703adff4e6",
+      "counterfactuals/3102811016_63.pkl": "74fb6b0ff71f7801f42528b00363cc7015fbc53b4549225023bda7b8e59114f1",
+      "counterfactuals/3102811017_1049.pkl": "0a48250f1a30b3eccbaaad55094aab15c2526c2366a2bed67a2fb9b39c9abbdc",
+      "counterfactuals/3102811017_1162.pkl": "18e4b0e53daaa63b818ee2bbc585d7f493d826da4d3e0f1c0f2a268d4aed5418",
+      "counterfactuals/3102811017_1785.pkl": "68e13631cfb38dc2140b3a6dd08c1b005833bd03aa5261c7f49d68acfe30916d",
+      "counterfactuals/3102811017_2181.pkl": "fd12e5762ae17eba90f2f5fcba25d72935ee022ac31024ce19a3ddeb1d1d1c2b",
+      "counterfactuals/3102811017_2207.pkl": "f8d84166832082bf15c7ae0a997abef860bb5c57ef8aad39a9aa999510f818ee",
+      "counterfactuals/3102811017_2213.pkl": "f55b35701ddddea45abc6105d968a959b7b2fefd4a8e96139d50f6100fa54a95",
+      "counterfactuals/3102811017_2217.pkl": "816d088dba6f37cd420827ec4ed57f77b18aae9a11c861799a8548439929fb0a",
+      "counterfactuals/3102811017_2221.pkl": "439872f5bbbd4f43282273c5ef15ce8657766b3d807697f8a70aeed924840732",
+      "counterfactuals/3102811017_257.pkl": "08514b4fcebf01d2b1d8fb26ec8b86a9bbcf521812e64c92ae28a2c72204afaf",
+      "counterfactuals/3102811017_781.pkl": "2d475ff422810805e681d36716250cd8713fdcc762f8f756ffef9d0e8ae76445",
+      "counterfactuals/3102811017_816.pkl": "71f2f233ef1b54ceb7227bf9a37d69b42ad9d0578d5fe5ab64ece874c7811c81",
+      "counterfactuals/3102811017_841.pkl": "73f613ca546b489ee3cf9b0b20406d3ffe690185c017e3f5407bfef508eaa575",
+      "counterfactuals/3102811017_845.pkl": "e97bdf4b71fbf028572508efd494f69904e89ba678718c1de40158af8b060241",
+      "counterfactuals/3102811017_849.pkl": "2beafc09a707a6ef35622c3e6ca4701b98cb6494b9aece320d552831cbdd209c",
+      "counterfactuals/3102811017_850.pkl": "e4331b571acb6dd6afb14b680e8499e845ef53e7b7e41b72a032d4c3499e7dd8",
+      "counterfactuals/3102811017_925.pkl": "e130658d1b23f30acedd007146f119905d8ca5e080162beca3386726c5f53734",
+      "counterfactuals/3102811018_1438.pkl": "56471f9b5b7b75cb65ec671b91c54b3ada3016242c8710aa7c7cb4c8eb2d7090",
+      "counterfactuals/3102811018_1486.pkl": "eb9b5ed8a0cb0d670931bcb7a4f44328f3787f5cf887dd6d8b31f6fad9d7bc9f",
+      "counterfactuals/3102811018_1518.pkl": "e416888fd9c04031c2db9b453efa3beda88e3fa66befb4eab9ce5c136965cc41",
+      "counterfactuals/3102811018_1648.pkl": "998c1a88a23ea1eff2b9dd9397bb579245f9ce964cc36e1a98a9d602fc78fb31",
+      "counterfactuals/3102811018_1786.pkl": "7002aa5cea47b4956b1d675b3b03c7cae125dfa8d69b9bc50831e71dbdfd84b7",
+      "counterfactuals/3102811018_1965.pkl": "6cd7445b347a6b8927c3eb09425b38f1d1d721625fc27f7c121c7a8ca0b404f2",
+      "counterfactuals/3102811018_4860.pkl": "bef425e79f5e106bdcb523aad324b06922188f3e65934e1fda2c3582dc81e669",
+      "counterfactuals/3102811018_5391.pkl": "e545c0d4d3717ee0bf5e91e17c1753c34371d6f4f3b3010e2f86ecc3043b09d2",
+      "counterfactuals/3102811018_6212.pkl": "6eb37b490ddfd99d852f22e169ed572e92fa04ed025a15984a883b94a1451705",
+      "counterfactuals/3102811018_6234.pkl": "b84171ceacc41eebfaa008a2ca0004876f7a683fc87abcbfa7f676e7081a326a",
+      "counterfactuals/3102811018_6238.pkl": "8a4f9c41e9ac4c4a072998248c8cf27cdb4a0ace3f710bdea5fe59bbdde3feeb",
+      "counterfactuals/3102811018_6242.pkl": "3599beaaaba385c06888e17ce9f023265ac9fc6f0aa1481a8d9c02fd53def95a",
+      "counterfactuals/3102811018_6246.pkl": "2a6abdd35dd5f63a858d8739c8faeedadfe9950ea84d60e8aeb6c241839783b4",
+      "counterfactuals/3102811018_6250.pkl": "170dfa204c8facc04361d2abfeca35e0a17cc12a01132c4e6d238328fcadcdf3",
+      "counterfactuals/3102811018_645.pkl": "ae1ce947d8eec621b7b274915183192c1fbc4f762919bf8d5d586ac1a1db0859",
+      "counterfactuals/3102811018_764.pkl": "918d4093a7e06928eb24f76f5f24b9289f4806765ba69cfe7cb347a4da990aa0",
+      "counterfactuals/3102811019_1166.pkl": "fc4368d10dfe9098a2ec3d4a4d247a28440316dd24b334480237d95bc134178a",
+      "counterfactuals/3102811019_1348.pkl": "63a21b0eb8ddd9377a2dd6bfd8142bba77eed224f179c29bc4d8446bef8a14aa",
+      "counterfactuals/3102811019_1368.pkl": "6af433ba9877a83a987295ee99cffe6d56bfc7193aecdbea33bc57714fde4645",
+      "counterfactuals/3102811019_1372.pkl": "ec827ddc7cbce957ab8b7c0f50ce386e6eed05862a8c7977519b98f5486174aa",
+      "counterfactuals/3102811019_1380.pkl": "def4f1f84988db4dcfeac937b623a99764128622348ea1a86abfb3e5268830a8",
+      "counterfactuals/3102811019_1384.pkl": "ac704559b64861fd450156202faaf874a6ffc07a13ca51c7ca86b391e4526757",
+      "counterfactuals/3102811019_1390.pkl": "8d553a7197c4b88f3c6287ea86e6c0a9d67242dd0a5e57aae79b58d3ddcd6ce0",
+      "counterfactuals/3102811019_1394.pkl": "9f14584cf7ccf663b9e0fc56e299775fc11ab926d2b1fe7b070918f8ad5b3200",
+      "counterfactuals/3102811019_1398.pkl": "56e287718eabfbd8d5a3b873bd38220f70b8b7588cfb36162cfb31839bb18236",
+      "counterfactuals/3102811019_1403.pkl": "d5285330d7b574a665cf98a670ea3c7be9af3d5495e918f2312af26865a61ed7",
+      "counterfactuals/3102811019_324.pkl": "1892f4e6b19cf729dc6a4766896b933710c86db4c3f57f2926ef2722c9b409a4",
+      "counterfactuals/3102811019_42.pkl": "3f9884dc2fe2462a71baa5db985b8cc57979cacdefb7fee58f3e7fd42a0dcec3",
+      "counterfactuals/3102811019_592.pkl": "a1c233f7edc3887f41da7e9a91cd7bafffae7dc93998b5e0f888607289147c3d",
+      "counterfactuals/3102811019_792.pkl": "3cbb020aaeb5c74a3cc78851e3144666fb18b869492aa0a1e72f1d05740551ce",
+      "counterfactuals/3102811019_891.pkl": "930a8747fa9c5b48e96006d2e39c70f1425b0ab3c54197eab8ea107f68513252",
+      "counterfactuals/3102811019_923.pkl": "469755024a84607bbf553f4ece1d866f55584988d4835108f209c73114bfdbbe",
+      "counterfactuals/3102811020_1273.pkl": "484677db719d71c06e554cc6e0b68821c80b7752ac2130518ac3777452fb3c63",
+      "counterfactuals/3102811020_1558.pkl": "dc03ad33bdf4891c9ed3e529c939268256b12554115c0c8b8102bca0add025b9",
+      "counterfactuals/3102811020_205.pkl": "a021bb5f37bf8c1d7f9550f6bfbd46a98c37db6dc7dfd6f9c294aec1820a59d6",
+      "counterfactuals/3102811020_245.pkl": "83b56df565cc0184f9b5d64c8f49b2ac8e1da8d87a723255dc3a234a20d606a6",
+      "counterfactuals/3102811020_277.pkl": "08c9584bf53b6f903a5bde575573bf3a133ce55a3cd98f41db0746ace9eb8b5d",
+      "counterfactuals/3102811020_502.pkl": "4085c117a9751cb0e37c4cbc1cea0760225bc9cb86b5fa77283255cead8d5987",
+      "counterfactuals/3102811020_5104.pkl": "76242b384c7694944114a351a737ce9eb02ca4d82ba705f6e3464886fc0cb95c",
+      "counterfactuals/3102811020_5108.pkl": "a23280e3f1096a6415dcc8c5a263182155de9669e2b555f35964b178e18131f7",
+      "counterfactuals/3102811020_511.pkl": "25046364f6b18e667e4623210a4b5e7fe14743d0fe9765a7ca8f970d2650de88",
+      "counterfactuals/3102811020_5115.pkl": "6391a69a867eb17cd7025619b80b2a56b6cd51bd65fa9f9418eaf5b949d5e82a",
+      "counterfactuals/3102811020_5447.pkl": "2c16f1d6d2879f10f83b1b1ec1552d2fa5b2b13211b5a529684fa0c48f4b13e7",
+      "counterfactuals/3102811020_5454.pkl": "36734894d18cfc4986fd9b09ab96b1c4e9d846fbdcf0a43868966d8a453def7a",
+      "counterfactuals/3102811020_559.pkl": "252042efee8b204298c57d49a5745256e62a26aea876b808fb04ddfcb1af2419",
+      "counterfactuals/3102811020_5973.pkl": "f6589a8714f0cffc2ecc6f82c59c1c53be33e6c934c2c86872210ef2370d6e21",
+      "counterfactuals/3102811020_5980.pkl": "06c0066c501a787de40afcbe08bf77a4fe1cb1f78f7ed1457c2aa9ee16be0efe",
+      "counterfactuals/3102811020_899.pkl": "7e01baaa6da80fa3b9e48c7b219eb98e5d44e2637c1ba22a519c08a6487376db",
+      "counterfactuals/3102811021_1040.pkl": "90cc7f25e6bfbf89c4f54cc4e0ef477bd545393060278c34b576656bb9dab1b1",
+      "counterfactuals/3102811021_1127.pkl": "d1af00cdd750ac8c0ae71b1a80cf5f4ca30e67c4b41d0a0d01b60f2bfd3825ce",
+      "counterfactuals/3102811021_11354.pkl": "17d023bd484cdc1712dc9d5b0b84d834475d1d0a44d364585d815c831a345f88",
+      "counterfactuals/3102811021_11358.pkl": "f0bfb35edfee14868063e5af31136f37b6147e17cdfcd9dcdfe42aff95f022ec",
+      "counterfactuals/3102811021_1411.pkl": "039f3e2bfcc90132eaef64745c87613e29588249b99c096196cb7c51d4690c51",
+      "counterfactuals/3102811021_249.pkl": "d5a12df3080b6b16b1503e4a09b94c09d0fdb6438ba94a3284d423e26c548eda",
+      "counterfactuals/3102811021_322.pkl": "99d9472e2a62afdbd27a4a20a61ab1e765094ab7355728f5d402c64db7053aac",
+      "counterfactuals/3102811021_4391.pkl": "7a83583a364b32be224a61c64b06749efde5d380870e576c13d7a75f0224e0f8",
+      "counterfactuals/3102811021_624.pkl": "8ce76d528e4761dd3ba45e7444481d1b7a380b61e2ca5e9a9811cb70c85198bf",
+      "counterfactuals/3102811021_656.pkl": "7a99eaac720a29749e0c089e27e09a4696af166ad28b02ea0c60830ce11745cc",
+      "counterfactuals/3102811021_659.pkl": "a8e6deffc8cdf07ef2c41fb7008afb4d68022d83cbbb92ec08ac22ca2e004bcf",
+      "counterfactuals/3102811021_663.pkl": "7b7411ed657869517d1bff7a2f47b503618ffa8e4fa60d93d8851ea518dad3dd",
+      "counterfactuals/3102811021_773.pkl": "712db0637c179d6ec28d37ec4a44d6c8e8aab0584f0fcf094051c2278f9c96f8",
+      "counterfactuals/3102811021_8576.pkl": "ab956ef661f21ab503a41a686e24e097a8bac786b13ffb6cdacb22a05f5290a0",
+      "counterfactuals/3102811021_8817.pkl": "867893eb44bad7a09543e2f094832d280e8de3d3c381ecf7857ad0f6375ed4c7",
+      "counterfactuals/3102811021_906.pkl": "d10b7784f8aa0e42af28208b22ced423a68ff304feca8ea8819ae0822cf6ad78",
+      "counterfactuals/3102811022_1009.pkl": "ec90e937dd29cf69b66dba7a88d70eb793e952da4bc0ad39661338330e3e3827",
+      "counterfactuals/3102811022_1300.pkl": "bf23d7f0cda39cf5934a49e3dc7d8aaad7ca166a1a682a71fba529561dd4f85f",
+      "counterfactuals/3102811022_1985.pkl": "ccedfbb44fc209cbb7a7567fbe4133d70eeb139cfb694e1c3871785da7c83737",
+      "counterfactuals/3102811022_1990.pkl": "0d843c4455e0467bc96261e1d6931311c0a89561e7a74f7ab981fe252dca05d1",
+      "counterfactuals/3102811022_2107.pkl": "1e7246109a422287b60ec7a3c5e3f285c688920ede64d9854a85af9bdb053ef3",
+      "counterfactuals/3102811022_2136.pkl": "a651c185bc892dbd40f21a121b02c41b9df252fa8d82fcd3f793455200de288f",
+      "counterfactuals/3102811022_2262.pkl": "d83c7f4dd271951af6954dc0e99d8253c8034bf193df6277ae93104c14a4c735",
+      "counterfactuals/3102811022_2375.pkl": "9c71c438c1da91793cabe07b01c982176604ab7876f4efad4cb9ef4fd7aade0e",
+      "counterfactuals/3102811022_238.pkl": "d66ff6ddd359ada6532a6a8e5f2c1738b97c75751cfcf61c34ebe050e68b4958",
+      "counterfactuals/3102811022_282.pkl": "1d523a3ee9aeebb296bce5575e723f2e1fabd4446f8c7cc5ed9f7f30c1aa6bff",
+      "counterfactuals/3102811022_2959.pkl": "049e4e4b4a4f31215c015a2eacc2f8a11ced9082aef2ade7c83a1506e2263080",
+      "counterfactuals/3102811022_2976.pkl": "cf23056aac1de2f6a88cc30c3216463c417189a22cd1690738ecc0ef7ea33297",
+      "counterfactuals/3102811022_322.pkl": "f824a1587392239601fc6967dd5c3cc3361226fcf8971ebedb53648e7298cd87",
+      "counterfactuals/3102811022_458.pkl": "c303b2226e380114b618121831d1ed0c790efb3e3097bd3fe0cba2c5ca76a7cb",
+      "counterfactuals/3102811022_48.pkl": "955095a654754f1e5222248e934aa4805a3347c2af1b5dbbe4acbbb8a85361da",
+      "counterfactuals/3102811022_970.pkl": "4ea9444cf07b340a50a6d656b8d0681d79d4c50bd794782fe109b76cd9343192",
+      "counterfactuals/3102811023_1785.pkl": "d3df5c679ba19d3c35a4092c1b958cf27b81ba914602d5a3e1d0676d13058c5b",
+      "counterfactuals/3102811023_1793.pkl": "ff32dc247d846b682a6ee2f3cf5d488810078c3e48b1fe4b184b02663a2338d0",
+      "counterfactuals/3102811023_1797.pkl": "ccbdbd32df7385e34eb418c6943e0db084dd24fe5252fc9daa9e6f0943685c8c",
+      "counterfactuals/3102811023_1804.pkl": "ca54cbeb50aa5ed8079f6bee5bce8b1dd712e08b090ce468c84da3f938ed2322",
+      "counterfactuals/3102811023_218.pkl": "412f111addfbeb408a2542dbcc0e971db8c86d1cd397eb62649d06379bb8c3d4",
+      "counterfactuals/3102811023_250.pkl": "0c46c6239e22a8c1c61a940011d48fd1ce5d36a71a6101fde1764face37b6ed2",
+      "counterfactuals/3102811023_27.pkl": "83cd93144313a59fba8ebae53368dc8548e1b8283df2728559b5708610146215",
+      "counterfactuals/3102811023_282.pkl": "efa03560f4c4835f19a2011a09d87f94cb2df060c6ce28a087d942db14a69fb2",
+      "counterfactuals/3102811023_284.pkl": "2d5972882ed04a7fb3ac40efdf67500af023300a23548c637d95c9f423717d4c",
+      "counterfactuals/3102811023_3183.pkl": "f069d6425bf8d34d03ea9f5ce45779526e14724e360b9b3c71aedf0ac0542812",
+      "counterfactuals/3102811023_3187.pkl": "c45df267d6b0d72ebe7e31c3422efcaa6b4ae1660104c160a4b12db74bbdff27",
+      "counterfactuals/3102811023_3196.pkl": "c8096037dfef43b85fd23271b35428d182e79af92180c163c2091afac41a9f25",
+      "counterfactuals/3102811023_421.pkl": "0a47356ae4270e8f54088cf4d6bb71607880e96fea9809dfa037ed002050c8be",
+      "counterfactuals/3102811023_507.pkl": "44f659fa03938656f5e95e649e1cffd09c75864d530404b130e34fa719fdc941",
+      "counterfactuals/3102811023_659.pkl": "7c99efa6d082fea7e3f82fe18a8d4d32aaf775f833f9d410f0c8334814e0fd15",
+      "counterfactuals/3102811023_830.pkl": "7b593dee603be7ad93808a261bf7281e38b10749f6afad084013183313fb64a2"
+    }
+  },
+  "training": {
+    "updates": 256,
+    "history": [
+      {
+        "epoch": 0,
+        "metrics": {
+          "normal": {
+            "loss": 0.5164213457772898,
+            "top1": 1.0,
+            "teacher_probability": 0.6518656763919565,
+            "samples": 172
+          },
+          "safe": {
+            "loss": 0.9579992224188412,
+            "top1": 0.7176470588235294,
+            "teacher_probability": 0.57840955397662,
+            "samples": 85
+          },
+          "bc": {
+            "loss": 0.6758149111410603,
+            "top1": 0.78076171875,
+            "teacher_probability": 0.6377770882099867,
+            "samples": 2048
+          },
+          "ppo": {
+            "loss": 1.4527738839387894,
+            "top1": 0.55517578125,
+            "teacher_probability": 0.3926123317796737,
+            "samples": 2048
+          },
+          "severe": {
+            "loss": 0.49834985511247504,
+            "top1": 0.8372093023255814,
+            "teacher_probability": 0.7595720291137695,
+            "samples": 43
+          }
+        }
+      },
+      {
+        "epoch": 1,
+        "metrics": {
+          "normal": {
+            "loss": 0.4913880714150362,
+            "top1": 0.9127906976744186,
+            "teacher_probability": 0.6763839111771695,
+            "samples": 172
+          },
+          "safe": {
+            "loss": 0.7561995534335866,
+            "top1": 0.7529411764705882,
+            "teacher_probability": 0.6515658266404096,
+            "samples": 85
+          },
+          "bc": {
+            "loss": 0.6001941598951817,
+            "top1": 0.80224609375,
+            "teacher_probability": 0.6707142447121441,
+            "samples": 2048
+          },
+          "ppo": {
+            "loss": 1.7196053406223655,
+            "top1": 0.4892578125,
+            "teacher_probability": 0.3941328714136034,
+            "samples": 2048
+          },
+          "severe": {
+            "loss": 0.42386394877766453,
+            "top1": 0.8372093023255814,
+            "teacher_probability": 0.7844951319140058,
+            "samples": 43
+          }
+        },
+        "stop": true,
+        "learning_signal": true,
+        "loss": 1.4771196581423283,
+        "gradient": 9.207969582639635
+      }
+    ],
+    "model": "/home/wyh/projects/tetris-ai-benchmark-safety/runs/bc_sequence_safety/checkpoints/epoch_01/model.zip",
+    "sha256": "7737c0bf148c1cb0627924b956c346e85117fe060530267a4bce781498edd174"
+  },
+  "outcome": {
+    "reason": "stopped_short32",
+    "confirmation": false,
+    "candidate": "/home/wyh/projects/tetris-ai-benchmark-safety/runs/bc_sequence_safety/checkpoints/epoch_01/model.zip"
+  },
+  "evaluation": {
+    "short32": {
+      "result": {
+        "label": "short32",
+        "cap": 20000,
+        "summary": {
+          "bc": {
+            "games": 32,
+            "mean_pieces": 20000,
+            "p10": 20000.0,
+            "minimum": 20000,
+            "capped": 32,
+            "deaths": 0,
+            "early": 0,
+            "mean_score": 333730250,
+            "score_per_1000": 16686512.5,
+            "four_fraction": 0.00034250345561522184,
+            "new_holes_per_100": 2.65171875,
+            "high_fraction": 0.0,
+            "mean_max_high_streak": 0,
+            "mean_inference_ms": 0.28276627132245835
+          },
+          "ppo": {
+            "games": 32,
+            "mean_pieces": 19059.21875,
+            "p10": 15240.800000000001,
+            "minimum": 9815,
+            "capped": 28,
+            "deaths": 4,
+            "early": 1,
+            "mean_score": 586254000,
+            "score_per_1000": 30759602.882463373,
+            "four_fraction": 0.9273228346456693,
+            "new_holes_per_100": 0.20511727428491788,
+            "high_fraction": 0.00033612343108239945,
+            "mean_max_high_streak": 3.6875,
+            "mean_inference_ms": 0.28683928849431495
+          },
+          "student": {
+            "games": 32,
+            "mean_pieces": 19620.5,
+            "p10": 20000.0,
+            "minimum": 10643,
+            "capped": 30,
+            "deaths": 2,
+            "early": 0,
+            "mean_score": 368150346.875,
+            "score_per_1000": 18763555.815346193,
+            "four_fraction": 0.023398755385351844,
+            "new_holes_per_100": 1.023960908233735,
+            "high_fraction": 7.963609490074157e-05,
+            "mean_max_high_streak": 1.1875,
+            "mean_inference_ms": 0.28472186693238205
+          },
+          "candidate": {
+            "games": 32,
+            "mean_pieces": 20000,
+            "p10": 20000.0,
+            "minimum": 20000,
+            "capped": 32,
+            "deaths": 0,
+            "early": 0,
+            "mean_score": 355103500,
+            "score_per_1000": 17755175.0,
+            "four_fraction": 0.00481310491085065,
+            "new_holes_per_100": 1.21015625,
+            "high_fraction": 6.25e-06,
+            "mean_max_high_streak": 0.125,
+            "mean_inference_ms": 0.2838774066594226
+          },
+          "B12": {
+            "games": 32,
+            "mean_pieces": 19287.84375,
+            "p10": 20000.0,
+            "minimum": 5252,
+            "capped": 30,
+            "deaths": 2,
+            "early": 1,
+            "mean_score": 601659250,
+            "score_per_1000": 31193701.99170138,
+            "four_fraction": 0.9163802978235968,
+            "new_holes_per_100": 0.21321719800846065,
+            "high_fraction": 0.0002009037428043246,
+            "mean_max_high_streak": 2.4375,
+            "mean_inference_ms": 0.5937586071974017
+          }
+        },
+        "paired": {
+          "ppo": {
+            "pairs": [
+              {
+                "seed": 3102812000,
+                "common_pieces": 20000,
+                "baseline_score": 333335700,
+                "candidate_score": 634607200,
+                "ratio": 1.903808082962611,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812001,
+                "common_pieces": 20000,
+                "baseline_score": 332648500,
+                "candidate_score": 634536200,
+                "ratio": 1.9075276154860161,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812002,
+                "common_pieces": 20000,
+                "baseline_score": 331545800,
+                "candidate_score": 634083300,
+                "ratio": 1.9125059041616572,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812003,
+                "common_pieces": 20000,
+                "baseline_score": 334448500,
+                "candidate_score": 635402100,
+                "ratio": 1.899850350651894,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812004,
+                "common_pieces": 20000,
+                "baseline_score": 333301500,
+                "candidate_score": 634166200,
+                "ratio": 1.90268030596922,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812005,
+                "common_pieces": 9815,
+                "baseline_score": 80099400,
+                "candidate_score": 152392300,
+                "ratio": 1.9025398442435275,
+                "survival_delta": -10185
+              },
+              {
+                "seed": 3102812006,
+                "common_pieces": 20000,
+                "baseline_score": 332964000,
+                "candidate_score": 634378100,
+                "ratio": 1.9052453118054804,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812007,
+                "common_pieces": 20000,
+                "baseline_score": 335756000,
+                "candidate_score": 632541800,
+                "ratio": 1.8839329751367064,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812008,
+                "common_pieces": 14529,
+                "baseline_score": 176107500,
+                "candidate_score": 333334200,
+                "ratio": 1.8927882117456667,
+                "survival_delta": -5471
+              },
+              {
+                "seed": 3102812009,
+                "common_pieces": 20000,
+                "baseline_score": 334228600,
+                "candidate_score": 632054100,
+                "ratio": 1.891083228664453,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812010,
+                "common_pieces": 20000,
+                "baseline_score": 333589800,
+                "candidate_score": 634605400,
+                "ratio": 1.902352529963446,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812011,
+                "common_pieces": 20000,
+                "baseline_score": 334635000,
+                "candidate_score": 633934800,
+                "ratio": 1.894406741673764,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812012,
+                "common_pieces": 20000,
+                "baseline_score": 332976800,
+                "candidate_score": 632421000,
+                "ratio": 1.899294485381564,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812013,
+                "common_pieces": 20000,
+                "baseline_score": 333319800,
+                "candidate_score": 630595300,
+                "ratio": 1.8918627096260108,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812014,
+                "common_pieces": 20000,
+                "baseline_score": 333733200,
+                "candidate_score": 635029900,
+                "ratio": 1.902807092611703,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812015,
+                "common_pieces": 20000,
+                "baseline_score": 333654600,
+                "candidate_score": 632552600,
+                "ratio": 1.8958305984691954,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812016,
+                "common_pieces": 20000,
+                "baseline_score": 334714100,
+                "candidate_score": 633249900,
+                "ratio": 1.8919128294864185,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812017,
+                "common_pieces": 20000,
+                "baseline_score": 334598000,
+                "candidate_score": 633733600,
+                "ratio": 1.8940149074411683,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812018,
+                "common_pieces": 20000,
+                "baseline_score": 334614500,
+                "candidate_score": 631722700,
+                "ratio": 1.8879119105717177,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812019,
+                "common_pieces": 20000,
+                "baseline_score": 335530000,
+                "candidate_score": 634412400,
+                "ratio": 1.8907769797037524,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812020,
+                "common_pieces": 20000,
+                "baseline_score": 333340600,
+                "candidate_score": 632284700,
+                "ratio": 1.8968127494820612,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812021,
+                "common_pieces": 20000,
+                "baseline_score": 333516100,
+                "candidate_score": 635324600,
+                "ratio": 1.9049293272498689,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812022,
+                "common_pieces": 20000,
+                "baseline_score": 332854200,
+                "candidate_score": 634270000,
+                "ratio": 1.9055490361846117,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812023,
+                "common_pieces": 20000,
+                "baseline_score": 334593400,
+                "candidate_score": 633646800,
+                "ratio": 1.893781527071365,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812024,
+                "common_pieces": 20000,
+                "baseline_score": 334241900,
+                "candidate_score": 634805200,
+                "ratio": 1.8992388446810529,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812025,
+                "common_pieces": 20000,
+                "baseline_score": 333599100,
+                "candidate_score": 635257400,
+                "ratio": 1.9042539383349655,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812026,
+                "common_pieces": 20000,
+                "baseline_score": 332765100,
+                "candidate_score": 633732900,
+                "ratio": 1.904445207745644,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812027,
+                "common_pieces": 20000,
+                "baseline_score": 333482400,
+                "candidate_score": 636141400,
+                "ratio": 1.9075711341887909,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812028,
+                "common_pieces": 10839,
+                "baseline_score": 98365400,
+                "candidate_score": 184899300,
+                "ratio": 1.879718884892452,
+                "survival_delta": -9161
+              },
+              {
+                "seed": 3102812029,
+                "common_pieces": 20000,
+                "baseline_score": 333709900,
+                "candidate_score": 633411100,
+                "ratio": 1.8980890288241374,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812030,
+                "common_pieces": 20000,
+                "baseline_score": 334307000,
+                "candidate_score": 634460000,
+                "ratio": 1.8978364198177124,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812031,
+                "common_pieces": 14712,
+                "baseline_score": 180675100,
+                "candidate_score": 342141500,
+                "ratio": 1.8936837450207582,
+                "survival_delta": -5288
+              }
+            ],
+            "common_score_ratio": 1.8985578901619902,
+            "positive_seeds": 32,
+            "ratio_ci95": [
+              1.8961511730679834,
+              1.9009139418687386
+            ],
+            "survival_difference_ci95": [
+              -1895.76796875,
+              -165.25
+            ]
+          },
+          "student": {
+            "pairs": [
+              {
+                "seed": 3102812000,
+                "common_pieces": 20000,
+                "baseline_score": 333335700,
+                "candidate_score": 381693400,
+                "ratio": 1.145072069988303,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812001,
+                "common_pieces": 20000,
+                "baseline_score": 332648500,
+                "candidate_score": 378693700,
+                "ratio": 1.1384199838568339,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812002,
+                "common_pieces": 20000,
+                "baseline_score": 331545800,
+                "candidate_score": 377579300,
+                "ratio": 1.138845070575468,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812003,
+                "common_pieces": 20000,
+                "baseline_score": 334448500,
+                "candidate_score": 384721100,
+                "ratio": 1.1503149214303547,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812004,
+                "common_pieces": 20000,
+                "baseline_score": 333301500,
+                "candidate_score": 377570600,
+                "ratio": 1.1328199843085014,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812005,
+                "common_pieces": 20000,
+                "baseline_score": 333921800,
+                "candidate_score": 383031100,
+                "ratio": 1.1470682656837619,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812006,
+                "common_pieces": 20000,
+                "baseline_score": 332964000,
+                "candidate_score": 380158300,
+                "ratio": 1.1417399478622314,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812007,
+                "common_pieces": 20000,
+                "baseline_score": 335756000,
+                "candidate_score": 381308200,
+                "ratio": 1.1356705464682686,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812008,
+                "common_pieces": 20000,
+                "baseline_score": 333539400,
+                "candidate_score": 375719600,
+                "ratio": 1.1264624209313803,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812009,
+                "common_pieces": 20000,
+                "baseline_score": 334228600,
+                "candidate_score": 378905100,
+                "ratio": 1.1336704878038564,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812010,
+                "common_pieces": 20000,
+                "baseline_score": 333589800,
+                "candidate_score": 379390500,
+                "ratio": 1.137296464100521,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812011,
+                "common_pieces": 20000,
+                "baseline_score": 334635000,
+                "candidate_score": 377079800,
+                "ratio": 1.1268390933405052,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812012,
+                "common_pieces": 20000,
+                "baseline_score": 332976800,
+                "candidate_score": 381188900,
+                "ratio": 1.144791168633971,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812013,
+                "common_pieces": 20000,
+                "baseline_score": 333319800,
+                "candidate_score": 381877900,
+                "ratio": 1.1456802146167135,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812014,
+                "common_pieces": 20000,
+                "baseline_score": 333733200,
+                "candidate_score": 381561100,
+                "ratio": 1.1433117831848914,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812015,
+                "common_pieces": 20000,
+                "baseline_score": 333654600,
+                "candidate_score": 377915300,
+                "ratio": 1.1326542478359358,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812016,
+                "common_pieces": 20000,
+                "baseline_score": 334714100,
+                "candidate_score": 383267300,
+                "ratio": 1.1450587232506788,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812017,
+                "common_pieces": 20000,
+                "baseline_score": 334598000,
+                "candidate_score": 384462500,
+                "ratio": 1.1490280874362668,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812018,
+                "common_pieces": 20000,
+                "baseline_score": 334614500,
+                "candidate_score": 381790200,
+                "ratio": 1.1409852232942685,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812019,
+                "common_pieces": 20000,
+                "baseline_score": 335530000,
+                "candidate_score": 382607000,
+                "ratio": 1.1403063809495426,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812020,
+                "common_pieces": 20000,
+                "baseline_score": 333340600,
+                "candidate_score": 381614600,
+                "ratio": 1.1448188429492236,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812021,
+                "common_pieces": 20000,
+                "baseline_score": 333516100,
+                "candidate_score": 377620600,
+                "ratio": 1.1322409922639416,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812022,
+                "common_pieces": 20000,
+                "baseline_score": 332854200,
+                "candidate_score": 379691000,
+                "ratio": 1.1407126603780273,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812023,
+                "common_pieces": 20000,
+                "baseline_score": 334593400,
+                "candidate_score": 380596500,
+                "ratio": 1.1374895619578869,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812024,
+                "common_pieces": 20000,
+                "baseline_score": 334241900,
+                "candidate_score": 381251400,
+                "ratio": 1.140645143532274,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812025,
+                "common_pieces": 20000,
+                "baseline_score": 333599100,
+                "candidate_score": 374060400,
+                "ratio": 1.12128719771726,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812026,
+                "common_pieces": 20000,
+                "baseline_score": 332765100,
+                "candidate_score": 372447900,
+                "ratio": 1.1192516883531356,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812027,
+                "common_pieces": 20000,
+                "baseline_score": 333482400,
+                "candidate_score": 380579100,
+                "ratio": 1.1412269433109514,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812028,
+                "common_pieces": 17213,
+                "baseline_score": 246984200,
+                "candidate_score": 283477100,
+                "ratio": 1.1477539858824977,
+                "survival_delta": -2787
+              },
+              {
+                "seed": 3102812029,
+                "common_pieces": 10643,
+                "baseline_score": 94262000,
+                "candidate_score": 106381800,
+                "ratio": 1.1285756720629734,
+                "survival_delta": -9357
+              },
+              {
+                "seed": 3102812030,
+                "common_pieces": 20000,
+                "baseline_score": 334307000,
+                "candidate_score": 371701200,
+                "ratio": 1.1118558690066316,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812031,
+                "common_pieces": 20000,
+                "baseline_score": 332277400,
+                "candidate_score": 380868600,
+                "ratio": 1.146236849090549,
+                "survival_delta": 0
+              }
+            ],
+            "common_score_ratio": 1.1378821241077344,
+            "positive_seeds": 32,
+            "ratio_ci95": [
+              1.1346023303924024,
+              1.1406744026725435
+            ],
+            "survival_difference_ci95": [
+              -1021.0593749999999,
+              0.0
+            ]
+          },
+          "candidate": {
+            "pairs": [
+              {
+                "seed": 3102812000,
+                "common_pieces": 20000,
+                "baseline_score": 333335700,
+                "candidate_score": 356661600,
+                "ratio": 1.0699772031618575,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812001,
+                "common_pieces": 20000,
+                "baseline_score": 332648500,
+                "candidate_score": 357119500,
+                "ratio": 1.073564137520536,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812002,
+                "common_pieces": 20000,
+                "baseline_score": 331545800,
+                "candidate_score": 354536300,
+                "ratio": 1.0693433607061227,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812003,
+                "common_pieces": 20000,
+                "baseline_score": 334448500,
+                "candidate_score": 354826800,
+                "ratio": 1.060931055154979,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812004,
+                "common_pieces": 20000,
+                "baseline_score": 333301500,
+                "candidate_score": 354879900,
+                "ratio": 1.0647413828020575,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812005,
+                "common_pieces": 20000,
+                "baseline_score": 333921800,
+                "candidate_score": 355506900,
+                "ratio": 1.0646411824564914,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812006,
+                "common_pieces": 20000,
+                "baseline_score": 332964000,
+                "candidate_score": 355613900,
+                "ratio": 1.0680250717795317,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812007,
+                "common_pieces": 20000,
+                "baseline_score": 335756000,
+                "candidate_score": 354668700,
+                "ratio": 1.0563287029866928,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812008,
+                "common_pieces": 20000,
+                "baseline_score": 333539400,
+                "candidate_score": 355130100,
+                "ratio": 1.0647320826265203,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812009,
+                "common_pieces": 20000,
+                "baseline_score": 334228600,
+                "candidate_score": 353566900,
+                "ratio": 1.0578595009523422,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812010,
+                "common_pieces": 20000,
+                "baseline_score": 333589800,
+                "candidate_score": 356437300,
+                "ratio": 1.068489803944845,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812011,
+                "common_pieces": 20000,
+                "baseline_score": 334635000,
+                "candidate_score": 354824500,
+                "ratio": 1.0603329000254007,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812012,
+                "common_pieces": 20000,
+                "baseline_score": 332976800,
+                "candidate_score": 351595100,
+                "ratio": 1.0559147063699332,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812013,
+                "common_pieces": 20000,
+                "baseline_score": 333319800,
+                "candidate_score": 356334900,
+                "ratio": 1.0690481033529962,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812014,
+                "common_pieces": 20000,
+                "baseline_score": 333733200,
+                "candidate_score": 356106700,
+                "ratio": 1.0670400787215657,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812015,
+                "common_pieces": 20000,
+                "baseline_score": 333654600,
+                "candidate_score": 357090400,
+                "ratio": 1.0702397029742734,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812016,
+                "common_pieces": 20000,
+                "baseline_score": 334714100,
+                "candidate_score": 354038700,
+                "ratio": 1.0577346457767989,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812017,
+                "common_pieces": 20000,
+                "baseline_score": 334598000,
+                "candidate_score": 356105200,
+                "ratio": 1.064277730291275,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812018,
+                "common_pieces": 20000,
+                "baseline_score": 334614500,
+                "candidate_score": 359184500,
+                "ratio": 1.0734277803263157,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812019,
+                "common_pieces": 20000,
+                "baseline_score": 335530000,
+                "candidate_score": 358512700,
+                "ratio": 1.0684967067028284,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812020,
+                "common_pieces": 20000,
+                "baseline_score": 333340600,
+                "candidate_score": 356457100,
+                "ratio": 1.069347988213857,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812021,
+                "common_pieces": 20000,
+                "baseline_score": 333516100,
+                "candidate_score": 353113000,
+                "ratio": 1.0587584827239225,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812022,
+                "common_pieces": 20000,
+                "baseline_score": 332854200,
+                "candidate_score": 353596000,
+                "ratio": 1.0623149715400917,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812023,
+                "common_pieces": 20000,
+                "baseline_score": 334593400,
+                "candidate_score": 354475300,
+                "ratio": 1.0594210764468157,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812024,
+                "common_pieces": 20000,
+                "baseline_score": 334241900,
+                "candidate_score": 352543000,
+                "ratio": 1.0547540568671971,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812025,
+                "common_pieces": 20000,
+                "baseline_score": 333599100,
+                "candidate_score": 354988700,
+                "ratio": 1.0641176789745537,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812026,
+                "common_pieces": 20000,
+                "baseline_score": 332765100,
+                "candidate_score": 354044900,
+                "ratio": 1.0639484128594014,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812027,
+                "common_pieces": 20000,
+                "baseline_score": 333482400,
+                "candidate_score": 356159800,
+                "ratio": 1.068001789599691,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812028,
+                "common_pieces": 20000,
+                "baseline_score": 333625300,
+                "candidate_score": 354215600,
+                "ratio": 1.0617168422179013,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812029,
+                "common_pieces": 20000,
+                "baseline_score": 333709900,
+                "candidate_score": 352373300,
+                "ratio": 1.0559270192463575,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812030,
+                "common_pieces": 20000,
+                "baseline_score": 334307000,
+                "candidate_score": 355884200,
+                "ratio": 1.0645430696934255,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812031,
+                "common_pieces": 20000,
+                "baseline_score": 332277400,
+                "candidate_score": 352720500,
+                "ratio": 1.061524196349195,
+                "survival_delta": 0
+              }
+            ],
+            "common_score_ratio": 1.0640434902140277,
+            "positive_seeds": 32,
+            "ratio_ci95": [
+              1.0622536642023075,
+              1.0657743325918014
+            ],
+            "survival_difference_ci95": [
+              0.0,
+              0.0
+            ]
+          },
+          "B12": {
+            "pairs": [
+              {
+                "seed": 3102812000,
+                "common_pieces": 20000,
+                "baseline_score": 333335700,
+                "candidate_score": 632455300,
+                "ratio": 1.8973524287977555,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812001,
+                "common_pieces": 20000,
+                "baseline_score": 332648500,
+                "candidate_score": 632169700,
+                "ratio": 1.9004134995347943,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812002,
+                "common_pieces": 20000,
+                "baseline_score": 331545800,
+                "candidate_score": 633747400,
+                "ratio": 1.9114927711344858,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812003,
+                "common_pieces": 20000,
+                "baseline_score": 334448500,
+                "candidate_score": 632504900,
+                "ratio": 1.8911877314444525,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812004,
+                "common_pieces": 20000,
+                "baseline_score": 333301500,
+                "candidate_score": 633444900,
+                "ratio": 1.900516199297033,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812005,
+                "common_pieces": 20000,
+                "baseline_score": 333921800,
+                "candidate_score": 629990300,
+                "ratio": 1.8866402253461738,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812006,
+                "common_pieces": 20000,
+                "baseline_score": 332964000,
+                "candidate_score": 634013300,
+                "ratio": 1.9041496978652346,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812007,
+                "common_pieces": 20000,
+                "baseline_score": 335756000,
+                "candidate_score": 633323600,
+                "ratio": 1.8862614517685463,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812008,
+                "common_pieces": 20000,
+                "baseline_score": 333539400,
+                "candidate_score": 632746400,
+                "ratio": 1.8970664335307912,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812009,
+                "common_pieces": 20000,
+                "baseline_score": 334228600,
+                "candidate_score": 633324600,
+                "ratio": 1.8948845191584442,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812010,
+                "common_pieces": 20000,
+                "baseline_score": 333589800,
+                "candidate_score": 631716400,
+                "ratio": 1.8936921932265316,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812011,
+                "common_pieces": 11959,
+                "baseline_score": 119012600,
+                "candidate_score": 225788200,
+                "ratio": 1.8971789541611561,
+                "survival_delta": -8041
+              },
+              {
+                "seed": 3102812012,
+                "common_pieces": 20000,
+                "baseline_score": 332976800,
+                "candidate_score": 631219900,
+                "ratio": 1.8956873271651358,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812013,
+                "common_pieces": 20000,
+                "baseline_score": 333319800,
+                "candidate_score": 634040700,
+                "ratio": 1.9021993292927692,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812014,
+                "common_pieces": 20000,
+                "baseline_score": 333733200,
+                "candidate_score": 633130400,
+                "ratio": 1.897115420341758,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812015,
+                "common_pieces": 20000,
+                "baseline_score": 333654600,
+                "candidate_score": 632687200,
+                "ratio": 1.8962340096614883,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812016,
+                "common_pieces": 20000,
+                "baseline_score": 334714100,
+                "candidate_score": 632338600,
+                "ratio": 1.889190207403871,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812017,
+                "common_pieces": 20000,
+                "baseline_score": 334598000,
+                "candidate_score": 633252800,
+                "ratio": 1.892577959222709,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812018,
+                "common_pieces": 20000,
+                "baseline_score": 334614500,
+                "candidate_score": 633174600,
+                "ratio": 1.8922509335369506,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812019,
+                "common_pieces": 20000,
+                "baseline_score": 335530000,
+                "candidate_score": 632260700,
+                "ratio": 1.884364140315322,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812020,
+                "common_pieces": 20000,
+                "baseline_score": 333340600,
+                "candidate_score": 634738300,
+                "ratio": 1.9041733890201193,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812021,
+                "common_pieces": 20000,
+                "baseline_score": 333516100,
+                "candidate_score": 633043000,
+                "ratio": 1.8980882781970645,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812022,
+                "common_pieces": 20000,
+                "baseline_score": 332854200,
+                "candidate_score": 634363900,
+                "ratio": 1.9058311416830551,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812023,
+                "common_pieces": 20000,
+                "baseline_score": 334593400,
+                "candidate_score": 629299600,
+                "ratio": 1.8807890412662054,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812024,
+                "common_pieces": 20000,
+                "baseline_score": 334241900,
+                "candidate_score": 634665100,
+                "ratio": 1.8988196871786571,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812025,
+                "common_pieces": 5252,
+                "baseline_score": 23060000,
+                "candidate_score": 43059500,
+                "ratio": 1.867281006071119,
+                "survival_delta": -14748
+              },
+              {
+                "seed": 3102812026,
+                "common_pieces": 20000,
+                "baseline_score": 332765100,
+                "candidate_score": 632603700,
+                "ratio": 1.901051823042741,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812027,
+                "common_pieces": 20000,
+                "baseline_score": 333482400,
+                "candidate_score": 634052800,
+                "ratio": 1.901308135002027,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812028,
+                "common_pieces": 20000,
+                "baseline_score": 333625300,
+                "candidate_score": 633143800,
+                "ratio": 1.8977691440067646,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812029,
+                "common_pieces": 20000,
+                "baseline_score": 333709900,
+                "candidate_score": 632994000,
+                "ratio": 1.8968391408226126,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812030,
+                "common_pieces": 20000,
+                "baseline_score": 334307000,
+                "candidate_score": 632699200,
+                "ratio": 1.8925694047686707,
+                "survival_delta": 0
+              },
+              {
+                "seed": 3102812031,
+                "common_pieces": 20000,
+                "baseline_score": 332277400,
+                "candidate_score": 631103200,
+                "ratio": 1.8993262858081832,
+                "survival_delta": 0
+              }
+            ],
+            "common_score_ratio": 1.8962576994765152,
+            "positive_seeds": 32,
+            "ratio_ci95": [
+              1.8938974954317558,
+              1.8985252989283035
+            ],
+            "survival_difference_ci95": [
+              -1885.1875,
+              0.0
+            ]
+          }
+        },
+        "candidate_vs_student": {
+          "pairs": [
+            {
+              "seed": 3102812000,
+              "common_pieces": 20000,
+              "baseline_score": 381693400,
+              "candidate_score": 356661600,
+              "ratio": 0.9344190913439949,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812001,
+              "common_pieces": 20000,
+              "baseline_score": 378693700,
+              "candidate_score": 357119500,
+              "ratio": 0.9430299474218874,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812002,
+              "common_pieces": 20000,
+              "baseline_score": 377579300,
+              "candidate_score": 354536300,
+              "ratio": 0.9389717603692788,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812003,
+              "common_pieces": 20000,
+              "baseline_score": 384721100,
+              "candidate_score": 354826800,
+              "ratio": 0.9222961776726049,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812004,
+              "common_pieces": 20000,
+              "baseline_score": 377570600,
+              "candidate_score": 354879900,
+              "ratio": 0.9399034246840193,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812005,
+              "common_pieces": 20000,
+              "baseline_score": 383031100,
+              "candidate_score": 355506900,
+              "ratio": 0.9281410830608794,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812006,
+              "common_pieces": 20000,
+              "baseline_score": 380158300,
+              "candidate_score": 355613900,
+              "ratio": 0.9354363695334286,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812007,
+              "common_pieces": 20000,
+              "baseline_score": 381308200,
+              "candidate_score": 354668700,
+              "ratio": 0.9301365666932943,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812008,
+              "common_pieces": 20000,
+              "baseline_score": 375719600,
+              "candidate_score": 355130100,
+              "ratio": 0.9451998245500102,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812009,
+              "common_pieces": 20000,
+              "baseline_score": 378905100,
+              "candidate_score": 353566900,
+              "ratio": 0.9331278465241033,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812010,
+              "common_pieces": 20000,
+              "baseline_score": 379390500,
+              "candidate_score": 356437300,
+              "ratio": 0.9394998029734535,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812011,
+              "common_pieces": 20000,
+              "baseline_score": 377079800,
+              "candidate_score": 354824500,
+              "ratio": 0.9409798668610729,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812012,
+              "common_pieces": 20000,
+              "baseline_score": 381188900,
+              "candidate_score": 351595100,
+              "ratio": 0.9223644759855284,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812013,
+              "common_pieces": 20000,
+              "baseline_score": 381877900,
+              "candidate_score": 356334900,
+              "ratio": 0.9331121282483223,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812014,
+              "common_pieces": 20000,
+              "baseline_score": 381561100,
+              "candidate_score": 356106700,
+              "ratio": 0.9332887969973879,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812015,
+              "common_pieces": 20000,
+              "baseline_score": 377915300,
+              "candidate_score": 357090400,
+              "ratio": 0.9448953244285161,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812016,
+              "common_pieces": 20000,
+              "baseline_score": 383267300,
+              "candidate_score": 354038700,
+              "ratio": 0.923738341361238,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812017,
+              "common_pieces": 20000,
+              "baseline_score": 384462500,
+              "candidate_score": 356105200,
+              "ratio": 0.9262417010761778,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812018,
+              "common_pieces": 20000,
+              "baseline_score": 381790200,
+              "candidate_score": 359184500,
+              "ratio": 0.9407902560097142,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812019,
+              "common_pieces": 20000,
+              "baseline_score": 382607000,
+              "candidate_score": 358512700,
+              "ratio": 0.9370259822742396,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812020,
+              "common_pieces": 20000,
+              "baseline_score": 381614600,
+              "candidate_score": 356457100,
+              "ratio": 0.934076159559933,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812021,
+              "common_pieces": 20000,
+              "baseline_score": 377620600,
+              "candidate_score": 353113000,
+              "ratio": 0.9350999389334163,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812022,
+              "common_pieces": 20000,
+              "baseline_score": 379691000,
+              "candidate_score": 353596000,
+              "ratio": 0.9312730615158116,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812023,
+              "common_pieces": 20000,
+              "baseline_score": 380596500,
+              "candidate_score": 354475300,
+              "ratio": 0.9313677345955625,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812024,
+              "common_pieces": 20000,
+              "baseline_score": 381251400,
+              "candidate_score": 352543000,
+              "ratio": 0.9246995552016334,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812025,
+              "common_pieces": 20000,
+              "baseline_score": 374060400,
+              "candidate_score": 354988700,
+              "ratio": 0.9490143837733157,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812026,
+              "common_pieces": 20000,
+              "baseline_score": 372447900,
+              "candidate_score": 354044900,
+              "ratio": 0.9505890622554188,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812027,
+              "common_pieces": 20000,
+              "baseline_score": 380579100,
+              "candidate_score": 356159800,
+              "ratio": 0.935836466059224,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812028,
+              "common_pieces": 17213,
+              "baseline_score": 283477100,
+              "candidate_score": 262485700,
+              "ratio": 0.9259502795816664,
+              "survival_delta": 2787
+            },
+            {
+              "seed": 3102812029,
+              "common_pieces": 10643,
+              "baseline_score": 106381800,
+              "candidate_score": 100918700,
+              "ratio": 0.9486462910009043,
+              "survival_delta": 9357
+            },
+            {
+              "seed": 3102812030,
+              "common_pieces": 20000,
+              "baseline_score": 371701200,
+              "candidate_score": 355884200,
+              "ratio": 0.9574470031304715,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102812031,
+              "common_pieces": 20000,
+              "baseline_score": 380868600,
+              "candidate_score": 352720500,
+              "ratio": 0.9260949839393429,
+              "survival_delta": 0
+            }
+          ],
+          "common_score_ratio": 0.9354302862898803,
+          "positive_seeds": 0,
+          "ratio_ci95": [
+            0.9326110081530083,
+            0.938348901046323
+          ],
+          "survival_difference_ci95": [
+            0.0,
+            1021.0593749999957
+          ]
+        }
+      },
+      "gate": {
+        "passed": false,
+        "checks": {
+          "survival": true,
+          "early": true,
+          "score": false,
+          "seeds": true,
+          "high": true,
+          "holes": true,
+          "streak": true,
+          "capped": true
+        }
+      }
+    }
+  },
+  "evaluation_details": {
+    "short32": {
+      "bc": {
+        "clears_0_to_4": [
+          394747,
+          235232,
+          9425,
+          512,
+          84
+        ],
+        "deaths": []
+      },
+      "ppo": {
+        "clears_0_to_4": [
+          546395,
+          2445,
+          702,
+          1468,
+          58885
+        ],
+        "deaths": [
+          {
+            "seed": 3102812005,
+            "piece": 9815,
+            "height": 20,
+            "holes": 17,
+            "high_streak": 4
+          },
+          {
+            "seed": 3102812008,
+            "piece": 14529,
+            "height": 20,
+            "holes": 2,
+            "high_streak": 6
+          },
+          {
+            "seed": 3102812028,
+            "piece": 10839,
+            "height": 20,
+            "holes": 2,
+            "high_streak": 5
+          },
+          {
+            "seed": 3102812031,
+            "piece": 14712,
+            "height": 19,
+            "holes": 0,
+            "high_streak": 2
+          }
+        ]
+      },
+      "student": {
+        "clears_0_to_4": [
+          418956,
+          180648,
+          19232,
+          4132,
+          4888
+        ],
+        "deaths": [
+          {
+            "seed": 3102812028,
+            "piece": 17213,
+            "height": 19,
+            "holes": 4,
+            "high_streak": 3
+          },
+          {
+            "seed": 3102812029,
+            "piece": 10643,
+            "height": 19,
+            "holes": 2,
+            "high_streak": 4
+          }
+        ]
+      },
+      "candidate": {
+        "clears_0_to_4": [
+          410834,
+          207380,
+          17881,
+          2802,
+          1103
+        ],
+        "deaths": []
+      },
+      "B12": {
+        "clears_0_to_4": [
+          552609,
+          2675,
+          931,
+          1796,
+          59200
+        ],
+        "deaths": [
+          {
+            "seed": 3102812011,
+            "piece": 11959,
+            "height": 20,
+            "holes": 12,
+            "high_streak": 10
+          },
+          {
+            "seed": 3102812025,
+            "piece": 5252,
+            "height": 20,
+            "holes": 4,
+            "high_streak": 4
+          }
+        ]
+      }
+    }
+  }
+}
