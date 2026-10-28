@@ -10,6 +10,7 @@ def compute():
     if len(paths)!=dataset['accepted']+dataset['rejected']:raise RuntimeError('Incomplete fixed counterfactual set')
     result=dict(source_sha256=digest(Path(__file__)),dataset_sha256=digest(RUN/'dataset.json'),
         all_states=len(paths),bc_deaths=0,student_deaths=0,accepted_student_deaths=0,
+        accepted_same_first_action=0,accepted_death_same_first_action=0,
         accepted_clear_height_advantage=0,accepted_without_clear_local_advantage=0,
         accepted_higher_bc_common_height=0,accepted=dataset['accepted'],rejected=dataset['rejected'])
     for path in paths:
@@ -17,6 +18,9 @@ def compute():
         result['bc_deaths']+=a['death'];result['student_deaths']+=b['death']
         if r['accepted']:
             result['accepted_student_deaths']+=b['death']
+            same=a['rows'][0]['action']==b['rows'][0]['action']
+            result['accepted_same_first_action']+=same
+            result['accepted_death_same_first_action']+=bool(same and b['death'])
             advantage=not a['death'] and (b['death'] or a['rows'][n-1]['height']<=b['rows'][n-1]['height']-3)
             result['accepted_clear_height_advantage']+=advantage
             result['accepted_without_clear_local_advantage']+=not advantage
@@ -31,6 +35,8 @@ def append():
     text+=f'接受的 {result["accepted"]} 个标签中，学生局部死亡 {result["accepted_student_deaths"]}；'
     text+=f'BC在共同窗口末高至少低3层或学生已死亡的 {result["accepted_clear_height_advantage"]} 个；'
     text+=f'没有该明确相对优势的 {result["accepted_without_clear_local_advantage"]} 个。\n\n'
+    text+=f'接受标签中首动作相同 {result["accepted_same_first_action"]} 个；学生局部死亡案例中首动作仍相同 {result["accepted_death_same_first_action"]} 个。'
+    text+='完整BC恢复窗口有效，不代表只蒸馏快照首步就覆盖了后续关键决策。\n\n'
     text+='“BC能够恢复”不是“学生在此必然危险”，也不证明BC的首动作是安全最优。以上是事后描述性诊断，不修改原接受规则、样本、训练或开发门槛。'
     text+='出生空间紧张快照为0，不能声称本轮直接覆盖了这类风险。所有被拒绝样本永久保留。\n'
     path.write_text(text)
