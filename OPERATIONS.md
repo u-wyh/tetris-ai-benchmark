@@ -483,3 +483,4 @@
 2026-10-29T00:03:58+08:00 | BC recovery sequence: tmux bounded fresh sampling started/resumed
 2026-10-29T00:20:30+08:00 | BC recovery sequence: failed/interrupted:FileNotFoundError(2, 'No such file or directory'); evidence retained
 2026-10-29T00:21:14+08:00 | BC recovery sequence: closed reason=technical_failure, regression=[0, 0]; raw evidence preserved; frozen identities verified
+2026-10-29T00:22:33+08:00 | BC recovery sequence: diagnosed exact traceback: guard.stat raced atomic rename of3102821007.checkpoint.pkl.tmp; archived attempt_01 including source, outputs, regressions and full traceback. Fixed only missing-file-tolerant disk accounting, documented implementation amendment without changing original protocol/data identities or24h start. Resuming47 completed episodes plus remaining saved checkpoint; no replacement seeds or additional budget.

@@ -5,6 +5,12 @@ import pytest
 import training.bc_recovery_sequence as r
 from training.bc_recovery_sequence_train import gate
 
+def test_disk_accounting_tolerates_atomic_temporary_rename(tmp_path):
+    existing=tmp_path/'real';existing.write_bytes(b'abc')
+    class Disappeared:
+        def stat(self):raise FileNotFoundError('atomic temporary rename')
+    assert r.retained_bytes([Disappeared(),existing,tmp_path])==3
+
 def branch(n,death,divergence=True):
     return dict(rows=[dict(action=1)]*n,death=death,frames=[dict(action=1,student_action=2 if divergence else 1)])
 

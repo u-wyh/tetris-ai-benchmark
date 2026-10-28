@@ -4,6 +4,7 @@ import random
 import resource
 import shutil
 import signal
+import stat
 import subprocess
 import time
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -34,10 +35,18 @@ def operation(message):
 
 def status(stage,**kw):record(RUN/'status.json',dict(at=now(),stage=stage,pid=os.getpid(),**kw))
 
+def retained_bytes(paths):
+    total=0
+    for path in paths:
+        try:info=path.stat()
+        except FileNotFoundError:continue  #Another worker atomically renamed its temporary file.
+        if stat.S_ISREG(info.st_mode):total+=info.st_size
+    return total
+
 def guard():
     p=read_record(RUN/'protocol.json')
     if time.time()-p['started']>86400:raise RuntimeError('Budget:24h wall clock')
-    if sum(f.stat().st_size for f in RUN.rglob('*') if f.is_file())>6*1024**3:raise RuntimeError('Budget:6GiB disk')
+    if retained_bytes(RUN.rglob('*'))>6*1024**3:raise RuntimeError('Budget:6GiB disk')
     if shutil.disk_usage(RUN).free<8*1024**3:raise RuntimeError('Budget:8GiB free disk')
     pending=[read_record(RUN/'runtime.json')['pid']];rss=0;seen=set()
     while pending:
@@ -66,7 +75,13 @@ def freeze():
     path=RUN/'protocol.json'
     if path.exists():
         p=read_record(path)
-        if p['sources']!=sources or p['history']!=history:raise RuntimeError('Frozen source/history changed')
+        expected_sources=p['sources']
+        amendment=RUN/'implementation_amendment.json'
+        if amendment.exists():
+            a=read_record(amendment)
+            if a['original_protocol_sha']!=digest(path):raise RuntimeError('Amendment protocol mismatch')
+            expected_sources=a['sources']
+        if expected_sources!=sources or p['history']!=history:raise RuntimeError('Frozen source/history changed')
         return p
     if subprocess.run(['git','diff','--quiet','--',*files],cwd=ROOT).returncode:raise RuntimeError('Commit before protocol freeze')
     trees=subprocess.check_output(['git','worktree','list','--porcelain'],text=True,cwd=ROOT)
