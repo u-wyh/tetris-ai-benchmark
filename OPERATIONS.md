@@ -479,3 +479,7 @@
 2026-10-28T23:07:35+08:00 | BC sequence safety: unattended final report assembled with actual corpus, spawn-space, action and label-quality diagnostics; no new games/updates
 2026-10-28T23:08:41+08:00 | BC sequence safety: final interpretation: fresh32 candidate capped32/32, old student30/32; score +6.404% vs BC failed8% gate; four-clear share2.340% to0.481%; no further stages or experiments. Added evidence-qualified mechanism/resource conclusion and numeric changelog.
 2026-10-29T00:03:50+08:00 | BC recovery sequence: implemented preregistered four-branch sequence counterfactual protocol, conditional strong-label trainer and automatic closeout in isolated worktree; preflight found absent psutil, replaced dependency with Linux /proc aggregate RSS accounting before any data. Four targeted tests passed including real frozen-model/Core handoff and atomic trajectory resume; historical checkpoints unchanged.
+2026-10-29T00:03:58+08:00 | BC recovery sequence: protocol frozen before fresh data; strong evidence needs observed student death and>=256-piece advantage
+2026-10-29T00:03:58+08:00 | BC recovery sequence: tmux bounded fresh sampling started/resumed
+2026-10-29T00:20:30+08:00 | BC recovery sequence: failed/interrupted:FileNotFoundError(2, 'No such file or directory'); evidence retained
+2026-10-29T00:21:14+08:00 | BC recovery sequence: closed reason=technical_failure, regression=[0, 0]; raw evidence preserved; frozen identities verified

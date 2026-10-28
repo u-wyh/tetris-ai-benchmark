@@ -1,0 +1,12 @@
+{
+  "reason": "technical_failure",
+  "error": "FileNotFoundError(2, 'No such file or directory')",
+  "analysis": null,
+  "risk_hist": {},
+  "observed_deaths": {},
+  "cases": [],
+  "patterns": {},
+  "training": null,
+  "evaluations": {},
+  "protocol_sha": "92dc7838e9f8652a6935579534add808f4add4224f45019f1608b8ac82bddf8b"
+}
