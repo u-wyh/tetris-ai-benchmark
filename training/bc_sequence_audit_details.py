@@ -1,11 +1,59 @@
 """Complete clear-count and death-only terminal-risk tables from the fixed audit."""
 import json
+import os
+import sys
 from pathlib import Path
 from statistics import mean
 
-from training.bc_sequence_transfer import ROOT, read_record
-from training.bc_sequence_supervised import WORK
+import numpy as np
+import torch
+from sb3_contrib import MaskablePPO
+
+from training.bc_sequence_transfer import ROOT, RUN, BC, read_record, read_blob, record, digest
+from training.bc_sequence_supervised import WORK, DATA_SEEDS, data_path, chunks
 from training.bc_sequence_policy_audit import LABEL
+from training.imitation_bc import batch
+
+
+def sequence_alignment():
+    """Teacher-forced agreement only; no claim of free-running sequence success."""
+    os.sched_setaffinity(0,sorted(os.sched_getaffinity(0))[-2:])
+    torch.set_num_threads(1)
+    model_path = Path(read_record(WORK/'training_result.json')['last_model'])
+    output = dict(mode='descriptive teacher-forced matching on held-out complete episodes; not a selection gate',
+                  model_sha256=digest(model_path), sources={})
+    models = dict(bc=MaskablePPO.load(BC,device='cpu'),candidate=MaskablePPO.load(model_path,device='cpu'))
+    for source in ('ppo','transfer'):
+        frames = [f for seed in DATA_SEEDS[6:] for f in read_blob(data_path(source,seed))['frames']]
+        segments = chunks(frames)
+        output['sources'][source] = {}
+        for name,model in models.items():
+            matches = []
+            for segment in segments:
+                if any(b['piece']-a['piece'] != 1 for a,b in zip(segment,segment[1:])):
+                    raise RuntimeError('Sequence diagnostic crossed non-contiguous data')
+                predicted = []
+                for start in range(0,len(segment),32):
+                    obs,mask,actions = batch(segment[start:start+32],'cpu')
+                    with torch.inference_mode():
+                        prediction = model.policy.get_distribution(obs,action_masks=mask).get_actions(deterministic=True)
+                    predicted.extend((prediction==actions).cpu().numpy().tolist())
+                matches.append(predicted)
+            longest = []
+            for segment in matches:
+                streak = maximum = 0
+                for same in segment:
+                    streak = streak+1 if same else 0
+                    maximum = max(maximum,streak)
+                longest.append(maximum)
+            counts = {str(h):dict(exact=sum(all(segment[i:i+h]) for segment in matches
+                for i in range(len(segment)-h+1)), windows=sum(max(0,len(segment)-h+1) for segment in matches))
+                for h in (16,32,64,128)}
+            output['sources'][source][name] = dict(frames=sum(map(len,matches)),fragments=len(matches),
+                top1=sum(map(sum,matches))/max(1,sum(map(len,matches))),
+                mean_longest_streak=float(np.mean(longest)) if longest else None, exact_windows=counts)
+    record(RUN/'policy_audit'/'sequence_alignment.json',output)
+    return output
 
 
 def main():
@@ -40,15 +88,30 @@ def main():
         values = ['—' if r[k] is None else f'{r[k]:.2f}' for k in
                   ('terminal_height','terminal_holes','terminal_high_streak')]
         lines.append(f'|{name}|{r["deaths"]}|'+'|'.join(values)+'|')
+    alignment_path = RUN/'policy_audit'/'sequence_alignment.json'
+    alignment = read_record(alignment_path) if alignment_path.exists() else sequence_alignment()
+    lines += ['', '### 教师状态上的连续动作对齐（描述性）', '',
+        '使用完整episode留出的教师片段，在教师实际状态上逐步比较动作。此为teacher-forced诊断；不代表模型自由运行能到达这些状态，'
+        '动作不完全一致也不证明无法用另一种布局得分。窗口彼此重叠，不当作独立样本。', '',
+        '|教师来源|模型|逐帧一致率|每片段平均最长一致动作串|16/32/64/128块完整一致窗口数/总数|',
+        '|---|---|---:|---:|---|']
+    for source,models in alignment['sources'].items():
+        for name,r in models.items():
+            counts = '/'.join(f'{r["exact_windows"][str(h)]["exact"]}:{r["exact_windows"][str(h)]["windows"]}' for h in (16,32,64,128))
+            lines.append(f'|{source}|{name}|{r["top1"]:.2%}|{r["mean_longest_streak"]:.2f}|{counts}|')
     path = ROOT/'reports/experiments/bc_sequence_transfer_results.md'
     text = path.read_text().split('\n### 补充诊断：完整消行分布与真实死亡终局')[0]
     path.write_text(text+'\n'.join(lines)+'\n')
     path = ROOT/'reports/experiments/bc_sequence_transfer_evidence.json'
     evidence = json.loads(path.read_text())
     evidence['policy_audit']['clear_and_terminal_details'] = details
+    evidence['policy_audit']['teacher_forced_alignment'] = alignment
     path.write_text(json.dumps(evidence,indent=2,ensure_ascii=False)+'\n')
     print(json.dumps(details,ensure_ascii=False))
 
 
 if __name__ == '__main__':
-    main()
+    if '--teacher-only' in sys.argv:
+        print(json.dumps(sequence_alignment(),ensure_ascii=False))
+    else:
+        main()
