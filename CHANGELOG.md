@@ -201,8 +201,6 @@
 
 ### BC recovery sequence research (2026-10-29)
 
-- Pre-registered four-branch3000-piece recovery study; result=technical_failure; strong labels separated from weak board proxies. No champion without confirmation.
-
-### BC recovery sequence research (2026-10-29)
-
-- Pre-registered four-branch3000-piece recovery study; result=insufficient_high_confidence_labels; strong labels separated from weak board proxies. No champion without confirmation.
+- Completed48 fresh20K-capped episodes and235 fixed four-branch3000-piece counterfactual states. Two strong states came from one underlying death; validation had zero strong states. Stopped at the frozen learning gate without training or development/confirmation evaluation.
+- One first-action-identical case showed A/B death at43 versus BC16/64 reaching3000, with corrections at steps2/8/14. Three intervention branches caused clear harm; no champion registered.
+- Fixed and archived one atomic-temporary-file disk-accounting race; resumed original snapshots without changing protocol or wall budget. Python/Parity24 tests plus35 subtests and JS68 tests passed.
