@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-28T20:32:40+08:00",
+  "at": "2026-10-28T21:12:59+08:00",
   "analysis": "descriptive only; not used to alter registered gate",
   "protocol": {
     "version": "bc-sequence-transfer-v1",
@@ -7143,5 +7143,616 @@
     },
     "last_model_sha256": "e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914",
     "evaluations": {}
+  },
+  "policy_audit": {
+    "protocol": {
+      "at": "2026-10-28T20:37:04+08:00",
+      "git_commit": "0708a3c48b0e236189445039efc57fb60ef9ea19",
+      "sources": {
+        "training/bc_sequence_policy_audit.py": "4bdbe0bbf940342faf5c92941827394627df26341b794a3cbdde36bb180bebaf",
+        "reports/experiments/bc_sequence_transfer_audit_design.md": "154dc11cd31d3c0fe2185bd74ac3667b9451397c545cee52c4775401a793ff7c"
+      },
+      "supervised_protocol_sha256": "107f2a1cc92b5c366129578a1fe1f4ebcee70f5c7083b040fd69a15187fdcef2",
+      "checkpoint": "/home/wyh/projects/tetris-ai-benchmark-sequence/runs/bc_sequence_transfer/supervised/checkpoints/epoch_01/model.zip",
+      "model_sha256": "e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914",
+      "seeds": [
+        3102803000,
+        3102803001,
+        3102803002,
+        3102803003,
+        3102803004,
+        3102803005,
+        3102803006,
+        3102803007,
+        3102803008,
+        3102803009,
+        3102803010,
+        3102803011,
+        3102803012,
+        3102803013,
+        3102803014,
+        3102803015
+      ],
+      "cap": 20000,
+      "mode": "one diagnostic; no subsequent training/100k/confirmation",
+      "original_stop": "stopped_supervised_learning_signal"
+    },
+    "result": {
+      "label": "stopped_epoch01_audit_20k",
+      "cap": 20000,
+      "summary": {
+        "bc": {
+          "games": 16,
+          "mean_pieces": 20000,
+          "p10": 20000.0,
+          "minimum": 20000,
+          "capped": 16,
+          "deaths": 0,
+          "early": 0,
+          "mean_score": 333932831.25,
+          "score_per_1000": 16696641.5625,
+          "four_fraction": 0.0003918527286828034,
+          "new_holes_per_100": 2.6234375,
+          "high_fraction": 6.25e-06,
+          "mean_max_high_streak": 0.125,
+          "mean_inference_ms": 0.2724407870579569
+        },
+        "ppo": {
+          "games": 16,
+          "mean_pieces": 15098.5625,
+          "p10": 3557.0,
+          "minimum": 2236,
+          "capped": 11,
+          "deaths": 5,
+          "early": 5,
+          "mean_score": 446542306.25,
+          "score_per_1000": 29575153.677709386,
+          "four_fraction": 0.9294281729428173,
+          "new_holes_per_100": 0.21690806657918593,
+          "high_fraction": 0.0005174333649312641,
+          "mean_max_high_streak": 4.625,
+          "mean_inference_ms": 0.2771077567363061
+        },
+        "B12": {
+          "games": 16,
+          "mean_pieces": 16324.75,
+          "p10": 5395.5,
+          "minimum": 651,
+          "capped": 10,
+          "deaths": 6,
+          "early": 3,
+          "mean_score": 483573031.25,
+          "score_per_1000": 29622078.822034027,
+          "four_fraction": 0.9157393850658858,
+          "new_holes_per_100": 0.22932969877027212,
+          "high_fraction": 0.00023736963812615814,
+          "mean_max_high_streak": 2.1875,
+          "mean_inference_ms": 0.583552216412825
+        },
+        "candidate": {
+          "games": 16,
+          "mean_pieces": 19366.6875,
+          "p10": 20000.0,
+          "minimum": 9867,
+          "capped": 15,
+          "deaths": 1,
+          "early": 1,
+          "mean_score": 362584831.25,
+          "score_per_1000": 18722088.18622183,
+          "four_fraction": 0.02420005639225676,
+          "new_holes_per_100": 1.0494825199198365,
+          "high_fraction": 1.9363146123982225e-05,
+          "mean_max_high_streak": 0.375,
+          "mean_inference_ms": 0.2700219938320647
+        }
+      },
+      "paired_to_bc": {
+        "ppo": {
+          "pairs": [
+            {
+              "seed": 3102803000,
+              "common_pieces": 4872,
+              "baseline_score": 19947300,
+              "candidate_score": 36979500,
+              "ratio": 1.8538599208915492,
+              "survival_delta": -15128
+            },
+            {
+              "seed": 3102803001,
+              "common_pieces": 20000,
+              "baseline_score": 333946500,
+              "candidate_score": 634347900,
+              "ratio": 1.8995494787338691,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803002,
+              "common_pieces": 20000,
+              "baseline_score": 334489900,
+              "candidate_score": 632528900,
+              "ratio": 1.8910254091379142,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803003,
+              "common_pieces": 7015,
+              "baseline_score": 41144900,
+              "candidate_score": 77503400,
+              "ratio": 1.8836696650131608,
+              "survival_delta": -12985
+            },
+            {
+              "seed": 3102803004,
+              "common_pieces": 20000,
+              "baseline_score": 333299500,
+              "candidate_score": 634809100,
+              "ratio": 1.9046206189928279,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803005,
+              "common_pieces": 20000,
+              "baseline_score": 334048600,
+              "candidate_score": 634482300,
+              "ratio": 1.8993712292163476,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803006,
+              "common_pieces": 2236,
+              "baseline_score": 4224800,
+              "candidate_score": 7713000,
+              "ratio": 1.8256485514107177,
+              "survival_delta": -17764
+            },
+            {
+              "seed": 3102803007,
+              "common_pieces": 20000,
+              "baseline_score": 333327600,
+              "candidate_score": 634419900,
+              "ratio": 1.90329243662991,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803008,
+              "common_pieces": 5212,
+              "baseline_score": 22606700,
+              "candidate_score": 42675800,
+              "ratio": 1.887750091786948,
+              "survival_delta": -14788
+            },
+            {
+              "seed": 3102803009,
+              "common_pieces": 20000,
+              "baseline_score": 333066800,
+              "candidate_score": 631261700,
+              "ratio": 1.8953005823456435,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803010,
+              "common_pieces": 20000,
+              "baseline_score": 334361500,
+              "candidate_score": 633560700,
+              "ratio": 1.8948374738120268,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803011,
+              "common_pieces": 20000,
+              "baseline_score": 334354700,
+              "candidate_score": 632982000,
+              "ratio": 1.893145213750547,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803012,
+              "common_pieces": 20000,
+              "baseline_score": 334868900,
+              "candidate_score": 633623500,
+              "ratio": 1.8921539145617883,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803013,
+              "common_pieces": 20000,
+              "baseline_score": 332383400,
+              "candidate_score": 635244000,
+              "ratio": 1.9111784764221078,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803014,
+              "common_pieces": 20000,
+              "baseline_score": 333650600,
+              "candidate_score": 634751700,
+              "ratio": 1.9024443534643727,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803015,
+              "common_pieces": 2242,
+              "baseline_score": 4228800,
+              "candidate_score": 7793500,
+              "ratio": 1.8429578130911843,
+              "survival_delta": -17758
+            }
+          ],
+          "common_score_ratio": 1.8981856695511803,
+          "positive_seeds": 16,
+          "ratio_ci95": [
+            1.894539926083639,
+            1.901631366625482
+          ],
+          "survival_difference_ci95": [
+            -8508.509375,
+            -1757.0625
+          ]
+        },
+        "B12": {
+          "pairs": [
+            {
+              "seed": 3102803000,
+              "common_pieces": 6484,
+              "baseline_score": 35186600,
+              "candidate_score": 66038700,
+              "ratio": 1.876813900746307,
+              "survival_delta": -13516
+            },
+            {
+              "seed": 3102803001,
+              "common_pieces": 20000,
+              "baseline_score": 333946500,
+              "candidate_score": 633958600,
+              "ratio": 1.8983837231412817,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803002,
+              "common_pieces": 15648,
+              "baseline_score": 204887200,
+              "candidate_score": 385947500,
+              "ratio": 1.8837072301246736,
+              "survival_delta": -4352
+            },
+            {
+              "seed": 3102803003,
+              "common_pieces": 4307,
+              "baseline_score": 15404400,
+              "candidate_score": 28702900,
+              "ratio": 1.8632923060943627,
+              "survival_delta": -15693
+            },
+            {
+              "seed": 3102803004,
+              "common_pieces": 20000,
+              "baseline_score": 333299500,
+              "candidate_score": 632995900,
+              "ratio": 1.899180466817382,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803005,
+              "common_pieces": 18657,
+              "baseline_score": 290501300,
+              "candidate_score": 549584900,
+              "ratio": 1.8918500536830645,
+              "survival_delta": -1343
+            },
+            {
+              "seed": 3102803006,
+              "common_pieces": 20000,
+              "baseline_score": 334007400,
+              "candidate_score": 632760000,
+              "ratio": 1.894449045140916,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803007,
+              "common_pieces": 20000,
+              "baseline_score": 333327600,
+              "candidate_score": 632435200,
+              "ratio": 1.8973382342176286,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803008,
+              "common_pieces": 20000,
+              "baseline_score": 334191100,
+              "candidate_score": 632381000,
+              "ratio": 1.8922736123134338,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803009,
+              "common_pieces": 20000,
+              "baseline_score": 333066800,
+              "candidate_score": 632826900,
+              "ratio": 1.8999999399519856,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803010,
+              "common_pieces": 20000,
+              "baseline_score": 334361500,
+              "candidate_score": 633584600,
+              "ratio": 1.894908953333443,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803011,
+              "common_pieces": 20000,
+              "baseline_score": 334354700,
+              "candidate_score": 633661300,
+              "ratio": 1.8951768884959594,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803012,
+              "common_pieces": 20000,
+              "baseline_score": 334868900,
+              "candidate_score": 633976200,
+              "ratio": 1.8932071625642155,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803013,
+              "common_pieces": 15449,
+              "baseline_score": 198766200,
+              "candidate_score": 376387400,
+              "ratio": 1.89361873396986,
+              "survival_delta": -4551
+            },
+            {
+              "seed": 3102803014,
+              "common_pieces": 651,
+              "baseline_score": 361000,
+              "candidate_score": 607100,
+              "ratio": 1.6817174515235458,
+              "survival_delta": -19349
+            },
+            {
+              "seed": 3102803015,
+              "common_pieces": 20000,
+              "baseline_score": 334998700,
+              "candidate_score": 631320300,
+              "ratio": 1.8845455221169516,
+              "survival_delta": 0
+            }
+          ],
+          "common_score_ratio": 1.8937982676125156,
+          "positive_seeds": 16,
+          "ratio_ci95": [
+            1.8910912560402036,
+            1.8960716225387932
+          ],
+          "survival_difference_ci95": [
+            -6930.2421875,
+            -1012.625
+          ]
+        },
+        "candidate": {
+          "pairs": [
+            {
+              "seed": 3102803000,
+              "common_pieces": 20000,
+              "baseline_score": 333957500,
+              "candidate_score": 386143700,
+              "ratio": 1.1562659919301108,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803001,
+              "common_pieces": 20000,
+              "baseline_score": 333946500,
+              "candidate_score": 378768700,
+              "ratio": 1.1342197028565952,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803002,
+              "common_pieces": 9867,
+              "baseline_score": 81710500,
+              "candidate_score": 93294000,
+              "ratio": 1.141762686558031,
+              "survival_delta": -10133
+            },
+            {
+              "seed": 3102803003,
+              "common_pieces": 20000,
+              "baseline_score": 333972600,
+              "candidate_score": 380125900,
+              "ratio": 1.138194869878547,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803004,
+              "common_pieces": 20000,
+              "baseline_score": 333299500,
+              "candidate_score": 383706700,
+              "ratio": 1.151236950550481,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803005,
+              "common_pieces": 20000,
+              "baseline_score": 334048600,
+              "candidate_score": 381568000,
+              "ratio": 1.142252953612139,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803006,
+              "common_pieces": 20000,
+              "baseline_score": 334007400,
+              "candidate_score": 377919500,
+              "ratio": 1.131470440475271,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803007,
+              "common_pieces": 20000,
+              "baseline_score": 333327600,
+              "candidate_score": 386557000,
+              "ratio": 1.159690946684283,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803008,
+              "common_pieces": 20000,
+              "baseline_score": 334191100,
+              "candidate_score": 375954400,
+              "ratio": 1.1249683190246538,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803009,
+              "common_pieces": 20000,
+              "baseline_score": 333066800,
+              "candidate_score": 377202600,
+              "ratio": 1.1325133576808015,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803010,
+              "common_pieces": 20000,
+              "baseline_score": 334361500,
+              "candidate_score": 381974000,
+              "ratio": 1.142398272528386,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803011,
+              "common_pieces": 20000,
+              "baseline_score": 334354700,
+              "candidate_score": 379525000,
+              "ratio": 1.1350969494372294,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803012,
+              "common_pieces": 20000,
+              "baseline_score": 334868900,
+              "candidate_score": 382894300,
+              "ratio": 1.1434155276885969,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803013,
+              "common_pieces": 20000,
+              "baseline_score": 332383400,
+              "candidate_score": 378286700,
+              "ratio": 1.1381034672610004,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803014,
+              "common_pieces": 20000,
+              "baseline_score": 333650600,
+              "candidate_score": 383455800,
+              "ratio": 1.1492735214622722,
+              "survival_delta": 0
+            },
+            {
+              "seed": 3102803015,
+              "common_pieces": 20000,
+              "baseline_score": 334998700,
+              "candidate_score": 373981000,
+              "ratio": 1.1163655261945793,
+              "survival_delta": 0
+            }
+          ],
+          "common_score_ratio": 1.1397231855377663,
+          "positive_seeds": 16,
+          "ratio_ci95": [
+            1.1341109204571618,
+            1.1452275635500426
+          ],
+          "survival_difference_ci95": [
+            -1899.9375,
+            0.0
+          ]
+        }
+      }
+    },
+    "gate": {
+      "passed": false,
+      "checks": {
+        "mean": false,
+        "p10": true,
+        "early": false,
+        "score": true,
+        "seeds": true,
+        "high": true,
+        "holes": true,
+        "capped": true
+      }
+    },
+    "row_sha256": {
+      "supervised/evaluation/stopped_epoch01_audit_20k/B12/seed_3102803000.json": "ef50fb5acd0087b841845fb4359aa9d02350b1ce233010db078dd4ecaeba21c3",
+      "supervised/evaluation/stopped_epoch01_audit_20k/B12/seed_3102803001.json": "77e6792ff46dce75e114dcc1bfca357f30f1258321a6c6135c04fa62dac46d91",
+      "supervised/evaluation/stopped_epoch01_audit_20k/B12/seed_3102803002.json": "aeb529d43161ef46f4fa818ae58ff875469c320c2bacadcd52a8efc12f5d463b",
+      "supervised/evaluation/stopped_epoch01_audit_20k/B12/seed_3102803003.json": "9e863d62dc75d49aba61037d4256812af58ebd72f81e6c99ed446422bfc17b50",
+      "supervised/evaluation/stopped_epoch01_audit_20k/B12/seed_3102803004.json": "4cbf4c10af645da9c69830940b472785c0623250ba207a9231f1dbbec20b182d",
+      "supervised/evaluation/stopped_epoch01_audit_20k/B12/seed_3102803005.json": "98a5034b46bdf2682d928704cb3acdbcce1f5e44c0262f686084827f06f8384d",
+      "supervised/evaluation/stopped_epoch01_audit_20k/B12/seed_3102803006.json": "9bf922721876f3dd4a837c9767a9a9d641c556486b280152779c40ea5e1e65fe",
+      "supervised/evaluation/stopped_epoch01_audit_20k/B12/seed_3102803007.json": "e94c16aa57a12ef9f2c373e56e44356d230cc5537b85974a939cb42174bb8dff",
+      "supervised/evaluation/stopped_epoch01_audit_20k/B12/seed_3102803008.json": "ae44aa02e34a7bc78605bf1812b1b2bf5f9592e4a739300c57d84444af56f823",
+      "supervised/evaluation/stopped_epoch01_audit_20k/B12/seed_3102803009.json": "b84852eb89e6c6240802b2b81da49bb6f4a176d241d8aaf6228042a3de1b52d3",
+      "supervised/evaluation/stopped_epoch01_audit_20k/B12/seed_3102803010.json": "1cf78e896170e7c78c5466b7fc569320e5c95570eb8b97ace414d52e485f1d20",
+      "supervised/evaluation/stopped_epoch01_audit_20k/B12/seed_3102803011.json": "cc6016dd677e666002d7ab965b572d1f91a14f53ef37b99a664372a87ecdf12c",
+      "supervised/evaluation/stopped_epoch01_audit_20k/B12/seed_3102803012.json": "02694c036a9d4cd7bd4302cd7708ee23727339697a62897a154b5cb6c9543a43",
+      "supervised/evaluation/stopped_epoch01_audit_20k/B12/seed_3102803013.json": "92676f5eccca1ef13549090c7a65e9436ec2694bdcda84ac2384c4c8fef0d7fd",
+      "supervised/evaluation/stopped_epoch01_audit_20k/B12/seed_3102803014.json": "b1dcd10eb1a9e2ca1c06bc8fb721fbd58eadab3e1e99fefb4acde2bf922d7b3a",
+      "supervised/evaluation/stopped_epoch01_audit_20k/B12/seed_3102803015.json": "7914d0401106fa5d100fdb338370994f28fa51ff1487480a7c755e662e1532fc",
+      "supervised/evaluation/stopped_epoch01_audit_20k/bc/seed_3102803000.json": "383cf4c9c3ef5ffef3580ec85a6166d398f2805bd5dacae866154e62fc4ae017",
+      "supervised/evaluation/stopped_epoch01_audit_20k/bc/seed_3102803001.json": "86a40c1a05898c97fca707b3a36363feafc432ae5f5fd3c080a54aeccd5e9cd7",
+      "supervised/evaluation/stopped_epoch01_audit_20k/bc/seed_3102803002.json": "ef7e396cadcc6af511b6bab70c606632a1ad41a6c202d0435c2ce5a1b4372071",
+      "supervised/evaluation/stopped_epoch01_audit_20k/bc/seed_3102803003.json": "5ea4e014d84cb52592277c04fc963a4fd93c8cfcd3c2c995f96f9bb69ff8c6b9",
+      "supervised/evaluation/stopped_epoch01_audit_20k/bc/seed_3102803004.json": "28d88c7600ff1ad2204a54d222ecf792796d5f5f7ff6eb572e949d2af743054b",
+      "supervised/evaluation/stopped_epoch01_audit_20k/bc/seed_3102803005.json": "0b170483c1426a7d7c5fe739c6663205d965178a62d3ad747c51e43b1317096a",
+      "supervised/evaluation/stopped_epoch01_audit_20k/bc/seed_3102803006.json": "e2061f22b805076fe389e15bc10f940b64fac46e83fe991cc98c9203c6336684",
+      "supervised/evaluation/stopped_epoch01_audit_20k/bc/seed_3102803007.json": "a48e7d3828d1e7f6c11b1a2abcec198024956d76e3da802fe81c98f5295a0d40",
+      "supervised/evaluation/stopped_epoch01_audit_20k/bc/seed_3102803008.json": "f2abb0678be28d6ac89f67b79ccdff972b7c240da6e73fe401574eb9c1107d64",
+      "supervised/evaluation/stopped_epoch01_audit_20k/bc/seed_3102803009.json": "c96a4c29d7d0ba3d068d3e34d047c498f43cb6dfcbc12db20be3c6e5e086e2c7",
+      "supervised/evaluation/stopped_epoch01_audit_20k/bc/seed_3102803010.json": "b32e15e9ef0d263fada5f596bb7af2c9ba275808a5ca30a713f7a8aa5cf8a8cc",
+      "supervised/evaluation/stopped_epoch01_audit_20k/bc/seed_3102803011.json": "0b0c70cbf6edd9bd6c1f53f01ef9b099262f1923ae89d07e4019a21a084c3533",
+      "supervised/evaluation/stopped_epoch01_audit_20k/bc/seed_3102803012.json": "c592ffdc6d9edde7693d777ce9f64a76d40d59cb4266a33b1c48007e38dac03f",
+      "supervised/evaluation/stopped_epoch01_audit_20k/bc/seed_3102803013.json": "1f3ec515ce315757fead7306f300982d2b4873ae191c6bc2257e965c265fe0a7",
+      "supervised/evaluation/stopped_epoch01_audit_20k/bc/seed_3102803014.json": "7c7e5b5403b1c3c3a08c212a2f37cfadc3ecf8025fe52dd6215d68ffc670c815",
+      "supervised/evaluation/stopped_epoch01_audit_20k/bc/seed_3102803015.json": "4f2417af7eac022c049909b4cf631776b1d58e88292057188deda7dfa80c3ed2",
+      "supervised/evaluation/stopped_epoch01_audit_20k/candidate/seed_3102803000.json": "c71e15b6b273a6e34588203f16f3ed1d849874a33f3afea2fa38de1efa8e8b62",
+      "supervised/evaluation/stopped_epoch01_audit_20k/candidate/seed_3102803001.json": "c1dc38fff35bbb1e34af63936eed57d8f06cd7c820b76e043f0d2e50a38260a1",
+      "supervised/evaluation/stopped_epoch01_audit_20k/candidate/seed_3102803002.json": "fd0428c223b6170954b93dcb88b415993d10b1997304f358a8b6ade786e27455",
+      "supervised/evaluation/stopped_epoch01_audit_20k/candidate/seed_3102803003.json": "4edf4fd7ec4885bc68654b2f946acc106d32b328462003622a206a040477a07c",
+      "supervised/evaluation/stopped_epoch01_audit_20k/candidate/seed_3102803004.json": "5669b9d4cd278990537c1b509443cbc5d3c4c002b913a8dad7f7bf35dba80627",
+      "supervised/evaluation/stopped_epoch01_audit_20k/candidate/seed_3102803005.json": "047f9493da1a3ca4101ae4c5d419dddb06fb05b72cbfdc42de2768caa06823af",
+      "supervised/evaluation/stopped_epoch01_audit_20k/candidate/seed_3102803006.json": "9e05696aee64bd68efa87a7153d1e335709d66200173d44dc847002004d7f7f9",
+      "supervised/evaluation/stopped_epoch01_audit_20k/candidate/seed_3102803007.json": "8be3c62cdba36c417ec29a0714482c9967e5323275048765eec92e84bde6b53d",
+      "supervised/evaluation/stopped_epoch01_audit_20k/candidate/seed_3102803008.json": "9f3ab1a7a49252eb3312c074fd3367607f0622db0707e36f5eaefb2a31a954d0",
+      "supervised/evaluation/stopped_epoch01_audit_20k/candidate/seed_3102803009.json": "38bf1e2005ffd618b71d01cc96166bf0ec6b785cb29376f9968b2d5f6668fa47",
+      "supervised/evaluation/stopped_epoch01_audit_20k/candidate/seed_3102803010.json": "5557ef86d9e1d4e2bec2f3c8e30e620b2bf707e97fca3c122b1636648a1496c8",
+      "supervised/evaluation/stopped_epoch01_audit_20k/candidate/seed_3102803011.json": "af563e7146c313f346507a1b227072decb9f4e5f2e24d82f3a37f586c5327b99",
+      "supervised/evaluation/stopped_epoch01_audit_20k/candidate/seed_3102803012.json": "f88817e978f72d69dc5d4f4b301007d8f75c12b8aa799177795004a2c99c1fce",
+      "supervised/evaluation/stopped_epoch01_audit_20k/candidate/seed_3102803013.json": "77160ab8072a6c2b99ecadd0c14c8ccd529baf04c69ab169590c69e35e07da34",
+      "supervised/evaluation/stopped_epoch01_audit_20k/candidate/seed_3102803014.json": "8b3ef330986e470f1d00b8a942d3b93973b5d31caa229531d7399fb1ed27e442",
+      "supervised/evaluation/stopped_epoch01_audit_20k/candidate/seed_3102803015.json": "1574a903a5567ff3d1f38c2dfdde2ca8af306126d3d8f053c9ddfe361e508ad9",
+      "supervised/evaluation/stopped_epoch01_audit_20k/ppo/seed_3102803000.json": "dc8223e240216e8bdf3113ed4ad5810e8e8cf6f450b781744d62019af49342a6",
+      "supervised/evaluation/stopped_epoch01_audit_20k/ppo/seed_3102803001.json": "d92520651c4c3b79fa2a98a99237a386841147771ef0437f4b91afd6306303a5",
+      "supervised/evaluation/stopped_epoch01_audit_20k/ppo/seed_3102803002.json": "704f23dc65a1d8e9fe64d5b81540ac7a91b88dda7032853a82457c03129a7eec",
+      "supervised/evaluation/stopped_epoch01_audit_20k/ppo/seed_3102803003.json": "07f04d5eeeefb14bebfcf21af62dc0b1a9f5cf4b3f1c2d6916b5d69fdaa30e03",
+      "supervised/evaluation/stopped_epoch01_audit_20k/ppo/seed_3102803004.json": "920b96682735cccb8bc78b931499ab4e337cb61b8cd47367082441b8233e9ced",
+      "supervised/evaluation/stopped_epoch01_audit_20k/ppo/seed_3102803005.json": "eed0b7d4b93d6c825f22a5282dda62a2d008ed19c9e95c2a1074b8e489b4b5c2",
+      "supervised/evaluation/stopped_epoch01_audit_20k/ppo/seed_3102803006.json": "9656ab6b67615cec35fb8378f983d8a1f8e6752c74654e5b9ae8235e34658c20",
+      "supervised/evaluation/stopped_epoch01_audit_20k/ppo/seed_3102803007.json": "a8a60b37f9df16be1a6568045523fbcf3ae39af78544a6b353c0a824f9468678",
+      "supervised/evaluation/stopped_epoch01_audit_20k/ppo/seed_3102803008.json": "62026bfc38d5c8365b88828eab83a88b828c4e52fc4625e2d1f8537831ad0d7a",
+      "supervised/evaluation/stopped_epoch01_audit_20k/ppo/seed_3102803009.json": "9102922d565df41a87609e5dceffda6bdaf9e907ed10c340a28ac21ff08e97db",
+      "supervised/evaluation/stopped_epoch01_audit_20k/ppo/seed_3102803010.json": "246309a7b069fd99955c66873afec35e05981e3cbb1396846e70dfa92b8e43ba",
+      "supervised/evaluation/stopped_epoch01_audit_20k/ppo/seed_3102803011.json": "ebbb26100b54088f3e4b3cef3869b59133f2d9b3aead5621cf0234db4c9dc1b8",
+      "supervised/evaluation/stopped_epoch01_audit_20k/ppo/seed_3102803012.json": "7df1bfb72e410b433b3a3e19ff0230af0d6210580e5d4447712adff33f69db9a",
+      "supervised/evaluation/stopped_epoch01_audit_20k/ppo/seed_3102803013.json": "74d6e40fbd6ce392a87d341409b007109c753d081a93cde037a8f0edc3f0505a",
+      "supervised/evaluation/stopped_epoch01_audit_20k/ppo/seed_3102803014.json": "6906a96ac00b166610231782bfb71389f722c7bcdec7f02f7b4c050a81e98152",
+      "supervised/evaluation/stopped_epoch01_audit_20k/ppo/seed_3102803015.json": "c7e0a0958c394b972a9e96d1d4d77952fa5076e3166909ecb4beb42f4456d9c3"
+    }
   }
 }
