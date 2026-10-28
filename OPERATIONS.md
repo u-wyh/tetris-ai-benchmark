@@ -452,3 +452,4 @@
 2026-10-28T20:25:33+08:00 | BC sequence transfer: supervised collection started/resumed; 24 episode maximum
 2026-10-28T20:32:38+08:00 | BC sequence transfer: supervised epoch 1: updates=1280; validation checks={'bc_agreement': False, 'native_signal': True, 'target_signal': True}
 2026-10-28T20:33:27+08:00 | BC sequence transfer: supervised outcome=stopped_supervised_learning_signal; required Python/Parity/JS return codes=[0, 0]
+2026-10-28T20:37:03+08:00 | BC sequence transfer: supervised epoch1 stopped normally after1280 updates: BC agreement78.027%, source teacher56.201%, BC-distribution teacher54.297%. Original regressions passed and result pushed. Before any development results, froze one supplementary16seed/20K deployment audit to answer actual scoring/four-clear/survival questions; original retention stop remains terminal, no more training/100K/confirmation. Evidence: supervised/training_result.json; reports/experiments/bc_sequence_transfer_audit_design.md.
