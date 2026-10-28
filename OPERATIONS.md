@@ -440,3 +440,5 @@
 2026-10-27T21:13:10+08:00 | BC score RL: task_32_20k paired evaluation started; 16 seeds, cap 20000, pending 80
 2026-10-27T21:28:22+08:00 | BC score RL: finished reason=stopped_gate_32; committed_steps=131072; confirmation=False
 2026-10-27T21:29:05+08:00 | BC score RL: regression return codes [0, 0]; report generated; no web model changes
+2026-10-28T19:57:45+08:00 | BC sequence transfer: created isolated worktree and codex/bc-sequence-transfer from 09a2b8c; frozen model directories linked read-only by convention; stage-I implementation pending, no sampling/training started. Earlier interruptions occurred before data collection. Evidence: git worktree, reports/experiments/bc_sequence_transfer_design.md (to be frozen).
+2026-10-28T20:04:54+08:00 | BC sequence transfer: preflight 4 targeted tests and 6GiB worker/model smoke passed; fixed str-to-Path snapshot reader found by recovery test before research data; frozen design includes one-step diagnostic, four registered sequence lengths and 2048-block follow-up. Evidence: tests/test_bc_sequence_transfer.py.
