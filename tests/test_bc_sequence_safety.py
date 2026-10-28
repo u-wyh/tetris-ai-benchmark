@@ -50,6 +50,19 @@ def test_gate_requires_actual_survival_and_broad_score_gain():
     assert not s.gate(result,long=True)['passed']
 
 
+def test_long_gate_rejects_score_gain_concentrated_in_one_seed():
+    base=dict(games=16,mean_pieces=100000,p10=100000,early=0,capped=16,mean_score=100,
+              high_fraction=0,new_holes_per_100=2,mean_max_high_streak=0)
+    pairs=[dict(seed=i,baseline_score=100,candidate_score=109) for i in range(16)]
+    result=dict(summary=dict(bc=base,candidate=dict(base,mean_score=109)),paired=dict(candidate=dict(
+        common_score_ratio=1.09,positive_seeds=16,ratio_ci95=[1.08,1.1],pairs=pairs)))
+    assert s.gate(result,long=True)['passed']
+    for pair in pairs:pair['candidate_score']=101
+    pairs[0]['candidate_score']=400
+    result['paired']['candidate']['common_score_ratio']=sum(p['candidate_score'] for p in pairs)/1600
+    assert not s.gate(result,long=True)['checks']['trimmed_score']
+
+
 def test_real_updates_atomic_optimizer_rng_restore(tmp_path,monkeypatch):
     if not s.STUDENT.exists():pytest.skip('Frozen student unavailable')
     monkeypatch.setattr(s,'RUN',tmp_path);s.record(tmp_path/'protocol.json',dict(test=True));s.record(tmp_path/'dataset.json',dict(test=True))
