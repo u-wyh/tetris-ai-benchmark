@@ -6,4 +6,5 @@ export PATH=/home/wyh/projects/tetris-ai-benchmark/.venv/bin:/home/wyh/.nvm/vers
 mkdir -p runs/bc_sequence_safety
 exec 9>runs/bc_sequence_safety/queue.lock
 flock -n 9 || exit 0
-exec timeout --signal=TERM --kill-after=60s 86400s python -u -m training.bc_sequence_safety >> runs/bc_sequence_safety/queue.log 2>&1
+timeout --signal=TERM --kill-after=60s 86400s python -u -m training.bc_sequence_safety >> runs/bc_sequence_safety/queue.log 2>&1
+python -u -m training.bc_sequence_safety_finalize >> runs/bc_sequence_safety/finalize.log 2>&1
