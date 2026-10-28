@@ -92,7 +92,8 @@ def main():
     alignment = read_record(alignment_path) if alignment_path.exists() else sequence_alignment()
     lines += ['', '### 教师状态上的连续动作对齐（描述性）', '',
         '使用完整episode留出的教师片段，在教师实际状态上逐步比较动作。此为teacher-forced诊断；不代表模型自由运行能到达这些状态，'
-        '动作不完全一致也不证明无法用另一种布局得分。窗口彼此重叠，不当作独立样本。', '',
+        '动作不完全一致也不证明无法用另一种布局得分。窗口彼此重叠，不当作独立样本。'
+        '本表使用全部留出帧；训练监控表对每来源预定最多采样4,096帧，因此逐帧一致率略有差异。', '',
         '|教师来源|模型|逐帧一致率|每片段平均最长一致动作串|16/32/64/128块完整一致窗口数/总数|',
         '|---|---|---:|---:|---|']
     for source,models in alignment['sources'].items():
@@ -107,6 +108,17 @@ def main():
     evidence['policy_audit']['clear_and_terminal_details'] = details
     evidence['policy_audit']['teacher_forced_alignment'] = alignment
     path.write_text(json.dumps(evidence,indent=2,ensure_ascii=False)+'\n')
+    path = ROOT/'reports/experiments/bc_sequence_transfer_final.md'
+    final = path.read_text().splitlines()
+    for i,line in enumerate(final):
+        if line.startswith('1. **'):
+            final[i] = ('1. **PPO高分是否依赖连续动作？** 连续128块接管在BC状态上有可靠的有限窗口收益；'
+                '自然轨迹也表现为多块布局构建。但长度变化同时改变PPO控制块数，本轮没有等控制块数的分散接管对照，'
+                '因此不能证明“必须连续”或把收益唯一归因于布局建立。')
+        if line.startswith('8. **') and '完整16块匹配' not in line:
+            final[i] = line + (' 留出教师状态上的完整16块匹配仍为0（PPO自然片段0/7,232窗口、BC分布片段0/226窗口），'
+                '逐帧动作学习未形成完整教师序列复现；此为描述性证据，替代动作也可能得分，不能作为唯一因果解释。')
+    path.write_text('\n'.join(final)+'\n')
     print(json.dumps(details,ensure_ascii=False))
 
 
