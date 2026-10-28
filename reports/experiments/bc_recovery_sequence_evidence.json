@@ -20312,5 +20312,133 @@
   },
   "training": null,
   "evaluations": {},
-  "protocol_sha": "92dc7838e9f8652a6935579534add808f4add4224f45019f1608b8ac82bddf8b"
+  "protocol_sha": "92dc7838e9f8652a6935579534add808f4add4224f45019f1608b8ac82bddf8b",
+  "descriptive_closeout": {
+    "states": 235,
+    "strong": 2,
+    "single": 1,
+    "multi": 1,
+    "first_same_multi": 1,
+    "weak_pairs": 2,
+    "harm_pairs": 3,
+    "both_censored_pairs": 695,
+    "divergences": [
+      1,
+      3
+    ],
+    "strong_episodes": [
+      3102821023
+    ],
+    "coverage": {
+      "normal": 880038,
+      "moderate": 35028,
+      "severe": 3344,
+      "other": 16595
+    },
+    "examples": [
+      {
+        "seed": 3102821023,
+        "piece": 3265,
+        "selected": "B",
+        "first_same": false,
+        "multistep": false,
+        "positions": [
+          0
+        ],
+        "observed_lengths": {
+          "A": 518,
+          "B": 3000,
+          "C": 3000,
+          "D": 3000
+        },
+        "deaths": {
+          "A": true,
+          "B": false,
+          "C": false,
+          "D": false
+        },
+        "post_handoff_observed": 2999
+      },
+      {
+        "seed": 3102821023,
+        "piece": 3740,
+        "selected": "C",
+        "first_same": true,
+        "multistep": true,
+        "positions": [
+          1,
+          7,
+          13
+        ],
+        "observed_lengths": {
+          "A": 43,
+          "B": 43,
+          "C": 3000,
+          "D": 3000
+        },
+        "deaths": {
+          "A": true,
+          "B": true,
+          "C": false,
+          "D": false
+        },
+        "post_handoff_observed": 2984
+      }
+    ],
+    "patterns": {
+      "hold+/clear=/height+/holes=": {
+        "train": [
+          3102821023
+        ],
+        "validation": []
+      },
+      "hold=/clear=/height=/holes=": {
+        "train": [
+          3102821023
+        ],
+        "validation": []
+      },
+      "hold-/clear=/height=/holes=": {
+        "train": [
+          3102821023
+        ],
+        "validation": []
+      },
+      "hold-/clear=/height-/holes+": {
+        "train": [
+          3102821023
+        ],
+        "validation": []
+      }
+    },
+    "cross_episode_patterns": {}
+  },
+  "implementation_amendment": {
+    "at": "2026-10-29T00:22:33+08:00",
+    "original_protocol_sha": "92dc7838e9f8652a6935579534add808f4add4224f45019f1608b8ac82bddf8b",
+    "sources": {
+      "training/bc_recovery_sequence.py": "ce64e7cde27cf555e719eb27481fd7d3ecbb1db63c9e4761e2318ebcfd4c81c5",
+      "training/bc_recovery_sequence_report.py": "f99abfa821bfdf3d02e5d3241cbe91a76291ee47066ff59636816fc4496b69d5",
+      "training/bc_recovery_sequence_train.py": "8e781237ffc0dc4ea8486edc1e96f452971b200fa19f3ee5a9d76050c05cb1cf",
+      "reports/experiments/bc_recovery_sequence_design.md": "7c72d499b12276ee004ce7385e2b9b123bd2c879b9f16000257243bbbba00593",
+      "ops/run_bc_recovery_sequence.sh": "1fe091634a84212829ca1f10c830955f7986d5e829278a04e93d0e0fb6a66ea1",
+      "training/bc_sequence_transfer.py": "9d3b0c402e73659ad68f482e9748fd139c3c2ca8cc34e26114797f5e1edac1a1",
+      "training/bc_sequence_safety.py": "67f9a375d37c4bee3b6aa07539a382214cd2cd286b4293c9a9aef64b70bcfaeb",
+      "training/bc_sequence_supervised.py": "f932ff5f870213c4605f3be0a6801d477b495a4b6b48f8b78658e189ec837443",
+      "training/bc_score_rl.py": "e360190c06958d990c08f24f01b30954df0ff2d804a6df403fe9563f4bf89103",
+      "training/tetris_core/__init__.py": "094e2519383fae1f8f8b5ad45a07eb22da0b0df82d4b8d6ae15bedda7fd8007e",
+      "training/tetris_core/core.py": "d4257f084aff1dd50c43b1eb2593393a3951aa6b8a1ca9d0de0b7e5ce2e75495",
+      "training/tetris_core/legal_placements.py": "788cfaf85983eae91ac3d6afe2068b368206a052bfcdc146b68762dfd981628b",
+      "training/tetris_core/pieces.py": "479b3edf7a02e9ad3fcc0f1353076142fd00a1b9d93e86f6939f8cf2aa899479",
+      "training/tetris_core/rng.py": "c363caf8446908d4c782008affbd89253095ea1561129c6441444891c96c0e39",
+      "training/tetris_core/actions.py": "36bafd2dd3e2c088dcd10b02b6b394c541007438bcdc8c39a175a8bb94780962",
+      "training/env/__init__.py": "6df308447f7a5348e9111dd968476a7698f80cc5ff0e9bbd404aef091e8edb6c",
+      "training/env/failure_curriculum_env.py": "15cc0ea0c75e1da44381928118c5dbde00f5f24692813610bc55367fb208d540",
+      "training/env/candidate_env.py": "a9f181aae5f87bb6be9b6a780507dcaaf03968c78949d0d027cf06e47c4a25e8",
+      "training/env/fast_candidate_env.py": "79190128c156ccc18230240ee4685a2583e688420e1b1898dc7d29043525f940",
+      "training/env/tetris_env.py": "a51a40a5e690706c02b77ba04dd0b247aff36186208d2120d58051bf648bb35a"
+    },
+    "reason": "One technical repair: disk-accounting TOCTOU on atomically renamed temporary file; ignore only FileNotFoundError. Sampling, seeds, counterfactual windows, labels, gates, trainer, original wall deadline and all data identities unchanged.",
+    "failure_archive": "/home/wyh/projects/tetris-ai-benchmark-sequence-recovery/runs/bc_recovery_sequence/failures/attempt_01"
+  }
 }

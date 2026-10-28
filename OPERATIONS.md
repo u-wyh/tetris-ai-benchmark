@@ -488,3 +488,4 @@
 2026-10-29T00:30:50+08:00 | BC recovery sequence: added post-closed-only descriptive finalizer: summarizes actual divergent positions, strong/weak/censored/harm evidence and cross-episode patterns and pushes eight-answer report; no changes to protocol, labels, training, gates or models.
 2026-10-29T01:21:16+08:00 | BC recovery sequence: learnability gate={'train_states': False, 'val_states': False, 'train_episodes': False, 'val_episodes': False, 'train_frames': False, 'val_frames': False, 'train_multi': False, 'val_multi': False}
 2026-10-29T01:22:12+08:00 | BC recovery sequence: closed reason=insufficient_high_confidence_labels, regression=[0, 0]; raw evidence preserved; frozen identities verified
+2026-10-29T01:22:33+08:00 | BC recovery sequence: final descriptive closeout: strong=2, episodes=1, multistep=1, trained=False, reason=insufficient_high_confidence_labels; no new games/labels/updates
