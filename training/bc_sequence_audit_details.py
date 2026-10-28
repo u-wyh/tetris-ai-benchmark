@@ -1,6 +1,7 @@
 """Complete clear-count and death-only terminal-risk tables from the fixed audit."""
 import json
 import os
+import re
 import sys
 from pathlib import Path
 from statistics import mean
@@ -13,6 +14,7 @@ from training.bc_sequence_transfer import ROOT, RUN, BC, read_record, read_blob,
 from training.bc_sequence_supervised import WORK, DATA_SEEDS, data_path, chunks
 from training.bc_sequence_policy_audit import LABEL
 from training.imitation_bc import batch
+from training.train_ppo import now
 
 
 def sequence_alignment():
@@ -100,6 +102,20 @@ def main():
         for name,r in models.items():
             counts = '/'.join(f'{r["exact_windows"][str(h)]["exact"]}:{r["exact_windows"][str(h)]["windows"]}' for h in (16,32,64,128))
             lines.append(f'|{source}|{name}|{r["top1"]:.2%}|{r["mean_longest_streak"]:.2f}|{counts}|')
+    failure_path = RUN/'policy_audit'/'failure'/'result.json'
+    failure = read_record(failure_path) if failure_path.exists() else None
+    if failure:
+        lines += ['', '### 唯一早死的固定单例复现', '',
+            f'种子 {failure["protocol"]["seed"]} 的前 {failure["reproduced_score_prefix"]} 步正式累计分数全部与开发原局一致。'
+            f'死亡为 **{failure["death_kind"]}**：高度 {failure["terminal_height"]}、洞数 {failure["terminal_holes"]}，'
+            f'终局前高位连续 {failure["terminal_high_streak"]} 块。', '',
+            f'预先固定从第 {failure["start_piece"]} 块后（死亡前128块）的同一Core/RNG快照派生BC分支。'
+            f'BC实际观察 {failure["bc_observed"]} 块，死亡={failure["bc_death"]}，右截断={failure["bc_right_censored"]}；'
+            f'末尾高度 {failure["bc_final_height"]}、洞数 {failure["bc_final_holes"]}。'
+            '分支保留实际Hold/公开队列变化，不强制后续方块相同。此为失败后单例诊断，不参与选择、统计准入或确认，不能当作长期安全证明。', '',
+            '证据：`runs/bc_sequence_transfer/policy_audit/failure/`，含冻结诊断协议、同起点完整Core/RNG快照、'
+            '学生最后128块公开棋盘/动作和BC512块轨迹。该病例说明平均洞数/高位比例改善仍可能遗漏罕见Block Out；'
+            '同起点BC可消解局面，未发现Core或正式计分差异。']
     path = ROOT/'reports/experiments/bc_sequence_transfer_results.md'
     text = path.read_text().split('\n### 补充诊断：完整消行分布与真实死亡终局')[0]
     path.write_text(text+'\n'.join(lines)+'\n')
@@ -107,10 +123,18 @@ def main():
     evidence = json.loads(path.read_text())
     evidence['policy_audit']['clear_and_terminal_details'] = details
     evidence['policy_audit']['teacher_forced_alignment'] = alignment
+    if failure:
+        evidence['policy_audit']['single_failure_postmortem'] = {
+            k:v for k,v in failure.items() if k not in ('candidate_tail','candidate_tail_boards','bc_branch')}
+        evidence['policy_audit']['single_failure_postmortem'].update(
+            full_trajectory_record='runs/bc_sequence_transfer/policy_audit/failure/result.json',
+            full_trajectory_sha256=digest(failure_path),terminal_board=failure['candidate_tail_boards'][-1])
     path.write_text(json.dumps(evidence,indent=2,ensure_ascii=False)+'\n')
     path = ROOT/'reports/experiments/bc_sequence_transfer_final.md'
     final = path.read_text().splitlines()
     for i,line in enumerate(final):
+        if line.startswith('完成时间：'):
+            final[i] = f'完成时间：{now()}；停止原因：BC保留/早死门槛失败；补充诊断已完成。'
         if line.startswith('1. **'):
             final[i] = ('1. **PPO高分是否依赖连续动作？** 连续128块接管在BC状态上有可靠的有限窗口收益；'
                 '自然轨迹也表现为多块布局构建。但长度变化同时改变PPO控制块数，本轮没有等控制块数的分散接管对照，'
@@ -118,6 +142,24 @@ def main():
         if line.startswith('8. **') and '完整16块匹配' not in line:
             final[i] = line + (' 留出教师状态上的完整16块匹配仍为0（PPO自然片段0/7,232窗口、BC分布片段0/226窗口），'
                 '逐帧动作学习未形成完整教师序列复现；此为描述性证据，替代动作也可能得分，不能作为唯一因果解释。')
+        if line.startswith('8. **') and failure and 'Block Out单例' not in final[i]:
+            final[i] += (' Block Out单例已逐步复现：高20层但仅1洞；死亡前128块切回BC后，固定512块随访存活并降到高度1/0洞。'
+                '这支持尾部高堆叠安全行为保留不足，不能把任何特定损失项或网络容量断言为唯一原因。')
+        if line.startswith('9. **'):
+            final[i] = ('9. **是否值得继续投入资源？** 值得另立一轮有限的安全保留研究：本轮真实学到更多四消，'
+                '共同得分提高13.97%且16/16seed正向，方向有实测信号。但当前配方已触发早死与保留门槛，'
+                '本轮停止，不追加epoch、扩大样本或转PPO；下一轮应先解决罕见高堆叠死亡，并重新冻结全新开发/确认seed。')
+    regression = read_record(RUN/'policy_audit'/'regression.json')
+    if regression['returncodes'] != [0,0]:
+        raise RuntimeError('Final regression did not pass')
+    if not any(line.startswith('最终回归：') for line in final):
+        python_log = (RUN/'policy_audit'/'regression_0.log').read_text()
+        js_log = (RUN/'policy_audit'/'regression_1.log').read_text()
+        py = re.search(r'(\d+) passed, (\d+) subtests passed',python_log)
+        js = re.search(r'pass (\d+)',js_log)
+        counts = f'Python/Parity {py[1]}项测试、{py[2]}个子测试，JS {js[1]}项' if py and js else 'Python/Parity与JS'
+        final += ['',f'最终回归：{counts}全部通过。日志：`runs/bc_sequence_transfer/policy_audit/regression_*.log`。'
+                  '唯一早死复现另验证了9,867步正式分数完全一致；冻结模型与源码身份、已完成任务恢复检查通过。']
     path.write_text('\n'.join(final)+'\n')
     print(json.dumps(details,ensure_ascii=False))
 

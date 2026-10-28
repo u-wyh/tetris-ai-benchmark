@@ -7753,6 +7753,341 @@
       "supervised/evaluation/stopped_epoch01_audit_20k/ppo/seed_3102803013.json": "74d6e40fbd6ce392a87d341409b007109c753d081a93cde037a8f0edc3f0505a",
       "supervised/evaluation/stopped_epoch01_audit_20k/ppo/seed_3102803014.json": "6906a96ac00b166610231782bfb71389f722c7bcdec7f02f7b4c050a81e98152",
       "supervised/evaluation/stopped_epoch01_audit_20k/ppo/seed_3102803015.json": "c7e0a0958c394b972a9e96d1d4d77952fa5076e3166909ecb4beb42f4456d9c3"
+    },
+    "clear_and_terminal_details": {
+      "bc": {
+        "clears_0_to_4": [
+          197505,
+          117406,
+          4746,
+          295,
+          48
+        ],
+        "shares_1_to_4": [
+          0.9584554471611086,
+          0.038744438548512186,
+          0.0024082615616963956,
+          0.0003918527286828034
+        ],
+        "deaths": 0,
+        "terminal_height": null,
+        "terminal_holes": null,
+        "terminal_high_streak": null,
+        "death_records": []
+      },
+      "ppo": {
+        "clears_0_to_4": [
+          216482,
+          917,
+          270,
+          584,
+          23324
+        ],
+        "shares_1_to_4": [
+          0.036541143654114365,
+          0.010759115361625823,
+          0.02327156804144252,
+          0.9294281729428173
+        ],
+        "deaths": 5,
+        "terminal_height": 19.8,
+        "terminal_holes": 6.8,
+        "terminal_high_streak": 10.4,
+        "death_records": [
+          {
+            "seed": 3102803000,
+            "pieces": 4872,
+            "height": 20,
+            "holes": 11,
+            "high_streak": 8
+          },
+          {
+            "seed": 3102803003,
+            "pieces": 7015,
+            "height": 20,
+            "holes": 7,
+            "high_streak": 26
+          },
+          {
+            "seed": 3102803006,
+            "pieces": 2236,
+            "height": 20,
+            "holes": 9,
+            "high_streak": 11
+          },
+          {
+            "seed": 3102803008,
+            "pieces": 5212,
+            "height": 19,
+            "holes": 7,
+            "high_streak": 3
+          },
+          {
+            "seed": 3102803015,
+            "pieces": 2242,
+            "height": 20,
+            "holes": 0,
+            "high_streak": 4
+          }
+        ]
+      },
+      "B12": {
+        "clears_0_to_4": [
+          233876,
+          1107,
+          409,
+          786,
+          25018
+        ],
+        "shares_1_to_4": [
+          0.040519765739385066,
+          0.014970717423133236,
+          0.0287701317715959,
+          0.9157393850658858
+        ],
+        "deaths": 6,
+        "terminal_height": 19.833333333333332,
+        "terminal_holes": 2.8333333333333335,
+        "terminal_high_streak": 4.166666666666667,
+        "death_records": [
+          {
+            "seed": 3102803000,
+            "pieces": 6484,
+            "height": 19,
+            "holes": 0,
+            "high_streak": 5
+          },
+          {
+            "seed": 3102803002,
+            "pieces": 15648,
+            "height": 20,
+            "holes": 9,
+            "high_streak": 5
+          },
+          {
+            "seed": 3102803003,
+            "pieces": 4307,
+            "height": 20,
+            "holes": 3,
+            "high_streak": 3
+          },
+          {
+            "seed": 3102803005,
+            "pieces": 18657,
+            "height": 20,
+            "holes": 3,
+            "high_streak": 2
+          },
+          {
+            "seed": 3102803013,
+            "pieces": 15449,
+            "height": 20,
+            "holes": 2,
+            "high_streak": 5
+          },
+          {
+            "seed": 3102803014,
+            "pieces": 651,
+            "height": 20,
+            "holes": 0,
+            "high_streak": 5
+          }
+        ]
+      },
+      "candidate": {
+        "clears_0_to_4": [
+          207016,
+          88798,
+          9534,
+          2030,
+          2489
+        ],
+        "shares_1_to_4": [
+          0.8633654509922121,
+          0.09269720274960866,
+          0.019737289865922547,
+          0.02420005639225676
+        ],
+        "deaths": 1,
+        "terminal_height": 20,
+        "terminal_holes": 1,
+        "terminal_high_streak": 6,
+        "death_records": [
+          {
+            "seed": 3102803002,
+            "pieces": 9867,
+            "height": 20,
+            "holes": 1,
+            "high_streak": 6
+          }
+        ]
+      }
+    },
+    "teacher_forced_alignment": {
+      "mode": "descriptive teacher-forced matching on held-out complete episodes; not a selection gate",
+      "model_sha256": "e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914",
+      "sources": {
+        "ppo": {
+          "bc": {
+            "frames": 8192,
+            "fragments": 64,
+            "top1": 0.3851318359375,
+            "mean_longest_streak": 4.984375,
+            "exact_windows": {
+              "16": {
+                "exact": 0,
+                "windows": 7232
+              },
+              "32": {
+                "exact": 0,
+                "windows": 6208
+              },
+              "64": {
+                "exact": 0,
+                "windows": 4160
+              },
+              "128": {
+                "exact": 0,
+                "windows": 64
+              }
+            }
+          },
+          "candidate": {
+            "frames": 8192,
+            "fragments": 64,
+            "top1": 0.5594482421875,
+            "mean_longest_streak": 7.0625,
+            "exact_windows": {
+              "16": {
+                "exact": 0,
+                "windows": 7232
+              },
+              "32": {
+                "exact": 0,
+                "windows": 6208
+              },
+              "64": {
+                "exact": 0,
+                "windows": 4160
+              },
+              "128": {
+                "exact": 0,
+                "windows": 64
+              }
+            }
+          }
+        },
+        "transfer": {
+          "bc": {
+            "frames": 256,
+            "fragments": 2,
+            "top1": 0.40234375,
+            "mean_longest_streak": 4.5,
+            "exact_windows": {
+              "16": {
+                "exact": 0,
+                "windows": 226
+              },
+              "32": {
+                "exact": 0,
+                "windows": 194
+              },
+              "64": {
+                "exact": 0,
+                "windows": 130
+              },
+              "128": {
+                "exact": 0,
+                "windows": 2
+              }
+            }
+          },
+          "candidate": {
+            "frames": 256,
+            "fragments": 2,
+            "top1": 0.54296875,
+            "mean_longest_streak": 7.0,
+            "exact_windows": {
+              "16": {
+                "exact": 0,
+                "windows": 226
+              },
+              "32": {
+                "exact": 0,
+                "windows": 194
+              },
+              "64": {
+                "exact": 0,
+                "windows": 130
+              },
+              "128": {
+                "exact": 0,
+                "windows": 2
+              }
+            }
+          }
+        }
+      }
+    },
+    "single_failure_postmortem": {
+      "protocol": {
+        "seed": 3102803002,
+        "death_piece": 9867,
+        "lookback": 128,
+        "bc_follow": 512,
+        "model_sha256": "e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914",
+        "source_sha256": "9ca8a617b5884ef823f0f9cc84af612887f995f0dbc0970af902676147db2e5b",
+        "origin_sha256": "fd0428c223b6170954b93dcb88b415993d10b1997304f358a8b6ade786e27455",
+        "mode": "single postmortem, not training/selection/confirmation"
+      },
+      "reproduced_score_prefix": 9867,
+      "death_kind": "Block Out on next spawn",
+      "terminal_height": 20,
+      "terminal_holes": 1,
+      "terminal_wells": [
+        8,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7
+      ],
+      "terminal_high_streak": 6,
+      "snapshot_sha256": "bb781a970e9aebc2cc570c9a66944a99929fd14bf4e20d7886df512db7077188",
+      "start_piece": 9739,
+      "bc_observed": 512,
+      "bc_death": false,
+      "bc_right_censored": true,
+      "bc_final_height": 1,
+      "bc_final_holes": 0,
+      "full_trajectory_record": "runs/bc_sequence_transfer/policy_audit/failure/result.json",
+      "full_trajectory_sha256": "d74905e21c4dd313561e1ff306dc2c1d90a0eca556997dd526321ea9e46c4f8e",
+      "terminal_board": [
+        ".......L..",
+        "...S...L..",
+        "...SSSLL..",
+        "..ZZSSSL..",
+        "..TZZTSL..",
+        "..TTTTTZ..",
+        "..TZOOZZ..",
+        "..ZZOOZT..",
+        "..ZLLLTT..",
+        "..JLLLST..",
+        "..JOOLSS..",
+        ".JJOOLTS..",
+        ".OOZZTTS..",
+        ".OOJZZTSS.",
+        ".JJJLLLSS.",
+        ".JJJLOOSS.",
+        ".JZOOOOTS.",
+        ".ZZOOLLTT.",
+        ".Z.LLLLTT.",
+        "IJJLZZLTT."
+      ]
     }
   }
 }

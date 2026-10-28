@@ -188,3 +188,6 @@
 - Preserved Core, official scoring, frozen models and service configuration; Python, Parity and JS regressions passed.
 
 - Added a single pre-frozen 16-seed/20K deployment diagnostic of the stopped epoch1 model; quantified actual scoring, four-clears and survival without more training.
+
+- The trained single model improved common-window official score by13.97% on all16 development seeds and raised four-clear share from0.039% to2.420%, but one9867-piece early death failed admission; no champion or independent confirmation.
+- A single exact-score death replay found height20/one-hole Block Out; BC from the fixed128-piece lookback survived512 observed pieces and flattened the board.
