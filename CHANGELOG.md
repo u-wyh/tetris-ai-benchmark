@@ -180,3 +180,9 @@
 
 - Add an isolated BC-initialized score-learning route with fresh critic warmup, conservative KL-PPO updates, atomic checkpoints, paired survival/score gates, and automatic reports.
 - Preserve historical models, official rules, action IDs, and web defaults; all outcomes remain on the research branch.
+
+### BC sequence transfer research (2026-10-28)
+
+- Fresh paired finite PPO sequences on BC states passed the registered 128-piece feasibility gate (+3.90% common score).
+- Ran the single bounded supervised transfer route; see the final report for actual updates and stop gates.
+- Preserved Core, official scoring, frozen models and service configuration; Python, Parity and JS regressions passed.

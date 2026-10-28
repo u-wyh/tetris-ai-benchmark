@@ -448,3 +448,7 @@
 2026-10-28T20:09:14+08:00 | BC sequence transfer: defined descriptive support-overlap, fixed-endpoint non-four-clear windows and takeover/handback attribution while native sampling is in progress; these cannot alter the frozen gate or consume new episodes. Evidence: training/bc_sequence_diagnostics.py.
 2026-10-28T20:19:38+08:00 | BC sequence transfer: stage-I completed; gate passed=True; selected length=128; no gradient updates
 2026-10-28T20:25:32+08:00 | BC sequence transfer: stage-I selected128 passed all preregistered gates: +3.903% common score, 98.75% CI [1.03359,1.04483], 6/6 positive seeds, 0/24 branch deaths. Stage-II implementation tested: three targeted tests including two real actor updates and optimizer/RNG save-load; corrected test checkpoint-directory expectation. Native64-block sparse-public-data smoke passed. No new supervised research episodes consumed yet. Evidence: decision.json, tests/test_bc_sequence_supervised.py, supervised design.
+2026-10-28T20:25:33+08:00 | BC sequence transfer: conditional supervised protocol frozen; 24-episode cap, one loss, max three epochs
+2026-10-28T20:25:33+08:00 | BC sequence transfer: supervised collection started/resumed; 24 episode maximum
+2026-10-28T20:32:38+08:00 | BC sequence transfer: supervised epoch 1: updates=1280; validation checks={'bc_agreement': False, 'native_signal': True, 'target_signal': True}
+2026-10-28T20:33:27+08:00 | BC sequence transfer: supervised outcome=stopped_supervised_learning_signal; required Python/Parity/JS return codes=[0, 0]
