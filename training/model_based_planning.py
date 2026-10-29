@@ -73,11 +73,14 @@ def freeze():
     if subprocess.run(['git','diff','--quiet','--',*files],cwd=ROOT).returncode:raise RuntimeError('Commit before freezing')
     trees=subprocess.check_output(['git','worktree','list','--porcelain'],text=True,cwd=ROOT)
     roots=sorted({str(Path(line[9:])/d) for line in trees.splitlines() if line.startswith('worktree ') for d in ('runs','reports','training','ops') if (Path(line[9:])/d).exists()})
-    scan=subprocess.run(['rg','-l','--hidden','-g','*.md','-g','*.json','-g','*.jsonl','-g','*.py','-g','*.sh','-g','*.csv',r'\b310283[1235][0-9]{3}\b',*roots],capture_output=True,text=True)
+    groups=dict(functional_seeds=[3102831000,3102831001],short_seeds=list(range(3102832000,3102832016)),long_seeds=list(range(3102833000,3102833016)),confirm_seeds=list(range(3102835000,3102835032)))
+    pattern=r'\b(?:'+'|'.join(str(seed) for values in groups.values() for seed in values)+r')\b'
+    scan=subprocess.run(['rg','-l','--hidden','-g','*.md','-g','*.json','-g','*.jsonl','-g','*.py','-g','*.sh','-g','*.csv',pattern,*roots],capture_output=True,text=True)
     own={str(ROOT/f) for f in files};matches=[s for s in scan.stdout.splitlines() if s not in own and '/model_based_planning/' not in s]
     if scan.returncode not in (0,1) or matches:raise RuntimeError(f'Seed collision/audit error:{matches} {scan.stderr[:200]}')
     record(RUN/'seed_audit.json',dict(at=now(),roots=roots,matches=matches,method='exact integer textual audit of all registered worktrees; all prior reserved groups untouched'))
-    p=dict(at=now(),started=time.time(),git=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),sources=sources,models=models,history=history,config=vars(PlanningConfig()),functional_seeds=[3102831000,3102831001],short_seeds=list(range(3102832000,3102832016)),long_seeds=list(range(3102833000,3102833016)),confirm_seeds=list(range(3102835000,3102835032)),device='cpu',workers=4,seed_audit=digest(RUN/'seed_audit.json'))
+    started=read_record(RUN/'task_started.json')['epoch'] if (RUN/'task_started.json').exists() else time.time()
+    p=dict(at=now(),started=started,git=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),sources=sources,models=models,history=history,config=vars(PlanningConfig()),**groups,device='cpu',workers=4,seed_audit=digest(RUN/'seed_audit.json'))
     record(path,p);operation('protocol frozen before new seeds; one public-only configuration, no training, fixed functional/development/confirmation gates');return p
 
 def init(identity):
@@ -197,5 +200,6 @@ if __name__=='__main__':
     try:main()
     except BaseException as exc:
         status('failed',error=repr(exc));operation(f'failure/interruption {exc!r}; all evidence retained')
+        if not (RUN/'protocol.json').exists():raise
         from training.model_based_planning_report import finish
         finish('resource_stop' if str(exc).startswith('Budget:') else 'technical_failure',error=repr(exc));raise
