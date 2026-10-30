@@ -219,3 +219,5 @@
 ### Public Lookahead ablation (2026-10-31)
 
 - Completed bounded A/B/C/D/E mechanism study; reason=completed, short complete=True, long complete=True. Paired seed Bootstrap, component traces and right-censored results archived; no planner weights, models or web defaults changed. See reports/experiments/lookahead_ablation_final.md.
+
+- Ablation findings: student already supplies +13.717% short common score vs BC; Full retains97.30%. Extra roots add +0.257% long common score (14/16) with one additional death vs two-root depth4. Depth4 vs1 loses0.395% long common score; observed survival advantage is inconclusive. Added reproducible read-only mechanism reconstruction; no production update.

@@ -4695,5 +4695,22 @@
     "unknown_frontiers": 649,
     "hidden_checks": 80
   },
-  "examples": []
+  "examples": [],
+  "editorial": {
+    "at": "2026-10-31T05:59:08+08:00",
+    "search_cost_uncomputed": {
+      "short": [
+        "A",
+        "BC"
+      ],
+      "long": [
+        "BC"
+      ]
+    },
+    "raw_zero_cost_means_are_placeholders": true,
+    "mechanism_report": "lookahead_ablation_mechanism.json",
+    "mechanism_sha256": "15c6c92e869b2920a7ed48ff4d0fc13766011feb50714be53e89193cba0b5932",
+    "analysis_source": "training/analyze_lookahead_ablation.py",
+    "interpretation": "Full score advantage versus BC largely already present in student; extra roots add small long common score but no survival support; deeper rollout loses small common score and survival evidence remains inconclusive."
+  }
 }

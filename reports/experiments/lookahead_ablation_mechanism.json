@@ -1,0 +1,6866 @@
+{
+  "functional_action_checks": 1024,
+  "scope": "Actions reconstructed on Full-visited states only; no efficacy or survival inference from action differences.",
+  "formula": "depth1 = 1.25*immediate_geometry - 2*immediate_reward + immediate_true_death_penalty; same margin12 and root tie order",
+  "source_sha256": "57f1ca163b31cb504b39e92d0aa0cd32719d51f837f3e57ddcb48d1f7d315a7c",
+  "stages": {
+    "short": {
+      "completed_Full_episodes": 16,
+      "counts": {
+        "decisions": 320000,
+        "unequal_root_horizons": 5,
+        "B_differs_A": 2075,
+        "C_differs_B": 2731,
+        "E_differs_D": 3555,
+        "E_differs_C": 844,
+        "D_differs_B": 27,
+        "E_differs_A": 2162,
+        "overrides": 2162,
+        "override_terminal_geometry_improved": 2160,
+        "override_terminal_geometry_worsened": 2,
+        "override_terminal_geometry_saving_sum": 17258.649999999994,
+        "override_path_max_quarter_improved": 2085,
+        "override_path_max_quarter_worsened": 67,
+        "override_path_max_quarter_saving_sum": 2910.2174999999997,
+        "override_formal_reward_term_improved": 2143,
+        "override_formal_reward_term_worsened": 5,
+        "override_formal_reward_term_saving_sum": 14004.497579237946,
+        "override_known_death_penalty_improved": 0,
+        "override_known_death_penalty_worsened": 0,
+        "override_known_death_penalty_saving_sum": 0.0
+      },
+      "sources": [
+        {
+          "seed": 3102852000,
+          "result_sha256": "d599b8387a6d4b6749690e981a92af2f65602d44457935da8cb0da01ce8506fb",
+          "artifact_sha256": "ea32b7e7da030fceb69fcf04973776f562398c0b5a4ab0d2ecdf0b597e93ebbc"
+        },
+        {
+          "seed": 3102852001,
+          "result_sha256": "6908da1c9ffe9a62cdb8eff2347025895a14eb118a62951ad414b7fba6437d33",
+          "artifact_sha256": "e3054381aec4924e65d00cfe6a0c98ab0517a5c1254f3b36f7c7dcfdbede02c2"
+        },
+        {
+          "seed": 3102852002,
+          "result_sha256": "4dd2da605e240b987683f99cef13cdd1fc5e9749c6a05be77f3382987e2db822",
+          "artifact_sha256": "5995d9196936c51c04d6e7cfdfe7e7209863c42d1114ee0d4141c93651f919e4"
+        },
+        {
+          "seed": 3102852003,
+          "result_sha256": "e4d4fabfeeeb8edc0a958c0331abee1140e1177039bff140c3b678c842dcd9d7",
+          "artifact_sha256": "5ad2aa1e6929caddb6c1fc2aa9a4077cba5e07a9dcbb958cff1177d402d6c524"
+        },
+        {
+          "seed": 3102852004,
+          "result_sha256": "dcd261e2c651bdddc560be4f3956c9829b1668e16bb831b0798df23c811c3db9",
+          "artifact_sha256": "68c75219eac651714beca657a9310f0f8ba1fc583aeb7650b248eff30d55cea7"
+        },
+        {
+          "seed": 3102852005,
+          "result_sha256": "d6c4001395f6fac87c8916c0e8ba149150aa0d548d033b62a521ff9952c07122",
+          "artifact_sha256": "4f1e65a86d0d1595da814c407c729ff123a88deab69bf51001bbe62fd79219b2"
+        },
+        {
+          "seed": 3102852006,
+          "result_sha256": "ddfae9b34453632edb41be169d5a1bbd753d06ca71ee5f0f9011241c3138bb1c",
+          "artifact_sha256": "21b887227a967e44c56d8bd23082948417f145dc94b146c75a26ee66fbe61b15"
+        },
+        {
+          "seed": 3102852007,
+          "result_sha256": "09afffff2e26f13a4e19a99b175657b87d2d281aba8a8ee39275b6e9f56cd472",
+          "artifact_sha256": "bcff8c5453f2b0c30e892f3119e27ea38317339285f84dea9af3d450582a766c"
+        },
+        {
+          "seed": 3102852008,
+          "result_sha256": "a65eaaf73aebb3a2bdc13346f75c780d19ffb6f3a04401229333665a0d66b70a",
+          "artifact_sha256": "3627e294c0ed18f5339b0b1835ec0cd6812989a6cda381770f9fe3f4424e73ff"
+        },
+        {
+          "seed": 3102852009,
+          "result_sha256": "c0b24dbdba60ec93bf098f68346bc1604ad9f5e199df139460e0cb96eb1434d7",
+          "artifact_sha256": "37a605fac4ce270d285c4703701992adcc49bb7912555baa17ecd4a0819b3563"
+        },
+        {
+          "seed": 3102852010,
+          "result_sha256": "bbd7d902f5d900bbe718267016f08764938b1f656cff9d4ee5bfa43feadb587d",
+          "artifact_sha256": "1b792946dfe8df390977b32dbaa714be71b60d3fdde8feecdd0c31116cdbd241"
+        },
+        {
+          "seed": 3102852011,
+          "result_sha256": "3d80cf4a07dc9463573909b13b9037c7857fb7493fd87b372d76d6703d9fe68b",
+          "artifact_sha256": "42b3ec72d4b54de9b149fbd210094f1738941a34c700fa021191bc0bdc8ea4c7"
+        },
+        {
+          "seed": 3102852012,
+          "result_sha256": "f7c7480437bf9eff3f8b02b6ae2a681114cf8e4608c79fcc645fdf2ba7a9f250",
+          "artifact_sha256": "2a7276af8c34079e82055b93636816187644546c67cfca80dbab4e9875a7dcbe"
+        },
+        {
+          "seed": 3102852013,
+          "result_sha256": "1f6a7c47d0c60a09ceba4b2a5a91be2ec6bdc5b2cfe2e77ce1eee006e9d9abc1",
+          "artifact_sha256": "34846fc328f590c44a85c7afe978fde61b7cb9a5b928e3e037920fb4703cf165"
+        },
+        {
+          "seed": 3102852014,
+          "result_sha256": "f6159732705d3de862871b2494b04241a6f88e17d90470105d1622c81ae2571f",
+          "artifact_sha256": "cd7dc7661d9d455ba7b4724a84d8e08e0fa263882072f17ffeceb7b48f8d69f8"
+        },
+        {
+          "seed": 3102852015,
+          "result_sha256": "dffb616257b4ba70e17155244c860bc8193bae39c7d32edef3430919e7dfa87f",
+          "artifact_sha256": "1380fe306269d535ee119d5df559ed3e9cf21c69b4983aab971cdfb55e698460"
+        }
+      ],
+      "first_chronological_override_examples": [
+        {
+          "seed": 3102852000,
+          "piece": 174,
+          "public": {
+            "board": [
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                "Z",
+                "Z",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                "T",
+                "Z",
+                "Z",
+                null,
+                null,
+                "J",
+                "J",
+                null,
+                null,
+                "L"
+              ],
+              [
+                "T",
+                "T",
+                "Z",
+                "S",
+                null,
+                "J",
+                "Z",
+                "L",
+                "L",
+                "L"
+              ],
+              [
+                "I",
+                "S",
+                "S",
+                "T",
+                "T",
+                "T",
+                null,
+                "O",
+                "O",
+                "I"
+              ]
+            ],
+            "currentPiece": {
+              "type": "L",
+              "matrix": [
+                [
+                  0,
+                  0,
+                  1
+                ],
+                [
+                  1,
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "rotation": "0",
+              "x": 3,
+              "y": 0
+            },
+            "hold": "O",
+            "holdAvailable": true,
+            "next": [
+              "J",
+              "Z",
+              "I"
+            ],
+            "score": 30900,
+            "level": 7,
+            "lines": 67,
+            "phase": "playing",
+            "gameOver": false
+          },
+          "reconstructed_actions": {
+            "A": 778,
+            "B": 778,
+            "C": 778,
+            "D": 778,
+            "E": 1100
+          },
+          "trace": {
+            "student_action": 778,
+            "bc_action": 778,
+            "geometry_action": 1100,
+            "clear_action": 778,
+            "nominal_depth": 4,
+            "roots": [
+              778,
+              1100
+            ],
+            "selected": {
+              "action": 1100,
+              "value": 7.802500000000002,
+              "terminal": "unknown_frontier",
+              "path": [
+                1100,
+                341,
+                1675,
+                387
+              ],
+              "known_tokens_consumed": 3,
+              "remaining_known": 0,
+              "legal_counts": [
+                68,
+                51,
+                34
+              ],
+              "final_risk": {
+                "holes": 1,
+                "height": 3,
+                "central_top4": 0,
+                "wells": 1
+              },
+              "reward_normalized": 3.0,
+              "final_geometry": 10.610000000000001,
+              "max_geometry": 12.77,
+              "score_contribution": -6.0,
+              "immediate_reward": 0.0,
+              "immediate_geometry": 12.77,
+              "immediate_proxy": 12.77,
+              "death_penalty": 0,
+              "stop_reason": "unknown_frontier"
+            },
+            "alternatives": [
+              {
+                "action": 778,
+                "value": 23.85,
+                "terminal": "unknown_frontier",
+                "path": [
+                  778,
+                  479,
+                  158,
+                  1123
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  43,
+                  26,
+                  26
+                ],
+                "final_risk": {
+                  "holes": 2,
+                  "height": 4,
+                  "central_top4": 0,
+                  "wells": 1
+                },
+                "reward_normalized": 1.0,
+                "final_geometry": 20.68,
+                "max_geometry": 20.68,
+                "score_contribution": -2.0,
+                "immediate_reward": 1.0,
+                "immediate_geometry": 19.39,
+                "immediate_proxy": 17.39,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 1100,
+                "value": 7.802500000000002,
+                "terminal": "unknown_frontier",
+                "path": [
+                  1100,
+                  341,
+                  1675,
+                  387
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  68,
+                  51,
+                  34
+                ],
+                "final_risk": {
+                  "holes": 1,
+                  "height": 3,
+                  "central_top4": 0,
+                  "wells": 1
+                },
+                "reward_normalized": 3.0,
+                "final_geometry": 10.610000000000001,
+                "max_geometry": 12.77,
+                "score_contribution": -6.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 12.77,
+                "immediate_proxy": 12.77,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              }
+            ],
+            "override": true,
+            "reason": "public_rollout_advantage",
+            "bounded_search": true
+          }
+        },
+        {
+          "seed": 3102852000,
+          "piece": 349,
+          "public": {
+            "board": [
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "J",
+                "J",
+                null
+              ],
+              [
+                null,
+                "T",
+                null,
+                null,
+                null,
+                "L",
+                "I",
+                "J",
+                "S",
+                null
+              ],
+              [
+                "I",
+                "T",
+                "S",
+                "S",
+                "O",
+                "O",
+                "I",
+                null,
+                "Z",
+                "S"
+              ]
+            ],
+            "currentPiece": {
+              "type": "O",
+              "matrix": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "rotation": "0",
+              "x": 4,
+              "y": 0
+            },
+            "hold": "Z",
+            "holdAvailable": true,
+            "next": [
+              "L",
+              "T",
+              "I"
+            ],
+            "score": 123900,
+            "level": 14,
+            "lines": 138,
+            "phase": "playing",
+            "gameOver": false
+          },
+          "reconstructed_actions": {
+            "A": 963,
+            "B": 963,
+            "C": 66,
+            "D": 963,
+            "E": 66
+          },
+          "trace": {
+            "student_action": 963,
+            "bc_action": 66,
+            "geometry_action": 66,
+            "clear_action": 66,
+            "nominal_depth": 4,
+            "roots": [
+              963,
+              66
+            ],
+            "selected": {
+              "action": 66,
+              "value": -0.8275000000000006,
+              "terminal": "unknown_frontier",
+              "path": [
+                66,
+                572,
+                249,
+                455
+              ],
+              "known_tokens_consumed": 3,
+              "remaining_known": 0,
+              "legal_counts": [
+                51,
+                51,
+                34
+              ],
+              "final_risk": {
+                "holes": 0,
+                "height": 3,
+                "central_top4": 0,
+                "wells": 1
+              },
+              "reward_normalized": 3.0,
+              "final_geometry": 2.19,
+              "max_geometry": 11.93,
+              "score_contribution": -6.0,
+              "immediate_reward": 0.0,
+              "immediate_geometry": 11.719999999999999,
+              "immediate_proxy": 11.719999999999999,
+              "death_penalty": 0,
+              "stop_reason": "unknown_frontier"
+            },
+            "alternatives": [
+              {
+                "action": 963,
+                "value": 16.075000000000003,
+                "terminal": "unknown_frontier",
+                "path": [
+                  963,
+                  572,
+                  525,
+                  134
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  43,
+                  43,
+                  26
+                ],
+                "final_risk": {
+                  "holes": 1,
+                  "height": 4,
+                  "central_top4": 0,
+                  "wells": 5
+                },
+                "reward_normalized": 0.0,
+                "final_geometry": 12.860000000000001,
+                "max_geometry": 12.860000000000001,
+                "score_contribution": -0.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 11.719999999999999,
+                "immediate_proxy": 11.719999999999999,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 66,
+                "value": -0.8275000000000006,
+                "terminal": "unknown_frontier",
+                "path": [
+                  66,
+                  572,
+                  249,
+                  455
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  51,
+                  51,
+                  34
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 3,
+                  "central_top4": 0,
+                  "wells": 1
+                },
+                "reward_normalized": 3.0,
+                "final_geometry": 2.19,
+                "max_geometry": 11.93,
+                "score_contribution": -6.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 11.719999999999999,
+                "immediate_proxy": 11.719999999999999,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              }
+            ],
+            "override": true,
+            "reason": "public_rollout_advantage",
+            "bounded_search": true
+          }
+        },
+        {
+          "seed": 3102852000,
+          "piece": 374,
+          "public": {
+            "board": [
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                "S",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                "T",
+                "S",
+                "S",
+                null,
+                "S",
+                "S",
+                "O",
+                "O",
+                null
+              ],
+              [
+                "I",
+                "T",
+                "T",
+                "S",
+                "S",
+                "S",
+                "J",
+                "O",
+                "O",
+                null
+              ],
+              [
+                "I",
+                "T",
+                "I",
+                "I",
+                "I",
+                "I",
+                "J",
+                "Z",
+                "Z",
+                null
+              ]
+            ],
+            "currentPiece": {
+              "type": "L",
+              "matrix": [
+                [
+                  0,
+                  0,
+                  1
+                ],
+                [
+                  1,
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "rotation": "0",
+              "x": 3,
+              "y": 0
+            },
+            "hold": "Z",
+            "holdAvailable": true,
+            "next": [
+              "I",
+              "J",
+              "L"
+            ],
+            "score": 140100,
+            "level": 15,
+            "lines": 147,
+            "phase": "playing",
+            "gameOver": false
+          },
+          "reconstructed_actions": {
+            "A": 893,
+            "B": 893,
+            "C": 893,
+            "D": 893,
+            "E": 571
+          },
+          "trace": {
+            "student_action": 893,
+            "bc_action": 893,
+            "geometry_action": 571,
+            "clear_action": 893,
+            "nominal_depth": 4,
+            "roots": [
+              893,
+              571
+            ],
+            "selected": {
+              "action": 571,
+              "value": -4.46,
+              "terminal": "unknown_frontier",
+              "path": [
+                571,
+                456,
+                1170,
+                550
+              ],
+              "known_tokens_consumed": 3,
+              "remaining_known": 0,
+              "legal_counts": [
+                34,
+                51,
+                68
+              ],
+              "final_risk": {
+                "holes": 0,
+                "height": 2,
+                "central_top4": 0,
+                "wells": 2
+              },
+              "reward_normalized": 4.0,
+              "final_geometry": 2.34,
+              "max_geometry": 4.8,
+              "score_contribution": -8.0,
+              "immediate_reward": 0.0,
+              "immediate_geometry": 4.8,
+              "immediate_proxy": 4.8,
+              "death_penalty": 0,
+              "stop_reason": "unknown_frontier"
+            },
+            "alternatives": [
+              {
+                "action": 893,
+                "value": 10.95,
+                "terminal": "unknown_frontier",
+                "path": [
+                  893,
+                  1169,
+                  1260,
+                  1055
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  34,
+                  51,
+                  68
+                ],
+                "final_risk": {
+                  "holes": 1,
+                  "height": 4,
+                  "central_top4": 0,
+                  "wells": 2
+                },
+                "reward_normalized": 2.0,
+                "final_geometry": 11.959999999999999,
+                "max_geometry": 11.959999999999999,
+                "score_contribution": -4.0,
+                "immediate_reward": 1.0,
+                "immediate_geometry": 11.42,
+                "immediate_proxy": 9.42,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 571,
+                "value": -4.46,
+                "terminal": "unknown_frontier",
+                "path": [
+                  571,
+                  456,
+                  1170,
+                  550
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  34,
+                  51,
+                  68
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 2,
+                  "central_top4": 0,
+                  "wells": 2
+                },
+                "reward_normalized": 4.0,
+                "final_geometry": 2.34,
+                "max_geometry": 4.8,
+                "score_contribution": -8.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 4.8,
+                "immediate_proxy": 4.8,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              }
+            ],
+            "override": true,
+            "reason": "public_rollout_advantage",
+            "bounded_search": true
+          }
+        },
+        {
+          "seed": 3102852000,
+          "piece": 401,
+          "public": {
+            "board": [
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                "J",
+                "J",
+                null,
+                null,
+                null,
+                "T",
+                null,
+                "L",
+                "L",
+                "L"
+              ],
+              [
+                "T",
+                "T",
+                "S",
+                "S",
+                "S",
+                "S",
+                "Z",
+                "Z",
+                "I",
+                null
+              ],
+              [
+                "I",
+                null,
+                "Z",
+                "Z",
+                "I",
+                "I",
+                "I",
+                "I",
+                "J",
+                "J"
+              ]
+            ],
+            "currentPiece": {
+              "type": "Z",
+              "matrix": [
+                [
+                  1,
+                  1,
+                  0
+                ],
+                [
+                  0,
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "rotation": "0",
+              "x": 3,
+              "y": 0
+            },
+            "hold": "Z",
+            "holdAvailable": true,
+            "next": [
+              "I",
+              "O",
+              "S"
+            ],
+            "score": 162100,
+            "level": 16,
+            "lines": 158,
+            "phase": "playing",
+            "gameOver": false
+          },
+          "reconstructed_actions": {
+            "A": 962,
+            "B": 962,
+            "C": 386,
+            "D": 962,
+            "E": 386
+          },
+          "trace": {
+            "student_action": 962,
+            "bc_action": 386,
+            "geometry_action": 42,
+            "clear_action": 42,
+            "nominal_depth": 4,
+            "roots": [
+              962,
+              386,
+              42
+            ],
+            "selected": {
+              "action": 386,
+              "value": 13.489999999999998,
+              "terminal": "unknown_frontier",
+              "path": [
+                386,
+                962,
+                1259,
+                433
+              ],
+              "known_tokens_consumed": 3,
+              "remaining_known": 0,
+              "legal_counts": [
+                34,
+                26,
+                26
+              ],
+              "final_risk": {
+                "holes": 1,
+                "height": 4,
+                "central_top4": 0,
+                "wells": 4
+              },
+              "reward_normalized": 2.0,
+              "final_geometry": 12.17,
+              "max_geometry": 21.279999999999998,
+              "score_contribution": -4.0,
+              "immediate_reward": 0.0,
+              "immediate_geometry": 20.5,
+              "immediate_proxy": 20.5,
+              "death_penalty": 0,
+              "stop_reason": "unknown_frontier"
+            },
+            "alternatives": [
+              {
+                "action": 962,
+                "value": 27.424999999999997,
+                "terminal": "unknown_frontier",
+                "path": [
+                  962,
+                  246,
+                  40,
+                  317
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  34,
+                  26,
+                  34
+                ],
+                "final_risk": {
+                  "holes": 2,
+                  "height": 7,
+                  "central_top4": 0,
+                  "wells": 1
+                },
+                "reward_normalized": 0.0,
+                "final_geometry": 21.939999999999998,
+                "max_geometry": 21.939999999999998,
+                "score_contribution": -0.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 20.5,
+                "immediate_proxy": 20.5,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 386,
+                "value": 13.489999999999998,
+                "terminal": "unknown_frontier",
+                "path": [
+                  386,
+                  962,
+                  1259,
+                  433
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  34,
+                  26,
+                  26
+                ],
+                "final_risk": {
+                  "holes": 1,
+                  "height": 4,
+                  "central_top4": 0,
+                  "wells": 4
+                },
+                "reward_normalized": 2.0,
+                "final_geometry": 12.17,
+                "max_geometry": 21.279999999999998,
+                "score_contribution": -4.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 20.5,
+                "immediate_proxy": 20.5,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 42,
+                "value": 27.424999999999997,
+                "terminal": "unknown_frontier",
+                "path": [
+                  42,
+                  246,
+                  40,
+                  317
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  34,
+                  26,
+                  34
+                ],
+                "final_risk": {
+                  "holes": 2,
+                  "height": 7,
+                  "central_top4": 0,
+                  "wells": 1
+                },
+                "reward_normalized": 0.0,
+                "final_geometry": 21.939999999999998,
+                "max_geometry": 21.939999999999998,
+                "score_contribution": -0.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 20.5,
+                "immediate_proxy": 20.5,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              }
+            ],
+            "override": true,
+            "reason": "public_rollout_advantage",
+            "bounded_search": true
+          }
+        },
+        {
+          "seed": 3102852000,
+          "piece": 402,
+          "public": {
+            "board": [
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "Z",
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "Z",
+                "Z",
+                null,
+                null
+              ],
+              [
+                "J",
+                "J",
+                null,
+                null,
+                null,
+                "T",
+                "Z",
+                "L",
+                "L",
+                "L"
+              ],
+              [
+                "T",
+                "T",
+                "S",
+                "S",
+                "S",
+                "S",
+                "Z",
+                "Z",
+                "I",
+                null
+              ],
+              [
+                "I",
+                null,
+                "Z",
+                "Z",
+                "I",
+                "I",
+                "I",
+                "I",
+                "J",
+                "J"
+              ]
+            ],
+            "currentPiece": {
+              "type": "I",
+              "matrix": [
+                [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "rotation": "0",
+              "x": 3,
+              "y": -1
+            },
+            "hold": "Z",
+            "holdAvailable": true,
+            "next": [
+              "O",
+              "S",
+              "T"
+            ],
+            "score": 162100,
+            "level": 16,
+            "lines": 158,
+            "phase": "playing",
+            "gameOver": false
+          },
+          "reconstructed_actions": {
+            "A": 1282,
+            "B": 1282,
+            "C": 1260,
+            "D": 1282,
+            "E": 1260
+          },
+          "trace": {
+            "student_action": 1282,
+            "bc_action": 1260,
+            "geometry_action": 962,
+            "clear_action": 962,
+            "nominal_depth": 4,
+            "roots": [
+              1282,
+              1260,
+              962
+            ],
+            "selected": {
+              "action": 1260,
+              "value": -3.6750000000000007,
+              "terminal": "unknown_frontier",
+              "path": [
+                1260,
+                65,
+                433,
+                710
+              ],
+              "known_tokens_consumed": 3,
+              "remaining_known": 0,
+              "legal_counts": [
+                26,
+                34,
+                51
+              ],
+              "final_risk": {
+                "holes": 0,
+                "height": 1,
+                "central_top4": 0,
+                "wells": 3
+              },
+              "reward_normalized": 5.1875,
+              "final_geometry": 1.38,
+              "max_geometry": 21.279999999999998,
+              "score_contribution": -10.375,
+              "immediate_reward": 0.0,
+              "immediate_geometry": 21.279999999999998,
+              "immediate_proxy": 21.279999999999998,
+              "death_penalty": 0,
+              "stop_reason": "unknown_frontier"
+            },
+            "alternatives": [
+              {
+                "action": 1282,
+                "value": 28.4,
+                "terminal": "unknown_frontier",
+                "path": [
+                  1282,
+                  202,
+                  1259,
+                  568
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  26,
+                  34,
+                  51
+                ],
+                "final_risk": {
+                  "holes": 2,
+                  "height": 7,
+                  "central_top4": 0,
+                  "wells": 0
+                },
+                "reward_normalized": 0.0,
+                "final_geometry": 22.72,
+                "max_geometry": 22.72,
+                "score_contribution": -0.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 21.279999999999998,
+                "immediate_proxy": 21.279999999999998,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 1260,
+                "value": -3.6750000000000007,
+                "terminal": "unknown_frontier",
+                "path": [
+                  1260,
+                  65,
+                  433,
+                  710
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  26,
+                  34,
+                  51
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 1,
+                  "central_top4": 0,
+                  "wells": 3
+                },
+                "reward_normalized": 5.1875,
+                "final_geometry": 1.38,
+                "max_geometry": 21.279999999999998,
+                "score_contribution": -10.375,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 21.279999999999998,
+                "immediate_proxy": 21.279999999999998,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 962,
+                "value": 13.370000000000001,
+                "terminal": "unknown_frontier",
+                "path": [
+                  962,
+                  1259,
+                  433,
+                  364
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  26,
+                  26,
+                  43
+                ],
+                "final_risk": {
+                  "holes": 1,
+                  "height": 4,
+                  "central_top4": 0,
+                  "wells": 3
+                },
+                "reward_normalized": 2.0,
+                "final_geometry": 12.05,
+                "max_geometry": 21.279999999999998,
+                "score_contribution": -4.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 21.279999999999998,
+                "immediate_proxy": 21.279999999999998,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              }
+            ],
+            "override": true,
+            "reason": "public_rollout_advantage",
+            "bounded_search": true
+          }
+        },
+        {
+          "seed": 3102852000,
+          "piece": 488,
+          "public": {
+            "board": [
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                "Z",
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                "Z",
+                "Z",
+                "S",
+                "S",
+                "I",
+                null,
+                null
+              ],
+              [
+                null,
+                "O",
+                "O",
+                "Z",
+                "S",
+                "S",
+                "Z",
+                "I",
+                null,
+                "J"
+              ],
+              [
+                null,
+                "O",
+                "O",
+                "S",
+                "S",
+                "Z",
+                "Z",
+                "I",
+                null,
+                "J"
+              ]
+            ],
+            "currentPiece": {
+              "type": "T",
+              "matrix": [
+                [
+                  0,
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "rotation": "0",
+              "x": 3,
+              "y": 0
+            },
+            "hold": "L",
+            "holdAvailable": true,
+            "next": [
+              "J",
+              "L",
+              "O"
+            ],
+            "score": 233600,
+            "level": 20,
+            "lines": 193,
+            "phase": "playing",
+            "gameOver": false
+          },
+          "reconstructed_actions": {
+            "A": 1191,
+            "B": 1191,
+            "C": 1191,
+            "D": 1191,
+            "E": 133
+          },
+          "trace": {
+            "student_action": 1191,
+            "bc_action": 294,
+            "geometry_action": 133,
+            "clear_action": 133,
+            "nominal_depth": 4,
+            "roots": [
+              1191,
+              294,
+              133
+            ],
+            "selected": {
+              "action": 133,
+              "value": -5.0600000000000005,
+              "terminal": "unknown_frontier",
+              "path": [
+                133,
+                434,
+                480,
+                1401
+              ],
+              "known_tokens_consumed": 3,
+              "remaining_known": 0,
+              "legal_counts": [
+                68,
+                68,
+                43
+              ],
+              "final_risk": {
+                "holes": 0,
+                "height": 2,
+                "central_top4": 0,
+                "wells": 1
+              },
+              "reward_normalized": 4.0,
+              "final_geometry": 1.71,
+              "max_geometry": 4.92,
+              "score_contribution": -8.0,
+              "immediate_reward": 0.0,
+              "immediate_geometry": 4.92,
+              "immediate_proxy": 4.92,
+              "death_penalty": 0,
+              "stop_reason": "unknown_frontier"
+            },
+            "alternatives": [
+              {
+                "action": 1191,
+                "value": 7.387499999999999,
+                "terminal": "unknown_frontier",
+                "path": [
+                  1191,
+                  434,
+                  293,
+                  86
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  68,
+                  68,
+                  43
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 6,
+                  "central_top4": 0,
+                  "wells": 5
+                },
+                "reward_normalized": 0.0,
+                "final_geometry": 5.909999999999999,
+                "max_geometry": 5.909999999999999,
+                "score_contribution": -0.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 5.220000000000001,
+                "immediate_proxy": 5.220000000000001,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 294,
+                "value": 7.012499999999999,
+                "terminal": "unknown_frontier",
+                "path": [
+                  294,
+                  434,
+                  133,
+                  202
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  68,
+                  68,
+                  43
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 5,
+                  "central_top4": 0,
+                  "wells": 2
+                },
+                "reward_normalized": 0.0,
+                "final_geometry": 5.609999999999999,
+                "max_geometry": 5.609999999999999,
+                "score_contribution": -0.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 4.92,
+                "immediate_proxy": 4.92,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 133,
+                "value": -5.0600000000000005,
+                "terminal": "unknown_frontier",
+                "path": [
+                  133,
+                  434,
+                  480,
+                  1401
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  68,
+                  68,
+                  43
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 2,
+                  "central_top4": 0,
+                  "wells": 1
+                },
+                "reward_normalized": 4.0,
+                "final_geometry": 1.71,
+                "max_geometry": 4.92,
+                "score_contribution": -8.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 4.92,
+                "immediate_proxy": 4.92,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              }
+            ],
+            "override": true,
+            "reason": "public_rollout_advantage",
+            "bounded_search": true
+          }
+        },
+        {
+          "seed": 3102852000,
+          "piece": 563,
+          "public": {
+            "board": [
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "S",
+                "S"
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "T",
+                "S",
+                "S",
+                "T"
+              ],
+              [
+                "L",
+                "L",
+                "L",
+                null,
+                null,
+                "I",
+                "T",
+                "T",
+                "T",
+                "T"
+              ],
+              [
+                "L",
+                "S",
+                "S",
+                null,
+                null,
+                "I",
+                "T",
+                "Z",
+                "Z",
+                "T"
+              ]
+            ],
+            "currentPiece": {
+              "type": "Z",
+              "matrix": [
+                [
+                  1,
+                  1,
+                  0
+                ],
+                [
+                  0,
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "rotation": "0",
+              "x": 3,
+              "y": 0
+            },
+            "hold": "I",
+            "holdAvailable": true,
+            "next": [
+              "O",
+              "J",
+              "O"
+            ],
+            "score": 305700,
+            "level": 23,
+            "lines": 223,
+            "phase": "playing",
+            "gameOver": false
+          },
+          "reconstructed_actions": {
+            "A": 319,
+            "B": 319,
+            "C": 319,
+            "D": 319,
+            "E": 363
+          },
+          "trace": {
+            "student_action": 319,
+            "bc_action": 319,
+            "geometry_action": 363,
+            "clear_action": 319,
+            "nominal_depth": 4,
+            "roots": [
+              319,
+              363
+            ],
+            "selected": {
+              "action": 363,
+              "value": -5.135,
+              "terminal": "unknown_frontier",
+              "path": [
+                363,
+                90,
+                342,
+                942
+              ],
+              "known_tokens_consumed": 3,
+              "remaining_known": 0,
+              "legal_counts": [
+                26,
+                51,
+                26
+              ],
+              "final_risk": {
+                "holes": 0,
+                "height": 2,
+                "central_top4": 0,
+                "wells": 1
+              },
+              "reward_normalized": 4.0,
+              "final_geometry": 1.71,
+              "max_geometry": 4.62,
+              "score_contribution": -8.0,
+              "immediate_reward": 0.0,
+              "immediate_geometry": 4.62,
+              "immediate_proxy": 4.62,
+              "death_penalty": 0,
+              "stop_reason": "unknown_frontier"
+            },
+            "alternatives": [
+              {
+                "action": 319,
+                "value": 9.472499999999998,
+                "terminal": "unknown_frontier",
+                "path": [
+                  319,
+                  941,
+                  549,
+                  158
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  26,
+                  43,
+                  18
+                ],
+                "final_risk": {
+                  "holes": 1,
+                  "height": 3,
+                  "central_top4": 0,
+                  "wells": 0
+                },
+                "reward_normalized": 2.0,
+                "final_geometry": 10.729999999999999,
+                "max_geometry": 10.969999999999999,
+                "score_contribution": -4.0,
+                "immediate_reward": 1.0,
+                "immediate_geometry": 10.639999999999999,
+                "immediate_proxy": 8.639999999999999,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 363,
+                "value": -5.135,
+                "terminal": "unknown_frontier",
+                "path": [
+                  363,
+                  90,
+                  342,
+                  942
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  26,
+                  51,
+                  26
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 2,
+                  "central_top4": 0,
+                  "wells": 1
+                },
+                "reward_normalized": 4.0,
+                "final_geometry": 1.71,
+                "max_geometry": 4.62,
+                "score_contribution": -8.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 4.62,
+                "immediate_proxy": 4.62,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              }
+            ],
+            "override": true,
+            "reason": "public_rollout_advantage",
+            "bounded_search": true
+          }
+        },
+        {
+          "seed": 3102852000,
+          "piece": 842,
+          "public": {
+            "board": [
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                "J",
+                "J",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                "J",
+                "I",
+                "I",
+                "I",
+                "I",
+                "Z",
+                null,
+                null,
+                null,
+                null
+              ]
+            ],
+            "currentPiece": {
+              "type": "O",
+              "matrix": [
+                [
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1
+                ]
+              ],
+              "rotation": "0",
+              "x": 4,
+              "y": 0
+            },
+            "hold": "S",
+            "holdAvailable": true,
+            "next": [
+              "I",
+              "L",
+              "Z"
+            ],
+            "score": 689600,
+            "level": 34,
+            "lines": 336,
+            "phase": "playing",
+            "gameOver": false
+          },
+          "reconstructed_actions": {
+            "A": 66,
+            "B": 66,
+            "C": 205,
+            "D": 66,
+            "E": 205
+          },
+          "trace": {
+            "student_action": 66,
+            "bc_action": 205,
+            "geometry_action": 19,
+            "clear_action": 19,
+            "nominal_depth": 4,
+            "roots": [
+              66,
+              205,
+              19
+            ],
+            "selected": {
+              "action": 205,
+              "value": -2.29,
+              "terminal": "unknown_frontier",
+              "path": [
+                205,
+                67,
+                388,
+                411
+              ],
+              "known_tokens_consumed": 3,
+              "remaining_known": 0,
+              "legal_counts": [
+                34,
+                51,
+                34
+              ],
+              "final_risk": {
+                "holes": 0,
+                "height": 2,
+                "central_top4": 0,
+                "wells": 2
+              },
+              "reward_normalized": 2.0,
+              "final_geometry": 1.08,
+              "max_geometry": 2.52,
+              "score_contribution": -4.0,
+              "immediate_reward": 0.0,
+              "immediate_geometry": 2.04,
+              "immediate_proxy": 2.04,
+              "death_penalty": 0,
+              "stop_reason": "unknown_frontier"
+            },
+            "alternatives": [
+              {
+                "action": 66,
+                "value": 11.0,
+                "terminal": "unknown_frontier",
+                "path": [
+                  66,
+                  160,
+                  249,
+                  42
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  34,
+                  51,
+                  34
+                ],
+                "final_risk": {
+                  "holes": 1,
+                  "height": 4,
+                  "central_top4": 0,
+                  "wells": 0
+                },
+                "reward_normalized": 1.0,
+                "final_geometry": 10.4,
+                "max_geometry": 10.4,
+                "score_contribution": -2.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 2.04,
+                "immediate_proxy": 2.04,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 205,
+                "value": -2.29,
+                "terminal": "unknown_frontier",
+                "path": [
+                  205,
+                  67,
+                  388,
+                  411
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  34,
+                  51,
+                  34
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 2,
+                  "central_top4": 0,
+                  "wells": 2
+                },
+                "reward_normalized": 2.0,
+                "final_geometry": 1.08,
+                "max_geometry": 2.52,
+                "score_contribution": -4.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 2.04,
+                "immediate_proxy": 2.04,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 19,
+                "value": 0.6624999999999996,
+                "terminal": "unknown_frontier",
+                "path": [
+                  19,
+                  160,
+                  296,
+                  90
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  34,
+                  51,
+                  34
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 3,
+                  "central_top4": 0,
+                  "wells": 0
+                },
+                "reward_normalized": 1.0,
+                "final_geometry": 2.13,
+                "max_geometry": 2.13,
+                "score_contribution": -2.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 2.04,
+                "immediate_proxy": 2.04,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              }
+            ],
+            "override": true,
+            "reason": "public_rollout_advantage",
+            "bounded_search": true
+          }
+        }
+      ]
+    },
+    "long": {
+      "completed_Full_episodes": 16,
+      "counts": {
+        "decisions": 1573025,
+        "unequal_root_horizons": 7,
+        "B_differs_A": 10430,
+        "C_differs_B": 13733,
+        "E_differs_D": 17784,
+        "E_differs_C": 4137,
+        "D_differs_B": 154,
+        "E_differs_A": 10678,
+        "overrides": 10678,
+        "override_terminal_geometry_improved": 10662,
+        "override_terminal_geometry_worsened": 16,
+        "override_terminal_geometry_saving_sum": 88279.4,
+        "override_path_max_quarter_improved": 10238,
+        "override_path_max_quarter_worsened": 383,
+        "override_path_max_quarter_saving_sum": 15132.062500000004,
+        "override_formal_reward_term_improved": 10583,
+        "override_formal_reward_term_worsened": 18,
+        "override_formal_reward_term_saving_sum": 69513.56091430277,
+        "override_known_death_penalty_improved": 0,
+        "override_known_death_penalty_worsened": 0,
+        "override_known_death_penalty_saving_sum": 0.0
+      },
+      "sources": [
+        {
+          "seed": 3102853000,
+          "result_sha256": "c44bf4c788310c9a15352f296fcaa67772d3aeefe1e0f0934f6526bf39808517",
+          "artifact_sha256": "62498aa93781e182d6a23cc5e2a2d65f127fe15a9995fbbf97027c8e7138ab2c"
+        },
+        {
+          "seed": 3102853001,
+          "result_sha256": "eef216165e65f1d6b188b6f3eb57847611645daaea3221f63892bf2e9e1a758f",
+          "artifact_sha256": "827a31061a83c1184a94c66398602b5bb34971293ce8ea5507a8e050e408adbd"
+        },
+        {
+          "seed": 3102853002,
+          "result_sha256": "4345f75111e4df4078bc6b035f66551be9ff34a742ab9117f41c21396f05e76a",
+          "artifact_sha256": "6e3f713ce1dde995c320141f417b62b2c6530601a350396f25d853bfa42902d7"
+        },
+        {
+          "seed": 3102853003,
+          "result_sha256": "9b1a9d9cf84388df093054fe59e38e1ec99e9d1589b83d70cb4a6e5890a43fde",
+          "artifact_sha256": "ffde391eaf83a14454c06432763c3a485ef7a455cc7448bea1abe3ac0dc6c279"
+        },
+        {
+          "seed": 3102853004,
+          "result_sha256": "a7471e2ffb4bde517937906c6705b8802277474d5b1bc92808b0451c61e19e3c",
+          "artifact_sha256": "98ffcd33e1b2079637d0c072e9e9577075f3fe6fa511c8498f59ff161398794d"
+        },
+        {
+          "seed": 3102853005,
+          "result_sha256": "8cb14f64734456b1b07f901c63856b687726e7c15214eaa397e7f0f5ccd44215",
+          "artifact_sha256": "7fc0452806377812af9ed65af34bacebe7d614cc351c4f929a9b608b31fa00bf"
+        },
+        {
+          "seed": 3102853006,
+          "result_sha256": "43be7208fa58ea805d6b5a1fcd50092780b9581a6c6061a559c8c40700033f71",
+          "artifact_sha256": "0a365161094b07b8e36973a6a15290678498a529e12563b4e1429b8539dd0372"
+        },
+        {
+          "seed": 3102853007,
+          "result_sha256": "3d85dc083ce3fafe4541b3a36347184fab2b34d823aef8839d47ae22a68ad62c",
+          "artifact_sha256": "549addfcca23ba49eb9147a7e7f671686001ee1c0921f7fa28f87d46bec93622"
+        },
+        {
+          "seed": 3102853008,
+          "result_sha256": "b75115eb7411f441460080cabbc021860b0dcb01c21f643a6b079e55d7dbe921",
+          "artifact_sha256": "2d6a6d610232636dddffc52fcd2395579df76f2f668ad97e7189fcb9a711baf1"
+        },
+        {
+          "seed": 3102853009,
+          "result_sha256": "7f71bfdcae0e22d223a6f29945ade8bd089e187ca011dd8e91222d019c3b91ff",
+          "artifact_sha256": "42a37b86fd72c3fcde69b6036d08186fd6646583d9b4d97ec7fcaeb3d1a5800c"
+        },
+        {
+          "seed": 3102853010,
+          "result_sha256": "dd20cdfe5e23509cfddf6e9cd8a2cf20121484ec6e563e31b83da3aee6081f15",
+          "artifact_sha256": "d7f9a952a1b6084355ed1a44176c3f97852c8ff6fafe0be7fb716639261fe4dd"
+        },
+        {
+          "seed": 3102853011,
+          "result_sha256": "6f23c56f09301e6988c617ee2bf66caf038c182648a66c16acd424d2f13c7c5c",
+          "artifact_sha256": "65c474d4b2e324924407147a9b18d6b06c69fd3e535027cfd27e4633406afd55"
+        },
+        {
+          "seed": 3102853012,
+          "result_sha256": "2bdaed6b1b5bcaab2159658d7e8e6c0df4d080948c8576fbd22daa89adf4b232",
+          "artifact_sha256": "2b8030c14e596c8e58abade7eb8823850cf307b9ccf64c5aa4418cecd0141acf"
+        },
+        {
+          "seed": 3102853013,
+          "result_sha256": "44432511451b8b6682a9279eec1d2bc4c5c2895fc61ad645abb047293dd14dce",
+          "artifact_sha256": "9f924c29e566fd08545f3649d009fbc99dd51a9d5217afe8d8da1f5066698731"
+        },
+        {
+          "seed": 3102853014,
+          "result_sha256": "5683ccee2949a29724ca06451613d9aed390e80a203bbd497bb1d72000215f7c",
+          "artifact_sha256": "d043e14ad5c281e7a5bae3bae14e55b9ec2283c132497f0e817955d1efd10c50"
+        },
+        {
+          "seed": 3102853015,
+          "result_sha256": "c9cc4b8b0ed4e3597c3b80ee6f934c6841f4ee72bc3803da9615c76050ccbcf5",
+          "artifact_sha256": "feb5fac893074bb10a93c8150ff99b1c2094923ad3d42da5eaccf38607689978"
+        }
+      ],
+      "first_chronological_override_examples": [
+        {
+          "seed": 3102853000,
+          "piece": 105,
+          "public": {
+            "board": [
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                "T",
+                null,
+                null,
+                null,
+                null,
+                "Z",
+                "Z",
+                null
+              ],
+              [
+                null,
+                "T",
+                "T",
+                "T",
+                "J",
+                "J",
+                "J",
+                "S",
+                "Z",
+                "Z"
+              ],
+              [
+                null,
+                "T",
+                "I",
+                "I",
+                "I",
+                "I",
+                "J",
+                "S",
+                "S",
+                "I"
+              ],
+              [
+                null,
+                "L",
+                "L",
+                "L",
+                "J",
+                "L",
+                "T",
+                "S",
+                "S",
+                "I"
+              ]
+            ],
+            "currentPiece": {
+              "type": "I",
+              "matrix": [
+                [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "rotation": "0",
+              "x": 3,
+              "y": -1
+            },
+            "hold": "O",
+            "holdAvailable": true,
+            "next": [
+              "O",
+              "Z",
+              "J"
+            ],
+            "score": 10900,
+            "level": 4,
+            "lines": 39,
+            "phase": "playing",
+            "gameOver": false
+          },
+          "reconstructed_actions": {
+            "A": 88,
+            "B": 249,
+            "C": 249,
+            "D": 249,
+            "E": 249
+          },
+          "trace": {
+            "student_action": 88,
+            "bc_action": 249,
+            "geometry_action": 249,
+            "clear_action": 249,
+            "nominal_depth": 4,
+            "roots": [
+              88,
+              249
+            ],
+            "selected": {
+              "action": 249,
+              "value": -7.0375,
+              "terminal": "unknown_frontier",
+              "path": [
+                249,
+                90,
+                1056,
+                642
+              ],
+              "known_tokens_consumed": 3,
+              "remaining_known": 0,
+              "legal_counts": [
+                18,
+                26,
+                51
+              ],
+              "final_risk": {
+                "holes": 0,
+                "height": 2,
+                "central_top4": 0,
+                "wells": 1
+              },
+              "reward_normalized": 5.0,
+              "final_geometry": 2.37,
+              "max_geometry": 2.37,
+              "score_contribution": -10.0,
+              "immediate_reward": 5.0,
+              "immediate_geometry": 1.23,
+              "immediate_proxy": -8.77,
+              "death_penalty": 0,
+              "stop_reason": "unknown_frontier"
+            },
+            "alternatives": [
+              {
+                "action": 88,
+                "value": 8.9875,
+                "terminal": "unknown_frontier",
+                "path": [
+                  88,
+                  63,
+                  1029,
+                  249
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  18,
+                  26,
+                  51
+                ],
+                "final_risk": {
+                  "holes": 1,
+                  "height": 4,
+                  "central_top4": 0,
+                  "wells": 1
+                },
+                "reward_normalized": 3.0,
+                "final_geometry": 11.99,
+                "max_geometry": 11.99,
+                "score_contribution": -6.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 4.83,
+                "immediate_proxy": 4.83,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 249,
+                "value": -7.0375,
+                "terminal": "unknown_frontier",
+                "path": [
+                  249,
+                  90,
+                  1056,
+                  642
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  18,
+                  26,
+                  51
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 2,
+                  "central_top4": 0,
+                  "wells": 1
+                },
+                "reward_normalized": 5.0,
+                "final_geometry": 2.37,
+                "max_geometry": 2.37,
+                "score_contribution": -10.0,
+                "immediate_reward": 5.0,
+                "immediate_geometry": 1.23,
+                "immediate_proxy": -8.77,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              }
+            ],
+            "override": true,
+            "reason": "public_rollout_advantage",
+            "bounded_search": true
+          }
+        },
+        {
+          "seed": 3102853000,
+          "piece": 448,
+          "public": {
+            "board": [
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "T",
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "T",
+                "T",
+                "T"
+              ],
+              [
+                null,
+                "L",
+                "L",
+                "L",
+                "S",
+                "S",
+                "I",
+                "I",
+                "I",
+                "I"
+              ],
+              [
+                null,
+                "L",
+                "L",
+                "S",
+                "S",
+                "T",
+                "T",
+                "T",
+                "O",
+                "O"
+              ]
+            ],
+            "currentPiece": {
+              "type": "I",
+              "matrix": [
+                [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "rotation": "0",
+              "x": 3,
+              "y": -1
+            },
+            "hold": "S",
+            "holdAvailable": true,
+            "next": [
+              "S",
+              "O",
+              "Z"
+            ],
+            "score": 182100,
+            "level": 18,
+            "lines": 177,
+            "phase": "playing",
+            "gameOver": false
+          },
+          "reconstructed_actions": {
+            "A": 89,
+            "B": 89,
+            "C": 249,
+            "D": 89,
+            "E": 249
+          },
+          "trace": {
+            "student_action": 89,
+            "bc_action": 249,
+            "geometry_action": 249,
+            "clear_action": 249,
+            "nominal_depth": 4,
+            "roots": [
+              89,
+              249
+            ],
+            "selected": {
+              "action": 249,
+              "value": -5.9825,
+              "terminal": "unknown_frontier",
+              "path": [
+                249,
+                136,
+                44,
+                1010
+              ],
+              "known_tokens_consumed": 3,
+              "remaining_known": 0,
+              "legal_counts": [
+                34,
+                26,
+                34
+              ],
+              "final_risk": {
+                "holes": 0,
+                "height": 1,
+                "central_top4": 0,
+                "wells": 2
+              },
+              "reward_normalized": 4.0,
+              "final_geometry": 1.41,
+              "max_geometry": 2.4299999999999997,
+              "score_contribution": -8.0,
+              "immediate_reward": 3.0,
+              "immediate_geometry": 1.47,
+              "immediate_proxy": -4.53,
+              "death_penalty": 0,
+              "stop_reason": "unknown_frontier"
+            },
+            "alternatives": [
+              {
+                "action": 89,
+                "value": 7.387499999999999,
+                "terminal": "unknown_frontier",
+                "path": [
+                  89,
+                  42,
+                  110,
+                  1076
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  34,
+                  26,
+                  34
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 5,
+                  "central_top4": 0,
+                  "wells": 6
+                },
+                "reward_normalized": 0.0,
+                "final_geometry": 5.909999999999999,
+                "max_geometry": 5.909999999999999,
+                "score_contribution": -0.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 3.87,
+                "immediate_proxy": 3.87,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 249,
+                "value": -5.9825,
+                "terminal": "unknown_frontier",
+                "path": [
+                  249,
+                  136,
+                  44,
+                  1010
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  34,
+                  26,
+                  34
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 1,
+                  "central_top4": 0,
+                  "wells": 2
+                },
+                "reward_normalized": 4.0,
+                "final_geometry": 1.41,
+                "max_geometry": 2.4299999999999997,
+                "score_contribution": -8.0,
+                "immediate_reward": 3.0,
+                "immediate_geometry": 1.47,
+                "immediate_proxy": -4.53,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              }
+            ],
+            "override": true,
+            "reason": "public_rollout_advantage",
+            "bounded_search": true
+          }
+        },
+        {
+          "seed": 3102853000,
+          "piece": 648,
+          "public": {
+            "board": [
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                "T",
+                "T",
+                "T",
+                "S",
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                "O",
+                "O",
+                "T",
+                "T",
+                "S",
+                "S",
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                "O",
+                "O",
+                "T",
+                "T",
+                "T",
+                "S",
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                "O",
+                "O",
+                "I",
+                "I",
+                "I",
+                "I",
+                null,
+                null,
+                null,
+                null
+              ]
+            ],
+            "currentPiece": {
+              "type": "L",
+              "matrix": [
+                [
+                  0,
+                  0,
+                  1
+                ],
+                [
+                  1,
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "rotation": "0",
+              "x": 3,
+              "y": 0
+            },
+            "hold": "J",
+            "holdAvailable": true,
+            "next": [
+              "Z",
+              "O",
+              "J"
+            ],
+            "score": 384300,
+            "level": 26,
+            "lines": 257,
+            "phase": "playing",
+            "gameOver": false
+          },
+          "reconstructed_actions": {
+            "A": 478,
+            "B": 478,
+            "C": 478,
+            "D": 478,
+            "E": 388
+          },
+          "trace": {
+            "student_action": 478,
+            "bc_action": 478,
+            "geometry_action": 388,
+            "clear_action": 388,
+            "nominal_depth": 4,
+            "roots": [
+              478,
+              388
+            ],
+            "selected": {
+              "action": 388,
+              "value": -5.4725,
+              "terminal": "unknown_frontier",
+              "path": [
+                388,
+                182,
+                1562,
+                136
+              ],
+              "known_tokens_consumed": 3,
+              "remaining_known": 0,
+              "legal_counts": [
+                51,
+                43,
+                43
+              ],
+              "final_risk": {
+                "holes": 0,
+                "height": 2,
+                "central_top4": 0,
+                "wells": 1
+              },
+              "reward_normalized": 4.0,
+              "final_geometry": 1.56,
+              "max_geometry": 3.87,
+              "score_contribution": -8.0,
+              "immediate_reward": 0.0,
+              "immediate_geometry": 3.87,
+              "immediate_proxy": 3.87,
+              "death_penalty": 0,
+              "stop_reason": "unknown_frontier"
+            },
+            "alternatives": [
+              {
+                "action": 478,
+                "value": 6.637499999999999,
+                "terminal": "unknown_frontier",
+                "path": [
+                  478,
+                  1079,
+                  1078,
+                  547
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  51,
+                  26,
+                  43
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 5,
+                  "central_top4": 0,
+                  "wells": 2
+                },
+                "reward_normalized": 0.0,
+                "final_geometry": 5.31,
+                "max_geometry": 5.31,
+                "score_contribution": -0.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 3.87,
+                "immediate_proxy": 3.87,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 388,
+                "value": -5.4725,
+                "terminal": "unknown_frontier",
+                "path": [
+                  388,
+                  182,
+                  1562,
+                  136
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  51,
+                  43,
+                  43
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 2,
+                  "central_top4": 0,
+                  "wells": 1
+                },
+                "reward_normalized": 4.0,
+                "final_geometry": 1.56,
+                "max_geometry": 3.87,
+                "score_contribution": -8.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 3.87,
+                "immediate_proxy": 3.87,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              }
+            ],
+            "override": true,
+            "reason": "public_rollout_advantage",
+            "bounded_search": true
+          }
+        },
+        {
+          "seed": 3102853000,
+          "piece": 708,
+          "public": {
+            "board": [
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                "S",
+                "I",
+                "I",
+                "I",
+                "I",
+                "O",
+                "O"
+              ],
+              [
+                null,
+                null,
+                null,
+                "S",
+                "S",
+                "T",
+                "T",
+                "T",
+                "O",
+                "O"
+              ],
+              [
+                null,
+                "J",
+                "J",
+                "J",
+                "S",
+                "Z",
+                "T",
+                "S",
+                "S",
+                "I"
+              ],
+              [
+                null,
+                "S",
+                "S",
+                "J",
+                "Z",
+                "Z",
+                "S",
+                "S",
+                "L",
+                "I"
+              ]
+            ],
+            "currentPiece": {
+              "type": "I",
+              "matrix": [
+                [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  1,
+                  1,
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "rotation": "0",
+              "x": 3,
+              "y": -1
+            },
+            "hold": "T",
+            "holdAvailable": true,
+            "next": [
+              "O",
+              "J",
+              "Z"
+            ],
+            "score": 466100,
+            "level": 29,
+            "lines": 280,
+            "phase": "playing",
+            "gameOver": false
+          },
+          "reconstructed_actions": {
+            "A": 156,
+            "B": 156,
+            "C": 249,
+            "D": 156,
+            "E": 249
+          },
+          "trace": {
+            "student_action": 156,
+            "bc_action": 249,
+            "geometry_action": 249,
+            "clear_action": 249,
+            "nominal_depth": 4,
+            "roots": [
+              156,
+              249
+            ],
+            "selected": {
+              "action": 249,
+              "value": -9.96,
+              "terminal": "unknown_frontier",
+              "path": [
+                249,
+                44,
+                21,
+                20
+              ],
+              "known_tokens_consumed": 3,
+              "remaining_known": 0,
+              "legal_counts": [
+                43,
+                68,
+                51
+              ],
+              "final_risk": {
+                "holes": 0,
+                "height": 3,
+                "central_top4": 0,
+                "wells": 0
+              },
+              "reward_normalized": 6.0,
+              "final_geometry": 1.41,
+              "max_geometry": 2.52,
+              "score_contribution": -12.0,
+              "immediate_reward": 3.0,
+              "immediate_geometry": 2.52,
+              "immediate_proxy": -3.48,
+              "death_penalty": 0,
+              "stop_reason": "unknown_frontier"
+            },
+            "alternatives": [
+              {
+                "action": 156,
+                "value": 5.574999999999999,
+                "terminal": "unknown_frontier",
+                "path": [
+                  156,
+                  939,
+                  87,
+                  86
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  43,
+                  43,
+                  26
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 6,
+                  "central_top4": 0,
+                  "wells": 4
+                },
+                "reward_normalized": 1.0,
+                "final_geometry": 6.06,
+                "max_geometry": 6.06,
+                "score_contribution": -2.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 5.07,
+                "immediate_proxy": 5.07,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 249,
+                "value": -9.96,
+                "terminal": "unknown_frontier",
+                "path": [
+                  249,
+                  44,
+                  21,
+                  20
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  43,
+                  68,
+                  51
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 3,
+                  "central_top4": 0,
+                  "wells": 0
+                },
+                "reward_normalized": 6.0,
+                "final_geometry": 1.41,
+                "max_geometry": 2.52,
+                "score_contribution": -12.0,
+                "immediate_reward": 3.0,
+                "immediate_geometry": 2.52,
+                "immediate_proxy": -3.48,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              }
+            ],
+            "override": true,
+            "reason": "public_rollout_advantage",
+            "bounded_search": true
+          }
+        },
+        {
+          "seed": 3102853000,
+          "piece": 884,
+          "public": {
+            "board": [
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                "O",
+                "O",
+                "L",
+                "L",
+                "L",
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                "O",
+                "O",
+                "L",
+                "Z",
+                "O",
+                "O",
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                "I",
+                "L",
+                "Z",
+                "Z",
+                "O",
+                "O",
+                null,
+                "T",
+                null,
+                null
+              ],
+              [
+                "I",
+                "L",
+                "Z",
+                "S",
+                "Z",
+                "Z",
+                "T",
+                "T",
+                null,
+                "I"
+              ],
+              [
+                "I",
+                "L",
+                "L",
+                "S",
+                "S",
+                "Z",
+                "Z",
+                "T",
+                null,
+                "I"
+              ]
+            ],
+            "currentPiece": {
+              "type": "T",
+              "matrix": [
+                [
+                  0,
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "rotation": "0",
+              "x": 3,
+              "y": 0
+            },
+            "hold": "S",
+            "holdAvailable": true,
+            "next": [
+              "S",
+              "I",
+              "J"
+            ],
+            "score": 740700,
+            "level": 36,
+            "lines": 350,
+            "phase": "playing",
+            "gameOver": false
+          },
+          "reconstructed_actions": {
+            "A": 433,
+            "B": 433,
+            "C": 433,
+            "D": 433,
+            "E": 386
+          },
+          "trace": {
+            "student_action": 433,
+            "bc_action": 433,
+            "geometry_action": 386,
+            "clear_action": 433,
+            "nominal_depth": 4,
+            "roots": [
+              433,
+              386
+            ],
+            "selected": {
+              "action": 386,
+              "value": -8.0775,
+              "terminal": "unknown_frontier",
+              "path": [
+                386,
+                338,
+                433,
+                641
+              ],
+              "known_tokens_consumed": 3,
+              "remaining_known": 0,
+              "legal_counts": [
+                34,
+                34,
+                51
+              ],
+              "final_risk": {
+                "holes": 0,
+                "height": 3,
+                "central_top4": 0,
+                "wells": 1
+              },
+              "reward_normalized": 6.0,
+              "final_geometry": 2.19,
+              "max_geometry": 6.93,
+              "score_contribution": -12.0,
+              "immediate_reward": 0.0,
+              "immediate_geometry": 6.1499999999999995,
+              "immediate_proxy": 6.1499999999999995,
+              "death_penalty": 0,
+              "stop_reason": "unknown_frontier"
+            },
+            "alternatives": [
+              {
+                "action": 433,
+                "value": 12.509999999999998,
+                "terminal": "unknown_frontier",
+                "path": [
+                  433,
+                  432,
+                  386,
+                  548
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  34,
+                  34,
+                  51
+                ],
+                "final_risk": {
+                  "holes": 1,
+                  "height": 4,
+                  "central_top4": 0,
+                  "wells": 4
+                },
+                "reward_normalized": 2.0,
+                "final_geometry": 13.16,
+                "max_geometry": 13.399999999999999,
+                "score_contribution": -4.0,
+                "immediate_reward": 1.0,
+                "immediate_geometry": 12.62,
+                "immediate_proxy": 10.62,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 386,
+                "value": -8.0775,
+                "terminal": "unknown_frontier",
+                "path": [
+                  386,
+                  338,
+                  433,
+                  641
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  34,
+                  34,
+                  51
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 3,
+                  "central_top4": 0,
+                  "wells": 1
+                },
+                "reward_normalized": 6.0,
+                "final_geometry": 2.19,
+                "max_geometry": 6.93,
+                "score_contribution": -12.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 6.1499999999999995,
+                "immediate_proxy": 6.1499999999999995,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              }
+            ],
+            "override": true,
+            "reason": "public_rollout_advantage",
+            "bounded_search": true
+          }
+        },
+        {
+          "seed": 3102853000,
+          "piece": 1619,
+          "public": {
+            "board": [
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "L",
+                "L",
+                "L",
+                null
+              ],
+              [
+                "I",
+                null,
+                null,
+                null,
+                "T",
+                null,
+                "L",
+                "Z",
+                "Z",
+                null
+              ],
+              [
+                "I",
+                "J",
+                "J",
+                null,
+                "T",
+                "T",
+                "S",
+                "S",
+                "Z",
+                "Z"
+              ],
+              [
+                "I",
+                "J",
+                "J",
+                null,
+                "T",
+                "S",
+                "S",
+                "L",
+                "L",
+                "L"
+              ]
+            ],
+            "currentPiece": {
+              "type": "S",
+              "matrix": [
+                [
+                  0,
+                  1,
+                  1
+                ],
+                [
+                  1,
+                  1,
+                  0
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "rotation": "0",
+              "x": 3,
+              "y": 0
+            },
+            "hold": "O",
+            "holdAvailable": true,
+            "next": [
+              "T",
+              "I",
+              "Z"
+            ],
+            "score": 2406200,
+            "level": 65,
+            "lines": 645,
+            "phase": "playing",
+            "gameOver": false
+          },
+          "reconstructed_actions": {
+            "A": 295,
+            "B": 295,
+            "C": 295,
+            "D": 295,
+            "E": 340
+          },
+          "trace": {
+            "student_action": 295,
+            "bc_action": 295,
+            "geometry_action": 340,
+            "clear_action": 295,
+            "nominal_depth": 4,
+            "roots": [
+              295,
+              340
+            ],
+            "selected": {
+              "action": 340,
+              "value": -0.8025000000000002,
+              "terminal": "unknown_frontier",
+              "path": [
+                340,
+                132,
+                318,
+                964
+              ],
+              "known_tokens_consumed": 3,
+              "remaining_known": 0,
+              "legal_counts": [
+                43,
+                26,
+                26
+              ],
+              "final_risk": {
+                "holes": 0,
+                "height": 4,
+                "central_top4": 0,
+                "wells": 3
+              },
+              "reward_normalized": 3.0,
+              "final_geometry": 3.6899999999999995,
+              "max_geometry": 6.03,
+              "score_contribution": -6.0,
+              "immediate_reward": 0.0,
+              "immediate_geometry": 5.25,
+              "immediate_proxy": 5.25,
+              "death_penalty": 0,
+              "stop_reason": "unknown_frontier"
+            },
+            "alternatives": [
+              {
+                "action": 295,
+                "value": 14.45,
+                "terminal": "unknown_frontier",
+                "path": [
+                  295,
+                  709,
+                  455,
+                  65
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  43,
+                  26,
+                  26
+                ],
+                "final_risk": {
+                  "holes": 1,
+                  "height": 5,
+                  "central_top4": 0,
+                  "wells": 3
+                },
+                "reward_normalized": 1.0,
+                "final_geometry": 13.16,
+                "max_geometry": 13.16,
+                "score_contribution": -2.0,
+                "immediate_reward": 1.0,
+                "immediate_geometry": 11.87,
+                "immediate_proxy": 9.87,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 340,
+                "value": -0.8025000000000002,
+                "terminal": "unknown_frontier",
+                "path": [
+                  340,
+                  132,
+                  318,
+                  964
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  43,
+                  26,
+                  26
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 4,
+                  "central_top4": 0,
+                  "wells": 3
+                },
+                "reward_normalized": 3.0,
+                "final_geometry": 3.6899999999999995,
+                "max_geometry": 6.03,
+                "score_contribution": -6.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 5.25,
+                "immediate_proxy": 5.25,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              }
+            ],
+            "override": true,
+            "reason": "public_rollout_advantage",
+            "bounded_search": true
+          }
+        },
+        {
+          "seed": 3102853000,
+          "piece": 1620,
+          "public": {
+            "board": [
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                "S",
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                "S",
+                "S",
+                "L",
+                "L",
+                "L",
+                null
+              ],
+              [
+                "I",
+                null,
+                null,
+                null,
+                "T",
+                "S",
+                "L",
+                "Z",
+                "Z",
+                null
+              ],
+              [
+                "I",
+                "J",
+                "J",
+                null,
+                "T",
+                "T",
+                "S",
+                "S",
+                "Z",
+                "Z"
+              ],
+              [
+                "I",
+                "J",
+                "J",
+                null,
+                "T",
+                "S",
+                "S",
+                "L",
+                "L",
+                "L"
+              ]
+            ],
+            "currentPiece": {
+              "type": "T",
+              "matrix": [
+                [
+                  0,
+                  1,
+                  0
+                ],
+                [
+                  1,
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "rotation": "0",
+              "x": 3,
+              "y": 0
+            },
+            "hold": "O",
+            "holdAvailable": true,
+            "next": [
+              "I",
+              "Z",
+              "S"
+            ],
+            "score": 2406200,
+            "level": 65,
+            "lines": 645,
+            "phase": "playing",
+            "gameOver": false
+          },
+          "reconstructed_actions": {
+            "A": 755,
+            "B": 755,
+            "C": 755,
+            "D": 755,
+            "E": 132
+          },
+          "trace": {
+            "student_action": 755,
+            "bc_action": 755,
+            "geometry_action": 132,
+            "clear_action": 755,
+            "nominal_depth": 4,
+            "roots": [
+              755,
+              132
+            ],
+            "selected": {
+              "action": 132,
+              "value": -0.022499999999999964,
+              "terminal": "unknown_frontier",
+              "path": [
+                132,
+                318,
+                964,
+                65
+              ],
+              "known_tokens_consumed": 3,
+              "remaining_known": 0,
+              "legal_counts": [
+                26,
+                26,
+                34
+              ],
+              "final_risk": {
+                "holes": 0,
+                "height": 4,
+                "central_top4": 0,
+                "wells": 4
+              },
+              "reward_normalized": 3.0,
+              "final_geometry": 4.47,
+              "max_geometry": 6.03,
+              "score_contribution": -6.0,
+              "immediate_reward": 0.0,
+              "immediate_geometry": 6.03,
+              "immediate_proxy": 6.03,
+              "death_penalty": 0,
+              "stop_reason": "unknown_frontier"
+            },
+            "alternatives": [
+              {
+                "action": 755,
+                "value": 15.237499999999997,
+                "terminal": "unknown_frontier",
+                "path": [
+                  755,
+                  134,
+                  272,
+                  293
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  26,
+                  26,
+                  26
+                ],
+                "final_risk": {
+                  "holes": 1,
+                  "height": 6,
+                  "central_top4": 0,
+                  "wells": 4
+                },
+                "reward_normalized": 1.0,
+                "final_geometry": 13.79,
+                "max_geometry": 13.79,
+                "score_contribution": -2.0,
+                "immediate_reward": 1.0,
+                "immediate_geometry": 12.05,
+                "immediate_proxy": 10.05,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 132,
+                "value": -0.022499999999999964,
+                "terminal": "unknown_frontier",
+                "path": [
+                  132,
+                  318,
+                  964,
+                  65
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  26,
+                  26,
+                  34
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 4,
+                  "central_top4": 0,
+                  "wells": 4
+                },
+                "reward_normalized": 3.0,
+                "final_geometry": 4.47,
+                "max_geometry": 6.03,
+                "score_contribution": -6.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 6.03,
+                "immediate_proxy": 6.03,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              }
+            ],
+            "override": true,
+            "reason": "public_rollout_advantage",
+            "bounded_search": true
+          }
+        },
+        {
+          "seed": 3102853000,
+          "piece": 1863,
+          "public": {
+            "board": [
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+              ],
+              [
+                null,
+                "S",
+                null,
+                "S",
+                "I",
+                "I",
+                "I",
+                "I",
+                null,
+                null
+              ],
+              [
+                "T",
+                "S",
+                "S",
+                "S",
+                "S",
+                "L",
+                "L",
+                "L",
+                null,
+                null
+              ],
+              [
+                "T",
+                "T",
+                "S",
+                "T",
+                "S",
+                "L",
+                "O",
+                "O",
+                null,
+                null
+              ]
+            ],
+            "currentPiece": {
+              "type": "Z",
+              "matrix": [
+                [
+                  1,
+                  1,
+                  0
+                ],
+                [
+                  0,
+                  1,
+                  1
+                ],
+                [
+                  0,
+                  0,
+                  0
+                ]
+              ],
+              "rotation": "0",
+              "x": 3,
+              "y": 0
+            },
+            "hold": "I",
+            "holdAvailable": true,
+            "next": [
+              "T",
+              "J",
+              "L"
+            ],
+            "score": 3174900,
+            "level": 75,
+            "lines": 743,
+            "phase": "playing",
+            "gameOver": false
+          },
+          "reconstructed_actions": {
+            "A": 434,
+            "B": 434,
+            "C": 434,
+            "D": 434,
+            "E": 248
+          },
+          "trace": {
+            "student_action": 434,
+            "bc_action": 434,
+            "geometry_action": 248,
+            "clear_action": 434,
+            "nominal_depth": 4,
+            "roots": [
+              434,
+              248
+            ],
+            "selected": {
+              "action": 248,
+              "value": -3.21,
+              "terminal": "unknown_frontier",
+              "path": [
+                248,
+                434,
+                1376,
+                527
+              ],
+              "known_tokens_consumed": 3,
+              "remaining_known": 0,
+              "legal_counts": [
+                51,
+                51,
+                68
+              ],
+              "final_risk": {
+                "holes": 0,
+                "height": 2,
+                "central_top4": 0,
+                "wells": 1
+              },
+              "reward_normalized": 3.0,
+              "final_geometry": 1.71,
+              "max_geometry": 4.32,
+              "score_contribution": -6.0,
+              "immediate_reward": 0.0,
+              "immediate_geometry": 4.32,
+              "immediate_proxy": 4.32,
+              "death_penalty": 0,
+              "stop_reason": "unknown_frontier"
+            },
+            "alternatives": [
+              {
+                "action": 434,
+                "value": 9.33,
+                "terminal": "unknown_frontier",
+                "path": [
+                  434,
+                  641,
+                  1009,
+                  1400
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  51,
+                  51,
+                  68
+                ],
+                "final_risk": {
+                  "holes": 1,
+                  "height": 2,
+                  "central_top4": 0,
+                  "wells": 1
+                },
+                "reward_normalized": 2.0,
+                "final_geometry": 10.43,
+                "max_geometry": 11.6,
+                "score_contribution": -4.0,
+                "immediate_reward": 1.0,
+                "immediate_geometry": 10.79,
+                "immediate_proxy": 8.79,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              },
+              {
+                "action": 248,
+                "value": -3.21,
+                "terminal": "unknown_frontier",
+                "path": [
+                  248,
+                  434,
+                  1376,
+                  527
+                ],
+                "known_tokens_consumed": 3,
+                "remaining_known": 0,
+                "legal_counts": [
+                  51,
+                  51,
+                  68
+                ],
+                "final_risk": {
+                  "holes": 0,
+                  "height": 2,
+                  "central_top4": 0,
+                  "wells": 1
+                },
+                "reward_normalized": 3.0,
+                "final_geometry": 1.71,
+                "max_geometry": 4.32,
+                "score_contribution": -6.0,
+                "immediate_reward": 0.0,
+                "immediate_geometry": 4.32,
+                "immediate_proxy": 4.32,
+                "death_penalty": 0,
+                "stop_reason": "unknown_frontier"
+              }
+            ],
+            "override": true,
+            "reason": "public_rollout_advantage",
+            "bounded_search": true
+          }
+        }
+      ]
+    }
+  }
+}

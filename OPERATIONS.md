@@ -521,3 +521,5 @@
 2026-10-31T04:29:49+08:00 | Lookahead ablation: long16_E_C_BC completed all48 games; immutable configs
 2026-10-31T05:53:47+08:00 | Lookahead ablation: long16_D completed all16 games; immutable configs
 2026-10-31T05:54:48+08:00 | Lookahead ablation: final reason=completed; short complete=True, long complete=True; regressions=[0, 0]; services={'8080': 200, '8081': 200}; no training or production changes
+
+- 2026-10-31T05:59:08+08:00 — Final read-only interpretation after all 160 games: A/BC short +13.717%, E/A -2.702%; long E/C common +0.257% (14/16), deaths0→1; E/D common -0.395%, deaths2→1, survival CI crosses zero. Reconstructed 1,024 functional actions and all Full choices from saved components; no new rollouts/inference. Clarified uncomputed A/BC search-cost placeholders. Python33 +35 subtests and JS70 passed; automatic queue exited normally and initial report0647918 pushed. Elapsed11.77h, retained654.1MiB. Final evidence and mechanism report under reports/experiments/lookahead_ablation_*. No tuning, training, deployment or further queue.

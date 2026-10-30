@@ -225,7 +225,7 @@
 
 ### 机制聚合（自身访问状态，描述性，非逐块独立统计）
 
-**A**：根成员重叠计数`{}`；停止原因`{}`；公开Next消耗`{}`；选中根分项均值`{'immediate_geometry': 0.0, 'immediate_reward': 0.0, 'immediate_proxy': 0.0, 'final_geometry': 0.0, 'max_geometry': 0.0, 'score_contribution': 0.0, 'death_penalty': 0.0, 'value': 0.0}`。
+**A**：根成员重叠计数`{}`；停止原因`{}`；公开Next消耗`{}`；选中根分项均值 **NA（未运行搜索；原始 JSON 的零为占位）**。
 
 **B**：根成员重叠计数`{'bc': 2, 'bc+clear': 1, 'bc+geometry': 1, 'bc+geometry+clear': 1335, 'student': 62640, 'student+bc': 9339, 'student+bc+clear': 1921, 'student+bc+geometry': 793, 'student+bc+geometry+clear': 219658, 'student+clear': 12, 'student+geometry': 7827, 'student+geometry+clear': 16471}`；停止原因`{'depth_limit': 320000}`；公开Next消耗`{'1': 319984, '2': 16}`；选中根分项均值`{'immediate_geometry': 3.481320187500027, 'immediate_reward': 0.46331875, 'immediate_proxy': 2.5546826875000277, 'final_geometry': 3.481320187500027, 'max_geometry': 3.481320187500027, 'score_contribution': -0.9266375, 'death_penalty': 0.0, 'value': 3.4250127343750014}`。
 
@@ -235,7 +235,7 @@
 
 **E**：根成员重叠计数`{'bc': 106, 'bc+clear': 29, 'bc+geometry': 16, 'bc+geometry+clear': 1167, 'clear': 3, 'geometry': 764, 'geometry+clear': 77, 'student': 61497, 'student+bc': 9363, 'student+bc+clear': 1265, 'student+bc+geometry': 570, 'student+bc+geometry+clear': 220997, 'student+clear': 9, 'student+geometry': 7577, 'student+geometry+clear': 16560}`；停止原因`{'unknown_frontier': 320000}`；公开Next消耗`{'3': 320000}`；选中根分项均值`{'immediate_geometry': 2.9894148437500285, 'immediate_reward': 0.461103125, 'immediate_proxy': 2.067208593750011, 'final_geometry': 2.7449477812500316, 'max_geometry': 3.6749465312500105, 'score_contribution': -3.9394017062951816, 'death_penalty': 0.0, 'value': -0.27571729223267866}`。
 
-**BC**：根成员重叠计数`{}`；停止原因`{}`；公开Next消耗`{}`；选中根分项均值`{'immediate_geometry': 0.0, 'immediate_reward': 0.0, 'immediate_proxy': 0.0, 'final_geometry': 0.0, 'max_geometry': 0.0, 'score_contribution': 0.0, 'death_penalty': 0.0, 'value': 0.0}`。
+**BC**：根成员重叠计数`{}`；停止原因`{}`；公开Next消耗`{}`；选中根分项均值 **NA（未运行搜索；原始 JSON 的零为占位）**。
 
 ## long：整组完成=True
 
@@ -356,7 +356,7 @@
 
 **E**：根成员重叠计数`{'bc': 563, 'bc+clear': 206, 'bc+geometry': 48, 'bc+geometry+clear': 5724, 'clear': 22, 'geometry': 3763, 'geometry+clear': 352, 'student': 302904, 'student+bc': 46131, 'student+bc+clear': 6450, 'student+bc+geometry': 2944, 'student+bc+geometry+clear': 1085498, 'student+clear': 24, 'student+geometry': 36981, 'student+geometry+clear': 81415}`；停止原因`{'over': 2, 'unknown_frontier': 1573023}`；公开Next消耗`{'1': 1, '2': 1, '3': 1573023}`；选中根分项均值`{'immediate_geometry': 3.002796706981757, 'immediate_reward': 0.46093355159644633, 'immediate_proxy': 2.080929603788854, 'final_geometry': 2.7581423562880194, 'max_geometry': 3.6936602215477583, 'score_contribution': -3.938083428244288, 'death_penalty': 1.2714356097328396, 'value': 1.0149095931635357}`。
 
-**BC**：根成员重叠计数`{}`；停止原因`{}`；公开Next消耗`{}`；选中根分项均值`{'immediate_geometry': 0.0, 'immediate_reward': 0.0, 'immediate_proxy': 0.0, 'final_geometry': 0.0, 'max_geometry': 0.0, 'score_contribution': 0.0, 'death_penalty': 0.0, 'value': 0.0}`。
+**BC**：根成员重叠计数`{}`；停止原因`{}`；公开Next消耗`{}`；选中根分项均值 **NA（未运行搜索；原始 JSON 的零为占位）**。
 
 ## 预定共同局面样例：按时间顺序最早8个差异
 
@@ -368,3 +368,12 @@
 A使用Next3神经特征；B/D深度1仍有落子后出生和Hold的公开Next消费。深度对比不是纯Next3消融。额外几何/即时消行是组合候选，BC与一步评价也不能完全拆分，几何/正式分权重没有被单独消融。动作差异、分项代价和一条rollout成败不证明逐动作因果优劣。
 Bootstrap按seed抽样，非逐块独立样本；95%区间未多重校正。所有上限是右截断，均值/P10仅为min(寿命,cap)，[0,0]观测生存差不能证明无限或真实寿命相同。删一个seed范围只检验单seed敏感性，不代替新确认。
 NPZ保存每步动作/公开Next/全部根分项，详细trace采样按固定协议；真实Core/RNG仅用于正式对局与归档，不输入规划。未完成局保留checkpoint但不冒充死亡/完整上限结果。
+
+## 结果阅读说明与只读机制补充
+
+- A/BC 没有搜索评价；原始汇总 `cost_component_mean` 的零为未计算占位，不是实际代价。原始数据保持原样。
+- 所有 160 场均完成，没有缺失配对；正式确认旧 seed 未复用。本轮为固定消融，不是重新确认或选择线上算法。
+- 每局最高值均右截断；共同分数只比较同 seed 的共同存活块数，不把存活较短造成的总分损失隐藏。长局 Full 共同分比 BC +10.636%，平均总分仅 +7.394%；C 为 +10.333% / +10.333%，D 为 +11.096% / +1.357%。
+- 完整结论见 [最终报告](lookahead_ablation_final.md)。只读代数分析见 [机器日志](lookahead_ablation_mechanism.json)，可通过 `OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 .venv/bin/python -m training.analyze_lookahead_ablation` 重现；它不运行推理或新对局。
+- 该分析的动作差异条件于 Full 访问的状态，不能视作 A/B/C/D 自身轨迹的收益估计。功能局面验证 1,024 个重建动作完全一致；全部 Full 决策的 E 重建一致。根间长度差异、目标分项与按时间取例均保留。
+- 所有 Bootstrap 以 seed 为单位；区间未做多重比较校正，几何均值不能代替死亡证据。评分权重、两类额外候选及 Next 信息未做单项独立消融。
