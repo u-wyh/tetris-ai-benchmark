@@ -76,6 +76,14 @@ async function helper(page) {
   if(fs.existsSync(idFile)&&JSON.stringify(JSON.parse(fs.readFileSync(idFile)))!==JSON.stringify(identity))throw Error("resume identity changed");
   atomic(idFile,identity);
   const progress=py("training.evaluation.web_longrun_verify",["resume","--run",run,"--seed",String(seed)]);
+  const completedFile=path.join(run,"result.json");
+  if(fs.existsSync(completedFile)){
+    const done=JSON.parse(fs.readFileSync(completedFile));
+    if(done.pieces!==progress.pieces||done.cap!==cap||done.seed!==seed||(!done.right_censored&&!done.game_over)
+       ||(frozen&&done.frozen_checked_steps!==done.pieces))throw Error("completed result/resume identity mismatch");
+    //Preserve the original latency/CPU measurements; an idempotent resume does no new inference.
+    console.log(JSON.stringify(done));return;
+  }
   const browser=await chromium.launch({headless:true});
   try {
     const context=await browser.newContext({viewport:{width:1440,height:1100}});await install(context);

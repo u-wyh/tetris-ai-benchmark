@@ -113,7 +113,7 @@ curl -fsS "http://$web_ip:8081/api/health"
 真实Chromium复现测试（Playwright只用于验证，不是网页运行依赖）：
 
 ```bash
-npm install --prefix runs/model_based_planning_web/browser-runtime playwright
+npm install --prefix runs/model_based_planning_web/browser-runtime playwright@1.64.1
 node runs/model_based_planning_web/browser-runtime/node_modules/playwright/cli.js install chromium
 node tests/integration/lookahead-browser.cjs 300 3102841000 "http://$web_ip:8080" runs/model_based_planning_web/recheck300 0 '' frozen
 node tests/integration/lookahead-controls.cjs "http://$web_ip:8080" runs/model_based_planning_web/recheck-controls.json

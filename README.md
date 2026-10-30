@@ -1,11 +1,10 @@
 # Tetris AI Benchmark
 
-
-### Public Lookahead 网页实验候选
+## Public Lookahead 网页实验候选
 
 集成分支 `codex/public-lookahead-web` 基于冻结 `a3bfc02`，新增 **Public Lookahead (Experimental)**，默认仍为 V2 Hold-only。沿用8080网页/8081 CPU推理，冻结学生与BC提出候选，仅使用公开Next3有限规划；未训练新模型，也未替换冠军。
 
-推理服务还需 `runs/bc_sequence_transfer/supervised/checkpoints/epoch_01/model.zip`，SHA256 `e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914`。BC/PPO仍使用原发布清单路径与SHA256。启动命令沿用上文/下文 `training.web_inference`，必须从集成分支所在目录运行；`/api/health` 应包含 `lookahead`、学生SHA256及冻结规划配置。错误模型或规划源码身份会阻止启动，勿覆盖原文件。
+推理服务还需 `runs/bc_sequence_transfer/supervised/checkpoints/epoch_01/model.zip`，SHA256 `e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914`。BC/PPO仍使用原发布清单路径与SHA256。启动命令沿用下文 `training.web_inference`，必须从集成分支所在目录运行；`/api/health` 应包含 `lookahead`、学生SHA256及冻结规划配置。错误模型或规划源码身份会阻止启动，勿覆盖原文件。
 
 网页显示正式得分、消行、放置块数、服务器决策和HTTP耗时，另列动画倍率与实际播放吞吐。学生保留/规划覆盖/第三类计数仅在真实落子后累计，刷新可恢复。历史独立确认（另32seed、100K上限）共同得分比BC高10.536%，31/32达到上限；100K为右截断，仍有一次57409块死亡。详细验证、地址与性能见[集成报告](reports/experiments/model_based_planning_web_integration.md)和[网页说明](tetris-game/README.md)。
 

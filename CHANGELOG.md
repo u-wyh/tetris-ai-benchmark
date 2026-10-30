@@ -210,3 +210,8 @@
 - Added a bounded public-only frozen-policy hybrid controller, exact official transitions, hidden-state isolation tests and a preregistered evaluation queue. Result:confirmed; no policy training or new single-network claim.
 
 - Passed frozen20K/100K development and one-shot32-seed100K confirmation: common official score+10.536% vs BC (32/32 positive; bootstrap95% +10.426..10.641%),31/32 planner caps vs32/32 BC, one57409-piece death, zero<10K. Retained97.003% student common-window score; CPU mean/P95 26.248/38.250ms. Python25+35subtests and JS68 passed; hybrid candidate only, no deployment or training.
+
+### Public Lookahead web integration (2026-10-30)
+
+- Added Public Lookahead (Experimental) to8080/8081 with frozen student/BC and unchanged publicNext3 planning. Default and existing modes retained; completed-placement counters, reasons and separate HTTP/animation timings persist across refresh.
+- Real Chromium300 steps matched frozen planner/Core;10K browser HTTP/executor/Core checks passed. HTTP mean/P95/P99 23.92/30.90/36.40ms; server17.59/24.08/29.62ms. Pause/refresh,10s timeout/retry, stale responses and two independent browsers passed. Python33+35subtests/JS70 passed; no training or champion replacement.

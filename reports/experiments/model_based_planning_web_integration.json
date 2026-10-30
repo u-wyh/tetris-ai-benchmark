@@ -1,0 +1,1214 @@
+{
+  "at": "2026-10-30T15:20:34+08:00",
+  "baseline": "a3bfc02",
+  "implementation_git": "bb33ff7",
+  "branch": "codex/public-lookahead-web",
+  "health": {
+    "ready": true,
+    "models": {
+      "ppo": "eb859b8989efe8f3332393ed57110036979b03bb4d3d8d8316d080cf04b2da34",
+      "bc": "5f5613cb5eb4e80a02406b70902ad3d5c571eb8fe38bec4b40f73b34289ca663",
+      "student": "e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914"
+    },
+    "actionSpace": 1840,
+    "modes": [
+      "b12",
+      "bc",
+      "lookahead",
+      "ppo"
+    ],
+    "planner": {
+      "baseline": "a3bfc02",
+      "sha256": "0c2dbea26708fed866c5089eb102672b0cfccafeaa9f130b58086c847e8ffb08",
+      "config": {
+        "depth": 4,
+        "roots": 4,
+        "override_margin": 12.0
+      }
+    }
+  },
+  "source_sha256": {
+    "training/web_inference.py": "9f57cbe963ef5388fcd8e4abcefdf0d01831958706f19edfbc437176f8ec494e",
+    "training/public_lookahead.py": "0c2dbea26708fed866c5089eb102672b0cfccafeaa9f130b58086c847e8ffb08",
+    "tetris-game/game.js": "06a66f779b5ddbb07ae3c22635f249aadefbcd80410a61eefa6e44bd80332aab",
+    "tetris-game/index.html": "cf1a95c913398ea825288a78cb85ea5471fce2a87bc673b89501854103b6a6a5",
+    "training/evaluation/lookahead_web_verify.py": "19a4d9569129b34792bcf571316e8901045393007b1194be6a9571b881039120",
+    "training/evaluation/web_longrun_verify.py": "c3ab73bda0b7e7311d79a6c77976597aafe96c742da0b7a9529f36ed2e04d9d1",
+    "tests/integration/lookahead-browser.cjs": "a6a8c9aadb5585b03c6b1fc4acc804dcf75d6100212aff2b866aab2274d9571c",
+    "tests/integration/lookahead-controls.cjs": "544a94d237977669cbc978c2c0626119159a96ac858363928b1a2a04e7228820",
+    "tests/integration/lookahead_http.py": "66bcbaaf53b0e24bbb4d0df45d0acc26fccb161bdbfdad74afa5bebe535e2abb",
+    "ops/replace_web_service.py": "25a67b7eadf3efe4df5a371a825a490614ff853e29a3de050e1ba8c0b705ca11",
+    "ops/run_lookahead_web_validation.sh": "4419f1023ce1be6fe8f62d20d0febd284ee1ac5f2c5e3cd83921c01620b8b974"
+  },
+  "models": {
+    "student": "runs/bc_sequence_transfer/supervised/checkpoints/epoch_01/model.zip",
+    "bc": "runs/candidate_bc_next_stage/champion/model.zip",
+    "ppo": "runs/ppo_candidate_raw_30m_seed42/final/model.zip"
+  },
+  "staging300": {
+    "cap": 300,
+    "seed": 3102841000,
+    "origin": "http://100.91.227.47:8082",
+    "stagingPort": "8083",
+    "planner_sha256": "0c2dbea26708fed866c5089eb102672b0cfccafeaa9f130b58086c847e8ffb08",
+    "pieces": 300,
+    "right_censored": true,
+    "game_over": false,
+    "core_checked_steps": 300,
+    "frozen_checked_steps": 300,
+    "metrics": {
+      "http_ms": {
+        "count": 300,
+        "mean": 20.210000000397365,
+        "p95": 26.900000005960464,
+        "p99": 32
+      },
+      "server_ms": {
+        "count": 300,
+        "mean": 16.878636666666658,
+        "p95": 23.597,
+        "p99": 28.5
+      },
+      "compute_ms": {
+        "count": 300,
+        "mean": 16.88637333333334,
+        "p95": 23.604,
+        "p99": 28.506
+      },
+      "queue_ms": {
+        "count": 300,
+        "mean": 0.001043333333333334,
+        "p95": 0.001,
+        "p99": 0.002
+      },
+      "path_ms": {
+        "count": 300,
+        "mean": 2.063333332935969,
+        "p95": 2.699999988079071,
+        "p99": 2.9000000059604645
+      }
+    },
+    "server_cpu_percent": null,
+    "wall_ms": 15495.851821,
+    "resumed_from": 0,
+    "browser": "156.0.8078.4",
+    "errors": [],
+    "final": {
+      "state": {
+        "board": [
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            "O",
+            "O",
+            "S",
+            null,
+            null
+          ],
+          [
+            "I",
+            "L",
+            null,
+            "Z",
+            "Z",
+            "O",
+            "O",
+            "S",
+            "S",
+            null
+          ],
+          [
+            "I",
+            "L",
+            null,
+            "J",
+            "Z",
+            "Z",
+            "L",
+            "L",
+            "S",
+            "T"
+          ]
+        ],
+        "currentPiece": {
+          "type": "O",
+          "matrix": [
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "rotation": "0",
+          "x": 4,
+          "y": 0
+        },
+        "hold": "I",
+        "holdAvailable": true,
+        "next": [
+          "T",
+          "J",
+          "L"
+        ],
+        "score": 79600,
+        "level": 12,
+        "lines": 118,
+        "phase": "playing",
+        "gameOver": false,
+        "lock": {
+          "elapsedMs": 0,
+          "resetCount": 0,
+          "started": false
+        },
+        "placed": 300
+      },
+      "counts": {
+        "retained": 299,
+        "overrides": 1,
+        "third": 0
+      },
+      "text": "已落子决策：学生保留 299 · 规划覆盖 1（0.33%） · 第三类 0 · 本步：保留学生：替代收益未达门槛",
+      "timing": "AI 决策耗时：18.1 ms · HTTP 255.0 ms",
+      "animation": "动画速度 1× · 本局 0.00 块/秒（含动画与等待）"
+    }
+  },
+  "production300": {
+    "cap": 300,
+    "seed": 3102841000,
+    "origin": "http://100.91.227.47:8080",
+    "stagingPort": null,
+    "planner_sha256": "0c2dbea26708fed866c5089eb102672b0cfccafeaa9f130b58086c847e8ffb08",
+    "pieces": 300,
+    "right_censored": true,
+    "game_over": false,
+    "core_checked_steps": 300,
+    "frozen_checked_steps": 300,
+    "metrics": {
+      "http_ms": {
+        "count": 300,
+        "mean": 20.115999998648963,
+        "p95": 26.5,
+        "p99": 31.099999994039536
+      },
+      "server_ms": {
+        "count": 300,
+        "mean": 16.77855666666669,
+        "p95": 23.255,
+        "p99": 28.244
+      },
+      "compute_ms": {
+        "count": 300,
+        "mean": 16.777419999999985,
+        "p95": 23.255,
+        "p99": 28.243
+      },
+      "queue_ms": {
+        "count": 300,
+        "mean": 0.001043333333333334,
+        "p95": 0.001,
+        "p99": 0.002
+      },
+      "path_ms": {
+        "count": 300,
+        "mean": 2.092000000178814,
+        "p95": 2.5999999940395355,
+        "p99": 3.5
+      }
+    },
+    "server_cpu_percent": 34.273561763505654,
+    "server_rss_kb": 723416,
+    "wall_ms": 15535.280187,
+    "resumed_from": 0,
+    "browser": "156.0.8078.4",
+    "errors": [],
+    "final": {
+      "state": {
+        "board": [
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            "O",
+            "O",
+            "S",
+            null,
+            null
+          ],
+          [
+            "I",
+            "L",
+            null,
+            "Z",
+            "Z",
+            "O",
+            "O",
+            "S",
+            "S",
+            null
+          ],
+          [
+            "I",
+            "L",
+            null,
+            "J",
+            "Z",
+            "Z",
+            "L",
+            "L",
+            "S",
+            "T"
+          ]
+        ],
+        "currentPiece": {
+          "type": "O",
+          "matrix": [
+            [
+              1,
+              1
+            ],
+            [
+              1,
+              1
+            ]
+          ],
+          "rotation": "0",
+          "x": 4,
+          "y": 0
+        },
+        "hold": "I",
+        "holdAvailable": true,
+        "next": [
+          "T",
+          "J",
+          "L"
+        ],
+        "score": 79600,
+        "level": 12,
+        "lines": 118,
+        "phase": "playing",
+        "gameOver": false,
+        "lock": {
+          "elapsedMs": 0,
+          "resetCount": 0,
+          "started": false
+        },
+        "placed": 300
+      },
+      "counts": {
+        "retained": 299,
+        "overrides": 1,
+        "third": 0
+      },
+      "text": "已落子决策：学生保留 299 · 规划覆盖 1（0.33%） · 第三类 0 · 本步：保留学生：替代收益未达门槛",
+      "timing": "AI 决策耗时：14.0 ms · HTTP 254.9 ms",
+      "animation": "动画速度 1× · 本局 0.00 块/秒（含动画与等待）"
+    }
+  },
+  "production10000": {
+    "cap": 10000,
+    "seed": 3102841001,
+    "origin": "http://100.91.227.47:8080",
+    "stagingPort": null,
+    "planner_sha256": "0c2dbea26708fed866c5089eb102672b0cfccafeaa9f130b58086c847e8ffb08",
+    "pieces": 10000,
+    "right_censored": true,
+    "game_over": false,
+    "core_checked_steps": 10000,
+    "frozen_checked_steps": 0,
+    "metrics": {
+      "http_ms": {
+        "count": 10000,
+        "mean": 23.92009999975562,
+        "p95": 30.900000005960464,
+        "p99": 36.39999997615814
+      },
+      "server_ms": {
+        "count": 10000,
+        "mean": 17.59487959999997,
+        "p95": 24.076,
+        "p99": 29.624
+      },
+      "compute_ms": {
+        "count": 10000,
+        "mean": 17.59383630000005,
+        "p95": 24.075,
+        "p99": 29.622
+      },
+      "queue_ms": {
+        "count": 10000,
+        "mean": 0.0010335000000000149,
+        "p95": 0.001,
+        "p99": 0.002
+      },
+      "path_ms": {
+        "count": 10000,
+        "mean": 1.9740599999338388,
+        "p95": 2.5,
+        "p99": 2.800000011920929
+      }
+    },
+    "server_cpu_percent": 53.754143220270564,
+    "server_rss_kb": 724560,
+    "wall_ms": 345245.704293,
+    "resumed_from": 0,
+    "browser": "156.0.8078.4",
+    "errors": [],
+    "final": {
+      "state": {
+        "board": [
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            null,
+            null,
+            "Z",
+            "Z",
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            "I",
+            "Z",
+            "Z",
+            "Z",
+            "Z",
+            null,
+            null,
+            null,
+            null
+          ],
+          [
+            null,
+            "I",
+            "I",
+            "Z",
+            "Z",
+            "L",
+            null,
+            null,
+            "S",
+            null
+          ],
+          [
+            null,
+            "I",
+            "I",
+            "L",
+            "L",
+            "L",
+            "T",
+            null,
+            "S",
+            "S"
+          ],
+          [
+            null,
+            "I",
+            "I",
+            "J",
+            "J",
+            "T",
+            "T",
+            "T",
+            "T",
+            "S"
+          ]
+        ],
+        "currentPiece": {
+          "type": "S",
+          "matrix": [
+            [
+              0,
+              1,
+              1
+            ],
+            [
+              1,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "rotation": "0",
+          "x": 3,
+          "y": 0
+        },
+        "hold": "O",
+        "holdAvailable": true,
+        "next": [
+          "J",
+          "I",
+          "T"
+        ],
+        "score": 92344800,
+        "level": 400,
+        "lines": 3997,
+        "phase": "playing",
+        "gameOver": false,
+        "lock": {
+          "elapsedMs": 0,
+          "resetCount": 0,
+          "started": false
+        },
+        "placed": 10000
+      },
+      "counts": {
+        "retained": 9933,
+        "overrides": 67,
+        "third": 23
+      },
+      "text": "已落子决策：学生保留 9933 · 规划覆盖 67（0.67%） · 第三类 23 · 本步：保留学生：替代收益未达门槛",
+      "timing": "AI 决策耗时：13.0 ms · HTTP 389.6 ms",
+      "animation": "动画速度 1× · 本局 0.00 块/秒（含动画与等待）"
+    }
+  },
+  "controls": {
+    "checks": {
+      "pause_resume_refresh": true,
+      "previous_modes": true,
+      "old_request_isolation": true,
+      "failure_retry": true,
+      "timeout_retry": true,
+      "concurrent_browsers": true,
+      "animation_separate_from_decision": true
+    },
+    "origin": "http://100.91.227.47:8080",
+    "timeout_ms": 10049,
+    "concurrent": {
+      "browsers": 2,
+      "pieces_each": 64,
+      "deterministic": true,
+      "counts": {
+        "retained": 64,
+        "overrides": 0,
+        "third": 0
+      },
+      "http_ms": {
+        "count": 128,
+        "mean": 29.414843749487773,
+        "p95": 43.70000001788139,
+        "p99": 55.400000005960464
+      },
+      "server_ms": {
+        "count": 128,
+        "mean": 20.159328124999995,
+        "p95": 29.337,
+        "p99": 42.505
+      },
+      "queue_ms": {
+        "count": 128,
+        "mean": 2.186609375,
+        "p95": 10.003,
+        "p99": 16.151
+      }
+    },
+    "animation": [
+      {
+        "speed": 0.25,
+        "first": 21,
+        "pieces": 0,
+        "decision": "AI 决策耗时：16.3 ms · HTTP 25.7 ms",
+        "playback": "动画速度 0.25× · 本局 0.00 块/秒（含动画与等待）"
+      },
+      {
+        "speed": 8,
+        "first": 21,
+        "pieces": 6,
+        "decision": "AI 决策耗时：15.3 ms · HTTP 20.7 ms",
+        "playback": "动画速度 8× · 本局 1.99 块/秒（含动画与等待）"
+      }
+    ]
+  },
+  "http_boundary": {
+    "checks": {
+      "preflight": 204,
+      "bad_origin": 403,
+      "hidden_bag": 400,
+      "next4": 400,
+      "wrong_mask": 400,
+      "missing_mask": 400
+    },
+    "concurrent_requests": 8,
+    "statuses": [
+      200,
+      503,
+      503,
+      200,
+      503,
+      200,
+      503,
+      200
+    ],
+    "accepted_same_action": true,
+    "health": 200
+  },
+  "deployment": {
+    "api": {
+      "kind": "api",
+      "host": "100.91.227.47",
+      "port": 8081,
+      "old_pid": 200410,
+      "old_command": [
+        ".venv/bin/python",
+        "-m",
+        "training.web_inference",
+        "--host",
+        "100.91.227.47",
+        "--port",
+        "8081",
+        "--web-origin",
+        "http://100.91.227.47:8080"
+      ],
+      "old_cwd": "/home/wyh/projects/tetris-ai-benchmark",
+      "new_pid": 485264,
+      "ready_to_replace_at": 1793342172.384177,
+      "bind_gap_ms": 52.51685998518951,
+      "result": "serving",
+      "ready_at": 1793342172.4418118
+    },
+    "web": {
+      "kind": "web",
+      "host": "100.91.227.47",
+      "port": 8080,
+      "old_pid": 1936,
+      "old_command": [
+        "/usr/bin/python3",
+        "-m",
+        "http.server",
+        "8080",
+        "--bind",
+        "100.91.227.47",
+        "--directory",
+        "tetris-game"
+      ],
+      "old_cwd": "/home/wyh/projects/tetris-ai-benchmark",
+      "new_pid": 485322,
+      "ready_to_replace_at": 1793342181.851291,
+      "bind_gap_ms": 27.43484001257457,
+      "result": "serving",
+      "ready_at": 1793342181.8825717
+    }
+  },
+  "regressions": {
+    "python_tests": 33,
+    "parity_subtests": 35,
+    "js_tests": 70,
+    "logs_sha256": {
+      "python-regression.log": "24856f0d80a13be9282e5b21603c6d9c112ea63e6b4428e3a08683e5f9b48d8f",
+      "js-regression.log": "3a22e5845b0f6663b9e055b2a161fd58b0dddeaa347627152e43c70c1b6f31fd"
+    }
+  },
+  "environment": {
+    "python": "3.12.3",
+    "torch": "2.10.0+cu130",
+    "numpy": "2.5.3",
+    "browser": "156.0.8078.4",
+    "inference_device": "cpu",
+    "playwright": "1.64.1",
+    "node": "v24.18.0",
+    "playwright_lock_sha256": "d9d166097c8c8d5aeb57796512a9164447db2f5dd91d87b5d96e9d6a406e0e7d"
+  }
+}
