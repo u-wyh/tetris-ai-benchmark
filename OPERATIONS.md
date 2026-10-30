@@ -512,3 +512,12 @@
 2026-10-30T15:13:45.556848+08:00 | Public Lookahead web: production Chromium300 frozen-action/Core check, capped10K stability run and UI/fault/concurrent-browser suite completed. Evidence:runs/model_based_planning_web/production300/result.json,production10000/result.json,controls.json.
 2026-10-30T15:20:34+08:00 | Public Lookahead web: production10K fully Core-verified,300 frozen-action checks passed, all7 live control checks and2 independent64-step browsers passed. HTTP mean/P95/P99 23.92/30.90/36.40ms; serverCPU 53.75% of one core, RSS 707.58MiB. Explicit8-request saturation returned4x200/4x503 then healthy200; no500. Staging and validation tmux exited; production8080/8081 remain. Reports/evidence generated; completed result hashes preserved.
 2026-10-30T18:19:51+08:00 | Lookahead ablation: created isolated codex/lookahead-ablation from9cc7811; freeze A/B/C/D/E only, no production planner/model/service changes. Wall budget starts at branch-creation reflog epoch1793355159.0; independent run/model links prepared.
+2026-10-30T18:34:42+08:00 | Lookahead ablation: protocol frozen before functional/development data; A/B/C/D/E only, immutable weights, fresh paired seeds, E/C/BC long priority then D
+2026-10-30T18:34:42+08:00 | Lookahead ablation: fixed-budget tmux queue started/resumed; source/model identities checked
+2026-10-30T18:35:08+08:00 | Lookahead ablation: functional passed: E/original exact256 states, simulation3241, hidden80
+2026-10-30T20:52:22+08:00 | Lookahead ablation: short16 completed all96 games; immutable configs
+
+- 2026-10-31T01:49:12+08:00 — Added read-only saved-trace algebraic analysis; B/C/D/E reconstruction matches 1,024 previously executed functional actions. No inference, new trajectories or frozen source changes. Short Full states: 2,162/320,000 overrides; stored objective reductions are geometry/reward terms, not explicit known-death penalty. Conditional action differences are explanatory only. Evidence: runs/lookahead_ablation/derived_mechanism.json; training/analyze_lookahead_ablation.py. Long analysis remains provisional until all planned games complete.
+2026-10-31T04:29:49+08:00 | Lookahead ablation: long16_E_C_BC completed all48 games; immutable configs
+2026-10-31T05:53:47+08:00 | Lookahead ablation: long16_D completed all16 games; immutable configs
+2026-10-31T05:54:48+08:00 | Lookahead ablation: final reason=completed; short complete=True, long complete=True; regressions=[0, 0]; services={'8080': 200, '8081': 200}; no training or production changes
