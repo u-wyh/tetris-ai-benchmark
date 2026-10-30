@@ -61,6 +61,8 @@ const pauseButton = document.querySelector("#pauseButton");
 const retryAIButton = document.querySelector("#retryAIButton");
 const aiDecisionInfo = document.querySelector("#aiDecisionInfo");
 const hybridInfo = document.querySelector("#hybridInfo");
+const lookaheadInfo = document.querySelector("#lookaheadInfo");
+const aiPlaybackInfo = document.querySelector("#aiPlaybackInfo");
 const placedEl = document.querySelector("#placedCount");
 const elapsedEl = document.querySelector("#elapsedTime");
 const placedLabel = document.querySelector("#placedLabel");
@@ -105,6 +107,9 @@ let aiExpectedAction = null;
 let aiAbortController = null;
 let aiRequestFailed = false;
 let hybridCounts = { ppo: 0, bc: 0 };
+let lookaheadCounts = { retained: 0, overrides: 0, third: 0 };
+let pendingLookahead = null;
+let lookaheadReason = "—";
 let placedCount = 0;
 let survivalMs = 0;
 let legacyAI = false;
@@ -286,6 +291,9 @@ function resetGame({ seed = generateSeed() } = {}) {
   aiExpectedAction = null;
   aiRequestFailed = false;
   hybridCounts = { ppo: 0, bc: 0 };
+  lookaheadCounts = { retained: 0, overrides: 0, third: 0 };
+  pendingLookahead = null;
+  lookaheadReason = "—";
   if (aiDecisionInfo) aiDecisionInfo.textContent = "AI 决策耗时：—";
   if (retryAIButton) retryAIButton.hidden = true;
   updateDecisionInfo();
@@ -626,7 +634,7 @@ function acceptTraditionalAction(actionId, rngState) {
 }
 
 function neuralMode() {
-  return aiMode === "ppo" || aiMode === "bc" || aiMode === "b12";
+  return aiMode === "ppo" || aiMode === "bc" || aiMode === "b12" || aiMode === "lookahead";
 }
 
 function cancelNeuralRequest() {
@@ -636,8 +644,8 @@ function cancelNeuralRequest() {
   aiPlanning = false;
 }
 
-function updateDecisionInfo(milliseconds = null, source = null) {
-  if (aiDecisionInfo && milliseconds !== null) aiDecisionInfo.textContent = `AI 决策耗时：${milliseconds.toFixed(1)} ms`;
+function updateDecisionInfo(milliseconds = null, source = null, httpMs = null) {
+  if (aiDecisionInfo && milliseconds !== null) aiDecisionInfo.textContent = `AI 决策耗时：${milliseconds.toFixed(1)} ms${httpMs === null ? "" : ` · HTTP ${httpMs.toFixed(1)} ms`}`;
   if (hybridInfo) {
     hybridInfo.hidden = aiMode !== "b12";
     if (aiMode === "b12") {
@@ -646,6 +654,12 @@ function updateDecisionInfo(milliseconds = null, source = null) {
       hybridInfo.textContent = `本步：${source ? source.toUpperCase() : "—"} · PPO ${hybridCounts.ppo} / BC ${hybridCounts.bc} · PPO 采用率 ${percent}%`;
     }
   }
+  if (lookaheadInfo) {
+    lookaheadInfo.hidden = aiMode !== "lookahead";
+    const total = lookaheadCounts.retained + lookaheadCounts.overrides;
+    const ratio = total ? (100 * lookaheadCounts.overrides / total).toFixed(2) : "0.00";
+    lookaheadInfo.textContent = `已落子决策：学生保留 ${lookaheadCounts.retained} · 规划覆盖 ${lookaheadCounts.overrides}（${ratio}%） · 第三类 ${lookaheadCounts.third} · 本步：${lookaheadReason}`;
+  }
 }
 
 function planNeural() {
@@ -653,6 +667,8 @@ function planNeural() {
   const observation = getPublicObservation();
   const legalActionIds = getLegalPlacements().map(item => item.actionId);
   const requestId = ++aiRequestId;
+  const requestMode = aiMode;
+  const httpStarted = performance.now();
   const pieceIndex = placedCount;
   const controller = new AbortController();
   aiAbortController = controller;
@@ -668,13 +684,26 @@ function planNeural() {
     if (!response.ok) throw new Error(payload.error || `HTTP ${response.status}`);
     return payload;
   }).then(result => {
-    if (requestId !== aiRequestId || state !== "playing" || pieceIndex !== placedCount) return;
+    if (requestId !== aiRequestId || requestMode !== aiMode || state !== "playing" || pieceIndex !== placedCount) return;
     aiPlanning = false;
     aiAbortController = null;
     if (!legalActionIds.includes(result.actionId)) throw new Error("模型返回非法动作");
     acceptTraditionalAction(result.actionId, aiRngState);
     if (!aiPlan.length) throw new Error("网页无法执行模型动作");
-    if (aiMode === "b12" && (result.source === "ppo" || result.source === "bc")) {
+    if (aiMode === "lookahead") {
+      if (typeof result.override !== "boolean" || typeof result.thirdAction !== "boolean"
+          || !legalActionIds.includes(result.studentActionId) || !legalActionIds.includes(result.bcActionId)
+          || result.override !== (result.actionId !== result.studentActionId)
+          || result.thirdAction !== ![result.studentActionId, result.bcActionId].includes(result.actionId)) {
+        aiPlan = [];
+        throw new Error("规划器响应身份不一致");
+      }
+      pendingLookahead = { pieceIndex, override: result.override, third: result.thirdAction };
+      lookaheadReason = result.reason === "public_rollout_advantage"
+        ? "公开后续布局代价更优" : "保留学生：替代收益未达门槛";
+      updateDecisionInfo(result.decisionMs, null, performance.now() - httpStarted);
+      aiStatus.textContent = `Public Lookahead · 动作 ${result.actionId} · ${lookaheadReason}`;
+    } else if (aiMode === "b12" && (result.source === "ppo" || result.source === "bc")) {
       hybridCounts[result.source]++;
       updateDecisionInfo(result.decisionMs, result.source);
       aiStatus.textContent = `B12 · 本步 ${result.source.toUpperCase()} · 动作 ${result.actionId}`;
@@ -730,13 +759,25 @@ function updateTraditional(delta) {
   else if (action === "Right") move(1);
   else if (action === "RotateCW") rotate();
   else if (action === "Down") softDrop(false);
-  else if (action === "HardDrop") hardDrop();
+  else if (action === "HardDrop") {
+    const decision = pendingLookahead;
+    pendingLookahead = null;
+    hardDrop();
+    if (aiMode === "lookahead" && decision && placedCount === decision.pieceIndex + 1) {
+      lookaheadCounts[decision.override ? "overrides" : "retained"]++;
+      if (decision.third) lookaheadCounts.third++;
+      updateDecisionInfo();
+      saveGame();
+    }
+  }
 }
 
 function setMode(mode) {
-  if (!["human", "v1", "hold", "beam", "ppo", "bc", "b12"].includes(mode)) return;
+  if (!["human", "v1", "hold", "beam", "ppo", "bc", "b12", "lookahead"].includes(mode)) return;
   cancelNeuralRequest();
   aiMode = mode;
+  pendingLookahead = null;
+  lookaheadReason = "—";
   legacyAI = false;
   aiEnabled = mode !== "human";
   aiRequestId++;
@@ -831,6 +872,7 @@ function updateStats() {
   if (placedEl) placedEl.textContent = formatNumber(placedCount);
   if (placedLabel) placedLabel.textContent = aiEnabled ? "Benchmark 放置方块" : "放置方块";
   if (elapsedLabel) elapsedLabel.textContent = aiEnabled ? "演示时间（真实）" : "存活时间（真实）";
+  if (aiPlaybackInfo) aiPlaybackInfo.textContent = `动画速度 ${Number(demoSpeed?.value) || 1}× · 本局 ${survivalMs ? (1000 * placedCount / survivalMs).toFixed(2) : "0.00"} 块/秒（含动画与等待）`;
   if (elapsedEl) elapsedEl.textContent = `${Math.floor(survivalMs / 60000)}:${String(Math.floor(survivalMs / 1000) % 60).padStart(2, "0")}`;
 }
 
@@ -860,6 +902,7 @@ function saveGame() {
       legacyAI,
       aiMode,
       hybridCounts,
+      lookaheadCounts,
       placedCount,
       survivalMs,
       demoSpeed: Number(demoSpeed?.value) || 1
@@ -882,7 +925,7 @@ function validSavedGame(saved) {
   return [1, 2, 3, 4, 5, 6].includes(saved?.version)
     && (saved.version < 4 || (validRngState(saved.initialSeed) && validRngState(saved.gameplayRngState) && validRngState(saved.aiRngState)))
     && (saved.version < 5 || (Number.isFinite(saved.lockElapsed) && saved.lockElapsed >= 0 && Number.isInteger(saved.lockResetCount) && saved.lockResetCount >= 0 && saved.lockResetCount <= MAX_LOCK_RESETS && typeof saved.lockStarted === "boolean"))
-    && (saved.version < 6 || (["human", "v1", "hold", "beam", "ppo", "bc", "b12"].includes(saved.aiMode) && Number.isInteger(saved.placedCount) && saved.placedCount >= 0 && Number.isFinite(saved.survivalMs) && saved.survivalMs >= 0 && Number.isFinite(saved.demoSpeed) && saved.demoSpeed >= 0.25 && saved.demoSpeed <= 8))
+    && (saved.version < 6 || (["human", "v1", "hold", "beam", "ppo", "bc", "b12", "lookahead"].includes(saved.aiMode) && Number.isInteger(saved.placedCount) && saved.placedCount >= 0 && Number.isFinite(saved.survivalMs) && saved.survivalMs >= 0 && Number.isFinite(saved.demoSpeed) && saved.demoSpeed >= 0.25 && saved.demoSpeed <= 8))
     && (saved.version === 1 || ((saved.heldType === null || validPieceType(saved.heldType)) && typeof saved.holdUsed === "boolean"))
     && Array.isArray(saved.board)
     && saved.board.length === ROWS
@@ -930,6 +973,12 @@ function restoreGame() {
     aiMode = saved.version >= 6 ? saved.aiMode : "human";
     hybridCounts = saved.hybridCounts && Number.isInteger(saved.hybridCounts.ppo) && Number.isInteger(saved.hybridCounts.bc)
       ? { ppo: saved.hybridCounts.ppo, bc: saved.hybridCounts.bc } : { ppo: 0, bc: 0 };
+    const counts = saved.lookaheadCounts;
+    lookaheadCounts = counts && ["retained", "overrides", "third"].every(k => Number.isSafeInteger(counts[k]) && counts[k] >= 0)
+      && counts.third <= counts.overrides && counts.retained + counts.overrides <= saved.placedCount
+      ? { retained: counts.retained, overrides: counts.overrides, third: counts.third }
+      : { retained: 0, overrides: 0, third: 0 };
+    pendingLookahead = null;
     updateDecisionInfo();
     aiEnabled = legacyAI || aiMode !== "human";
     placedCount = saved.version >= 6 ? saved.placedCount : 0;

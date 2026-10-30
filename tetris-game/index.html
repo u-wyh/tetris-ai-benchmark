@@ -50,6 +50,7 @@
               <option value="ppo">PPO 30M · 强化学习</option>
               <option value="bc">BC Champion · 生存优先</option>
               <option value="b12">Hybrid B12 · 高分混合</option>
+              <option value="lookahead">Public Lookahead (Experimental)</option>
             </select>
           </label>
           <label>固定 Seed <input id="seedInput" type="number" min="0" max="4294967295" step="1" placeholder="随机"></label>
@@ -60,6 +61,8 @@
             <button id="retryAIButton" type="button" hidden>重试 AI</button>
           </div>
           <p id="aiDecisionInfo" class="ai-decision-info">决策耗时：—</p>
+          <p id="aiPlaybackInfo" class="ai-decision-info">动画速度 1× · 本局 0.00 块/秒（含动画与等待）</p>
+          <p id="lookaheadInfo" class="ai-decision-info" hidden></p>
           <p id="hybridInfo" class="ai-decision-info" hidden>本步：— · PPO 0 / BC 0</p>
         </section>
         <section class="panel next-panel">
@@ -120,6 +123,17 @@
           <div class="key-row"><span><kbd>C</kbd></span><span>暂存方块</span></div>
           <div class="key-row"><span><kbd>P</kbd></span><span>暂停</span></div>
           <div class="key-row ai-hint"><span><kbd>AI</kbd></span><span>自动挑战高分</span></div>
+        </section>
+        <section class="panel benchmark-panel">
+          <div class="panel-heading"><span>Public Lookahead · 实验候选</span><span class="tiny-label">独立确认</span></div>
+          <p>冻结学生 + BC 建议 + 公开 Next 3 有限规划。未训练新网络，未替换 BC Champion；短期可行不保证长期安全。</p>
+          <p>另一组全新 32 seed，每局 100K：共同存活正式得分比同组 BC 高 <strong>10.536%</strong>（32/32 正向；seed Bootstrap 95%：+10.426%～+10.641%）。</p>
+          <table><thead><tr><th>算法</th><th>平均已观察存活</th><th>达到 100K</th></tr></thead><tbody>
+            <tr><td>BC</td><td>100,000</td><td>32/32</td></tr>
+            <tr><td>高分学生</td><td>75,347</td><td>18/32</td></tr>
+            <tr><td>Public Lookahead</td><td>98,669</td><td>31/32</td></tr>
+          </tbody></table>
+          <p>100K 达到上限属于右截断。规划器有一局在 57,409 块死亡；共同得分约保留学生的 97%。本机历史 CPU 平均/P95 为 26.25/38.25ms，网页 HTTP 与动画另计。</p>
         </section>
         <section class="panel benchmark-panel">
           <div class="panel-heading"><span>历史独立评测</span><span class="tiny-label">32 SEEDS · 100K</span></div>

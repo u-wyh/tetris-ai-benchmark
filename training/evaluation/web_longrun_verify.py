@@ -67,6 +67,9 @@ def compare(core, browser, step):
     for field in ("board", "currentPiece", "next", "hold", "score", "level", "lines", "gameOver"):
         if browser[field] != public[field]:
             raise AssertionError(f"State drift at piece {step}, field {field}")
+    for field in ("holdAvailable", "phase"):
+        if field in browser and browser[field] != public[field]:
+            raise AssertionError(f"State drift at piece {step}, field {field}")
     if browser["placed"] != step:
         raise AssertionError(f"Browser piece count drift at piece {step}")
 

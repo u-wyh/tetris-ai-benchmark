@@ -146,3 +146,41 @@ test("inference timeout stops the AI and offers Retry", async () => {
   assert.equal(g.run("retryAIButton.hidden"), false);
   assert.match(g.run("aiStatus.textContent"), /请求超时/);
 });
+
+test("lookahead counts executed placements, preserves them on refresh and ignores cancelled responses", async () => {
+  const g = prepare();
+  g.run(`fetch = async () => {const a=getLegalPlacements()[0].actionId;
+    return {ok:true,json:async()=>({actionId:a,studentActionId:a,bcActionId:a,
+      override:false,thirdAction:false,source:"lookahead",reason:"retain_student_within_margin",decisionMs:25})};
+  }; setMode("lookahead"); resetGame({seed:3102841000});`);
+  await flush();
+  assert.equal(g.run("lookaheadCounts.retained"), 0);
+  g.run("togglePause(); togglePause(); while(placedCount===0) updateTraditional(1000); saveGame()");
+  assert.equal(g.run("lookaheadCounts.retained"), 1);
+  assert.equal(g.run("lookaheadCounts.overrides"), 0);
+  assert.match(g.run("lookaheadInfo.textContent"), /学生保留 1/);
+  assert.match(g.run("aiDecisionInfo.textContent"), /HTTP/);
+  const restored = game(g.storage);
+  assert.equal(restored.run("aiMode"), "lookahead");
+  assert.equal(restored.run("lookaheadCounts.retained"), 1);
+  const cancelled = prepare();
+  cancelled.run(`fetch=()=>new Promise(resolve=>{globalThis.done=resolve});
+    setMode("lookahead"); resetGame({seed:3102841000}); setMode("human");
+    done({ok:true,json:async()=>({actionId:21,override:true,thirdAction:true,decisionMs:1})});`);
+  await flush();
+  assert.equal(cancelled.run("aiPlan.length"), 0);
+  assert.equal(cancelled.run("lookaheadCounts.overrides"), 0);
+});
+
+test("lookahead records an override and third candidate only on actual lock", async () => {
+  const g = prepare();
+  g.run(`fetch=async()=>{const ids=getLegalPlacements().map(p=>p.actionId);
+    return {ok:true,json:async()=>({actionId:ids[2],studentActionId:ids[0],bcActionId:ids[1],
+      override:true,thirdAction:true,source:"lookahead",reason:"public_rollout_advantage",decisionMs:30})};
+  };setMode("lookahead");resetGame({seed:3102841000});`);
+  await flush();
+  g.run("while(placedCount===0) updateTraditional(1000)");
+  assert.equal(g.run("lookaheadCounts.overrides"), 1);
+  assert.equal(g.run("lookaheadCounts.third"), 1);
+  assert.match(g.run("lookaheadInfo.textContent"), /100.00%/);
+});

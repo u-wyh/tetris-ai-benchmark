@@ -20,7 +20,7 @@ def browser_states(seed, actions):
     return json.loads(process.stdout)["states"]
 
 
-@pytest.mark.parametrize("mode", ["ppo", "bc", "b12"])
+@pytest.mark.parametrize("mode", ["ppo", "bc", "b12", "lookahead"])
 def test_fixed_seed_browser_python_core_and_model_actions(engine, mode):
     seed = 12345
     core = TetrisCore(seed)
@@ -57,3 +57,27 @@ def test_request_rejects_changed_browser_mask(engine):
     public = TetrisCore(12345).get_public_observation()
     with pytest.raises(ValueError, match="legal actions differ"):
         engine.decide("ppo", public, [1, 2])
+
+
+def test_lookahead_requires_public_next3_and_official_mask(engine):
+    import copy
+    from concurrent.futures import ThreadPoolExecutor
+    core = TetrisCore(3102841000)
+    public = core.get_public_observation()
+    before = copy.deepcopy(public)
+    legal = [p["actionId"] for p in core.get_legal_placements()]
+    with pytest.raises(ValueError, match="legal action list"):
+        engine.decide("lookahead", public)
+    with pytest.raises(ValueError, match="public observation"):
+        engine.decide("lookahead", {**public, "bag": ["I"]}, legal)
+    with pytest.raises(ValueError, match="Hold/Next"):
+        engine.decide("lookahead", {**public, "next": public["next"] + ["I"]}, legal)
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        rows = list(pool.map(lambda _: engine.decide("lookahead", public, legal), range(4)))
+    assert len({r["actionId"] for r in rows}) == 1
+    for row in rows:
+        assert row["boundedSearch"] and row["source"] == "lookahead"
+        assert row["override"] == (row["actionId"] != row["studentActionId"])
+        assert row["thirdAction"] == (row["actionId"] not in (row["studentActionId"], row["bcActionId"]))
+        assert row["decisionMs"] >= row["queueMs"] >= 0
+    assert public == before

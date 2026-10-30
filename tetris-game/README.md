@@ -86,3 +86,37 @@ node tests/integration/web-ai-longrun.cjs ppo 10000 12345 "$(tailscale ip -4 | h
 ```
 
 该脚本以不渲染动画的大步进运行，测得的是验证吞吐量；网页正常播放的速度仍由演示滑块控制。正式长局测试结果见 `reports/experiments/web_longrun_validation.md`。
+
+
+## Public Lookahead (Experimental)
+
+独立可选混合控制器；默认选项保持V2 Hold-only，Human/V1/V2/PPO/BC/B12继续可用。网页执行官方1840 Action ID的BFS路径，8081加载冻结高分学生epoch1与BC；规划源码和配置固定于a3bfc02（4根、最多4落子、阈值12），不读取隐藏Bag/RNG/Next4+，不训练模型。
+
+- 选择新模式后填Seed并重新开始。得分、消行、块数沿用正式规则。
+- “AI决策耗时”含服务器排队、预处理和规划；HTTP耗时含网络和客户端响应解析，与动画倍率分开。动画倍率只改变播放速度，“块/秒”包含动画与等待，不代表纯推理速度。
+- 保留/覆盖次数与第三类次数只在真实落子后累计。第三类是覆盖的子集：动作同时不同于学生与BC首选。比例分母为保留+覆盖；切换别的模式不计入，重新开始清零。刷新保留已落子计数，尚未执行的决策不计数。
+- 暂停会取消在途请求；恢复后继续。请求失败或10秒超时会停止自动请求并显示“重试AI”，旧请求不能在切换模式/重新开始后落子。
+- 网页新增独立历史结果区：32个全新确认seed，最多100K；规划31/32达到上限、BC32/32，规划共同窗口正式得分+10.536%。达到上限为右截断，实验候选仍可能死亡；这不是当前网页对局成绩，也不与旧历史评测混为同一组。
+
+服务从集成分支目录启动（先按根README准备虚拟环境与三份冻结模型）：
+
+```bash
+web_ip=$(tailscale ip -4)
+mkdir -p runs/web_inference
+tmux new-session -d -s tetris-web -c "$PWD"   "python3 -m http.server 8080 --bind $web_ip --directory tetris-game >> runs/web_inference/static.log 2>&1"
+tmux new-session -d -s tetris-web-inference -c "$PWD"   "env OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 .venv/bin/python -m training.web_inference --host $web_ip --port 8081 --web-origin http://$web_ip:8080 >> runs/web_inference/service.log 2>&1"
+curl -fsS "http://$web_ip:8081/api/health"
+```
+
+已有服务时先检查tmux/端口，勿重复绑定。浏览器需能访问同一Tailscale设备的8080与8081，来源必须匹配配置。服务以单线程Torch执行并串行访问模型；最多4个在途推理请求，超出返回503，网页提供重试。不会按浏览器保存服务端游戏状态。
+
+真实Chromium复现测试（Playwright只用于验证，不是网页运行依赖）：
+
+```bash
+npm install --prefix runs/model_based_planning_web/browser-runtime playwright
+node runs/model_based_planning_web/browser-runtime/node_modules/playwright/cli.js install chromium
+node tests/integration/lookahead-browser.cjs 300 3102841000 "http://$web_ip:8080" runs/model_based_planning_web/recheck300 0 '' frozen
+node tests/integration/lookahead-controls.cjs "http://$web_ip:8080" runs/model_based_planning_web/recheck-controls.json
+```
+
+以上种子仅作工程回归，不作新的独立质量确认。首次300块验证通过后可用同一脚本以cap10000、seed3102841001验证稳定性；原子Core/浏览器断点、逐步公开轨迹与SHA256保留在指定目录。生产验证结果和CPU/响应分位数见[集成报告](../reports/experiments/model_based_planning_web_integration.md)。

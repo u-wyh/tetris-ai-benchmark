@@ -5,23 +5,38 @@ import json
 import logging
 import threading
 import time
+from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+from sb3_contrib import MaskablePPO
 
 from training.candidate_features import candidate_features
 from training.env.tetris_env import TetrisEnv
 from training.evaluation.failure_curriculum_eval import _DeterministicAdapter
-from training.evaluation.hybrid_queue import HASHES, load_models, verify_models
+from training.evaluation.hybrid_queue import HASHES, digest, load_models, verify_models
 from training.hybrid_policy import HybridConfig, HybridController
+from training.public_lookahead import PublicLookaheadController, PlanningConfig
+from training.train_ppo import ROOT
 from training.tetris_core.legal_placements import get_legal_placements
 
 LOG = logging.getLogger(__name__)
 PIECES = set("IJLOSTZ")
-MODES = {"ppo", "bc", "b12"}
+MODES = {"ppo", "bc", "b12", "lookahead"}
+STUDENT = ROOT / "runs/bc_sequence_transfer/supervised/checkpoints/epoch_01/model.zip"
+STUDENT_SHA256 = "e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914"
+PLANNER_SHA256 = "0c2dbea26708fed866c5089eb102672b0cfccafeaa9f130b58086c847e8ffb08"
+PUBLIC_KEYS = {"board", "currentPiece", "hold", "holdAvailable", "next", "score",
+               "level", "lines", "phase", "gameOver", "lock"}
 
 
 def validate_public(public):
     if not isinstance(public, dict) or public.get("phase") != "playing":
         raise ValueError("Expected a public playing state")
+    if set(public) - PUBLIC_KEYS:
+        raise ValueError("Only public observation fields are accepted")
+    if (any(type(public.get(k)) is not int or public[k] < 0 for k in ("score", "lines", "level"))
+            or public["level"] != public["lines"] // 10 + 1):
+        raise ValueError("Invalid public scoring state")
     board = public.get("board")
     if (not isinstance(board, list) or len(board) != 20 or
             any(not isinstance(row, list) or len(row) != 10 or
@@ -43,16 +58,24 @@ def validate_public(public):
 class Inference:
     def __init__(self):
         verify_models()
+        if digest(STUDENT) != STUDENT_SHA256 or digest(ROOT / "training/public_lookahead.py") != PLANNER_SHA256:
+            raise RuntimeError("Frozen public planner/student SHA256 mismatch")
+        models = load_models()
         self.models = {name: _DeterministicAdapter(model)
-                       for name, model in load_models().items()}
+                       for name, model in models.items()}
+        self.planner = PublicLookaheadController(MaskablePPO.load(STUDENT, device="cpu"), models["bc"])
         self.lock = threading.Lock()
+        self.capacity = threading.BoundedSemaphore(4)
 
     def decide(self, mode, public, legal_ids=None):
         if mode not in MODES:
             raise ValueError("Unknown AI mode")
         validate_public(public)
+        if mode == "lookahead" and legal_ids is None:
+            raise ValueError("Public Lookahead requires the browser legal action list")
         started = time.monotonic()
         with self.lock:
+            compute_started = time.monotonic()
             placements = get_legal_placements(public)
             features, mask = candidate_features(public, placements)
             ids = [p["actionId"] for p in placements]
@@ -60,7 +83,15 @@ class Inference:
                 raise ValueError("Browser and Python legal actions differ")
             observation = {"state": TetrisEnv._encode_observation(public),
                            "candidate": features}
-            if mode == "b12":
+            extra = {}
+            if mode == "lookahead":
+                action, detail = self.planner.decide(observation, mask, public)
+                source, reason = "lookahead", detail["reason"]
+                extra = {"studentActionId": detail["student_action"], "bcActionId": detail["bc_action"],
+                         "override": detail["override"],
+                         "thirdAction": action not in (detail["student_action"], detail["bc_action"]),
+                         "boundedSearch": True}
+            elif mode == "b12":
                 controller = HybridController(self.models["ppo"], self.models["bc"],
                                               HybridConfig("B", 12, 8))
                 action, detail = controller.decide(observation, mask, public, placements)
@@ -71,9 +102,12 @@ class Inference:
                 source, reason = mode, "model"
             if not mask[action]:
                 raise RuntimeError("Model chose an illegal Action ID")
+            finished = time.monotonic()
         return {"actionId": action, "source": source, "reason": reason,
-                "decisionMs": round((time.monotonic() - started) * 1000, 3),
-                "legalCount": len(ids)}
+                "decisionMs": round((finished - started) * 1000, 3),
+                "computeMs": round((finished - compute_started) * 1000, 3),
+                "queueMs": round((compute_started - started) * 1000, 3),
+                "legalCount": len(ids), **extra}
 
 
 def make_handler(inference, allowed_origin):
@@ -94,7 +128,10 @@ def make_handler(inference, allowed_origin):
                 self.send_header("Access-Control-Allow-Origin", origin)
                 self.send_header("Vary", "Origin")
             self.end_headers()
-            self.wfile.write(data)
+            try:
+                self.wfile.write(data)
+            except (BrokenPipeError, ConnectionResetError):
+                LOG.debug("Client cancelled a completed decision")
 
         def do_OPTIONS(self):
             try:
@@ -116,8 +153,10 @@ def make_handler(inference, allowed_origin):
                 if self.path != "/api/health":
                     self.send_json(404, {"error": "Not found"}, origin)
                 else:
-                    self.send_json(200, {"ready": True, "models": HASHES,
-                                         "actionSpace": 1840}, origin)
+                    self.send_json(200, {"ready": True, "models": {**HASHES, "student": STUDENT_SHA256},
+                                         "actionSpace": 1840, "modes": sorted(MODES),
+                                         "planner": {"baseline": "a3bfc02", "sha256": PLANNER_SHA256,
+                                                     "config": asdict(PlanningConfig())}}, origin)
             except ValueError as exc:
                 self.send_json(403, {"error": str(exc)})
 
@@ -137,8 +176,14 @@ def make_handler(inference, allowed_origin):
                 if legal is not None and (not isinstance(legal, list) or
                                            any(type(x) is not int or not 0 <= x < 1840 for x in legal)):
                     raise ValueError("Invalid legal action list")
-                self.send_json(200, inference.decide(request.get("mode"),
-                                                     request.get("observation"), legal), origin)
+                if not inference.capacity.acquire(blocking=False):
+                    self.send_json(503, {"error": "AI busy; retry shortly"}, origin)
+                    return
+                try:
+                    result = inference.decide(request.get("mode"), request.get("observation"), legal)
+                finally:
+                    inference.capacity.release()
+                self.send_json(200, result, origin)
             except (ValueError, TypeError, KeyError, json.JSONDecodeError) as exc:
                 self.send_json(400, {"error": str(exc)})
             except Exception:
