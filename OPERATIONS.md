@@ -527,3 +527,8 @@
 - 2026-10-31T09:48:32+08:00 — Created isolated codex/lookahead-long-validation worktree from fe134e2. New36h/6GiB study; no production changes. Preparing frozen32-seed100K and preset16-seed200K continuation protocol. Evidence:runs/lookahead_long_validation/task_started.json.
 
 - 2026-10-31T09:54:51+08:00 — Implemented isolated long-validation queue and exact100K→200K administrative-cap continuation, immutable controllers. Added bounded orphan-worker cleanup and checkpoint SHA/identity checks. Preflight validates uninterrupted equivalence, parent-prefix retention, interruption and dead-parent handling; evidence:tests/test_lookahead_long_validation.py, runs/lookahead_long_validation/. Protocol will freeze before research outcomes.
+2026-10-31T09:55:47+08:00 | Lookahead long validation: protocol frozen before results; A/B/C/E/BC100K32 seeds, presetBC/C/E200K16 continuations; immutable models/rules; no deployment
+2026-10-31T09:56:04+08:00 | Lookahead long validation: fixed-budget tmux queue started/resumed; source/model identities checked
+2026-10-31T09:56:28+08:00 | Lookahead long validation: functional passed: E/original exact256 states, simulation2962, hidden64
+
+- 2026-10-31T10:56:00+08:00 — Budget provenance correction: setup used git %ct (source commit05:59:32+08), not branch reflog time09:48:10+08. Retain earlier frozen epoch and same identity, game-stop2026-11-01 17:29:32+08 / hard17:59:32+08; no budget extension or controller/data change. Corrected runtime label; frozen design/protocol retained. Evidence:reports/experiments/lookahead_long_validation_budget_note.md. Main7/160; services200/200, fourworkers normal, retained145.8MiB.
