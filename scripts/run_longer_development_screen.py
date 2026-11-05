@@ -92,7 +92,7 @@ def run(folder):
 
     operation('启动串行失败重放与8种子×20000块配对开发评测，训练保持停止', folder)
     try:
-        if not (folder/'failure_replay.json').exists():
+        if protocol.get('diagnostic_required', True) and not (folder/'failure_replay.json').exists():
             stage('failure_replay', [sys.executable, '-u', str(ROOT/'scripts/diagnose_development_failure.py'),
                   '--baseline', protocol['short_baseline'], '--candidate', protocol['failed_short_candidate'],
                   '--output', str(folder/'failure_replay.json')], 180)

@@ -100,10 +100,13 @@ def run(folder):
         write_json(folder/'status.json', dict(at=now(), stage='waiting_for_longer_screen'))
         while not (upstream/'summary.json').exists():
             authorized()
-            state = json.loads((upstream/'status.json').read_text())
             live = subprocess.run(['systemctl', '--user', 'show', protocol['upstream_service'],
                                    '-p', 'MainPID', '--value'], capture_output=True, text=True,
                                   check=True, timeout=10).stdout.strip()
+            if (upstream/'summary.json').exists():
+                break
+            state = (json.loads((upstream/'status.json').read_text())
+                     if (upstream/'status.json').exists() else dict(stage='starting'))
             if state['stage'] == 'stopped' or not live.isdigit() or int(live) == 0:
                 raise RuntimeError('Upstream screen stopped; inspect its evidence before retrying')
             time.sleep(10)

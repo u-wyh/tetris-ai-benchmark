@@ -1,0 +1,86 @@
+"""Test the complete filesystem/service handoff without launching GPU work."""
+
+import hashlib
+import json
+from pathlib import Path
+from types import SimpleNamespace
+import sys
+
+import pytest
+
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
+import run_parameter_followup as followup
+
+
+def save(path, value):
+    path.parent.mkdir(parents=True,exist_ok=True)
+    path.write_text(json.dumps(value))
+
+
+def setup(tmp_path,monkeypatch,eligible=True,status='active'):
+    upstream=tmp_path/'screen';heldout=tmp_path/'extra';extension=heldout/'extension'
+    save(upstream/'status.json',dict(stage='completed_screen'))
+    save(upstream/'summary.json',dict(recommended_for_review='strong' if eligible else None,
+         results=[dict(case='strong',eligible_for_longer_development=eligible)]))
+    model=upstream/'strong/stage1_checkpoint/task_000064/model.zip'
+    model.parent.mkdir(parents=True);model.write_bytes(b'candidate')
+    baseline_model=tmp_path/'frozen.zip';baseline_model.write_bytes(b'baseline')
+    def result(path,step):
+        return dict(model_checkpoint=str(path),model_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+                    evaluation_source_sha256={'evaluate.py':'fixed'},committed_steps=step,
+                    seeds=list(range(100000,100008)),num_seeds=8,max_pieces=20000,
+                    per_seed=[dict(seed=n,pieces_survived=20000,score=1000,survived_cap=True,game_over=False)
+                              for n in range(100000,100008)])
+    save(tmp_path/'baseline.json',result(baseline_model,0))
+    save(upstream/'strong/eval.json',result(model,262144))
+    save(upstream/'strong/preset.json',{})
+    save(upstream/'strong/training/config.json',{})
+    save(upstream/'protocol.json',dict(baseline=str(tmp_path/'baseline.json'),
+         evaluation_filename='eval.json',stage1_steps=262144,training_source_sha256={}))
+    save(tmp_path/'training_resources.json',{})
+    save(tmp_path/'evaluation_resources.json',{})
+    save(tmp_path/'protocol.json',dict(thread_id='thread',wall_seconds=60,parameter_screen=str(upstream),
+         upstream_service='screen.service',heldout=str(heldout),extension=str(extension),
+         heldout_service='pair@extra.service',extension_service='extension@extra.service',
+         extra_seeds=list(range(100008,100016)),frozen_files={},extension_gate={},
+         training_resources=str(tmp_path/'training_resources.json'),
+         evaluation_resources=str(tmp_path/'evaluation_resources.json'),short_baseline=str(tmp_path/'baseline.json')))
+    calls=[]
+    def service(args,**kwargs):
+        calls.append(args)
+        return SimpleNamespace(returncode=3 if 'is-active' in args else 0)
+    monkeypatch.setattr(followup,'inspect',lambda *args:(status,0))
+    monkeypatch.setattr(followup,'operation',lambda *args:None)
+    monkeypatch.setattr(followup.signal,'signal',lambda *args:None)
+    monkeypatch.setattr(followup.subprocess,'run',service)
+    return heldout,extension,calls
+
+
+def test_eligible_candidate_handoff_uses_extra_seeds_and_persistent_guarded_services(tmp_path,monkeypatch):
+    heldout,extension,calls=setup(tmp_path,monkeypatch)
+    followup.run(tmp_path)
+    protocol=json.loads((heldout/'protocol.json').read_text())
+    assert protocol['seeds']==list(range(100008,100016)) and not protocol['diagnostic_required']
+    assert not set(protocol['seeds']) & set(range(100000,100008))
+    continuation=json.loads((extension/'protocol.json').read_text())
+    assert continuation['training']==str(tmp_path/'screen/strong/training')
+    assert continuation['checkpoints'][-1]==2097152
+    assert ['systemctl','--user','enable','extension@extra.service'] in calls
+    assert ['systemctl','--user','start','pair@extra.service'] in calls
+    assert ['systemctl','--user','start','extension@extra.service'] in calls
+    count=len(calls);followup.run(tmp_path)
+    assert len(calls)==count  # A second invocation cannot launch duplicate jobs.
+
+
+def test_no_eligible_candidate_does_not_spend_more_evaluation_or_training(tmp_path,monkeypatch):
+    heldout,extension,calls=setup(tmp_path,monkeypatch,eligible=False)
+    followup.run(tmp_path)
+    assert not heldout.exists() and not extension.exists()
+    assert not any('start' in call or 'enable' in call for call in calls)
+
+
+def test_user_pause_stops_handoff_before_starting_any_service(tmp_path,monkeypatch):
+    heldout,_,calls=setup(tmp_path,monkeypatch,status='paused')
+    with pytest.raises(RuntimeError,match='Goal stopped'):
+        followup.run(tmp_path)
+    assert not heldout.exists() and not any('start' in call for call in calls)

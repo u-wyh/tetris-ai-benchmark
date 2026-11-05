@@ -64,3 +64,19 @@ def test_failed_gate_or_missing_live_controller_never_starts_training(tmp_path, 
         with pytest.raises(RuntimeError, match='Upstream'):
             extension.run(tmp_path)
         assert json.loads((tmp_path/'status.json').read_text())['stage'] == 'stopped'
+
+
+def test_live_upstream_starting_before_status_file_exists_is_waited_for(tmp_path,monkeypatch):
+    upstream=tmp_path/'upstream';upstream.mkdir()
+    (tmp_path/'protocol.json').write_text(json.dumps(dict(wall_seconds=60,thread_id='thread',
+        longer_screen=str(upstream),upstream_service='test.service',frozen_files={})))
+    monkeypatch.setattr(extension.signal,'signal',lambda *args:None)
+    monkeypatch.setattr(extension,'inspect_goal',lambda *args:('active',0))
+    monkeypatch.setattr(extension,'operation',lambda *args:None)
+    monkeypatch.setattr(extension.subprocess,'run',lambda *args,**kwargs:SimpleNamespace(returncode=3,stdout='123'))
+    def finished(seconds):
+        (upstream/'summary.json').write_text(json.dumps(dict(eligible_for_training_extension=False)))
+        (upstream/'status.json').write_text(json.dumps(dict(stage='completed')))
+    monkeypatch.setattr(extension.time,'sleep',finished)
+    extension.run(tmp_path)
+    assert json.loads((tmp_path/'summary.json').read_text())['outcome']=='not_eligible'

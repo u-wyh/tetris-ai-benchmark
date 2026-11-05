@@ -605,3 +605,15 @@
 - 2026-11-05T16:23:46+08:00：资源保护：启动受保护任务 tetris-guard-72106-1793867026166462792，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/guards/weak_reference_training_00。
 
 - 2026-11-05T16:27:00+08:00：两组KL真实CUDA8两事务恢复验证通过（各8192步，optimizer/8worker/实际beta与LR/参考SHA核验）；试运行脚本自动启动持久tetris-kl-control-20261105.service，弱组接续原事务，强组待串行运行。补齐报告、协议/当前接手点与源码证据；准备提交本会话修改，不纳入已有其他未提交报告/longlife/viewer文件。证据：runs/autonomous_kl_control_20261105/smoke_verification.json、pilot_source_identity.json、status.json；reports/experiments/reference_kl_control_20261105.md。
+
+- 2026-11-05T16:32:21+08:00：资源保护：tetris-guard-72106-1793867026166462792 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/guards/weak_reference_training_00。
+
+- 2026-11-05T16:32:22+08:00：资源保护：启动受保护任务 tetris-guard-75474-1793867542340607942，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/guards/weak_reference_evaluation_00。
+
+- 2026-11-05T16:38:40+08:00：资源保护：tetris-guard-75474-1793867542340607942 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/guards/weak_reference_evaluation_00。
+
+- 2026-11-05T16:38:43+08:00：资源保护：启动受保护任务 tetris-guard-77739-1793867923525031443，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/guards/strong_reference_training_00。
+
+- 2026-11-05T16:39:33+08:00：配置KL比较后的无人值守接力：只对预声明合格者选额外验证种子100008–100015，配对评测通过后才恢复原事务并按既有门槛分段至最多2097152步；不占用最终测试集。持久模板服务和开机ExecCondition防止已暂停目标启动计算；修复上游进程已存活但状态文件尚未生成的启动竞态。18项接力/启动条件/续训测试通过；不改当前KL数值源码或并发启动训练，接力服务先等待现有MainPID。证据：runs/autonomous_kl_followup_20261105/protocol.json；tests/test_parameter_followup.py、test_development_allowed.py、test_unattended_extension.py；configs/systemd/。
+
+- 2026-11-05T16:43:17+08:00：核对弱KL组262144步评测失败（5/8触顶、得分比0.856601）；强组仍在原事务训练。接力服务MainPID78006等待正常终态，18项定向测试通过；补齐计划/报告/接手状态。16:42:34保护样本CPU77℃、GPU52℃、RSS3568MiB、CPU配额250%。证据：runs/autonomous_kl_control_20261105/partial_results.json、guards/strong_reference_training_00/samples.jsonl；runs/autonomous_kl_followup_20261105/status.json。

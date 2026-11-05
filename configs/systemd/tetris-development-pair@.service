@@ -1,0 +1,17 @@
+[Unit]
+Description=Guarded paired development evaluation %i
+
+[Service]
+Type=simple
+WorkingDirectory=/home/wyh/projects/tetris-ai-benchmark
+ExecCondition=/home/wyh/projects/tetris-ai-benchmark/.venv/bin/python /home/wyh/projects/tetris-ai-benchmark/scripts/development_allowed.py --thread-id 01a191e9-a3ee-7530-99c1-b4171e601ec1 --run-dir /home/wyh/projects/tetris-ai-benchmark/runs/%i
+ExecStart=/home/wyh/projects/tetris-ai-benchmark/.venv/bin/python -u /home/wyh/projects/tetris-ai-benchmark/scripts/run_longer_development_screen.py --run-dir /home/wyh/projects/tetris-ai-benchmark/runs/%i
+Slice=tetris-compute.slice
+CPUQuota=50%
+MemoryMax=1G
+MemorySwapMax=0
+Environment=PATH=/home/wyh/.local/bin:/home/wyh/.nvm/versions/node/v24.18.0/bin:/usr/local/bin:/usr/bin:/bin
+Environment=OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+TimeoutStopSec=40
+KillMode=mixed
+RuntimeMaxSec=1h
