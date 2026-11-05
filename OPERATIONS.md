@@ -735,3 +735,9 @@
 - 2026-11-05T17:17:09+08:00：资源保护：启动受保护任务 tetris-guard-93350-1793870229915168327，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_extra_20261105/guards/baseline_00。
 
 - 2026-11-05T17:20:18+08:00：核验Adam迁移8×20000初筛通过（8/8触顶、得分比1.0019875537、6胜2负），自动接力已真实handed_off并退出成功。额外8种子pair服务93337在baseline阶段、条件续训93341正常等待；未人工启动后续实例，不重复训练。补齐结果限制、实测接力正例及当前接手点。证据：runs/autonomous_optimizer_transfer_20261105/summary.json；runs/autonomous_optimizer_followup_20261105/summary.json；runs/autonomous_optimizer_extra_20261105/及extension/status.json。
+
+- 2026-11-05T17:24:00+08:00：资源保护：tetris-guard-93350-1793870229915168327 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_extra_20261105/guards/baseline_00。
+
+- 2026-11-05T17:24:02+08:00：资源保护：启动受保护任务 tetris-guard-96034-1793870642014007292，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_extra_20261105/guards/candidate_00。
+
+- 2026-11-05T17:29:29+08:00：新增只读实际运行观测CLI，避免将陈旧running文件误认活跃训练；从systemd MainPID+/proc模块命令、guard完整样本及内核cgroup核验，隐藏原始参数、不写账户或启动任务。4项定向测试通过且真实命令识别候选评测/条件续训等待、CPU总250%/内存6GiB/swap0。额外8种子冻结基线已8/8触顶，候选仍按原协议评测。证据：scripts/observe_development.py、tests/test_observe_development.py；runs/autonomous_optimizer_extra_20261105/baseline.json/status.json。

@@ -125,3 +125,9 @@
 - 原参数控制器已结束；optimizer_followup于17:17:05自动handed_off后正常退出。当前计算在runs/autonomous_optimizer_extra_20261105/；pair实例tetris-development-pair@autonomous_optimizer_extra_20261105.service，MainPID93337，先跑额外8种子冻结基线，再同协议候选；条件续训实例tetris-development-extension@autonomous_optimizer_extra_20261105.service，MainPID93341，waiting_for_longer_screen。
 - 已实测比较→额外验证正例自动接力及上游状态文件启动竞态修复；验证→实际续训仍待本轮门槛，不能提前称其成功。若合格则4段至2M，失败/暂停/保护异常停止；不重复启动。
 - 支持文件继续冻结。后续评测入口集成和“Review before extending”旧说明文字统一待本轮全部终止后处理；这些旧文字不是人工审批要求，原生目标授权的接力会自行按门槛执行。
+
+### 17:28 更新：实际运行观测入口
+
+- 额外8种子冻结基线8/8触顶（平均得分633990125），候选已于17:24:01自动接续评测；条件续训仍正常等待，不重复计算。
+- 新只读命令`.venv/bin/python scripts/observe_development.py`从实际systemd PID及/proc命令读取所有活动Tetris服务，给出真实训练/评测/等待阶段、CUDA/环境数、提交步数、最新温控样本时效和内核总CPU/内存限制。全局development_status仅作为记录字段，不能单独证明活跃。
+- 4项定向测试通过，覆盖陈旧running文件、真实CUDA8命令、样本写入一半/过期和内核配额。实际观测正确识别候选评测+等待续训、CPU总250%/内存6144MiB/swap0与active小时定时器。只读工具不启动/重启服务，也不以原生goal状态推断账号实时额度；源文件不属于当前被冻结的计算路径。
