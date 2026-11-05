@@ -84,3 +84,16 @@ def test_corrupt_stage_file_does_not_hide_a_live_controller(tmp_path):
     (proc/'cmdline').write_bytes(('python\0controller.py\0--run-dir\0'+str(run)+'\0').encode())
     result=inspect_service(tmp_path,'controller.service',dict(MainPID='42',ActiveState='active'),tmp_path/'proc')
     assert result['process_live'] and result['artifact_errors']
+
+
+def test_live_guarded_script_is_not_reported_as_waiting(tmp_path):
+    proc=tmp_path/'proc/42';proc.mkdir(parents=True)
+    guard=tmp_path/'runs/guard';guard.mkdir(parents=True)
+    args=['python','guarded_process.py','--heartbeat',str(guard/'heartbeat.json'),
+          '--','python','probe.py']
+    (proc/'cmdline').write_bytes('\0'.join(args).encode()+b'\0')
+    def show(name):return dict(MainPID='42',ActiveState='active')
+    result=observe(tmp_path,tmp_path/'no-codex',show,lambda:['guard.service'],
+                   proc_root=tmp_path/'proc',cgroup_root=tmp_path/'cgroup')
+    assert result['observed_activity']=='guarded_work'
+    assert result['services'][0]['process_live']

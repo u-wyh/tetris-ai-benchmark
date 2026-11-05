@@ -195,6 +195,7 @@ def observe(root=ROOT, codex_dir=Path.home()/'.codex', show=None, units=None, pr
     live = [r for r in services if r.get('process_live')]
     activity = ('training' if any(r['activity']=='training' for r in live) else
                 'evaluation' if any(r['activity']=='evaluation' for r in live) else
+                'guarded_work' if any(r['activity']=='guarded_work' for r in live) else
                 'waiting_or_starting' if live else 'no_active_compute')
     result = dict(at=current_time.isoformat(timespec='seconds'), hostname=socket.gethostname(),
                   configured_execution_host=recorded.get('execution_host'), observed_activity=activity,

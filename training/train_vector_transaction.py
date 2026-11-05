@@ -260,6 +260,10 @@ def verify_task(task_dir, number, config):
             or meta.get("policy", "MlpPolicy") != config["policy"]
             or meta.get("candidate_feature_version") != config.get("candidate_feature_version")):
         raise RuntimeError(f"Committed Task {number} metadata disagrees with run config")
+    if config.get('initial_context') and (
+            meta.get('source_steps_offset') != config['source_steps_offset']
+            or meta.get('lifetime_steps') != config['source_steps_offset'] + meta['end_step']):
+        raise RuntimeError(f'Committed Task {number} full context offset differs')
     return meta
 
 
@@ -423,6 +427,8 @@ def commit_vector_task(run_dir, state, working_dir, model, env, callback, captur
     atomic_json(working_dir / "task_meta.json",
                 {"task_id": number, "status": "committed", "start_step": start_step,
                  "end_step": end_step, "committed_at": now(), "device": config["device"],
+                 "source_steps_offset": config.get('source_steps_offset', 0),
+                 "lifetime_steps": config.get('source_steps_offset', 0) + end_step,
                  "n_envs": config["ppo"]["n_envs"], "n_steps": config["ppo"]["n_steps"],
                  "reward_version": reward_settings(config)[0],
                  "hole_penalty_coef": reward_settings(config)[1],
@@ -549,6 +555,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     or meta.get("observation_version", "237-float-public-observation-v1") != config["observation_version"]
                     or meta.get("policy", "MlpPolicy") != config["policy"]
                     or meta.get("candidate_feature_version") != config.get("candidate_feature_version")
+                    or meta.get('initial_context') != config.get('initial_context')
+                    or meta.get('source_steps_offset', 0) != config.get('source_steps_offset', 0)
                     or meta.get("failure_curriculum") != config.get("failure_curriculum")):
                 raise RuntimeError("Run config and metadata disagree")
             if config_file:
@@ -569,6 +577,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     raise RuntimeError("Resume candidate policy differs from recorded run")
                 if preset.get("initial_model") != config.get("initial_model"):
                     raise RuntimeError("Resume initial model differs from recorded run")
+                if preset.get("initial_context") != config.get("initial_context"):
+                    raise RuntimeError("Resume initial context differs from recorded run")
                 if preset.get("initial_optimizer", "fresh") != config.get("initial_optimizer", "fresh"):
                     raise RuntimeError("Resume initial optimizer differs from recorded run")
                 if preset.get("kl_reference") != config.get("kl_reference"):
@@ -591,6 +601,9 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                 initial = config["initial_model"]
                 if sha256(Path(initial["path"])) != initial["sha256"]:
                     raise RuntimeError("Initial model changed")
+            if config.get("initial_context"):
+                from training.initialization import context_source_config
+                context_source_config(config['initial_context'], config)
             if config.get("kl_reference"):
                 reference = config["kl_reference"]
                 if sha256(Path(reference["path"])) != reference["sha256"]:
@@ -668,6 +681,12 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
             else:
                 config = vector_config(target_steps=target_steps)
             config["step0_baseline"] = bool(preset.get("step0_baseline", False)) if config_file else False
+            from training.initialization import validate_initial_context, context_source_config
+            context = validate_initial_context(preset) if config_file else None
+            if context:
+                config['initial_context'] = context
+                source_config = context_source_config(context, config)
+                config['source_steps_offset'] = context['task'] * source_config['task_steps']
             if (config["transaction_retention"] < 3
                     or config["milestone_interval"] < config["task_steps"]
                     or config["validation_interval"] < config["task_steps"]
@@ -716,6 +735,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                          "candidate_feature_version": config.get("candidate_feature_version"),
                          "failure_curriculum": config.get("failure_curriculum"),
                          "action_space_version": config["action_space_version"],
+                         "initial_context": config.get("initial_context"),
+                         "source_steps_offset": config.get("source_steps_offset", 0),
                          "resume_episode_policy": "Restore each worker exactly from committed Task."})
             atomic_json(run_dir / "metadata.json", meta)
             state = initial_state(config)
@@ -757,7 +778,11 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
             log_event(run_dir, "RESUMED", committed_task=state["committed_task"],
                       committed_steps=state["committed_steps"])
         else:
-            if resume and config.get("step0_baseline") and (run_dir / "baseline").exists():
+            if config.get('initial_context'):
+                from training.initialization import restore_initial_context
+                model, initialization = restore_initial_context(config['initial_context'], config, env)
+                atomic_json(run_dir / 'initialization.json', initialization)
+            elif resume and config.get("step0_baseline") and (run_dir / "baseline").exists():
                 from training.step0_baseline import load_baseline
                 model = load_baseline(run_dir, env, config)
             else:

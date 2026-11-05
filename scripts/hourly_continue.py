@@ -61,7 +61,7 @@ def run(control_path, dry_run=False, clock=time.time):
                     or control.get('execution_machine_id') != Path('/etc/machine-id').read_text().strip()):
                 raise RuntimeError('Execution host identity does not match authorized lightbook')
             status,pending=inspect(Path.home()/'.codex',control['thread_id'])
-            action=decision(control['enabled'],status,pending)
+            action=decision(control['enabled'] and not (folder/'STOP').exists(),status,pending)
             event.update(goal_status=status,pending_messages=pending,action=action)
             interval=control.get('interval_seconds',3600)
             if interval<3600:

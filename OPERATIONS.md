@@ -879,3 +879,37 @@
 - 2026-11-05T20:57:05+08:00：按用户首要任务完成无人值守可靠性修复。旧bootstrap对正在运行的非托管backend报错，改为原生幂等daemon start；已启用成功且不打断本机PID1后台。增加5分钟watchdog，本机machine-id绑定、原生RPC/目标核验、既有4个sleep targets masked核验；额度RPC总时限12→35秒，小时service90秒。timer每分钟仅检查本地去重/间隔，实际额度查询与投递仍至少3600秒；显式unix://留在轻薄本，暂停/取消仍拒绝。18项定向测试及systemd配置验证通过，20:56健康核验成功。原断点CUDA8只读恢复审计20:55:57通过，旧8worker仅缺reward_profile=default，逐一显式记录后状态/RNG一致，旧文件未改，未训练或发布。原生续办消息01a1abc7-a16f-7662-a6b5-1a5f099f028f已实际投递，但尚未把排队当成下一轮已经执行。证据：unattended_health.json、unattended_acceptance_dispatch.json、runs/autonomous_original_context_20261105/summary.json；完整桌面断线/重启端到端尚未验证。
 
 - 2026-11-05T20:58:10+08:00：补修无人值守队列边界：旧代码在已有待办且目标usageLimited时先返回already_queued，可能永久不查额度。现在仍按至少3600秒间隔查询恢复资格，额度允许后恢复目标并保留原消息、不重复投递；额度不足照常一小时等待，暂停/预算限制不查询不恢复。新增两项回归，当前20项定向测试通过；真实本机dry-run确认active/pending=1并去重。证据：tests/test_hourly_continue.py；runs/autonomous_development_20261105/unattended_acceptance_dispatch.json。
+
+- 2026-11-05T20:59:15+08:00：原生排队消息01a1abc7-a16f-7662-a6b5-1a5f099f028f已真实到达本聊天并自动开始本轮；首条本地命令实际20:58:43，核验计划/操作/健康记录、两个活动timer及已完成GPU8恢复审计，无重复启动。证实“排队→下一轮开始执行”链路，关闭桌面/完整重启尚未实测。证据：runs/autonomous_development_20261105/unattended_acceptance_execution.json。
+
+- 2026-11-05T21:02:39+08:00：资源保护：启动受保护任务 tetris-guard-146292-1793883759436781184，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_20261105/test_guard。
+
+- 2026-11-05T21:02:43+08:00：资源保护：tetris-guard-146292-1793883759436781184 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_20261105/test_guard。
+
+- 2026-11-05T21:04:25+08:00：自动续办本轮实现显式initial_context独立续训入口，保留原Adam/env/RNG及PPO更新计数，仅新run步数归零、配置/任务同时记录source_steps_offset与lifetime_steps。严格冻结原config/metadata/task manifest，拒绝配方、版本、来源变化及KL/权重迁移/课程/step0冲突。准备原上下文直接续接对照vs位图新步数续接并真实退出恢复2任务，各8192；来源副本与原文件hash留证，父服务独立运行且全部重任务走原GPU8/250%/6GiB温控。定向测试结果见test_guard。证据：runs/autonomous_full_context_20261105/design.json。
+
+- 2026-11-05T21:04:28+08:00：资源保护：启动受保护任务 tetris-guard-147208-1793883868454411628，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_20261105/guards/direct。
+
+- 2026-11-05T21:04:59+08:00：资源保护：tetris-guard-147208-1793883868454411628 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_20261105/guards/direct。
+
+- 2026-11-05T21:05:00+08:00：资源保护：启动受保护任务 tetris-guard-147599-1793883900336615749，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_20261105/guards/rebased_task_01。
+
+- 2026-11-05T21:05:16+08:00：资源保护：tetris-guard-147599-1793883900336615749 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_20261105/guards/rebased_task_01。
+
+- 2026-11-05T21:05:17+08:00：资源保护：启动受保护任务 tetris-guard-147749-1793883917454801953，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_20261105/guards/rebased_task_02。
+
+- 2026-11-05T21:05:33+08:00：资源保护：tetris-guard-147749-1793883917454801953 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_20261105/guards/rebased_task_02。
+
+- 2026-11-05T21:05:34+08:00：资源保护：启动受保护任务 tetris-guard-148074-1793883934635218743，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_20261105/guards/verify。
+
+- 2026-11-05T21:05:38+08:00：资源保护：tetris-guard-148074-1793883934635218743 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_20261105/guards/verify。
+
+- 2026-11-05T21:05:39+08:00：资源保护：完整上下文直接续接与新步数位图恢复探针通过；未使用最终测试或发布模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_20261105/probe_summary.json。
+
+- 2026-11-05T21:07:55+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-05T21:08:26+08:00：完整上下文真实CUDA8直接续接对照与位图重基步数续接/跨进程恢复通过：4096/8192两检查点policy、Adam、PPO更新计数、全局RNG及8worker完整状态精确一致（仅预声明30,003,200步偏移），原文件hash保持。31项受保护定向测试通过，另7项观察器回归通过。将验证后8192断点复制到独立screen，冻结当前23数值来源及支持输入；启动匹配可恢复基线8×20000，与历史逐局结果精确一致才自动接力至新增262144及候选同门槛，无最终测试或发布，不自动越预算2M。STOP现在也阻止小时额度恢复/投递。证据：runs/autonomous_full_context_20261105/probe_summary.json；runs/autonomous_full_context_screen_20261105/bootstrap_design.json。
+
+- 2026-11-05T21:08:29+08:00：资源保护：启动受保护任务 tetris-guard-148933-1793884109140571974，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_screen_20261105/baseline_guards/attempt_00。
+
+- 2026-11-05T21:10:22+08:00：完成自动续办接手验收及后续开发：31项受保护初始化/来源定向测试、7项观察器及最终28项轻量无人值守/状态回归全部通过；GPU8完整上下文两事务跨进程数值对照passed。探针采样CPU峰值79.0℃、GPU55.0℃、内存3568.73MiB、配额[150, 250]。匹配基线bootstrap已由systemd独立运行，当前状态matched_baseline，通过后自动启动已冻结262144新增步数及候选8×20000筛选。证据：runs/autonomous_full_context_20261105/hardware_summary.json；runs/autonomous_full_context_screen_20261105/。

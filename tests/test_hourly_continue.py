@@ -125,3 +125,13 @@ def test_pending_message_with_unavailable_quota_still_waits_one_hour(tmp_path, m
     assert reads==['target']
     assert [json.loads(line)['action'] for line in (tmp_path/'hourly.jsonl').read_text().splitlines()]==[
         'quota_unavailable','interval_not_elapsed']
+
+
+def test_local_stop_disables_quota_recovery_and_dispatch(tmp_path,monkeypatch):
+    path=control_file(tmp_path);(tmp_path/'STOP').touch()
+    monkeypatch.setattr(module,'inspect',lambda *args:('usageLimited',1))
+    def forbidden(*args,**kwargs):raise AssertionError('STOP forbids recovery and delivery')
+    monkeypatch.setattr(module,'recover_goal',forbidden)
+    monkeypatch.setattr(module.subprocess,'run',forbidden)
+    assert module.run(path,clock=lambda:4000)==0
+    assert json.loads((tmp_path/'hourly.jsonl').read_text())['action']=='disabled'

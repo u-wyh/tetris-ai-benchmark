@@ -165,3 +165,12 @@
 - 证据：runs/autonomous_development_20261105/unattended_health.json、unattended_acceptance_dispatch.json；runs/autonomous_original_context_20261105/summary.json。17项旧验证加错机拒绝现共18项定向测试通过，systemd verify通过。
 
 - 最后补修：已有pending消息不再阻断usageLimited恢复检查；仍一小时最小间隔、额度不足等待、恢复后保留原消息而不重复投递。最终定向测试20项通过。真实dry-run为active/pending=1/already_queued；下一轮必须核验真实执行，不把这个去重状态解释为失败或再次排队。
+
+### 2026-11-05T21:10:22+08:00 自动续办已真实执行，完整上下文探针通过，后台基线接力运行中
+
+- 原生消息01a1abc7-a16f-7662-a6b5-1a5f099f028f已自动触发本轮，首条本机命令20:58:43；unattended_acceptance_execution.json已记录。已证明排队→实际执行，桌面断开/重启仍未实测。勿重复投递该验收消息或重开已完成审计。
+- 新initial_context显式冻结来源config/metadata/task manifest、运行库与完整配方，保留Adam/env/RNG/PPO更新计数，只重设新run进度0，并记录source_steps_offset=30003200及每任务lifetime_steps。旧来源缺SHA的限制继续保留，明确为当前来源的新续训，不宣称原始代码精确续接；本轮入口/验证仅针对无上游偏移的原始上下文，多层上下文再迁移不在验证范围。
+- runs/autonomous_full_context_20261105/probe_summary.json：原上下文直接按旧计数续接，对照新步数bitboard完整上下文续接，真实CUDA8的4096/8192两任务（后者跨进程恢复）policy/Adam/PPO更新/完整RNG/8worker状态精确相同，原文件hash未变；MainPID0/Resultsuccess。31项受保护定向测试通过，最终28项无人值守/观察回归通过。
+- 当前tetris-full-context-screen-bootstrap.service独立执行匹配可恢复baseline8×20000；来源23文件及支持输入已冻结在runs/autonomous_full_context_screen_20261105/bootstrap_design.json，运行期间禁止修改这些文件。基线逐局/聚合与历史冻结模型一致后自动启动tetris-parameter-screen@autonomous_full_context_screen_20261105.service，从复制的已验证8192继续至新增262144，再筛选同8×20000。固定原LR3e-4/gamma.995/GAE.95，不含KL，不是重复原先重置环境/RNG的迁移实验。
+- 新增步数上限262144，暂未配置2M扩训或模型发布。筛选完成后先查summary/实际服务PID，若合格再设计额外8配对与明确的可恢复扩展；不将有上限的本轮筛选自动越界。基线/候选缓存均保留，额度不足本机有限任务仍受原保护继续，AI续办一小时重试。
+- 观察器已修复：存活的通用受保护脚本汇总显示guarded_work，而非waiting_or_starting；小时STOP也实际阻止额度恢复与投递。接手先读取真实观察器、逐seed缓存及bootstrap/handoff/protocol，不重复准备或运行。
