@@ -189,3 +189,11 @@
 - 73e47c6加入串行验证等待器。tetris-context-validation.service已启动，真实PID156870；等当前screen、followup、可能的pair服务及所有存活guard释放后，再以CPU100%/内存2GiB和原温控运行实际CUDA断点正例及初始化回归。不并行重任务，不因AI额度不足而丢失已授权的有限队列。
 - 验证冻结34输入在runs/autonomous_context_validation_20261105/design.json；目前status为waiting_for_frozen_pipeline，尚未宣称CUDA验证通过。主工作副本的23数值文件及既有支持文件完全未修改，现有实验未迁移来源。后续先查其summary/guard日志和主screen结论，再决定合入隔离补强；有待运行的冻结验证期间不要修改隔离数值文件/输入。
 - 所有Codex/工作副本/定时续办仍在lightbook；没有依赖游戏本的新连接，没有CPU训练回退。native目标保持active；桌面实际断开后的完整链路仍未实测。
+
+### 2026-11-05T21:33:29+08:00 完整上下文质量门槛未过，自动止损与串行校验完成
+
+- screen于21:29:31 completed_screen：7/8达到20000，100001=5322；存活比0.9082625、得分比0.8842567976。followup21:29:38 no_eligible_candidate，额外pair未创建，无扩训/发布。相关服务MainPID0/Resultsuccess。不要复跑。
+- tetris-context-validation.service自动等主pipeline全部释放后于21:29:39真实启动GPU校验，21:29:45 summary passed；32通过/1跳过，新增真实CUDA模型正例通过。所有重任务严格串行。本轮训练温度CPU79.125℃/GPU54℃、配额250%，候选评测CPU79.625℃/GPU50℃、配额150%，未越预算。
+- 归档旧数值运行代码到/home/wyh/projects/tetris-context-runtime-dd23301（dd23301 detached，23文件SHA与本轮训练metadata全部相同），再将已验证的初代上下文offset/实际模型配方校验及延迟Torch导入合入主副本577970d/121009d；主文件SHA与测试副本相同。旧断点/缓存不改身份；不能直接用新数值来源恢复旧实验。独立开发副本仍在/home/wyh/projects/tetris-context-validation。
+- 当前计算任务全部结束。原PPO30M仍为冻结参考，没有候选获长局提升证据。下一步先检查现有评测器是否可显式复用已验证位图后端，做受保护、预声明的端到端配对性能与结果一致性验证，再考虑新匹配基线/不同训练假设；避免一再重复已失败迁移实验或盲增2M。
+- 小时续办和5分钟后台自检仍活动，健康记录healthy，目标active；仅lightbook运行，无其他机器或CPU训练fallback。桌面实际断开后的完整链路仍未实测。

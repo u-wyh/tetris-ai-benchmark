@@ -939,3 +939,7 @@
 - 2026-11-05T21:29:31+08:00：资源保护：learning_rate开发筛选完成，门槛合格候选None；由已配置接力处理后续，未替换正式模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_screen_20261105/summary.json。
 
 - 2026-11-05T21:29:34+08:00：主训练已完成262144新增步并释放trainer PID，候选评测当前8/8缓存，已核实100001于5322块终止；完整筛选及纯验证followup仍按冻结条件运行，不重复训练。隔离分支13项纯校验通过，串行CUDA/初始化复核已实际由PID156870等待上游释放，当前状态waiting_for_frozen_pipeline；主23数值/支持输入未改。证据：runs/autonomous_full_context_screen_20261105/full_context/；runs/autonomous_context_validation_20261105/status.json；隔离分支82085aa/73e47c6。
+
+- 2026-11-05T21:29:38+08:00：资源保护：参数比较没有合格候选，自动取消额外评测与续训。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_screen_20261105_followup/summary.json。
+
+- 2026-11-05T21:33:29+08:00：完整上下文候选筛选completed_screen、7/8触顶（100001=5322），得分比0.8842567976，followup自动no_eligible_candidate，未额外评测/扩训/发布。独立串行GPU校验随后自动passed，32通过/1跳过，新增真实CUDA正例通过；检查所有相关服务MainPID0/Resultsuccess后，先归档旧23数值来源到/home/wyh/projects/tetris-context-runtime-dd23301并对训练metadata逐文件SHA通过，再合入已验证补强577970d/121009d，主文件SHA与测试副本相同。旧数据身份不迁移。证据：screen/summary.json、followup/summary.json、runs/autonomous_context_validation_20261105/summary.json；reports/experiments/unattended_full_context_20261105.md。
