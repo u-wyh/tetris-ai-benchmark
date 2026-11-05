@@ -205,3 +205,11 @@
 - 推理身份现在保守扫描当前推理静态依赖闭包+动态CandidatePolicy根，resumable覆盖20文件，不导入Torch/Numpy。纯训练器/初始化改动不再作废基线；推理/模型/模式/种子/上限/运行库等变化仍拒绝混用。新身份不能重标旧数据。54项定向回归通过；控制器全链路传递并核验candidate_feature_backend，且后台脚本在非项目cwd可正常导入。
 - 所有本轮计算已完成。下一步先核对真实服务/结果；若继续训练研究，使用新bitboard长基线做新的预声明完整上下文低LR假设，避免重复旧高LR或重置环境/RNG/KL失败轨迹。当前完整上下文入口严格保持原配方，改变LR必须显式设计加载后变更、验证Adam/env/RNG/PPO更新保留并记录来源/目标参数，不能绕过校验。先小预算真实GPU8事务恢复再262144门槛，合格才额外配对，不能盲增2M。
 - 继续保持lightbook、GPU8、总CPU250%/6GiB/原温控，评测2worker较低配额；暂停/取消及额度规则不变。原PPO30M仍是冻结模型，所有新增吞吐证据不代表棋力提升。
+
+### 2026-11-05T22:21:30+08:00 显式保留上下文降LR已验证，新单臂训练运行
+
+- cf782f1新增initial_context.learning_rate_after_restore，只允许显式有限正降LR。先严格验证真实源模型，再改LR标量/常数schedule/Adam组与default的LR，保留矩、计数、env/RNG；未声明仍不允许PPO偏离。42项受保护测试通过。
+- runs/autonomous_context_lr_20261105/probe_summary.json于22:10:50通过；独立手工改LR正式环境参考与入口bitboard新步数续接的4096/8192 policy/Adam/完整RNG/8worker状态精确相同，任务2跨进程恢复，源Adam586000/PPO36625持续递增，组LR=3e-5；原文件未变。父服务MainPID0/Resultsuccess。不要重复探针。
+- 当前tetris-parameter-screen@autonomous_context_lr_screen_20261105.service（controller PID172609，trainer PID172644）已从已验证8192继续262144新增步。最近实际提交139264；本轮无KL、原奖励/gamma.995/GAE.95/max10000不变，完整env/RNG保留。训练/source23及59支持输入冻结在protocol.json，运行期禁止修改。
+- 成功复用推理20身份及6运行库仍完全匹配的runs/autonomous_bitboard_baseline_20261105/baseline.json，无重复基线。候选到262144再bitboard8×20000筛选；接力tetris-parameter-followup@autonomous_context_lr_screen_20261105.service（PID172612）等待，合格才extra8，extension_enabled=false，不越262144或发布。历史失败高LR/重置上下文/KL数据只作背景，不能伪称严格对照。
+- 先查实际进程/提交步数/评测cache与温控，避免重复启动。筛选后按完整summary决定是否extra8；不合格不复跑本配置，合格还需额外配对再设计明确扩展预算。当前保护GPU8/CPU250%/6GiB/原温控，最近CPU76.375℃/GPU52.0℃。全部lightbook，额度/暂停规则不变。

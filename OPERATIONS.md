@@ -1021,3 +1021,11 @@
 - 2026-11-05T22:10:54+08:00：资源保护：完整上下文直接续接与新步数位图恢复探针通过；未使用最终测试或发布模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_lr_20261105/probe_summary.json。
 
 - 2026-11-05T22:15:15+08:00：显式完整上下文降LR真实GPU8探针22:10:50通过、22:10:54父服务completed。独立手工改LR参考与入口bitboard新步数续接在4096/8192（后者跨进程）policy/Adam/完整RNG/8worker均精确相同；PPO更新及Adam计数按原值递增，组LR为3e-5，原文件不变。42项受保护测试通过。准备仅新低LR完整上下文单臂262144及8×20000门槛，复用推理身份仍一致的新长基线；历史高LR失败只作背景。证据：runs/autonomous_context_lr_20261105/probe_summary.json、training/initialization.json。
+
+- 2026-11-05T22:17:24+08:00：低LR完整上下文探针实际完成后，检查MainPID0并复制已验证8192断点到独立screen，当前23数值SHA与探针一致；复用source20完全匹配的bitboard8×20000基线（未重标或重算）。冻结协议，自动继续至262144新增步，再同8×20000门槛；合格才额外8配对，extension_enabled=false，仍无2M或发布。启动主/接力两个持久服务前已检查无重复任务。证据：runs/autonomous_context_lr_screen_20261105/protocol.json；runs/autonomous_context_lr_screen_20261105_followup/protocol.json。
+
+- 2026-11-05T22:17:26+08:00：资源保护：启动learning_rate受控实验，各262144步开发筛选，不自动替换正式模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_lr_screen_20261105。
+
+- 2026-11-05T22:17:29+08:00：资源保护：启动受保护任务 tetris-guard-172629-1793888249259753161，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_lr_screen_20261105/guards/full_context_low_lr_training_00。
+
+- 2026-11-05T22:21:30+08:00：新低LR完整上下文筛选已实际运行，核对trainer PID172644命令行匹配，已提交139264/262144新增步；最近温度CPU76.375℃/GPU52.0℃、配额250%。主/纯验证接力服务均active；训练23来源冻结，已验证GPU8两个事务与恢复后才接力，复用匹配推理20长基线。证据：runs/autonomous_context_lr_screen_20261105/；reports/experiments/context_lr_transition_20261105.md。
