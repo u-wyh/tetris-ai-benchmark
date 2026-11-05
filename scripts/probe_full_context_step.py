@@ -27,6 +27,13 @@ def direct(folder):
     env=make_vector_env(8,config['run_seed'],config['max_pieces'],env_class=TransactionCandidateEnv)
     try:
         model,_,_=restore_task(source,spec['task'],config,env)
+        transition=json.loads((folder/'design.json').read_text()).get('learning_rate_after_restore')
+        if transition is not None:
+            # Independent reference path: do not call the initializer's transition.
+            from stable_baselines3.common.utils import FloatSchedule
+            model.learning_rate=transition;model.lr_schedule=FloatSchedule(transition)
+            model.policy.optimizer.defaults['lr']=transition
+            for group in model.policy.optimizer.param_groups:group['lr']=transition
         for number in (1,2):
             task=folder/'direct'/f'task_{number:06d}';task.mkdir(parents=True,exist_ok=False)
             model.set_logger(configure(str(task),[]))
@@ -49,6 +56,14 @@ def verify(folder):
     verify_training_source_identity(json.loads((training/'metadata.json').read_text()))
     assert state['committed_steps']==8192 and state['pid'] is None
     offset=config['source_steps_offset'];records=[]
+    design=json.loads((folder/'design.json').read_text())
+    initialization=json.loads((training/'initialization.json').read_text())
+    transition=design.get('learning_rate_after_restore')
+    if transition is not None:
+        assert config['ppo']['learning_rate']==transition
+        assert initialization['learning_rate_transition_declared']
+        assert initialization['source_learning_rate']==0.0003
+        assert initialization['learning_rate_after_restore']==transition
     for number in (1,2):
         reference=folder/'direct'/f'task_{number:06d}'
         candidate=training/'committed'/f'task_{number:06d}'
@@ -58,6 +73,12 @@ def verify(folder):
         assert identical(a.policy.state_dict(),b.policy.state_dict()),'Policy differs'
         assert identical(a.policy.optimizer.state_dict(),b.policy.optimizer.state_dict()),'Adam differs'
         assert a._n_updates==b._n_updates,'PPO update count differs'
+        if transition is not None:
+            assert b._n_updates==initialization['source_ppo_update_count']+number*config['ppo']['n_epochs']
+            steps=[float(s['step']) for s in b.policy.optimizer.state.values() if 'step' in s]
+            updates_per_task=config['ppo']['n_epochs']*config['task_steps']//config['ppo']['batch_size']
+            assert min(steps)==initialization['minimum_optimizer_step']+number*updates_per_task
+            assert all(group['lr']==transition for group in b.policy.optimizer.param_groups)
         trainers=[pickle.loads((p/'trainer_state.pkl').read_bytes()) for p in (reference,candidate)]
         assert trainers[0]['num_timesteps']==offset+trainers[1]['num_timesteps']
         trainers[0]['num_timesteps']-=offset
@@ -71,6 +92,7 @@ def verify(folder):
     for relative,expected in json.loads((folder/'source_files.json').read_text()).items():
         assert sha256(source/relative)==sha256(original/relative)==expected,'Original source copy changed'
     result=dict(at=now(),status='passed',device='cuda',n_envs=8,source_steps_offset=offset,
+                learning_rate_after_restore=transition,
                 source_original_files_unchanged=True,tasks=records,
                 interpretation='Current-code direct official continuation equals rebased bitboard continuation across process resume. Original source identity remains unproven; no policy-quality claim.',
                 final_test_used=False,model_promotion='none')

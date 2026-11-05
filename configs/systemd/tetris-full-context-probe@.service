@@ -1,0 +1,18 @@
+[Unit]
+Description=Frozen CUDA8 full-context verification %i
+ConditionPathExists=/home/wyh/projects/tetris-ai-benchmark/runs/%i/design.json
+
+[Service]
+Type=exec
+WorkingDirectory=/home/wyh/projects/tetris-ai-benchmark
+ExecCondition=/home/wyh/projects/tetris-ai-benchmark/.venv/bin/python /home/wyh/projects/tetris-ai-benchmark/scripts/development_allowed.py --thread-id 01a191e9-a3ee-7530-99c1-b4171e601ec1 --run-dir /home/wyh/projects/tetris-ai-benchmark/runs/%i
+ExecStart=/home/wyh/projects/tetris-ai-benchmark/.venv/bin/python -u /home/wyh/projects/tetris-ai-benchmark/scripts/run_full_context_probe.py --run-dir /home/wyh/projects/tetris-ai-benchmark/runs/%i
+Environment="PATH=/home/wyh/.local/bin:/home/wyh/.nvm/versions/node/v24.18.0/bin:/usr/local/bin:/usr/bin:/bin"
+Slice=tetris-compute.slice
+CPUQuota=50%
+MemoryMax=256M
+TimeoutStopSec=35
+RuntimeMaxSec=1000
+
+[Install]
+WantedBy=default.target

@@ -49,3 +49,30 @@ def test_full_context_rejects_changed_source_files(tmp_path,name):
     spec,config=specification(tmp_path)
     with (tmp_path/name).open('a') as stream:stream.write(' ')
     with pytest.raises(RuntimeError,match='Frozen full context changed'):context_source_config(spec,config)
+
+
+@pytest.mark.parametrize('rate',[0,-0.0001,True,None,float('nan'),float('inf'),'0.00003'])
+def test_context_transition_requires_explicit_finite_positive_rate(tmp_path,rate):
+    spec,_=specification(tmp_path);spec['learning_rate_after_restore']=rate
+    with pytest.raises(ValueError,match='finite and positive'):
+        validate_initial_context(dict(device='cuda',n_envs=8,candidate_policy=True,initial_context=spec))
+
+
+def test_only_declared_learning_rate_reduction_can_differ_from_source(tmp_path,monkeypatch):
+    spec,config=specification(tmp_path)
+    import training.train_vector_transaction as trainer
+    monkeypatch.setattr(trainer,'verify_task',lambda *args:None)
+    target=deepcopy(config);target['ppo']['learning_rate']=0.00003
+    with pytest.raises(ValueError,match='ppo'):context_source_config(spec,target)
+    spec['learning_rate_after_restore']=0.00003
+    source=context_source_config(spec,target)
+    assert source['ppo']['learning_rate']==0.0003
+    assert json.loads((tmp_path/'config.json').read_text())==config
+    target['ppo']['gamma']=0.999
+    with pytest.raises(ValueError,match='ppo'):context_source_config(spec,target)
+
+
+def test_context_transition_rejects_learning_rate_increase(tmp_path):
+    spec,config=specification(tmp_path);spec['learning_rate_after_restore']=0.001
+    target=deepcopy(config);target['ppo']['learning_rate']=0.001
+    with pytest.raises(ValueError,match='only supports reductions'):context_source_config(spec,target)

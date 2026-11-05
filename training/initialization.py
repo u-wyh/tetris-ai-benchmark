@@ -4,7 +4,18 @@ from copy import deepcopy
 import hashlib
 from importlib.metadata import version
 import json
+import math
 from pathlib import Path
+
+
+def context_learning_rate(spec):
+    rate = spec.get('learning_rate_after_restore')
+    if 'learning_rate_after_restore' in spec and (
+            isinstance(rate, bool) or not isinstance(rate, (int, float))
+            or not math.isfinite(rate) or rate <= 0):
+        raise ValueError('learning_rate_after_restore must be finite and positive')
+    return rate
+
 
 def validate_initial_context(preset):
     spec = preset.get('initial_context')
@@ -17,11 +28,14 @@ def validate_initial_context(preset):
     if (preset.get('device') != 'cuda' or preset.get('n_envs') != 8
             or not preset.get('candidate_policy')):
         raise ValueError('Full context initialization requires CUDA8 Candidate policy')
-    if (not isinstance(spec, dict) or set(spec) != {'run_dir', 'task', 'files_sha256'}
+    required_keys = {'run_dir', 'task', 'files_sha256'}
+    if (not isinstance(spec, dict) or not required_keys <= set(spec)
+            or not set(spec) <= required_keys | {'learning_rate_after_restore'}
             or not isinstance(spec['run_dir'], str)
             or not Path(spec['run_dir']).is_absolute()
             or type(spec['task']) is not int or spec['task'] < 1):
         raise ValueError('Invalid frozen full context specification')
+    context_learning_rate(spec)
     required = {'config.json', 'metadata.json', f'committed/task_{spec["task"]:06d}/manifest.json'}
     hashes = spec['files_sha256']
     if (not isinstance(hashes, dict) or set(hashes) != required
@@ -44,7 +58,15 @@ def context_source_config(spec, config):
     expected_offset = spec['task'] * source['task_steps']
     if config.get('source_steps_offset', expected_offset) != expected_offset:
         raise ValueError('Recorded context source step offset differs')
-    for key in ('ppo', 'run_seed', 'max_pieces', 'device', 'candidate_policy', 'policy',
+    target_ppo = deepcopy(source['ppo'])
+    transition = context_learning_rate(spec)
+    if transition is not None:
+        if transition > source['ppo']['learning_rate']:
+            raise ValueError('Context learning-rate transition only supports reductions')
+        target_ppo['learning_rate'] = transition
+    if config['ppo'] != target_ppo:
+        raise ValueError('Full context recipe differs: ppo')
+    for key in ('run_seed', 'max_pieces', 'device', 'candidate_policy', 'policy',
                 'task_steps', 'reward', 'reward_version', 'observation_version', 'candidate_feature_version'):
         if source.get(key) != config.get(key):
             raise ValueError('Full context recipe differs: '+key)
@@ -94,15 +116,28 @@ def restore_initial_context(spec, config, env):
 
     source_config = context_source_config(spec, config)
     model, trainer, _ = restore_task(Path(spec['run_dir']), spec['task'], source_config, env)
-    validate_context_model_recipe(model, config)
+    validate_context_model_recipe(model, source_config)
     offset = spec['task'] * source_config['task_steps']
     if model.num_timesteps != offset or config['source_steps_offset'] != offset:
         raise RuntimeError('Full context step offset differs')
+    rate = config['ppo']['learning_rate']
+    if context_learning_rate(spec) is not None:
+        from stable_baselines3.common.utils import FloatSchedule
+        model.learning_rate = rate
+        model.lr_schedule = FloatSchedule(rate)
+        model.policy.optimizer.defaults['lr'] = rate
+        for group in model.policy.optimizer.param_groups:
+            group['lr'] = rate
+    validate_context_model_recipe(model, config)
     # Only the new run's progress counter is rebased. Preserve optimizer updates,
     # saved observations/episode starts, all workers and all restored RNG state.
     model.num_timesteps = 0
     steps = [float(s['step']) for s in model.policy.optimizer.state.values() if 'step' in s]
     return model, dict(mode='full_context', source_steps_offset=offset,
+        source_learning_rate=source_config['ppo']['learning_rate'],
+        learning_rate_after_restore=rate,
+        learning_rate_transition_declared='learning_rate_after_restore' in spec,
+        source_ppo_update_count=model._n_updates,
         new_run_start_step=0, source_task=spec['task'], source_run_dir=spec['run_dir'],
         optimizer_state_entries=len(model.policy.optimizer.state),
         minimum_optimizer_step=min(steps), maximum_optimizer_step=max(steps),
