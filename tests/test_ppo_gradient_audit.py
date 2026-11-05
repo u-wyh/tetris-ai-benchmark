@@ -10,6 +10,15 @@ audit = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(audit)
 
 
+def test_policy_snapshot_preserves_container_type_for_exact_gradient_only_comparison():
+    from scripts.verify_feature_backend_benchmark import identical
+    layer = torch.nn.Linear(2, 1)
+    before = audit.snapshot_policy(layer)
+    audit.gradient_vector(layer(torch.ones(1, 2)).square().sum(), list(layer.parameters()))
+    assert identical(before, layer.state_dict())
+    assert not identical(dict(before), layer.state_dict())  # Old false mutation alarm.
+
+
 @pytest.mark.parametrize('entropy_coefficient', [0., .01])
 def test_gradient_attribution_isolates_actor_and_critic_without_updates(entropy_coefficient):
     actor = torch.nn.Parameter(torch.tensor(2.))

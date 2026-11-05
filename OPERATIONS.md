@@ -1111,3 +1111,17 @@
 - 2026-11-05T23:59:52+08:00：资源保护：启动受保护任务 tetris-guard-203105-1793894392509442876，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_ppo_gradient_audit_20261105/unit_guard。
 
 - 2026-11-05T23:59:54+08:00：资源保护：tetris-guard-203105-1793894392509442876 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_ppo_gradient_audit_20261105/unit_guard。
+
+- 2026-11-06T00:03:23+08:00：解析梯度保护测试2项通过后，冻结原任务7325/当前25来源/诊断脚本等43输入，启动本机持久只读GPU8诊断，4096采样、固定原参数、16 minibatch、无optimizer.step，180秒命令/600秒队列预算；全局STOP/启用/主机与goal均检查。旧来源缺原训练SHA的限制仍保留，不代表历史训练损失完全重现。证据：runs/autonomous_ppo_gradient_audit_20261105/design.json。
+
+- 2026-11-06T00:03:34+08:00：资源保护：启动受保护任务 tetris-guard-203857-1793894614604263299，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_ppo_gradient_audit_20261105/guard。
+
+- 2026-11-06T00:03:48+08:00：资源保护：tetris-guard-203857-1793894614604263299 结束：command_failed:exit-code，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_ppo_gradient_audit_20261105/guard。
+
+- 2026-11-06T00:03:49+08:00：资源保护：隔离上下文验证停止并保留进度：RuntimeError('Staged runtime verification failed')。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_ppo_gradient_audit_20261105。
+
+- 2026-11-06T00:05:46+08:00：首轮梯度诊断在采集4096并完成16批后，参数不变断言失败；定位比较器严格类型检查与快照普通dict/模型OrderedDict不一致，未获得有效最终诊断。修复为保留state_dict容器类型的deepcopy，新增真实nn.Module梯度-only回归，并逐批持久化数值以便故障审计；首轮guard、进度、源码5cbf07c副本保留。证据：runs/autonomous_ppo_gradient_audit_20261105/guard/command.log；source/audit_ppo_gradients.py。
+
+- 2026-11-06T00:05:48+08:00：资源保护：启动受保护任务 tetris-guard-204323-1793894747971437476，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_ppo_gradient_audit_20261105/unit_guard_retry01。
+
+- 2026-11-06T00:05:50+08:00：资源保护：tetris-guard-204323-1793894747971437476 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_ppo_gradient_audit_20261105/unit_guard_retry01。

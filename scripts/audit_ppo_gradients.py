@@ -15,6 +15,10 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 
+def snapshot_policy(policy):
+    return copy.deepcopy(policy.state_dict())
+
+
 def gradient_vector(loss, parameters):
     import torch
     gradients = torch.autograd.grad(loss, parameters, retain_graph=True, allow_unused=True)
@@ -74,7 +78,7 @@ def run(folder):
         names = [name for name, _ in model.policy.named_parameters()]
         actor_mask = torch.cat([torch.full((p.numel(),), not name.startswith('value_net.'),
                     dtype=torch.bool, device=p.device) for name, p in model.policy.named_parameters()])
-        before_policy = {k:v.detach().clone() for k,v in model.policy.state_dict().items()}
+        before_policy = snapshot_policy(model.policy)
         before_optimizer = copy.deepcopy(model.policy.optimizer.state_dict())
         source_steps, source_updates = model.num_timesteps, model._n_updates
         assert source_steps == design['source_task'] * config['task_steps']
@@ -115,6 +119,8 @@ def run(folder):
             row.update(batch=index, policy_loss=float(policy_loss.item()), value_loss=float(value_loss.item()),
                        entropy=float(-entropy_loss.item()), max_ratio_deviation=float((ratio-1).abs().max().item()))
             rows.append(row)
+            with (folder/'audit_batches.jsonl').open('a') as stream:
+                stream.write(json.dumps(row)+'\n')
             write_json(folder/'audit_progress.json', dict(at=now(),stage='fixed_parameter_gradient_batches',completed=index+1))
         assert len(rows) == 4096 // model.batch_size
         assert identical(before_policy, model.policy.state_dict()), 'Diagnostic changed policy'
@@ -137,6 +143,7 @@ def run(folder):
             aggregate=aggregate,per_batch=rows,
             scope='One source-context rollout, one minibatch permutation at fixed original parameters; no optimizer updates. Gradient norms do not determine Adam updates, long-run drift or policy quality.')
         write_json(folder/'audit.json', result)
+        write_json(folder/'audit_progress.json', dict(at=now(),stage='completed',completed=len(rows)))
         print(json.dumps(dict(status='passed',aggregate=aggregate)))
     finally:
         if model is not None and hasattr(model, '_logger'):
