@@ -22,6 +22,11 @@ def run(folder):
     for sig in (signal.SIGTERM,signal.SIGINT,signal.SIGHUP):signal.signal(sig,stopped)
     def check():
         if not allowed(design['thread_id'],folder):raise RuntimeError('Goal stopped')
+        if design.get('control'):
+            control_path=Path(design['control']);control=json.loads(control_path.read_text())
+            if (control.get('enabled') is not True or (control_path.parent/'STOP').exists()
+                    or control.get('execution_machine_id')!=Path('/etc/machine-id').read_text().strip()):
+                raise RuntimeError('Unattended control stopped or execution host changed')
         if time.monotonic()>deadline:raise RuntimeError('Staged validation wait budget exhausted')
         for name,expected in design['frozen_files'].items():
             if hashlib.sha256(Path(name).read_bytes()).hexdigest()!=expected:raise RuntimeError('Staged validation input changed: '+name)
@@ -45,18 +50,21 @@ def run(folder):
         tests=design.get('test_targets',['tests/test_full_context_validation_guards.py',
             'tests/test_full_context_runtime_guards.py','tests/test_full_context_initialization.py',
             'tests/test_initialization.py'])
+        command=design.get('validation_command')
+        if command is None:
+            command=['/usr/bin/env','TETRIS_ORIGINAL_CONTEXT_DIR='+design['original_context'],
+                     sys.executable,'-m','pytest','-q',*tests]
         with (folder/'guard.log').open('w') as stream:
             child=subprocess.Popen([sys.executable,'-u',str(ROOT/'scripts/resource_guard.py'),
                 '--profile',str(folder/'profile.json'),'--output',str(guard),'--seconds',str(design.get('command_seconds',180)),'--',
-                '/usr/bin/env','TETRIS_ORIGINAL_CONTEXT_DIR='+design['original_context'],
-                sys.executable,'-m','pytest','-q',*tests],cwd=ROOT,stdout=stream,stderr=subprocess.STDOUT)
+                *command],cwd=ROOT,stdout=stream,stderr=subprocess.STDOUT)
             while child.poll() is None:check();time.sleep(1)
         result=json.loads((guard/'result.json').read_text())
         if child.returncode or result['outcome']!='completed':raise RuntimeError('Staged runtime verification failed')
         write_json(folder/'summary.json',dict(at=now(),status='passed',source_worktree=str(ROOT),
-            activation='staged only; main frozen source unchanged',guard=str(guard)))
+            activation=design.get('activation','staged only; main frozen source unchanged'),guard=str(guard)))
         write_json(folder/'status.json',dict(at=now(),stage='completed'))
-        operation('隔离副本上下文边界及实际CUDA模型配方校验通过；主实验来源未改变',folder/'summary.json')
+        operation(design.get('description','隔离副本上下文边界及实际CUDA模型配方校验通过；主实验来源未改变'),folder/'summary.json')
     except BaseException as exc:
         write_json(folder/'status.json',dict(at=now(),stage='stopped',error=repr(exc)))
         operation('隔离上下文验证停止并保留进度：'+repr(exc),folder)

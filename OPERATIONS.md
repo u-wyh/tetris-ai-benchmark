@@ -1103,3 +1103,11 @@
 - 2026-11-05T23:35:04+08:00：独立副本增加显式candidate_search_backend（formal默认/bitboard需既有位图特征），训练来源闭包增加新env和既有fast_legal共25项；配置/metadata/带preset恢复均固定搜索模式。推理20不改。准备原特征固定为bitboard的正式/位图搜索真实CUDA8两组对照，增加PPO更新计数比较及错误搜索preset恢复拒绝核验；主副本保持23来源不动。
 
 - 2026-11-05T23:51:34+08:00：已完成搜索后端代码集成3e614eb/205c33b/b7724c4，OP追加冲突保留双方真实条目。主25数值SHA与实测副本相同，推理20未变；新普通训练可显式选择位图搜索，默认formal不变。真实训练约+8.01%与完整上下文扩展故障恢复均过门槛，无棋力提升/最终测试/模型替换；旧23代码归档恢复可用。证据：runs/autonomous_candidate_search_20261105/integration_audit.json；reports/experiments/candidate_search_training_20261105.md。
+
+- 2026-11-05T23:55:40+08:00：新的原生自动续办轮于23:52:17开始，已有desktop proxy=0且fresh再查仍0，后台healthy/goal active。补齐“无桌面时新整轮实际启动”证据，无重复投递/模拟暂停或推断物理电源。证据：runs/autonomous_development_20261105/unattended_no_desktop_new_turn_20261105.json。
+
+- 2026-11-05T23:59:50+08:00：选择继续训练退化的下一项只读诊断：恢复原7325任务完整GPU8上下文，只采集4096样本、固定参数分解PG/熵/value梯度，无optimizer.step。代码显式断言policy/Adam/PPO更新数不变，诊断结果不写作普通训练断点；先保护运行解析梯度单元测试，再冻结来源独立后台采集。
+
+- 2026-11-05T23:59:52+08:00：资源保护：启动受保护任务 tetris-guard-203105-1793894392509442876，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_ppo_gradient_audit_20261105/unit_guard。
+
+- 2026-11-05T23:59:54+08:00：资源保护：tetris-guard-203105-1793894392509442876 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_ppo_gradient_audit_20261105/unit_guard。
