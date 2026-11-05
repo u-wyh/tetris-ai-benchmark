@@ -6,9 +6,6 @@ from importlib.metadata import version
 import json
 from pathlib import Path
 
-import torch
-
-
 def validate_initial_context(preset):
     spec = preset.get('initial_context')
     if spec is None:
@@ -42,6 +39,11 @@ def context_source_config(spec, config):
             raise RuntimeError('Frozen full context changed: '+name)
     source = json.loads((root/'config.json').read_text())
     meta = json.loads((root/'metadata.json').read_text())
+    if source.get('initial_context') or source.get('source_steps_offset', 0) != 0:
+        raise ValueError('Nested context offsets require a separate continuation protocol')
+    expected_offset = spec['task'] * source['task_steps']
+    if config.get('source_steps_offset', expected_offset) != expected_offset:
+        raise ValueError('Recorded context source step offset differs')
     for key in ('ppo', 'run_seed', 'max_pieces', 'device', 'candidate_policy', 'policy',
                 'task_steps', 'reward', 'reward_version', 'observation_version', 'candidate_feature_version'):
         if source.get(key) != config.get(key):
@@ -61,11 +63,38 @@ def context_source_config(spec, config):
     return source
 
 
+def validate_context_model_recipe(model, config):
+    """Check actual deserialized PPO fields, including constant SB3 schedules."""
+    ppo = config['ppo']
+    for key, expected in ppo.items():
+        if key != 'clip_range' and getattr(model, key) != expected:
+            raise ValueError('Loaded context model recipe differs: '+key)
+    if model.seed != config['run_seed']:
+        raise ValueError('Loaded context model seed differs')
+    for key, expected in [('normalize_advantage', True), ('clip_range_vf', None), ('target_kl', None)]:
+        if getattr(model, key) != expected:
+            raise ValueError('Loaded context model default differs: '+key)
+    for name, expected in [('lr_schedule', ppo['learning_rate']), ('clip_range', ppo['clip_range'])]:
+        schedule = getattr(model, name)
+        # Scope this entry to SB3's actual constant representation. Merely
+        # checking a few progress values cannot prove an arbitrary callable constant.
+        cls = type(schedule)
+        inner = getattr(schedule, 'value_schedule', None)
+        if (cls.__module__ != 'stable_baselines3.common.utils' or cls.__name__ != 'FloatSchedule'
+                or type(inner).__module__ != 'stable_baselines3.common.utils'
+                or type(inner).__name__ != 'ConstantSchedule' or inner.val != expected):
+            raise ValueError('Loaded context model schedule differs: '+name)
+    for group in model.policy.optimizer.param_groups:
+        if group['lr'] != ppo['learning_rate']:
+            raise ValueError('Loaded context optimizer learning rate differs')
+
+
 def restore_initial_context(spec, config, env):
     from training.train_vector_transaction import restore_task
 
     source_config = context_source_config(spec, config)
     model, trainer, _ = restore_task(Path(spec['run_dir']), spec['task'], source_config, env)
+    validate_context_model_recipe(model, config)
     offset = spec['task'] * source_config['task_steps']
     if model.num_timesteps != offset or config['source_steps_offset'] != offset:
         raise RuntimeError('Full context step offset differs')
@@ -109,6 +138,8 @@ def initialize_policy(target, source, mode='fresh'):
     This does not restore environment state, RNG, or PPO timesteps. It is a new
     transfer run; normal transaction resume restores the complete run instead.
     """
+    import torch
+
     if mode not in ('fresh', 'restore_state'):
         raise ValueError('Unknown optimizer initialization mode')
     source_parameters = [(name, tuple(p.shape)) for name,p in source.named_parameters()]
