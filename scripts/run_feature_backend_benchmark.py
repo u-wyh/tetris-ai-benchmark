@@ -17,11 +17,14 @@ from resource_guard import ROOT,now,operation,write_json
 def run(folder):
     if (folder/'gpu_summary.json').exists():return
     design=json.loads((folder/'gpu_design.json').read_text())
+    design_hash=hashlib.sha256((folder/'gpu_design.json').read_bytes()).hexdigest()
     lock=(folder/'gpu_benchmark.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
     child=None;deadline=time.monotonic()+design['wall_seconds']
     def stopped(*args):raise KeyboardInterrupt('GPU feature benchmark interrupted')
     for sig in (signal.SIGTERM,signal.SIGINT,signal.SIGHUP):signal.signal(sig,stopped)
     def check():
+        if hashlib.sha256((folder/'gpu_design.json').read_bytes()).hexdigest()!=design_hash:
+            raise RuntimeError('Benchmark design changed')
         if inspect(Path.home()/'.codex',design['thread_id'])[0] not in ('active','usageLimited','usage_limited') or (folder/'STOP').exists():
             raise RuntimeError('Goal stopped')
         if time.monotonic()>deadline:raise RuntimeError('Benchmark time budget exhausted')
@@ -41,6 +44,16 @@ def run(folder):
         result=json.loads((output/'result.json').read_text())
         if child.returncode or result['outcome']!='completed':raise RuntimeError(label+' failed; inspect '+str(output))
     try:
+        if design.get('preflight_tests'):
+            receipt=folder/'preflight_passed.json'
+            if receipt.exists():
+                cached=json.loads(receipt.read_text())
+                if cached.get('design_sha256')!=design_hash or cached.get('tests')!=design['preflight_tests']:
+                    raise RuntimeError('Preflight identity changed')
+            else:
+                stage('preflight',[sys.executable,'-m','pytest','-q',*design['preflight_tests']],
+                      'preflight_resources.json')
+                write_json(receipt,dict(at=now(),design_sha256=design_hash,tests=design['preflight_tests']))
         for name in design['case_order']:
             case=folder/'gpu_pairs'/name;training=case/'training'
             for task in (1,2):
