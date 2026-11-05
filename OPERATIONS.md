@@ -1089,3 +1089,13 @@
 - 2026-11-05T23:29:40+08:00：资源保护：tetris-guard-195883-1793892570906332448 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_candidate_search_20261105/guard。
 
 - 2026-11-05T23:30:47+08:00：落点复用受保护微基准完成，177项通过，19状态/30ABBA中位1.16418667、每对>1.09；输入SHA及推理20不变，无后端替换/训练。先归档现代码再进入独立GPU8验证。证据：runs/autonomous_candidate_search_20261105/summary.json；reports/experiments/candidate_search_micro_20261105.md。
+
+- 2026-11-05T23:31:55+08:00：创建本机归档tetris-runtime-65fd092，23数值/20推理SHA与已验证训练/基线逐项完全一致；独立开发副本tetris-search-validation（codex/placement-backend-performance）从同提交开始，主副本数值来源未动。准备显式搜索后端GPU8对照，尚未采纳。证据：runs/autonomous_candidate_search_20261105/runtime_archive.json。
+
+- 2026-11-05T23:38:09+08:00：独立副本877ecd3冻结25数值及支持输入，真实CUDA8搜索对照已配置并持久接力：种子1900000/1900100、AB/BA每后端8192（两次4096跨进程），相同位图特征/初始化/Adam/KL，仅搜索不同；事前≥1.05且每对更快、全状态/非计时指标相同、全程250%无降载才采纳。先串行188项预检，错误preset恢复必须拒绝且不改提交状态；无最终测试/棋力结论/模型替换。证据：runs/autonomous_candidate_search_20261105/gpu_design.json。
+
+- 2026-11-05T23:45:18+08:00：真实CUDA8两组AB/BA8192对照23:40:52 passed、父服务23:40:55 completed；吞吐1.092980/1.067346，几何1.0800869，全部policy/Adam/PPO更新/完整RNG/8worker/非计时指标精确一致，错误搜索preset恢复拒绝且原提交状态不变；43冻结SHA未改、全程250%。独立副本仍未合入主23来源。为补齐新搜索的完整上下文扩展路径，配置单项合成GPU8断点恢复测试并串行启动，预算300秒；源formal→显式降LR/newsearch→完成后扩展→中断恢复，未扩被拒绝候选。证据：runs/autonomous_candidate_search_20261105/gpu_summary.json；runs/autonomous_candidate_search_context_20261105/design.json。
+
+- 2026-11-05T23:47:20+08:00：新实证：非模拟情况下本机桌面代理已为0，本次AI工具调用前后均确认无代理，工具祖先为原生后台13827→1，local RPC目标active，开机/两timer/linger检查通过。已证明实际桌面连接缺席时仍执行，回执已更新；不推断游戏本物理电源状态，不声称重启或下一整轮无桌面启动已测。证据：runs/autonomous_development_20261105/unattended_no_desktop_execution_20261105.json。
+
+- 2026-11-05T23:48:58+08:00：新搜索完整上下文扩展/中断恢复23:46:58 passed，1项通过/2 deselected，CPU250%/6GiB保护，源formal→目标bitboard完整上下文及状态计数一致；全部GPU43和上下文31冻结输入仍相同，推理20与旧长基线匹配。采纳门槛具备，准备将独立副本已测代码合入主副本；旧23代码归档补齐本机venv/runs链接以便实际恢复，不改旧断点/缓存身份。证据：runs/autonomous_candidate_search_20261105/adoption_gate.json。
