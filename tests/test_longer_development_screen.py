@@ -1,12 +1,13 @@
 """Protect extension decisions against regressions hidden by capped averages."""
 
 import copy
+import json
 from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'scripts'))
 from compare_development_evaluations import compare
-from run_longer_development_screen import extension_eligible
+from run_longer_development_screen import extension_eligible, run
 
 
 GATE = dict(mean_pieces_ratio_at_least=0.99, mean_observed_score_ratio_at_least=0.99,
@@ -42,3 +43,11 @@ def test_matched_survival_with_large_score_loss_is_not_extended():
         row['score'] *= 0.98
     assert not extension_eligible(compare(baseline, candidate), dict(baseline=1, candidate=1), GATE)
     assert extension_eligible(compare(baseline, baseline), dict(baseline=1, candidate=1), GATE)
+
+
+def test_boot_does_not_replay_a_completed_historical_screen(tmp_path):
+    (tmp_path/'summary.json').write_text('{}')
+    (tmp_path/'status.json').write_text(json.dumps(dict(stage='completed')))
+    # No protocol or worker is needed when restarting an already finished job.
+    run(tmp_path)
+    assert not (tmp_path/'queue.lock').exists()

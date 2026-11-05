@@ -67,3 +67,26 @@ def test_preflight_timeout_never_starts_work_without_a_fresh_safe_reading(tmp_pa
     assert result['outcome'] == 'startup_failed'
     assert ('stop:temperature' if recovered else 'TimeoutExpired') in result['error']
     assert not (output/'launch.json').exists()
+
+
+@pytest.mark.parametrize('final_state,expected', [
+    (dict(ActiveState='active', SubState='exited', ExecMainStatus='0'), 'completed'),
+    (dict(ActiveState='failed', SubState='failed', Result='exit-code'), 'command_failed:exit-code'),
+    (dict(ActiveState='active', SubState='running'), 'technical_failure'),
+])
+def test_cgroup_disappearing_during_sampling_requires_a_confirmed_terminal_state(tmp_path, monkeypatch, final_state, expected):
+    states = iter([dict(ActiveState='active', SubState='running',
+                       ControlGroup='/__tetris_missing_cgroup__'), final_state])
+    monkeypatch.setattr(guard, 'unit_state', lambda unit: next(states))
+    monkeypatch.setattr(guard, 'read_telemetry', lambda required: sample())
+    monkeypatch.setattr(guard, 'physical_cpus', lambda *args: [0])
+    monkeypatch.setattr(guard, 'operation', lambda *args: None)
+    monkeypatch.setattr(guard, 'systemctl', lambda *args, **kwargs: None)
+    monkeypatch.setattr(guard.subprocess, 'run', lambda *args, **kwargs: None)
+    monkeypatch.setattr(guard.signal, 'signal', lambda *args: None)
+    output = tmp_path/'guard'
+    code = guard.run(SimpleNamespace(profile=ROOT/'configs/training_resources.json', output=output,
+                                    seconds=10, command=['--', '/bin/true']))
+    result = json.loads((output/'result.json').read_text())
+    assert result['outcome'].startswith(expected)
+    assert code == (0 if expected == 'completed' else 1)

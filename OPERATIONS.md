@@ -551,3 +551,11 @@
 - 2026-11-05T15:50:39+08:00：资源保护：启动受保护任务 tetris-guard-61563-1793865039350660289，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_longcap_20261105/guards/low_rate_failure_replay。
 
 - 2026-11-05T15:52:02+08:00：整理无人值守配置、14项定向测试、两组与长局结果及真实自动止损证据，准备提交本会话代码/文档；已有其他报告、traditional_longlife和viewer改动不纳入。长局失败精确重放独立受保护运行，后续按证据选新方向，不重启已拒绝组。证据：reports/experiments/unattended_development_20261105.md；AUTONOMOUS_PLAN.md；runs/autonomous_development_20261105/development_status.json。
+
+- 2026-11-05T15:52:50+08:00：资源保护：tetris-guard-61563-1793865039350660289 结束：technical_failure:FileNotFoundError(2, 'No such file or directory')，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_longcap_20261105/guards/low_rate_failure_replay。
+
+- 2026-11-05T15:57:49+08:00：资源保护：启动受保护任务 tetris-guard-64359-1793865469697646280，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/exit_race_verification。
+
+- 2026-11-05T15:57:50+08:00：资源保护：tetris-guard-64359-1793865469697646280 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/exit_race_verification。
+
+- 2026-11-05T15:59:22+08:00：用户要求复核运行状态时发现guard收尾误报：诊断真实退出0且产物正确，采样阶段遇到已回收的cgroup文件。回归先复现2项失败，修复后18项测试通过；真实systemd进程退出注入确认缺失文件竞态并正确返回completed/0。再次逐项核对长局诊断与原评测/模型SHA完全一致，保留旧失败结果，新增reconciliation证据；清理该已核对服务的failed标记，不重跑已有工作。证据：runs/autonomous_development_20261105/exit_race_verification/；runs/autonomous_lr_longcap_20261105/diagnosis_reconciliation.json；tests/test_resource_guard.py。

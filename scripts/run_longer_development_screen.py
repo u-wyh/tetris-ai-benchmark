@@ -29,6 +29,10 @@ def extension_eligible(comparison, failures, gate):
 
 
 def run(folder):
+    if (folder/'summary.json').exists() and (folder/'status.json').exists():
+        if json.loads((folder/'status.json').read_text())['stage'] == 'completed':
+            print(json.dumps(dict(already_completed=True)))
+            return
     sys.path.insert(0, str(ROOT))
     from training.train_vector_transaction import training_source_identity
 

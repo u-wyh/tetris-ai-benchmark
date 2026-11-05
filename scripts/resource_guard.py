@@ -108,6 +108,15 @@ def unit_state(unit):
     return dict(line.split("=", 1) for line in values.splitlines() if "=" in line)
 
 
+def terminal_result(state):
+    if state.get("SubState") == "exited":
+        code = int(state.get("ExecMainStatus", "1"))
+        return ("completed" if code == 0 else "command_failed"), code
+    if state.get("ActiveState") in ("failed", "inactive"):
+        return "command_failed:" + state.get("Result", "unknown"), 1
+    return None
+
+
 def run(args):
     profile = json.loads(args.profile.read_text())
     if not (0 < profile["min_cpu_quota"] <= profile["initial_cpu_quota"] <= profile["max_cpu_quota"]
@@ -185,12 +194,9 @@ def run(args):
         while True:
             write_json(output / "heartbeat.json", dict(pid=os.getpid(),monotonic=time.monotonic()))
             state = unit_state(unit)
-            if state.get("SubState") == "exited":
-                code = int(state.get("ExecMainStatus", "1"))
-                outcome = "completed" if code == 0 else "command_failed"
-                break
-            if state.get("ActiveState") in ("failed", "inactive"):
-                outcome = "command_failed:" + state.get("Result", "unknown")
+            terminal = terminal_result(state)
+            if terminal is not None:
+                outcome, code = terminal
                 break
             if stopping or time.monotonic() - started >= args.seconds:
                 outcome = "interrupted" if stopping else "time_budget"
@@ -199,11 +205,21 @@ def run(args):
             clock = time.monotonic()
             new_quota, cool_since, decision = control(sample, quota, cool_since, clock, profile)
             cgroup = Path("/sys/fs/cgroup") / state["ControlGroup"].lstrip("/")
-            stats = dict(line.split() for line in (cgroup / "cpu.stat").read_text().splitlines())
+            try:
+                stats = dict(line.split() for line in (cgroup / "cpu.stat").read_text().splitlines())
+                memory_mib = int((cgroup / "memory.current").read_text()) / 1024**2
+            except FileNotFoundError:
+                # systemd can remove an empty cgroup after the state query but
+                # before sampling. Only a confirmed terminal unit resolves it.
+                terminal = terminal_result(unit_state(unit))
+                if terminal is None:
+                    raise
+                outcome, code = terminal
+                break
             usage = int(stats["usage_usec"])
             sample.update(elapsed_seconds=round(clock-started, 3),cpu_quota_percent=quota,
                           decision=decision,cgroup_cpu_usage_usec=usage,
-                          memory_mib=int((cgroup / "memory.current").read_text()) / 1024**2)
+                          memory_mib=memory_mib)
             if previous_usage is not None:
                 sample["cpu_used_cores"] = (usage-previous_usage[0]) / 1e6 / (clock-previous_usage[1])
             previous_usage = (usage,clock)
