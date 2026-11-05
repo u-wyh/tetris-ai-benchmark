@@ -1029,3 +1029,39 @@
 - 2026-11-05T22:17:29+08:00：资源保护：启动受保护任务 tetris-guard-172629-1793888249259753161，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_lr_screen_20261105/guards/full_context_low_lr_training_00。
 
 - 2026-11-05T22:21:30+08:00：新低LR完整上下文筛选已实际运行，核对trainer PID172644命令行匹配，已提交139264/262144新增步；最近温度CPU76.375℃/GPU52.0℃、配额250%。主/纯验证接力服务均active；训练23来源冻结，已验证GPU8两个事务与恢复后才接力，复用匹配推理20长基线。证据：runs/autonomous_context_lr_screen_20261105/；reports/experiments/context_lr_transition_20261105.md。
+
+- 2026-11-05T22:25:04+08:00：资源保护：tetris-guard-172629-1793888249259753161 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_lr_screen_20261105/guards/full_context_low_lr_training_00。
+
+- 2026-11-05T22:25:06+08:00：资源保护：启动受保护任务 tetris-guard-175691-1793888706342361253，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_lr_screen_20261105/guards/full_context_low_lr_evaluation_00。
+
+- 2026-11-05T22:26:49+08:00：完整上下文低LR新增262144步于22:25:06自动转入长局评测；纠正全局状态中遗留的旧候选路径/接力目录/原因/结果字段，实际服务及冻结协议未变。新增完成后扩展的全上下文LR+中断恢复测试，待现有重任务结束再受保护串行验证。证据：runs/autonomous_context_lr_screen_20261105/status.json；tests/test_extend_candidate.py。
+
+- 2026-11-05T22:29:31+08:00：资源保护：tetris-guard-175691-1793888706342361253 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_lr_screen_20261105/guards/full_context_low_lr_evaluation_00。
+
+- 2026-11-05T22:29:33+08:00：资源保护：learning_rate开发筛选完成，门槛合格候选None；由已配置接力处理后续，未替换正式模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_lr_screen_20261105/summary.json。
+
+- 2026-11-05T22:29:36+08:00：资源保护：参数比较没有合格候选，自动取消额外评测与续训。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_lr_screen_20261105_followup/summary.json。
+
+- 2026-11-05T22:29:57+08:00：资源保护：启动受保护任务 tetris-guard-177669-1793888997743366032，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_extension_verify_20261105/guard。
+
+- 2026-11-05T22:30:48+08:00：资源保护：tetris-guard-177669-1793888997743366032 结束：interrupted，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_extension_verify_20261105/guard。
+
+- 2026-11-05T22:31:28+08:00：完成后扩展验证首试主动中断并保留guard记录：发现新增位图夹具漏声明fast_candidate_env，尚未获得测试结论；修正夹具后新guard独立重试，生产候选及冻结来源未改。证据：runs/autonomous_context_extension_verify_20261105/design_retry01.json；guard/result.json。
+
+- 2026-11-05T22:31:30+08:00：资源保护：启动受保护任务 tetris-guard-178356-1793889089983475035，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_extension_verify_20261105/guard_retry01。
+
+- 2026-11-05T22:34:33+08:00：资源保护：tetris-guard-178356-1793889089983475035 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_extension_verify_20261105/guard_retry01。
+
+- 2026-11-05T22:34:51+08:00：资源保护：启动受保护任务 tetris-guard-180203-1793889291385413356，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_candidate_construction_profile_20261105/guard。
+
+- 2026-11-05T22:34:53+08:00：资源保护：tetris-guard-180203-1793889291385413356 结束：command_failed:exit-code，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_candidate_construction_profile_20261105/guard。
+
+- 2026-11-05T22:35:37+08:00：静态构造剖析首试因误写运行库身份函数名在导入时失败（2.078秒）；未训练、未产生有效剖析，已修正为evaluation_runtime_identity并保留失败guard，使用新目录重试。证据：runs/autonomous_candidate_construction_profile_20261105/guard/command.log。
+
+- 2026-11-05T22:35:39+08:00：资源保护：启动受保护任务 tetris-guard-180353-1793889339516251975，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_candidate_construction_profile_20261105/guard_retry01。
+
+- 2026-11-05T22:35:42+08:00：资源保护：提交worker静态状态的正式落点/位图特征函数剖析完成，未训练或改变模型。证据：runs/autonomous_candidate_construction_profile_20261105/profile.json。
+
+- 2026-11-05T22:35:43+08:00：资源保护：tetris-guard-180353-1793889339516251975 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_candidate_construction_profile_20261105/guard_retry01。
+
+- 2026-11-05T22:37:40+08:00：完整上下文低LR筛选4/8触顶、得分比0.5898042639，自动拒绝extra8/扩训；完成后扩展两种初始化的CUDA8故障恢复回归2项通过（输入SHA未变）；静态16worker/480次构造剖析完成，落点搜索约75.4%仅作下一步假设。全局状态及接力计划已据实际结果更新；未替换模型。证据：runs/autonomous_context_lr_screen_20261105/summary.json；runs/autonomous_context_extension_verify_20261105/summary.json；runs/autonomous_candidate_construction_profile_20261105/profile.json；两份对应实验报告。

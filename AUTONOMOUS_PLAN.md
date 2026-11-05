@@ -213,3 +213,11 @@
 - 当前tetris-parameter-screen@autonomous_context_lr_screen_20261105.service（controller PID172609，trainer PID172644）已从已验证8192继续262144新增步。最近实际提交139264；本轮无KL、原奖励/gamma.995/GAE.95/max10000不变，完整env/RNG保留。训练/source23及59支持输入冻结在protocol.json，运行期禁止修改。
 - 成功复用推理20身份及6运行库仍完全匹配的runs/autonomous_bitboard_baseline_20261105/baseline.json，无重复基线。候选到262144再bitboard8×20000筛选；接力tetris-parameter-followup@autonomous_context_lr_screen_20261105.service（PID172612）等待，合格才extra8，extension_enabled=false，不越262144或发布。历史失败高LR/重置上下文/KL数据只作背景，不能伪称严格对照。
 - 先查实际进程/提交步数/评测cache与温控，避免重复启动。筛选后按完整summary决定是否extra8；不合格不复跑本配置，合格还需额外配对再设计明确扩展预算。当前保护GPU8/CPU250%/6GiB/原温控，最近CPU76.375℃/GPU52.0℃。全部lightbook，额度/暂停规则不变。
+
+### 2026-11-05T22:37:40+08:00 低LR完整上下文仍未过长局门槛，恢复回归与函数剖析完成
+
+- screen22:29:33完成，4/8触顶，存活比0.68739375、观测得分比0.5898042639；followup22:29:36 no_eligible_candidate。两个服务MainPID0/Resultsuccess；没有extra8/扩训/模型替换，不复跑。证据runs/autonomous_context_lr_screen_20261105/summary.json。
+- 新增完成后扩展的完整上下文降LR分支，与原fresh分支共2项真实CUDA8回归通过；故意中断恢复后policy/Adam/PPO更新/全部trainer RNG/8worker状态与连续控制组精确一致，offset/lifetime保持。合成小预算夹具，不是被拒绝候选的扩训。输入SHA未变；证据runs/autonomous_context_extension_verify_20261105/summary.json。首试夹具漏fast标志主动中断，独立retry通过，失败/中断保留。
+- 新scripts/profile_candidate_construction.py对原30M与新候选各8worker静态状态做480次函数剖析。输出指纹与输入SHA未变，正式落点搜索占构造累计约75.4%，位图特征约24.5%；含cProfile开销，不是端到端收益。证据runs/autonomous_candidate_construction_profile_20261105/profile.json。首试导入名错误已修复，guard_retry01通过。
+- 当前所有本轮计算已释放；继续前查实际PID，防重复。下一步先检查已有落点性能工作，再归档当前23数值/20推理身份的确切运行代码，在独立lightbook副本试搜索优化；必须保留action排序/path/边界规则。先差分状态与边界验证、配对计时，再实际GPU8完整事务/恢复精确一致，合格才启用。不得重标原缓存/断点。原30M仍冻结参考，暂无棋力提升候选。
+- 保持lightbook、GPU8、总CPU250%/6GiB/原温控和时间预算；新静态profiling单任务CPU100%/2GiB，无训练。每小时续办与watchdog保持，额度/暂停规则不变；实际桌面断开/重启验收仍未实测。
