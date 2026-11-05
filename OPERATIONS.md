@@ -1101,3 +1101,5 @@
 - 2026-11-05T23:48:58+08:00：新搜索完整上下文扩展/中断恢复23:46:58 passed，1项通过/2 deselected，CPU250%/6GiB保护，源formal→目标bitboard完整上下文及状态计数一致；全部GPU43和上下文31冻结输入仍相同，推理20与旧长基线匹配。采纳门槛具备，准备将独立副本已测代码合入主副本；旧23代码归档补齐本机venv/runs链接以便实际恢复，不改旧断点/缓存身份。证据：runs/autonomous_candidate_search_20261105/adoption_gate.json。
 
 - 2026-11-05T23:35:04+08:00：独立副本增加显式candidate_search_backend（formal默认/bitboard需既有位图特征），训练来源闭包增加新env和既有fast_legal共25项；配置/metadata/带preset恢复均固定搜索模式。推理20不改。准备原特征固定为bitboard的正式/位图搜索真实CUDA8两组对照，增加PPO更新计数比较及错误搜索preset恢复拒绝核验；主副本保持23来源不动。
+
+- 2026-11-05T23:51:34+08:00：已完成搜索后端代码集成3e614eb/205c33b/b7724c4，OP追加冲突保留双方真实条目。主25数值SHA与实测副本相同，推理20未变；新普通训练可显式选择位图搜索，默认formal不变。真实训练约+8.01%与完整上下文扩展故障恢复均过门槛，无棋力提升/最终测试/模型替换；旧23代码归档恢复可用。证据：runs/autonomous_candidate_search_20261105/integration_audit.json；reports/experiments/candidate_search_training_20261105.md。
