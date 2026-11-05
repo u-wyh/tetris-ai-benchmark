@@ -1,0 +1,18 @@
+[Unit]
+Description=Verify isolated context guards after live development releases compute
+ConditionPathExists=/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_validation_20261105/design.json
+
+[Service]
+Type=exec
+WorkingDirectory=/home/wyh/projects/tetris-context-validation
+ExecCondition=/home/wyh/projects/tetris-ai-benchmark/.venv/bin/python /home/wyh/projects/tetris-ai-benchmark/scripts/development_allowed.py --thread-id 01a191e9-a3ee-7530-99c1-b4171e601ec1 --run-dir /home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_validation_20261105
+ExecStart=/home/wyh/projects/tetris-ai-benchmark/.venv/bin/python -u /home/wyh/projects/tetris-context-validation/scripts/verify_context_guards_when_idle.py --run-dir /home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_validation_20261105
+Environment="PATH=/home/wyh/.local/bin:/home/wyh/.nvm/versions/node/v24.18.0/bin:/usr/local/bin:/usr/bin:/bin"
+Slice=tetris-compute.slice
+CPUQuota=10%
+MemoryMax=128M
+TimeoutStopSec=35
+RuntimeMaxSec=5700
+
+[Install]
+WantedBy=default.target

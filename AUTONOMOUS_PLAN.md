@@ -181,3 +181,11 @@
 - 新接力tetris-parameter-followup@autonomous_full_context_screen_20261105.service已启动等待，协议在runs/autonomous_full_context_screen_20261105_followup/。新增extension_enabled=false纯验证模式：screen不合格自动止损；合格自动启用并启动额外8种子配对服务tetris-development-pair@autonomous_full_context_extra_20261105.service，冻结模型/来源/运行库，完全不创建训练extension。用户无需逐项确认。此轮新增训练上限仍262144。
 - 接力脚本支持等待尚在运行的baseline bootstrap，而不是把尚未启动的screen误报失败；bootstrap实际退出失败仍拒绝继续。11项定向回归通过，旧默认含续训行为保持。该脚本未列入正在运行screen的冻结支持范围，因此此次修改没有迁移或绕过现有来源保护；新followup额外冻结自身等60输入。
 - 下一步先查screen状态和实际PID。完成后查summary及followup；若无合格候选不重跑，若额外验证启动跟踪成对逐seed缓存，完成后依据长局门槛决定后续研究。2M扩展需要新的明确可恢复预算设计，当前不越界。
+
+### 2026-11-05T21:29:34+08:00 新增262144步完成；隔离来源校验等待串行GPU复核
+
+- 主训练已完成262144新增步，trainer PID已释放，screen实际进入full_context_evaluation；当前逐seed缓存8/8。已观察100001在5322块结束，完整报告仍等待其余seed；不据部分结果启动额外验证或扩训。现有followup会按已冻结门槛自动拒绝不合格候选。
+- 在同一lightbook独立worktree /home/wyh/projects/tetris-context-validation（codex/full-context-validation）完成来源校验补强：82085aa显式拒绝未验证的多层上下文偏移、记录offset与源task不符、实际PPO字段/常数schedule/优化器LR与配置不符；Torch改成实际使用时导入，使纯校验不初始化数值库。13项纯测试通过。
+- 73e47c6加入串行验证等待器。tetris-context-validation.service已启动，真实PID156870；等当前screen、followup、可能的pair服务及所有存活guard释放后，再以CPU100%/内存2GiB和原温控运行实际CUDA断点正例及初始化回归。不并行重任务，不因AI额度不足而丢失已授权的有限队列。
+- 验证冻结34输入在runs/autonomous_context_validation_20261105/design.json；目前status为waiting_for_frozen_pipeline，尚未宣称CUDA验证通过。主工作副本的23数值文件及既有支持文件完全未修改，现有实验未迁移来源。后续先查其summary/guard日志和主screen结论，再决定合入隔离补强；有待运行的冻结验证期间不要修改隔离数值文件/输入。
+- 所有Codex/工作副本/定时续办仍在lightbook；没有依赖游戏本的新连接，没有CPU训练回退。native目标保持active；桌面实际断开后的完整链路仍未实测。

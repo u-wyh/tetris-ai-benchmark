@@ -925,3 +925,17 @@
 - 2026-11-05T21:15:25+08:00：资源保护：启动受保护任务 tetris-guard-152303-1793884525058198189，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_screen_20261105/guards/full_context_training_00。
 
 - 2026-11-05T21:17:14+08:00：匹配基线8/8评测已完成，逐局及聚合与历史冻结模型完全相同，baseline_equivalence.json passed；21:15:22后台bootstrap自动启动参数筛选后成功退出，训练实际PID152311、已提交65536新增步、目标262144。纯验证followup PID152112已实际等待screen，候选合格才额外8配对，extension_enabled=false。健康记录2026-11-05T21:16:39+08:00/healthy。证据：runs/autonomous_full_context_screen_20261105/handoff.json；runs/autonomous_full_context_screen_20261105_followup/status.json。
+
+- 2026-11-05T21:19:22+08:00：核实主训练PID152311存活、GPU8与250%/6GiB保护仍生效后，在同一轻薄本创建独立worktree /home/wyh/projects/tetris-context-validation（codex/full-context-validation），用于补强已注明的首代上下文来源边界和模型实际配方校验；主工作副本数值/冻结支持文件不修改、不重启训练。证据：git worktree list。
+
+- 2026-11-05T21:23:01+08:00：资源保护：tetris-guard-152303-1793884525058198189 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_screen_20261105/guards/full_context_training_00。
+
+- 2026-11-05T21:23:04+08:00：资源保护：启动受保护任务 tetris-guard-155765-1793884984166976534，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_screen_20261105/guards/full_context_evaluation_00。
+
+- 2026-11-05T21:25:55+08:00：训练已提交262144新增步并自动进入候选评测。隔离worktree提交82085aa/73e47c6补强：显式拒绝未验证的多层来源步数、来源任务与记录偏移不一致、已加载模型PPO参数/固定schedule/优化器LR与配方不符；仅把Torch导入延后，不改主实验。13项纯校验测试通过，真实CUDA模型正例及原有初始化回归排在screen/followup/可能的额外pair全部释放后，由独立持久服务自动受保护执行（100%CPU、2GiB、原温控）。尚未将该分支激活到主副本，不把待跑CUDA验证记为通过。证据：runs/autonomous_context_validation_20261105/design.json；/home/wyh/projects/tetris-context-validation。
+
+- 2026-11-05T21:29:30+08:00：资源保护：tetris-guard-155765-1793884984166976534 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_screen_20261105/guards/full_context_evaluation_00。
+
+- 2026-11-05T21:29:31+08:00：资源保护：learning_rate开发筛选完成，门槛合格候选None；由已配置接力处理后续，未替换正式模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_screen_20261105/summary.json。
+
+- 2026-11-05T21:29:34+08:00：主训练已完成262144新增步并释放trainer PID，候选评测当前8/8缓存，已核实100001于5322块终止；完整筛选及纯验证followup仍按冻结条件运行，不重复训练。隔离分支13项纯校验通过，串行CUDA/初始化复核已实际由PID156870等待上游释放，当前状态waiting_for_frozen_pipeline；主23数值/支持输入未改。证据：runs/autonomous_full_context_screen_20261105/full_context/；runs/autonomous_context_validation_20261105/status.json；隔离分支82085aa/73e47c6。
