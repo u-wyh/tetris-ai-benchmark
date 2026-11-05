@@ -52,6 +52,9 @@ def run(folder):
                 raise RuntimeError('Frozen followup input changed: ' + name)
 
     try:
+        extension_enabled = p.get('extension_enabled', True)
+        if type(extension_enabled) is not bool:
+            raise ValueError('extension_enabled must be a boolean')
         upstream = Path(p['parameter_screen'])
         write_json(folder/'status.json', dict(at=now(), stage='waiting_for_parameter_screen'))
         while not (upstream/'summary.json').exists():
@@ -61,7 +64,12 @@ def run(folder):
             if (upstream/'summary.json').exists():
                 break
             state = json.loads((upstream/'status.json').read_text()) if (upstream/'status.json').exists() else {}
-            if state.get('stage') == 'stopped' or not pid.isdigit() or int(pid) == 0:
+            bootstrap_live = False
+            if pid == '0' and p.get('bootstrap_service') and state.get('stage') != 'stopped':
+                bootstrap_pid = subprocess.run(['systemctl','--user','show',p['bootstrap_service'],
+                    '-p','MainPID','--value'],capture_output=True,text=True,check=True,timeout=10).stdout.strip()
+                bootstrap_live = bootstrap_pid.isdigit() and int(bootstrap_pid) > 0
+            if state.get('stage') == 'stopped' or not pid.isdigit() or (int(pid) == 0 and not bootstrap_live):
                 raise RuntimeError('Parameter screen stopped before producing a result')
             time.sleep(10)
         while subprocess.run(['systemctl','--user','is-active','--quiet',p['upstream_service']]).returncode == 0:
@@ -91,12 +99,16 @@ def run(folder):
         if (not paired['comparable'] or paired['mean_observed_score_ratio'] < 0.99
                 or not all(row['survived_cap'] and not row['game_over'] for row in result['per_seed'])):
             raise RuntimeError('Selected candidate no longer passes the frozen screen')
-        heldout, extension = Path(p['heldout']), Path(p['extension'])
-        heldout.mkdir(exist_ok=True);extension.mkdir(exist_ok=True)
+        heldout = Path(p['heldout'])
+        extension = Path(p['extension']) if extension_enabled else None
+        heldout.mkdir(exist_ok=True)
         ensure_json(heldout/'seeds.json',dict(validation=p['extra_seeds']))
-        for directory, name, origin in [(heldout,'resource_profile.json',p['evaluation_resources']),
-                                         (extension,'training_resources.json',p['training_resources']),
-                                         (extension,'evaluation_resources.json',p['evaluation_resources'])]:
+        resources = [(heldout,'resource_profile.json',p['evaluation_resources'])]
+        if extension_enabled:
+            extension.mkdir(exist_ok=True)
+            resources += [(extension,'training_resources.json',p['training_resources']),
+                          (extension,'evaluation_resources.json',p['evaluation_resources'])]
+        for directory, name, origin in resources:
             ensure_json(directory/name,json.loads(Path(origin).read_text()))
         frozen = dict(p['frozen_files'])
         for path in [upstream/'summary.json',case/source['evaluation_filename'],model,
@@ -112,23 +124,26 @@ def run(folder):
         if module_for(source) == RESUMABLE:
             heldout_protocol.update(runtime_identity())
         ensure_json(heldout/'protocol.json',heldout_protocol)
-        extra_inputs = [heldout/'protocol.json',extension/'training_resources.json',extension/'evaluation_resources.json',
+        if extension_enabled:
+            extra_inputs = [heldout/'protocol.json',extension/'training_resources.json',extension/'evaluation_resources.json',
                         case/'preset.json',case/'training/config.json',Path(p['short_baseline'])]
-        extension_protocol = dict(at=now(),thread_id=p['thread_id'],wall_seconds=21600,
+            extension_protocol = dict(at=now(),thread_id=p['thread_id'],wall_seconds=21600,
             evaluation_module=module_for(source),
             longer_screen=str(heldout),upstream_service=p['heldout_service'],training=str(case/'training'),
             preset=str(case/'preset.json'),short_baseline=p['short_baseline'],seeds_file=str(heldout/'seeds.json'),
             checkpoints=[524288,1048576,1572864,2097152],extension_gate=p['extension_gate'],
             frozen_files={**frozen,**{str(path):digest(path) for path in extra_inputs}})
-        ensure_json(extension/'protocol.json',extension_protocol)
+            ensure_json(extension/'protocol.json',extension_protocol)
         check()
-        subprocess.run(['systemctl','--user','enable',p['extension_service']],check=True,timeout=20)
+        subprocess.run(['systemctl','--user','enable',p['extension_service'] if extension_enabled else p['heldout_service']],check=True,timeout=20)
         subprocess.run(['systemctl','--user','start',p['heldout_service']],check=True,timeout=20)
-        subprocess.run(['systemctl','--user','start',p['extension_service']],check=True,timeout=20)
+        if extension_enabled:
+            subprocess.run(['systemctl','--user','start',p['extension_service']],check=True,timeout=20)
         write_json(folder/'summary.json',dict(at=now(),outcome='handed_off',selected_case=selected,
-                   heldout=str(heldout),extension=str(extension),model_promotion='none'))
+                   heldout=str(heldout),extension=str(extension) if extension else None,
+                   extension_enabled=extension_enabled,model_promotion='none'))
         write_json(folder/'status.json',dict(at=now(),stage='handed_off',selected_case=selected))
-        operation(f'参数比较自动接力：{selected}进入额外8种子长局复核，通过才分段续训；无人工确认或发布',folder/'summary.json')
+        operation(f'参数比较自动接力：{selected}进入额外8种子长局复核；追加训练开关={extension_enabled}，无模型发布',folder/'summary.json')
     except BaseException as exc:
         write_json(folder/'status.json',dict(at=now(),stage='stopped',error=repr(exc)))
         operation(f'参数比较接力停止：{exc!r}，已保存进度',folder)

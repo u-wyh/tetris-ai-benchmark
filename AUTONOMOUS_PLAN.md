@@ -174,3 +174,10 @@
 - 当前tetris-full-context-screen-bootstrap.service独立执行匹配可恢复baseline8×20000；来源23文件及支持输入已冻结在runs/autonomous_full_context_screen_20261105/bootstrap_design.json，运行期间禁止修改这些文件。基线逐局/聚合与历史冻结模型一致后自动启动tetris-parameter-screen@autonomous_full_context_screen_20261105.service，从复制的已验证8192继续至新增262144，再筛选同8×20000。固定原LR3e-4/gamma.995/GAE.95，不含KL，不是重复原先重置环境/RNG的迁移实验。
 - 新增步数上限262144，暂未配置2M扩训或模型发布。筛选完成后先查summary/实际服务PID，若合格再设计额外8配对与明确的可恢复扩展；不将有上限的本轮筛选自动越界。基线/候选缓存均保留，额度不足本机有限任务仍受原保护继续，AI续办一小时重试。
 - 观察器已修复：存活的通用受保护脚本汇总显示guarded_work，而非waiting_or_starting；小时STOP也实际阻止额度恢复与投递。接手先读取真实观察器、逐seed缓存及bootstrap/handoff/protocol，不重复准备或运行。
+
+### 2026-11-05T21:17:14+08:00 基线自动接力成功；额外验证也已配置无人值守条件接力
+
+- 8×20000匹配基线已真实全部完成，与历史冻结模型逐局/聚合完全一致。bootstrap于21:15:22 handed_off后MainPID0/Resultsuccess。当前实际主服务tetris-parameter-screen@autonomous_full_context_screen_20261105.service训练中，新增步数目标262144，最新只读观测提交65536；禁止重复启动或修改冻结来源。
+- 新接力tetris-parameter-followup@autonomous_full_context_screen_20261105.service已启动等待，协议在runs/autonomous_full_context_screen_20261105_followup/。新增extension_enabled=false纯验证模式：screen不合格自动止损；合格自动启用并启动额外8种子配对服务tetris-development-pair@autonomous_full_context_extra_20261105.service，冻结模型/来源/运行库，完全不创建训练extension。用户无需逐项确认。此轮新增训练上限仍262144。
+- 接力脚本支持等待尚在运行的baseline bootstrap，而不是把尚未启动的screen误报失败；bootstrap实际退出失败仍拒绝继续。11项定向回归通过，旧默认含续训行为保持。该脚本未列入正在运行screen的冻结支持范围，因此此次修改没有迁移或绕过现有来源保护；新followup额外冻结自身等60输入。
+- 下一步先查screen状态和实际PID。完成后查summary及followup；若无合格候选不重跑，若额外验证启动跟踪成对逐seed缓存，完成后依据长局门槛决定后续研究。2M扩展需要新的明确可恢复预算设计，当前不越界。

@@ -96,3 +96,48 @@ def test_resumable_method_and_runtime_survive_validation_and_extension_handoff(t
     continuation=json.loads((extension/'protocol.json').read_text())
     assert pair['evaluation_module']==continuation['evaluation_module']==RESUMABLE
     assert pair['runtime_versions'] and pair['python_version'] and pair['diagnostics'] is False
+
+
+def test_validation_only_handoff_never_creates_or_starts_training_extension(tmp_path,monkeypatch):
+    heldout,extension,calls=setup(tmp_path,monkeypatch)
+    path=tmp_path/'protocol.json';protocol=json.loads(path.read_text());protocol['extension_enabled']=False
+    for key in ('extension','extension_service','training_resources','short_baseline'):protocol.pop(key)
+    path.write_text(json.dumps(protocol))
+    followup.run(tmp_path)
+    assert (heldout/'protocol.json').exists() and not extension.exists()
+    assert ['systemctl','--user','enable','pair@extra.service'] in calls
+    assert ['systemctl','--user','start','pair@extra.service'] in calls
+    assert not any('extension@extra.service' in call for call in calls)
+    result=json.loads((tmp_path/'summary.json').read_text())
+    assert result['extension_enabled'] is False and result['extension'] is None
+
+
+def test_live_bootstrap_is_waited_for_before_screen_starts(tmp_path,monkeypatch):
+    _,_,calls=setup(tmp_path,monkeypatch,eligible=False)
+    path=tmp_path/'protocol.json';protocol=json.loads(path.read_text());protocol['bootstrap_service']='bootstrap.service'
+    path.write_text(json.dumps(protocol))
+    summary_path=tmp_path/'screen/summary.json';summary=summary_path.read_text();summary_path.unlink()
+    (tmp_path/'screen/status.json').unlink()
+    original=followup.subprocess.run
+    def service(args,**kwargs):
+        if 'show' in args:
+            calls.append(args)
+            return SimpleNamespace(returncode=0,stdout='99' if 'bootstrap.service' in args else '0')
+        return original(args,**kwargs)
+    monkeypatch.setattr(followup.subprocess,'run',service)
+    def finish(seconds):
+        assert seconds==10
+        summary_path.write_text(summary)
+        save(tmp_path/'screen/status.json',dict(stage='completed_screen'))
+    monkeypatch.setattr(followup.time,'sleep',finish)
+    followup.run(tmp_path)
+    assert any('bootstrap.service' in call and 'show' in call for call in calls)
+    assert json.loads((tmp_path/'summary.json').read_text())['outcome']=='no_eligible_candidate'
+
+
+def test_bootstrap_failure_cannot_be_misreported_as_pending(tmp_path,monkeypatch):
+    setup(tmp_path,monkeypatch)
+    path=tmp_path/'protocol.json';protocol=json.loads(path.read_text());protocol['bootstrap_service']='bootstrap.service'
+    path.write_text(json.dumps(protocol));(tmp_path/'screen/summary.json').unlink()
+    monkeypatch.setattr(followup.subprocess,'run',lambda *args,**kwargs:SimpleNamespace(returncode=0,stdout='0'))
+    with pytest.raises(RuntimeError,match='stopped before'):followup.run(tmp_path)

@@ -913,3 +913,15 @@
 - 2026-11-05T21:08:29+08:00：资源保护：启动受保护任务 tetris-guard-148933-1793884109140571974，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_screen_20261105/baseline_guards/attempt_00。
 
 - 2026-11-05T21:10:22+08:00：完成自动续办接手验收及后续开发：31项受保护初始化/来源定向测试、7项观察器及最终28项轻量无人值守/状态回归全部通过；GPU8完整上下文两事务跨进程数值对照passed。探针采样CPU峰值79.0℃、GPU55.0℃、内存3568.73MiB、配额[150, 250]。匹配基线bootstrap已由systemd独立运行，当前状态matched_baseline，通过后自动启动已冻结262144新增步数及候选8×20000筛选。证据：runs/autonomous_full_context_20261105/hardware_summary.json；runs/autonomous_full_context_screen_20261105/。
+
+- 2026-11-05T21:14:56+08:00：本轮基线仍运行，当前6/8 seed已提交；仅修改未被冻结的参数接力脚本，增加extension_enabled=false的纯追加验证模式，并能等待尚在运行的baseline bootstrap，避免把未启动screen误判失败。新模式通过才接额外8种子配对、启用可重启pair服务，无extension目录/服务或追加训练；旧默认续训行为保留。11项定向回归通过（含bootstrap失败拒绝、纯验证无训练、幂等与暂停）。冻结独立followup协议并启用等待，不修改当前数值23来源或基线protocol。证据：runs/autonomous_full_context_screen_20261105_followup/protocol.json；tests/test_parameter_followup.py。
+
+- 2026-11-05T21:15:22+08:00：资源保护：tetris-guard-148933-1793884109140571974 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_screen_20261105/baseline_guards/attempt_00。
+
+- 2026-11-05T21:15:22+08:00：资源保护：完整上下文匹配基线逐局一致，已自动接力262144新增步数及8×20000门槛。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_screen_20261105/handoff.json。
+
+- 2026-11-05T21:15:24+08:00：资源保护：启动learning_rate受控实验，各262144步开发筛选，不自动替换正式模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_screen_20261105。
+
+- 2026-11-05T21:15:25+08:00：资源保护：启动受保护任务 tetris-guard-152303-1793884525058198189，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_full_context_screen_20261105/guards/full_context_training_00。
+
+- 2026-11-05T21:17:14+08:00：匹配基线8/8评测已完成，逐局及聚合与历史冻结模型完全相同，baseline_equivalence.json passed；21:15:22后台bootstrap自动启动参数筛选后成功退出，训练实际PID152311、已提交65536新增步、目标262144。纯验证followup PID152112已实际等待screen，候选合格才额外8配对，extension_enabled=false。健康记录2026-11-05T21:16:39+08:00/healthy。证据：runs/autonomous_full_context_screen_20261105/handoff.json；runs/autonomous_full_context_screen_20261105_followup/status.json。
