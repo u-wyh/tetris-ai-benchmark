@@ -617,3 +617,17 @@
 - 2026-11-05T16:39:33+08:00：配置KL比较后的无人值守接力：只对预声明合格者选额外验证种子100008–100015，配对评测通过后才恢复原事务并按既有门槛分段至最多2097152步；不占用最终测试集。持久模板服务和开机ExecCondition防止已暂停目标启动计算；修复上游进程已存活但状态文件尚未生成的启动竞态。18项接力/启动条件/续训测试通过；不改当前KL数值源码或并发启动训练，接力服务先等待现有MainPID。证据：runs/autonomous_kl_followup_20261105/protocol.json；tests/test_parameter_followup.py、test_development_allowed.py、test_unattended_extension.py；configs/systemd/。
 
 - 2026-11-05T16:43:17+08:00：核对弱KL组262144步评测失败（5/8触顶、得分比0.856601）；强组仍在原事务训练。接力服务MainPID78006等待正常终态，18项定向测试通过；补齐计划/报告/接手状态。16:42:34保护样本CPU77℃、GPU52℃、RSS3568MiB、CPU配额250%。证据：runs/autonomous_kl_control_20261105/partial_results.json、guards/strong_reference_training_00/samples.jsonl；runs/autonomous_kl_followup_20261105/status.json。
+
+- 2026-11-05T16:46:50+08:00：提交无人值守接力与启动安全修复b8f4df2；新增CUDA同状态策略保持审计工具（使用已有训练状态，不充当独立验证），记录模型/样本/源码SHA、逐种子与参考概率差距分层，拒绝无效概率及CPU回退。6项概率/掩码审计测试通过；GPU实跑等待现有受保护比较结束，不抢占当前训练评测。证据：training/evaluation/audit_reference_retention.py、tests/test_reference_retention.py。
+
+- 2026-11-05T16:47:20+08:00：资源保护：tetris-guard-77739-1793867923525031443 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/guards/strong_reference_training_00。
+
+- 2026-11-05T16:47:22+08:00：资源保护：启动受保护任务 tetris-guard-81503-1793868442720313167，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/guards/strong_reference_evaluation_00。
+
+- 2026-11-05T16:49:46+08:00：两组训练均已结束；检测现评测仅CPU150%、RSS782MiB、GPU空闲，于同一CPU250%/内存6GiB总slice内启动一次短CUDA策略保持审计（独立CPU上限100%、内存2GiB、180秒、原温控），不并发启动另一训练。7项审计测试通过；同状态比较现有历史训练样本，不使用额外8验证种子或最终测试。证据：runs/autonomous_kl_control_20261105/retention_audit/。
+
+- 2026-11-05T16:49:46+08:00：资源保护：启动受保护任务 tetris-guard-82439-1793868586739491893，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/retention_audit/guard。
+
+- 2026-11-05T16:49:54+08:00：资源保护：tetris-guard-82439-1793868586739491893 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/retention_audit/guard。
+
+- 2026-11-05T16:51:02+08:00：CUDA策略保持审计真实通过，guard退出0、耗时8.177秒，64个既有正常状态强/弱Top1一致62/56个，KL0.007855/0.083772；仅诊断漂移，不推断生存。两组训练统计及保护峰值已归档，强组匹配20K评测仍运行，未重复启动。证据：runs/autonomous_kl_control_20261105/retention_audit/results.json、guard/result.json、training_diagnostics.json；reports/experiments/reference_kl_control_20261105.md。
