@@ -49,3 +49,12 @@ def test_large_development_regression_requests_review_without_promoting():
 def test_legacy_results_without_model_identity_are_not_silently_reused():
     baseline=result();baseline.pop('model_sha256')
     assert not module.compare(baseline,result())['comparable']
+
+
+def test_runtime_versions_and_diagnostics_must_match_when_present():
+    baseline=result();baseline.update(runtime_versions={'torch':'same'},python_version='3.test',diagnostics=False)
+    assert module.compare(baseline,copy.deepcopy(baseline))['comparable']
+    for key,value in [('runtime_versions',{'torch':'different'}),('python_version','3.other'),('diagnostics',True)]:
+        candidate=copy.deepcopy(baseline);candidate[key]=value
+        assert not module.compare(baseline,candidate)['comparable']
+    assert not module.compare(baseline,result())['comparable']

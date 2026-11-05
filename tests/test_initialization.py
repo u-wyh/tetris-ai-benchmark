@@ -1,10 +1,15 @@
 from copy import deepcopy
+import random
+from types import SimpleNamespace
 
+import numpy as np
 import pytest
 import torch
 from torch import nn
 
-from training.initialization import initialize_policy, validate_initial_optimizer
+from training.initialization import initialize_policy, load_source_model, validate_initial_optimizer
+from training.train_transaction import global_rng_state
+from training.train_ppo import ROOT
 
 
 def policy(lr):
@@ -55,3 +60,48 @@ def test_empty_or_nonfinite_optimizer_state_cannot_be_restored():
     step(source)
     next(iter(source.optimizer.state.values()))['exp_avg'].fill_(float('nan'))
     with pytest.raises(ValueError,match='nonfinite'):initialize_policy(target,source,'restore_state')
+
+
+@pytest.mark.parametrize('failing',[False,True])
+def test_source_loading_preserves_run_rng_even_if_loading_fails(failing):
+    target=SimpleNamespace(seed=1700000,num_timesteps=0,_last_obs=None,_last_episode_starts=None)
+    random.seed(1700000);np.random.seed(1700000);torch.manual_seed(1700000)
+    expected=global_rng_state(target)
+    class Loader:
+        @staticmethod
+        def load(path,device):
+            random.seed(42);np.random.seed(42);torch.manual_seed(42)
+            random.random();np.random.random();torch.rand(3)
+            if failing:raise RuntimeError('injected load failure')
+            return 'source'
+    if failing:
+        with pytest.raises(RuntimeError,match='injected'):load_source_model(Loader,'source.zip',target)
+    else:assert load_source_model(Loader,'source.zip',target)=='source'
+    actual=global_rng_state(target)
+    assert actual['python_random']==expected['python_random']
+    assert np.array_equal(actual['numpy_random'][1],expected['numpy_random'][1])
+    assert actual['numpy_random'][2:]==expected['numpy_random'][2:]
+    assert torch.equal(actual['torch_cpu_random'],expected['torch_cpu_random'])
+    if actual['torch_cuda_random'] is not None:
+        assert all(torch.equal(a,b) for a,b in zip(actual['torch_cuda_random'],expected['torch_cuda_random']))
+    assert actual['run_seed']==1700000
+
+
+def test_real_sb3_source_load_preserves_configured_rng():
+    from sb3_contrib import MaskablePPO
+
+    checkpoint=ROOT/'runs/ppo_candidate_raw_30m_seed42/final/model.zip'
+    if not checkpoint.exists():
+        pytest.skip('Frozen PPO checkpoint unavailable')
+    target=SimpleNamespace(seed=1700000,num_timesteps=0,_last_obs=None,_last_episode_starts=None)
+    random.seed(target.seed);np.random.seed(target.seed);torch.manual_seed(target.seed)
+    expected=global_rng_state(target)
+    source=load_source_model(MaskablePPO,str(checkpoint),target)
+    actual=global_rng_state(target)
+    assert source.seed==42 and target.seed==1700000
+    assert actual['python_random']==expected['python_random']
+    assert np.array_equal(actual['numpy_random'][1],expected['numpy_random'][1])
+    assert actual['numpy_random'][2:]==expected['numpy_random'][2:]
+    assert torch.equal(actual['torch_cpu_random'],expected['torch_cpu_random'])
+    if expected['torch_cuda_random'] is not None:
+        assert all(torch.equal(a,b) for a,b in zip(actual['torch_cuda_random'],expected['torch_cuda_random']))

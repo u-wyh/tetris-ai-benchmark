@@ -14,6 +14,7 @@ import time
 from resource_guard import ROOT,now,operation,write_json
 from hourly_continue import inspect as inspect_goal
 from compare_development_evaluations import compare
+from evaluation_identity import validate_evaluator
 
 
 def parameter_value(preset, name):
@@ -98,10 +99,7 @@ def run(folder):
                     raise RuntimeError('Frozen controller/resource support changed: ' + name)
             if training_source_identity()!=protocol['training_source_sha256']:
                 raise RuntimeError('Frozen training source changed during the controlled experiment')
-            evaluator={name:hashlib.sha256((ROOT/'training/evaluation'/name).read_bytes()).hexdigest()
-                       for name in ['evaluate.py','worker_budget.py']}
-            if evaluator!=baseline['evaluation_source_sha256']:
-                raise RuntimeError('Evaluator changed; matching baseline must be collected first')
+            evaluation_module = validate_evaluator(protocol, baseline)
             case=folder/label;training=case/'training';preset=json.loads((case/'preset.json').read_text())
             state_file=training/'transaction_state.json';state=json.loads(state_file.read_text()) if state_file.exists() else {}
             pid=state.get('pid')
@@ -131,13 +129,15 @@ def run(folder):
             verify_task(snapshot,n,config)
             evaluation=case/evaluation_filename
             if not evaluation.exists():
-                stage(label+'_evaluation',[sys.executable,'-u','-m','training.evaluation.evaluate',
+                stage(label+'_evaluation',[sys.executable,'-u','-m',evaluation_module,
                       '--model',str(snapshot/'model.zip'),'--seeds-file',protocol.get('seeds_file',str(ROOT/'training/evaluation/seeds.json')),
                       '--seed-set','validation','--seed-count',str(count),'--max-pieces',str(cap),
                       '--workers',str(protocol.get('evaluation_workers',0)),
                       '--protocol',protocol.get('evaluation_protocol','learning_rate_development_screen'),'--committed-steps',str(protocol['stage1_steps']),
                       '--output',str(evaluation)],900)
             result=json.loads(evaluation.read_text());comparison=compare(baseline,result)
+            if not comparison['comparable']:
+                raise RuntimeError('Evaluation identity mismatch: ' + comparison['reason'])
             if (result['model_sha256']!=hashlib.sha256((snapshot/'model.zip').read_bytes()).hexdigest()
                     or result['committed_steps']!=protocol['stage1_steps']):
                 raise RuntimeError('Cached evaluation does not match this checkpoint')
@@ -150,10 +150,10 @@ def run(folder):
             write_json(folder/'partial_results.json',reports)
         best=select_candidate(reports, protocol.get('prefer_higher_parameter',False))
         summary=dict(at=now(),results=reports,recommended_for_review=best,
-                     action='Review before further training; no automatic extension or promotion')
+                     action='Screen complete; configured followup applies predeclared gates; no promotion')
         write_json(folder/'summary.json',summary)
         write_json(folder/'status.json',dict(at=now(),stage='completed_screen',recommended_for_review=best))
-        operation(f'{parameter}开发筛选完成，待复核候选{best}；未自动追加长期训练或替换正式模型',folder/'summary.json')
+        operation(f'{parameter}开发筛选完成，门槛合格候选{best}；由已配置接力处理后续，未替换正式模型',folder/'summary.json')
     except BaseException as exc:
         write_json(folder/'status.json',dict(at=now(),stage='stopped',error=repr(exc)))
         operation(f'{parameter}对照停止：{exc!r}，已保留提交与日志',folder)

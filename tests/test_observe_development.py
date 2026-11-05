@@ -2,9 +2,11 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 import sys
+import pytest
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 from observe_development import inspect_service, kernel_budget, last_sample, observe
+from training.evaluation.evaluate_resumable import collect_cached_rows
 
 
 def save(path, value):
@@ -54,3 +56,31 @@ def test_partial_last_sample_is_ignored_and_old_telemetry_is_flagged(tmp_path):
     s=inspect_service(tmp_path,'guard.service',dict(MainPID='42',ActiveState='active'),tmp_path/'proc',
                       datetime(2026,11,5,9,1,0,tzinfo=timezone.utc))
     assert s['process_live'] and not s['sample_fresh'] and s['sample_age_seconds']==60
+
+
+def test_committed_cache_progress_and_corruption_do_not_override_live_process(tmp_path):
+    cache=tmp_path/'runs/eval.seeds'
+    identity=dict(seeds=[1,2],max_pieces=20)
+    def interrupted(pending):
+        yield dict(seed=1,pieces_survived=20,lines=8,score=100,episode_reward=1.,game_over=False,survived_cap=True)
+        raise RuntimeError('interrupted')
+    with pytest.raises(RuntimeError):collect_cached_rows(cache,identity,interrupted)
+    proc=tmp_path/'proc/42';proc.mkdir(parents=True)
+    args=['python','-m','training.evaluation.evaluate_resumable','--output',str(tmp_path/'runs/eval.json')]
+    (proc/'cmdline').write_bytes('\0'.join(args).encode()+b'\0')
+    def snapshot():return inspect_service(tmp_path,'guard.service',dict(MainPID='42',ActiveState='active'),tmp_path/'proc')
+    result=snapshot()
+    assert result['process_live'] and result['evaluation_progress']['completed_seeds']==[1]
+    assert result['evaluation_progress']['total_seeds']==2
+    row=cache/'seed_1.json';row.write_text('{}')
+    result=snapshot()
+    assert result['process_live'] and result['activity']=='evaluation' and 'evaluation_cache_error' in result
+
+
+def test_corrupt_stage_file_does_not_hide_a_live_controller(tmp_path):
+    run=tmp_path/'runs/controller';run.mkdir(parents=True)
+    (run/'status.json').write_text('corrupt')
+    proc=tmp_path/'proc/42';proc.mkdir(parents=True)
+    (proc/'cmdline').write_bytes(('python\0controller.py\0--run-dir\0'+str(run)+'\0').encode())
+    result=inspect_service(tmp_path,'controller.service',dict(MainPID='42',ActiveState='active'),tmp_path/'proc')
+    assert result['process_live'] and result['artifact_errors']

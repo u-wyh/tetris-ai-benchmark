@@ -10,6 +10,7 @@ import pytest
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 import run_parameter_followup as followup
+from evaluation_identity import RESUMABLE
 
 
 def save(path, value):
@@ -84,3 +85,14 @@ def test_user_pause_stops_handoff_before_starting_any_service(tmp_path,monkeypat
     with pytest.raises(RuntimeError,match='Goal stopped'):
         followup.run(tmp_path)
     assert not heldout.exists() and not any('start' in call for call in calls)
+
+
+def test_resumable_method_and_runtime_survive_validation_and_extension_handoff(tmp_path,monkeypatch):
+    heldout,extension,_=setup(tmp_path,monkeypatch)
+    path=tmp_path/'screen/protocol.json';source=json.loads(path.read_text());source['evaluation_module']=RESUMABLE
+    path.write_text(json.dumps(source))
+    followup.run(tmp_path)
+    pair=json.loads((heldout/'protocol.json').read_text())
+    continuation=json.loads((extension/'protocol.json').read_text())
+    assert pair['evaluation_module']==continuation['evaluation_module']==RESUMABLE
+    assert pair['runtime_versions'] and pair['python_version'] and pair['diagnostics'] is False

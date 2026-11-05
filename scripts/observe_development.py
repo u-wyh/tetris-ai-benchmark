@@ -7,6 +7,10 @@ from pathlib import Path
 import socket
 import sqlite3
 import subprocess
+import sys
+
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
+from training.evaluation.evaluate_resumable import digest_json, validate_row
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -68,6 +72,32 @@ def artifact_path(root, value):
     return path if path.is_relative_to((root/'runs').resolve()) else None
 
 
+def cache_progress(root, args):
+    output = artifact_path(root, argument(args, '--output'))
+    cache = artifact_path(root, argument(args, '--cache-dir'))
+    cache = cache or (output.with_suffix('.seeds') if output else None)
+    if cache is None:
+        return None
+    manifest = read_json(cache/'manifest.json')
+    if not manifest:
+        return dict(cache_dir=str(cache), completed_seeds=[], total_seeds=None)
+    identity = manifest['identity']
+    if manifest['identity_sha256'] != digest_json(identity):
+        raise ValueError('Evaluation cache manifest integrity differs')
+    completed = []
+    for seed in identity['seeds']:
+        path = cache/f'seed_{seed}.json'
+        if not path.exists():
+            continue
+        record = read_json(path)
+        if (record['identity_sha256'] != manifest['identity_sha256']
+                or record['row_sha256'] != digest_json(record['row'])):
+            raise ValueError('Evaluation cache row integrity differs')
+        validate_row(record['row'],seed,identity['max_pieces'],identity.get('diagnostics',False))
+        completed.append(seed)
+    return dict(cache_dir=str(cache),completed_seeds=completed,total_seeds=len(identity['seeds']))
+
+
 def inspect_service(root, name, state, proc_root=Path('/proc'), current_time=None):
     current_time = current_time or datetime.now().astimezone()
     pid = int(state.get('MainPID') or 0)
@@ -89,17 +119,25 @@ def inspect_service(root, name, state, proc_root=Path('/proc'), current_time=Non
     directory = artifact_path(root, argument(args, '--run-dir'))
     result['activity'] = ('training' if training else 'evaluation' if evaluation
                           else 'guarded_work' if heartbeat else 'controller')
+    def optional_json(path):
+        try:
+            return read_json(path)
+        except (OSError, ValueError) as exc:
+            result.setdefault('artifact_errors',[]).append(dict(path=str(path),error=str(exc)))
+            return {}
     if directory:
         result['run_dir'] = str(directory)
-        status = read_json(directory/('transaction_state.json' if training else 'status.json'))
+        status = optional_json(directory/('transaction_state.json' if training else 'status.json'))
+        if not training and not status:
+            status = optional_json(directory/'pilot_status.json')
         result['recorded_stage'] = status.get('stage', status.get('status'))
         if training:
-            config = read_json(directory/'config.json')
+            config = optional_json(directory/'config.json')
             result.update(committed_steps=status.get('committed_steps'), device=config.get('device'),
                           n_envs=config.get('ppo',{}).get('n_envs'))
     if heartbeat:
         folder = heartbeat.parent
-        launch = read_json(folder/'launch.json')
+        launch = optional_json(folder/'launch.json')
         sample = last_sample(folder/'samples.jsonl')
         result['guard_dir'] = str(folder)
         result['latest_sample'] = sample
@@ -109,6 +147,11 @@ def inspect_service(root, name, state, proc_root=Path('/proc'), current_time=Non
             result['sample_fresh'] = 0 <= age <= max(15, launch.get('profile',{}).get('sample_seconds',2)*4)
         except (KeyError, TypeError, ValueError):
             result['sample_fresh'] = False
+    if module == 'training.evaluation.evaluate_resumable':
+        try:
+            result['evaluation_progress'] = cache_progress(root,args)
+        except (OSError,ValueError,KeyError,TypeError) as exc:
+            result['evaluation_cache_error'] = str(exc)
     return result
 
 

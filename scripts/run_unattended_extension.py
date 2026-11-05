@@ -20,6 +20,7 @@ from compare_development_evaluations import compare
 from hourly_continue import inspect as inspect_goal
 from resource_guard import ROOT, now, operation, write_json
 from run_longer_development_screen import extension_eligible
+from evaluation_identity import validate_evaluator
 
 
 def short_gate(baseline, candidate):
@@ -134,6 +135,7 @@ def run(folder):
         verify_training_source_identity(json.loads((training/'metadata.json').read_text()))
         baseline = json.loads(Path(protocol['short_baseline']).read_text())
         long_baseline = json.loads((upstream/'baseline.json').read_text())
+        evaluation_module = validate_evaluator(protocol, long_baseline)
         # Freeze completed upstream evidence as an extension input at the handoff.
         write_json(folder/'upstream_identity.json', {name: hashlib.sha256((upstream/name).read_bytes()).hexdigest()
                    for name in ['summary.json', 'baseline.json', 'candidate.json']})
@@ -189,7 +191,7 @@ def run(folder):
             if steps in (1048576, 2097152):
                 output = folder/f'longer_{steps:09d}.json'
                 if not output.exists():
-                    stage(f'longer_{steps:09d}', [sys.executable, '-u', '-m', 'training.evaluation.evaluate',
+                    stage(f'longer_{steps:09d}', [sys.executable, '-u', '-m', evaluation_module,
                           '--model', str(snapshot/'model.zip'), '--seeds-file', protocol['seeds_file'],
                           '--seed-set', 'validation', '--seed-count', '8', '--max-pieces', '20000',
                           '--workers', '2', '--protocol', 'unattended_longer_development',

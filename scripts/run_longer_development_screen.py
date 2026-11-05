@@ -13,6 +13,7 @@ import time
 from compare_development_evaluations import compare
 from hourly_continue import inspect as inspect_goal
 from resource_guard import ROOT, now, operation, write_json
+from evaluation_identity import validate_evaluator
 
 
 def digest(path):
@@ -37,6 +38,7 @@ def run(folder):
     from training.train_vector_transaction import training_source_identity
 
     protocol = json.loads((folder/'protocol.json').read_text())
+    evaluation_module = validate_evaluator(protocol, protocol)
     lock = (folder/'queue.lock').open('a')
     fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     deadline = time.monotonic() + protocol['wall_seconds']
@@ -49,6 +51,7 @@ def run(folder):
         signal.signal(signum, interrupted)
 
     def verify_sources():
+        validate_evaluator(protocol, protocol)
         if training_source_identity() != protocol['training_source_sha256']:
             raise RuntimeError('Frozen training/environment source changed')
         for path, expected in protocol['frozen_files'].items():
@@ -90,7 +93,7 @@ def run(folder):
             raise RuntimeError(f'{label} failed: {result.get("error", result["outcome"])}; inspect {output}')
         verify_sources()
 
-    operation('启动串行失败重放与8种子×20000块配对开发评测，训练保持停止', folder)
+    operation('启动匹配种子的长局配对开发评测，后续按预声明门槛处理', folder)
     try:
         if protocol.get('diagnostic_required', True) and not (folder/'failure_replay.json').exists():
             stage('failure_replay', [sys.executable, '-u', str(ROOT/'scripts/diagnose_development_failure.py'),
@@ -101,7 +104,7 @@ def run(folder):
             verify_sources()
             output = folder/(label+'.json')
             if not output.exists():
-                stage(label, [sys.executable, '-u', '-m', 'training.evaluation.evaluate',
+                stage(label, [sys.executable, '-u', '-m', evaluation_module,
                       '--model', model['path'], '--seeds-file', protocol['seeds_file'],
                       '--seed-set', 'validation', '--seed-count', '8', '--max-pieces', '20000',
                       '--workers', '2', '--protocol', 'learning_rate_longer_development_screen',
@@ -122,7 +125,7 @@ def run(folder):
         eligible = extension_eligible(comparison, failures, gate)
         summary = dict(at=now(), comparison=comparison, failures=failures,
                        eligible_for_training_extension=eligible,
-                       action='Review before extending; no model promotion or automatic training')
+                       action='Configured continuation applies the predeclared extension gate; no model promotion')
         write_json(folder/'summary.json', summary)
         write_json(folder/'status.json', dict(at=now(), stage='completed', eligible=eligible))
         operation(f'更长局开发评测完成，扩展门槛通过={eligible}；未替换正式模型', folder/'summary.json')

@@ -153,7 +153,7 @@ def global_rng_state(model):
     return {"python_random": random.getstate(), "numpy_random": np.random.get_state(),
             "torch_cpu_random": torch.get_rng_state(),
             "torch_cuda_random": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None,
-            "num_timesteps": model.num_timesteps, "run_seed": 42,
+            "num_timesteps": model.num_timesteps, "run_seed": getattr(model, "seed", None),
             "sb3_last_obs": model._last_obs,
             "sb3_last_episode_starts": model._last_episode_starts}
 

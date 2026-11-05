@@ -771,10 +771,11 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     seed=config["run_seed"], device=config["device"], verbose=0,
                     **extra_algorithm)
                 if config.get("initial_model"):
-                    source = MaskablePPO.load(config["initial_model"]["path"], device="cpu")
-                    from training.initialization import initialize_policy
+                    from training.initialization import initialize_policy, load_source_model
+                    source = load_source_model(MaskablePPO, config["initial_model"]["path"], model)
                     initialization = initialize_policy(model.policy, source.policy,
                                                        config.get("initial_optimizer", "fresh"))
+                    initialization["source_load_preserved_run_rng"] = True
                     atomic_json(run_dir / "initialization.json", initialization)
                     # Keep timestep zero and the independent run RNG in either mode.
                     if model.num_timesteps != 0:

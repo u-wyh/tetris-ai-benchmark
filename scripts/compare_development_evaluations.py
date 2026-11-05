@@ -29,6 +29,9 @@ def compare(baseline,candidate):
     if (not baseline.get('evaluation_source_sha256') or
             baseline['evaluation_source_sha256']!=candidate.get('evaluation_source_sha256')):
         return dict(comparable=False,reason='Missing or different evaluator identity')
+    for key in ('runtime_versions','python_version','diagnostics'):
+        if baseline.get(key) != candidate.get(key):
+            return dict(comparable=False,reason='Different evaluator runtime or diagnostics: ' + key)
     if baseline['max_pieces']!=candidate['max_pieces']:
         return dict(comparable=False,reason='Different observation caps')
     try:

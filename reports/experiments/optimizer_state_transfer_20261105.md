@@ -45,3 +45,11 @@
 17:17:05接力服务自动复核候选SHA、来源、262144步和门槛后写`handed_off`，自动启动额外8种子配对与条件续训服务。实测核验：接力MainPID0/Result=success；pair实例MainPID93337在baseline阶段；extension实例MainPID93341正常等待上游状态。不是需要人工确认的暂停，尚未开始额外训练。后续必须完成100008–100015的基线及候选配对并通过原门槛，再恢复原事务；失败自动止损。
 
 证据：`runs/autonomous_optimizer_transfer_20261105/summary.json`、`restored_optimizer/stage1_8x20k.json`；`runs/autonomous_optimizer_followup_20261105/summary.json`；`runs/autonomous_optimizer_extra_20261105/status.json`及`extension/status.json`。当前源码与支持文件继续冻结，不在活动试验中改评测器。
+
+## 额外验证拒绝扩展（17:31）
+
+额外开发种子100008–100015：冻结基线8/8触顶，候选7/8触顶，100014在15346块结束（基线20000）；平均已观察块数比0.9709125、得分比0.9487529084，5局得分胜、3局负。原门槛未通过，条件续训于17:30:56自动not_eligible、history为空，两服务MainPID0/Result=success，未追加2M训练，也未替换正式模型。
+
+这次真实止损说明第一组8局得分约+0.20%不足以进入长期扩展。保留Adam改善了该初筛，但不能把它称为已确认泛化改善。两批都属于开发种子，最终测试未使用。
+
+随后核查本地SB3实际调用链，发现初次载入参考checkpoint会以参考seed42重置Python/NumPy/Torch CPU与全部CUDA生成器；新run的环境worker仍按其base seed初始化，但全局采样/打乱RNG受到了参考加载副作用。此前各参数组共享该旧行为，结果按其原来源保留，不能静默改标签或迁移。后续新代码保留目标run的加载前RNG，并修正trainer元数据硬编码run_seed=42；正常事务恢复本就最后恢复完整trainer RNG。此修复尚不证明旧候选死亡的原因。

@@ -5,6 +5,17 @@ from copy import deepcopy
 import torch
 
 
+def load_source_model(model_class, path, target):
+    """Loading a saved SB3 policy must not reseed the new run's generators."""
+    from training.train_transaction import global_rng_state, restore_global_rng
+
+    state = global_rng_state(target)
+    try:
+        return model_class.load(path, device='cpu')
+    finally:
+        restore_global_rng(state)
+
+
 def validate_initial_optimizer(preset):
     mode = preset.get('initial_optimizer', 'fresh')
     if mode not in ('fresh', 'restore_state'):
