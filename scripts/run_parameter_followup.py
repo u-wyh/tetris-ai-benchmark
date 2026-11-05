@@ -12,7 +12,7 @@ import time
 from hourly_continue import inspect
 from resource_guard import ROOT, now, operation, write_json
 from compare_development_evaluations import compare
-from evaluation_identity import module_for, runtime_identity, RESUMABLE
+from evaluation_identity import module_for, runtime_identity, feature_backend, RESUMABLE
 
 
 def digest(path):
@@ -116,6 +116,7 @@ def run(folder):
             frozen[str(path)] = digest(path)
         heldout_protocol = dict(at=now(),thread_id=p['thread_id'],wall_seconds=3600,diagnostic_required=False,
             evaluation_module=module_for(source),
+            candidate_feature_backend=feature_backend(source),
             seeds=p['extra_seeds'],seeds_file=str(heldout/'seeds.json'),extension_gate=p['extension_gate'],
             training_source_sha256=source['training_source_sha256'],
             evaluation_source_sha256=baseline['evaluation_source_sha256'],frozen_files=frozen,
@@ -129,6 +130,7 @@ def run(folder):
                         case/'preset.json',case/'training/config.json',Path(p['short_baseline'])]
             extension_protocol = dict(at=now(),thread_id=p['thread_id'],wall_seconds=21600,
             evaluation_module=module_for(source),
+            candidate_feature_backend=feature_backend(source),
             longer_screen=str(heldout),upstream_service=p['heldout_service'],training=str(case/'training'),
             preset=str(case/'preset.json'),short_baseline=p['short_baseline'],seeds_file=str(heldout/'seeds.json'),
             checkpoints=[524288,1048576,1572864,2097152],extension_gate=p['extension_gate'],

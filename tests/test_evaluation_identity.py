@@ -7,6 +7,25 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
 import evaluation_identity as identity
 
 
+def test_headless_script_import_works_outside_repository_cwd(tmp_path):
+    import subprocess
+    import sys
+    scripts=Path(__file__).resolve().parents[1]/'scripts'
+    subprocess.run([sys.executable,'-c',
+        f'import sys; sys.path.insert(0,{str(scripts)!r}); import evaluation_identity as e; '
+        'assert e.runtime_identity()["runtime_versions"]; assert e.source_identity(e.RESUMABLE); '
+        'assert "torch" not in sys.modules'],cwd=tmp_path,check=True,capture_output=True,text=True,timeout=10)
+
+
+def test_protocol_backend_must_match_the_baseline(monkeypatch):
+    monkeypatch.setattr(identity,'source_identity',lambda module:{'evaluate.py':'fixed'})
+    protocol=dict(candidate_feature_backend='bitboard')
+    baseline=dict(evaluation_source_sha256={'evaluate.py':'fixed'},candidate_feature_backend='bitboard')
+    assert identity.validate_evaluator(protocol,baseline)==identity.LEGACY
+    with pytest.raises(RuntimeError,match='feature backend'):
+        identity.validate_evaluator({},baseline)
+
+
 def test_legacy_protocol_defaults_and_runtime_independent_compatibility(monkeypatch):
     monkeypatch.setattr(identity,'source_identity',lambda module:{'evaluate.py':'fixed'})
     assert identity.validate_evaluator({},dict(evaluation_source_sha256={'evaluate.py':'fixed'}))==identity.LEGACY

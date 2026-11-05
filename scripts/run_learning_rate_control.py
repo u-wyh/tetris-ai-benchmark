@@ -14,7 +14,7 @@ import time
 from resource_guard import ROOT,now,operation,write_json
 from hourly_continue import inspect as inspect_goal
 from compare_development_evaluations import compare
-from evaluation_identity import validate_evaluator
+from evaluation_identity import validate_evaluator, feature_backend
 
 
 def parameter_value(preset, name):
@@ -133,6 +133,7 @@ def run(folder):
                       '--model',str(snapshot/'model.zip'),'--seeds-file',protocol.get('seeds_file',str(ROOT/'training/evaluation/seeds.json')),
                       '--seed-set','validation','--seed-count',str(count),'--max-pieces',str(cap),
                       '--workers',str(protocol.get('evaluation_workers',0)),
+                      '--candidate-feature-backend',feature_backend(protocol),
                       '--protocol',protocol.get('evaluation_protocol','learning_rate_development_screen'),'--committed-steps',str(protocol['stage1_steps']),
                       '--output',str(evaluation)],900)
             result=json.loads(evaluation.read_text());comparison=compare(baseline,result)

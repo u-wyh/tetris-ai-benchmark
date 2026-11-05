@@ -141,3 +141,17 @@ def test_bootstrap_failure_cannot_be_misreported_as_pending(tmp_path,monkeypatch
     path.write_text(json.dumps(protocol));(tmp_path/'screen/summary.json').unlink()
     monkeypatch.setattr(followup.subprocess,'run',lambda *args,**kwargs:SimpleNamespace(returncode=0,stdout='0'))
     with pytest.raises(RuntimeError,match='stopped before'):followup.run(tmp_path)
+
+
+@pytest.mark.parametrize('extend',[False,True])
+def test_bitboard_backend_survives_optional_handoff(tmp_path,monkeypatch,extend):
+    heldout,extension,_=setup(tmp_path,monkeypatch)
+    path=tmp_path/'protocol.json';p=json.loads(path.read_text());p['extension_enabled']=extend;path.write_text(json.dumps(p))
+    path=tmp_path/'screen/protocol.json';p=json.loads(path.read_text());p['candidate_feature_backend']='bitboard';path.write_text(json.dumps(p))
+    for name in ['baseline.json','screen/strong/eval.json']:
+        path=tmp_path/name;p=json.loads(path.read_text());p['candidate_feature_backend']='bitboard';path.write_text(json.dumps(p))
+    followup.run(tmp_path)
+    assert json.loads((heldout/'protocol.json').read_text())['candidate_feature_backend']=='bitboard'
+    if extend:
+        assert json.loads((extension/'protocol.json').read_text())['candidate_feature_backend']=='bitboard'
+    else:assert not extension.exists()

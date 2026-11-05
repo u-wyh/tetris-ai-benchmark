@@ -197,3 +197,11 @@
 - 归档旧数值运行代码到/home/wyh/projects/tetris-context-runtime-dd23301（dd23301 detached，23文件SHA与本轮训练metadata全部相同），再将已验证的初代上下文offset/实际模型配方校验及延迟Torch导入合入主副本577970d/121009d；主文件SHA与测试副本相同。旧断点/缓存不改身份；不能直接用新数值来源恢复旧实验。独立开发副本仍在/home/wyh/projects/tetris-context-validation。
 - 当前计算任务全部结束。原PPO30M仍为冻结参考，没有候选获长局提升证据。下一步先检查现有评测器是否可显式复用已验证位图后端，做受保护、预声明的端到端配对性能与结果一致性验证，再考虑新匹配基线/不同训练假设；避免一再重复已失败迁移实验或盲增2M。
 - 小时续办和5分钟后台自检仍活动，健康记录healthy，目标active；仅lightbook运行，无其他机器或CPU训练fallback。桌面实际断开后的完整链路仍未实测。
+
+### 2026-11-05T22:04:23+08:00 评测端到端提速及长基线完成
+
+- runs/autonomous_evaluation_backend_20261105/summary.json全部passed：2worker×2seed×4096两组AB/BA受保护整命令25.301→23.201秒、25.293→23.199秒，几何平均吞吐+9.0388%，两组采样均固定CPU150%，CPU最高79℃/GPU47℃。归档逐局/聚合/孔洞诊断、单worker/spawn/legacy CLI、真实缓存跨模式拒绝全通过，无训练或最终测试。推荐新实验显式bitboard，默认official兼容保留。
+- 新configs/development_evaluation_bitboard.json实际用于tetris-bitboard-baseline.service；该服务22:00:46完成8×20000，8/8触顶，逐局/聚合与旧冻结模型完全相同，MainPID0/Resultsuccess。基线为runs/autonomous_bitboard_baseline_20261105/baseline.json，SHA02831deef2907f016404873432f9beda5257af8683508a6b2d68b5da83c4807c。
+- 推理身份现在保守扫描当前推理静态依赖闭包+动态CandidatePolicy根，resumable覆盖20文件，不导入Torch/Numpy。纯训练器/初始化改动不再作废基线；推理/模型/模式/种子/上限/运行库等变化仍拒绝混用。新身份不能重标旧数据。54项定向回归通过；控制器全链路传递并核验candidate_feature_backend，且后台脚本在非项目cwd可正常导入。
+- 所有本轮计算已完成。下一步先核对真实服务/结果；若继续训练研究，使用新bitboard长基线做新的预声明完整上下文低LR假设，避免重复旧高LR或重置环境/RNG/KL失败轨迹。当前完整上下文入口严格保持原配方，改变LR必须显式设计加载后变更、验证Adam/env/RNG/PPO更新保留并记录来源/目标参数，不能绕过校验。先小预算真实GPU8事务恢复再262144门槛，合格才额外配对，不能盲增2M。
+- 继续保持lightbook、GPU8、总CPU250%/6GiB/原温控，评测2worker较低配额；暂停/取消及额度规则不变。原PPO30M仍是冻结模型，所有新增吞吐证据不代表棋力提升。

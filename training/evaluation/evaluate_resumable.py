@@ -13,7 +13,6 @@ import math
 from multiprocessing import get_context
 import os
 from pathlib import Path
-import platform
 import time
 
 
@@ -108,21 +107,18 @@ def collect_cached_rows(directory, identity, evaluate_pending):
 
 
 def source_identity():
-    from training.train_vector_transaction import training_source_identity
-
-    root = Path(__file__).resolve().parents[2]
-    names = ['training/evaluation/evaluate.py', 'training/evaluation/worker_budget.py',
-             'training/evaluation/evaluate_resumable.py']
-    return {**training_source_identity(),
-            **{name: hashlib.sha256((root/name).read_bytes()).hexdigest() for name in names}}
+    from training.evaluation.feature_backend import inference_source_identity
+    return inference_source_identity(resumable=True)
 
 
-def evaluate(model, seeds, cap, protocol, steps, output, cache, workers=0, diagnostics=False):
-    from importlib.metadata import version
+def evaluate(model, seeds, cap, protocol, steps, output, cache, workers=0, diagnostics=False,
+             candidate_feature_backend='official'):
     from training.evaluation import evaluate as original
     from training.evaluation.worker_budget import automatic_workers, detect_resources
     from training.train_ppo import now
+    from training.evaluation.feature_backend import backend_name, evaluation_runtime_identity
 
+    candidate_feature_backend = backend_name(candidate_feature_backend)
     if workers < 0:
         raise ValueError('Evaluation workers must be nonnegative')
     began = time.monotonic()
@@ -131,21 +127,20 @@ def evaluate(model, seeds, cap, protocol, steps, output, cache, workers=0, diagn
     sources = source_identity()
     identity = dict(model_sha256=model_sha, model_checkpoint=str(model), seeds=list(seeds),
                     max_pieces=cap, protocol=protocol, committed_steps=steps,
-                    evaluation_source_sha256=sources, diagnostics=diagnostics,
-                    runtime_versions={name:version(name) for name in
-                                      ['torch','numpy','gymnasium','stable-baselines3','sb3-contrib']},
-                    python_version=platform.python_version())
+                    evaluation_source_sha256=sources,
+                    candidate_feature_backend=candidate_feature_backend,
+                    **evaluation_runtime_identity(diagnostics))
     budget = detect_resources() if workers == 0 else None
     count = automatic_workers(len(seeds), budget) if workers == 0 else workers
 
     def pending_rows(pending):
         if count == 1:
-            original._init_worker(model)
+            original._init_worker(model,candidate_feature_backend)
             for seed in pending:
                 yield original._evaluate_worker(seed, cap, diagnostics)
         else:
             with ProcessPoolExecutor(max_workers=min(count, len(pending)), mp_context=get_context('spawn'),
-                                     initializer=original._init_worker, initargs=(model,)) as pool:
+                                     initializer=original._init_worker, initargs=(model,candidate_feature_backend)) as pool:
                 futures = [pool.submit(original._evaluate_worker, seed, cap, diagnostics) for seed in pending]
                 for future in as_completed(futures):
                     yield future.result()
@@ -164,6 +159,7 @@ def evaluate(model, seeds, cap, protocol, steps, output, cache, workers=0, diagn
 
 
 def main():
+    from training.evaluation.feature_backend import BACKENDS
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--model', type=Path, required=True)
     parser.add_argument('--seeds-file', type=Path, required=True)
@@ -176,13 +172,14 @@ def main():
     parser.add_argument('--cache-dir', type=Path)
     parser.add_argument('--workers', type=int, default=0)
     parser.add_argument('--diagnostics', action='store_true')
+    parser.add_argument('--candidate-feature-backend', choices=BACKENDS, default='official')
     args = parser.parse_args()
     seeds = json.loads(args.seeds_file.read_text())[args.seed_set][:args.seed_count]
     if args.seed_count <= 0 or len(seeds) != args.seed_count:
         parser.error('Seed count mismatch')
     cache = args.cache_dir or args.output.with_suffix('.seeds')
     evaluate(args.model, seeds, args.max_pieces, args.protocol, args.committed_steps,
-             args.output, cache, args.workers, args.diagnostics)
+             args.output, cache, args.workers, args.diagnostics, args.candidate_feature_backend)
 
 
 if __name__ == '__main__':

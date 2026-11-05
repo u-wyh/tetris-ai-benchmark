@@ -13,7 +13,7 @@ import time
 from compare_development_evaluations import compare
 from hourly_continue import inspect as inspect_goal
 from resource_guard import ROOT, now, operation, write_json
-from evaluation_identity import validate_evaluator
+from evaluation_identity import validate_evaluator, feature_backend
 
 
 def digest(path):
@@ -107,7 +107,8 @@ def run(folder):
                 stage(label, [sys.executable, '-u', '-m', evaluation_module,
                       '--model', model['path'], '--seeds-file', protocol['seeds_file'],
                       '--seed-set', 'validation', '--seed-count', '8', '--max-pieces', '20000',
-                      '--workers', '2', '--protocol', 'learning_rate_longer_development_screen',
+                      '--workers', '2', '--candidate-feature-backend',feature_backend(protocol),
+                      '--protocol', 'learning_rate_longer_development_screen',
                       '--committed-steps', str(model['committed_steps']), '--output', str(output)], 1200)
             result = json.loads(output.read_text())
             if (result['model_sha256'] != model['sha256'] or result['max_pieces'] != 20000

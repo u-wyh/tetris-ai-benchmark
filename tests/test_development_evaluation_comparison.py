@@ -58,3 +58,11 @@ def test_runtime_versions_and_diagnostics_must_match_when_present():
         candidate=copy.deepcopy(baseline);candidate[key]=value
         assert not module.compare(baseline,candidate)['comparable']
     assert not module.compare(baseline,result())['comparable']
+
+
+def test_different_backend_modes_cannot_be_compared_even_with_same_source():
+    baseline=result();candidate=copy.deepcopy(baseline)
+    candidate['candidate_feature_backend']='bitboard'
+    assert not module.compare(baseline,candidate)['comparable']
+    baseline['candidate_feature_backend']='bitboard'
+    assert module.compare(baseline,candidate)['comparable']

@@ -32,6 +32,8 @@ def compare(baseline,candidate):
     for key in ('runtime_versions','python_version','diagnostics'):
         if baseline.get(key) != candidate.get(key):
             return dict(comparable=False,reason='Different evaluator runtime or diagnostics: ' + key)
+    if baseline.get('candidate_feature_backend','official') != candidate.get('candidate_feature_backend','official'):
+        return dict(comparable=False,reason='Different evaluation feature backends')
     if baseline['max_pieces']!=candidate['max_pieces']:
         return dict(comparable=False,reason='Different observation caps')
     try:

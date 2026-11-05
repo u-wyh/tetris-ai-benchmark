@@ -35,7 +35,8 @@ def test_interrupted_evaluation_reuses_completed_seeds_and_preserves_frozen_orde
 
 @pytest.mark.parametrize('key,value',[('model_sha256','other'),('max_pieces',21),
     ('seeds',[11,12,13]),('evaluation_source_sha256',{'evaluator':'changed'}),
-    ('diagnostics',True),('committed_steps',8192),('protocol','final')])
+    ('diagnostics',True),('committed_steps',8192),('protocol','final'),
+    ('candidate_feature_backend','bitboard')])
 def test_cache_cannot_cross_model_source_protocol_seed_or_cap_identity(tmp_path,key,value):
     collect_cached_rows(tmp_path,identity(),lambda seeds:map(row,seeds))
     changed={**identity(),key:value}

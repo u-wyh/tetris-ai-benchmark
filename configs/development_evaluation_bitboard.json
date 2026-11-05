@@ -1,0 +1,5 @@
+{
+  "evaluation_module": "training.evaluation.evaluate_resumable",
+  "candidate_feature_backend": "bitboard",
+  "evaluation_workers": 2
+}
