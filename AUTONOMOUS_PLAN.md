@@ -41,3 +41,15 @@
 - 低学习率两个事务8192步试运行已核验实际日志learning_rate=3e-5。队列会接着已有提交补齐步数，不能另行重复启动。控制协议、来源哈希、状态和日志分别在protocol.json、status.json、queue.log。
 - 温控主配置始终GPU8＋CPU250%；评测自动并发根据CPU配额及内存余量降至2进程。预算受限、用户暂停或STOP文件会停止受控队列；AI账户usageLimited时已授权的本地有界计算可继续，续办按小时等待。
 - 当前下一步：跟踪这两组受控结果，使用scripts/compare_development_evaluations.py只比较相同种子/上限/评测身份；任何长局右截断均应明确。不得把5K开发筛选当独立确认或生存改善证明。
+
+## 2026-11-05T13:50:45+08:00 执行主机与暂停接手点
+
+- 用户明确要求Codex在轻薄本执行，游戏本之后会关闭。已用Codex任务元数据核实本聊天hostId为remote-ssh-discovered:lightbook；项目、Codex后台和每小时定时器均位于此主机，无需迁移到新聊天。开发与续办不依赖游戏本作为执行主机。
+- 已启用本机用户wyh的linger（loginctl确认Linger=yes），使用户定时器不因最后一个登录会话结束而退出；机器仍需开机联网。已存在的Codex后台PPID=1，原启动会话关闭后仍在运行。尚未实测关闭游戏本后的完整续办。
+- 原生goal当前为paused；续办dry-run正确返回goal_paused。两组控制器13:48:48依保护规则停止，reference_rate已提交139264步（task34），低学习率已有8192步；资源服务MainPID=0。保留事务，不将其误报为仍在训练。用户从界面恢复持续目标后，再从现有run目录恢复控制器，不重做已提交任务、不重复启动。
+
+## 2026-11-05T15:12:19+08:00 已恢复持续执行（取代此前暂停接手点）
+
+- 用户要求纠正停工后，已通过官方App Server的thread/goal/set接口仅将原目标status从paused恢复为active；目标文本、已用tokens172576和tokenBudget保持不变。之前声称必须用户界面点击恢复的结论不准确，已纠正。证据runs/autonomous_development_20261105/authorized_resume_evidence.json。该恢复仅对应本次用户明确要求，小时任务不得自行解除今后的用户暂停。
+- 已复核原训练源码哈希与两组事务，没有重复训练进程；从reference_rate139264步、lower_rate8192步接续原实验。控制器改由lightbook用户服务tetris-lr-control-20261105.service托管，独立于桌面终端和SSH连接；仍套用原GPU8/CPU250%温控保护，未改数值源码。接手时检查服务及status.json，不再查旧tmux会话。
+- 原先的“控制器在tmux运行”和“目标仍暂停”均为历史状态。恢复后定时器dry-run已返回goal_status=active、action=queue；不重复投递，等待原小时定时器或原生goal续办。

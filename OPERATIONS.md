@@ -455,3 +455,17 @@
 - 2026-11-05T13:44:20+08:00：资源保护：启动受保护任务 tetris-guard-29276-1793857460076462468，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105/guards/reference_rate_training_00。
 
 - 2026-11-05T13:46:15+08:00：为持续开发建立本地分支codex/hardware-safe-autonomy，仅准备提交本会话新增/修改的保护、配置、受控实验、评测并发及测试文档；已有其他未提交报告、traditional_longlife和viewer文件不纳入。源码内容不因建分支而改变，正在执行的训练哈希清单仍适用。
+
+- 2026-11-05T13:48:48+08:00：资源保护：两学习率对照停止：RuntimeError('Goal stopped or local STOP file set')，已保留提交与日志。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105。
+
+- 2026-11-05T13:48:49+08:00：资源保护：tetris-guard-29276-1793857460076462468 结束：interrupted，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105/guards/reference_rate_training_00。
+
+- 2026-11-05T13:50:45+08:00：按用户要求核实Codex任务、工作副本和小时续办均在lightbook；启用wyh用户linger，读取确认Linger=yes。保存执行主机约束及goal暂停/对照实验139264步接手状态；dry-run为goal_paused，未重启暂停中的训练。证据：AUTONOMOUS_PLAN.md；runs/autonomous_development_20261105/control.json、development_status.json、hourly.jsonl；runs/autonomous_lr_control_20261105/status.json。
+
+- 2026-11-05T15:11:26+08:00：资源保护：启动两学习率受控实验；各262144步开发筛选，合格后是否扩展仍需复核。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105。
+
+- 2026-11-05T15:11:28+08:00：资源保护：启动受保护任务 tetris-guard-47316-1793862687968695253，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105/guards/reference_rate_training_02。
+
+- 2026-11-05T15:12:19+08:00：按用户要求恢复无人值守执行；官方thread/goal/set仅恢复status=active，保留既有目标、用量与预算。复核源码及断点后，通过lightbook的用户systemd服务重启原学习率控制器；reference_rate由139264步继续，当前已提交159744步，未另开训练。定时器dry-run确认active/queue。证据：runs/autonomous_development_20261105/authorized_resume_evidence.json、development_status.json；runs/autonomous_lr_control_20261105/status.json；服务tetris-lr-control-20261105。
+
+- 2026-11-05T15:14:23+08:00：更新轻薄本后台托管、目标恢复及原断点接手文档，纠正此前必须界面恢复的说明；准备提交本会话文档变更，不包含已有其他报告或viewer改动。证据：AUTONOMOUS_PLAN.md、reports/experiments/autonomous_lr_control_20261105.md。

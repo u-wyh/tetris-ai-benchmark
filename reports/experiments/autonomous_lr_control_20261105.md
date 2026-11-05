@@ -29,7 +29,7 @@
 
 ## 执行与接手
 
-目录：`runs/autonomous_lr_control_20261105/`；tmux：`tetris-lr-control-20261105`。队列顺序为参考学习率训练/开发评测，再补齐已完成2事务的低学习率训练并评测。检查`status.json`及实际PID后再操作，不重复启动。
+目录：`runs/autonomous_lr_control_20261105/`。原tmux任务因目标暂停已结束；15:11恢复后由轻薄本用户服务`tetris-lr-control-20261105.service`托管，继续参考组已有139264步和低学习率组已有8192步。队列顺序为参考学习率训练/开发评测，再补齐低学习率训练并评测。检查`status.json`、服务MainPID及实际训练PID后再操作，不重复启动。
 
 `scripts/run_learning_rate_control.py`冻结训练源码、基线文件身份，缓存评测核对模型SHA及实际步数。用户目标暂停、显式预算限制或目录中的`STOP`文件会终止当前受保护子任务；AI账户额度暂时不足不强行中断已授权且有界的本地计算。
 
