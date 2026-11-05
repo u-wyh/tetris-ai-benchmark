@@ -1,0 +1,19 @@
+[Unit]
+Description=Automatic extra validation and continuation after optimizer-state screen
+Wants=tetris-optimizer-control-20261105.service
+After=tetris-optimizer-control-20261105.service
+
+[Service]
+Type=simple
+WorkingDirectory=/home/wyh/projects/tetris-ai-benchmark
+ExecCondition=/home/wyh/projects/tetris-ai-benchmark/.venv/bin/python /home/wyh/projects/tetris-ai-benchmark/scripts/development_allowed.py --thread-id 01a191e9-a3ee-7530-99c1-b4171e601ec1 --run-dir /home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_followup_20261105
+ExecStart=/home/wyh/projects/tetris-ai-benchmark/.venv/bin/python -u /home/wyh/projects/tetris-ai-benchmark/scripts/run_parameter_followup.py --run-dir /home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_followup_20261105
+Slice=tetris-compute.slice
+CPUQuota=25%
+MemoryMax=256M
+MemorySwapMax=0
+TimeoutStopSec=20
+RuntimeMaxSec=4h
+
+[Install]
+WantedBy=default.target

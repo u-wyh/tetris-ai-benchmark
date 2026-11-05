@@ -631,3 +631,49 @@
 - 2026-11-05T16:49:54+08:00：资源保护：tetris-guard-82439-1793868586739491893 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/retention_audit/guard。
 
 - 2026-11-05T16:51:02+08:00：CUDA策略保持审计真实通过，guard退出0、耗时8.177秒，64个既有正常状态强/弱Top1一致62/56个，KL0.007855/0.083772；仅诊断漂移，不推断生存。两组训练统计及保护峰值已归档，强组匹配20K评测仍运行，未重复启动。证据：runs/autonomous_kl_control_20261105/retention_audit/results.json、guard/result.json、training_diagnostics.json；reports/experiments/reference_kl_control_20261105.md。
+
+- 2026-11-05T16:52:55+08:00：资源保护：tetris-guard-81503-1793868442720313167 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/guards/strong_reference_evaluation_00。
+
+- 2026-11-05T16:52:58+08:00：资源保护：kl_beta开发筛选完成，待复核候选None；未自动追加长期训练或替换正式模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/summary.json。
+
+- 2026-11-05T16:53:04+08:00：资源保护：参数比较没有合格候选，自动取消额外评测与续训。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_followup_20261105/summary.json。
+
+- 2026-11-05T16:55:58+08:00：资源保护：启动受保护任务 tetris-guard-85164-1793868958764379838，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/verification_guard。
+
+- 2026-11-05T16:56:00+08:00：资源保护：tetris-guard-85164-1793868958764379838 结束：command_failed:exit-code，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/verification_guard。
+
+- 2026-11-05T16:56:38+08:00：KL两组均未达门槛（强4/8、弱5/8触顶），控制器与接力均MainPID0/Result=success；已自动取消额外验证及2M扩训。核对原模型序列化超参，除计划LR外与新强组一致，但初始化明确重置Adam状态；设计单组恢复原Adam矩/步计数的新探索性对照，旧强组结果作为历史fresh控制不重跑。新增显式restore_state选项与来源/恢复校验。首次定向测试命令引用不存在的tests/test_learning_rate_control.py，受保护退出1，未运行测试；保留原失败证据后按真实test_parameter_screen_selection.py重试。证据：runs/autonomous_kl_control_20261105/summary.json、runs/autonomous_kl_followup_20261105/summary.json；runs/autonomous_optimizer_transfer_20261105/verification_guard/。
+
+- 2026-11-05T16:56:38+08:00：资源保护：启动受保护任务 tetris-guard-85331-1793868998576233642，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/verification_guard_retry。
+
+- 2026-11-05T16:56:42+08:00：资源保护：tetris-guard-85331-1793868998576233642 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/verification_guard_retry。
+
+- 2026-11-05T16:58:21+08:00：12项初始化/参数选择/来源测试受保护通过。预声明新Adam状态迁移试验：GPU8、原种子1600000–1600007、KL0.3/LR3e-5等保持不变，迁移原Adam矩与计数但保留新LR和独立环境/RNG；仅新组262144步并匹配8×20000，历史fresh组不重跑，仍须基线99%得分及全触顶才能接力。旧数值来源已在5d690fd留存，旧终态不会被新来源恢复。证据：runs/autonomous_optimizer_transfer_20261105/protocol.json、verification_guard_retry/。
+
+- 2026-11-05T16:59:05+08:00：资源保护：启动受保护任务 tetris-guard-85999-1793869145633275047，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/restored_optimizer_smoke_task_01。
+
+- 2026-11-05T16:59:09+08:00：资源保护：tetris-guard-85999-1793869145633275047 结束：command_failed:exit-code，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/restored_optimizer_smoke_task_01。
+
+- 2026-11-05T17:00:14+08:00：Adam迁移首轮试运行在元数据创建阶段失败：临时systemd父服务PATH未含nvm中的node，未提交任务/未开始训练。保留原guard日志和config于training_start_failed_missing_node_path；重试明确配置与持久控制器一致的PATH，并为试运行guard加唯一重试目录，避免覆盖失败证据。训练数值源码未变，刷新启动脚本冻结SHA。证据：runs/autonomous_optimizer_transfer_20261105/restored_optimizer_smoke_task_01/command.log。
+
+- 2026-11-05T17:00:20+08:00：资源保护：启动受保护任务 tetris-guard-86287-1793869220710223752，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/restored_optimizer_smoke_task_01_retry01。
+
+- 2026-11-05T17:00:37+08:00：资源保护：tetris-guard-86287-1793869220710223752 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/restored_optimizer_smoke_task_01_retry01。
+
+- 2026-11-05T17:00:38+08:00：资源保护：启动受保护任务 tetris-guard-86425-1793869238072506596，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/restored_optimizer_smoke_task_02。
+
+- 2026-11-05T17:00:54+08:00：资源保护：tetris-guard-86425-1793869238072506596 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/restored_optimizer_smoke_task_02。
+
+- 2026-11-05T17:00:55+08:00：资源保护：启动受保护任务 tetris-guard-86544-1793869255070463863，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/pilot_verification_guard。
+
+- 2026-11-05T17:00:59+08:00：资源保护：tetris-guard-86544-1793869255070463863 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/pilot_verification_guard。
+
+- 2026-11-05T17:00:59+08:00：资源保护：Adam状态迁移两事务CUDA8恢复验证通过；继续预声明262144步筛选。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/smoke_verification.json。
+
+- 2026-11-05T17:01:02+08:00：资源保护：启动initial_optimizer受控实验，各262144步开发筛选，不自动替换正式模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105。
+
+- 2026-11-05T17:01:02+08:00：资源保护：启动受保护任务 tetris-guard-86599-1793869262224795860，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/guards/restored_optimizer_training_00。
+
+- 2026-11-05T17:01:54+08:00：PATH重试后真实CUDA8完成4096步→退出→恢复8192步；18份Adam参数状态计数586000→586160，LR仍3e-5、参考SHA未变、8worker快照齐全，恢复验证通过。试运行已自动启动持久tetris-optimizer-control-20261105.service，从8192继续原262144预算；部署同门槛的合格者额外8验证/分段2M接力，当前仅等待，不启动并发训练。证据：runs/autonomous_optimizer_transfer_20261105/smoke_verification.json、pilot_verification_guard/；runs/autonomous_optimizer_followup_20261105/protocol.json。
+
+- 2026-11-05T17:03:05+08:00：补齐KL最终失败结论和Adam迁移试验协议/当前接手点，记录历史控制限制及已恢复的两项技术失败。新控制器86590、接力86900真实运行，后者等待；未启动第二训练。准备提交本会话源码/测试/服务/报告，不包含已有其他报告、longlife和viewer修改。证据：reports/experiments/optimizer_state_transfer_20261105.md、AUTONOMOUS_PLAN.md；runs/autonomous_development_20261105/development_status.json。

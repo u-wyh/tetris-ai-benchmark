@@ -21,6 +21,8 @@ def parameter_value(preset, name):
         return preset['ppo_overrides']['learning_rate']
     if name == 'kl_beta':
         return preset['kl_reference']['beta']
+    if name == 'initial_optimizer':
+        return preset.get('initial_optimizer', 'fresh')
     raise ValueError('Unsupported screened parameter: ' + name)
 
 

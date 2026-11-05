@@ -40,6 +40,7 @@ TRAINING_SOURCE_FILES = (
     "training/vector_env.py",
     "training/long_run.py",
     "training/kl_maskable_ppo.py",
+    "training/initialization.py",
     "training/evaluation/hybrid_queue.py",
     "training/candidate_policy.py",
     "training/candidate_features.py",
@@ -561,6 +562,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     raise RuntimeError("Resume candidate policy differs from recorded run")
                 if preset.get("initial_model") != config.get("initial_model"):
                     raise RuntimeError("Resume initial model differs from recorded run")
+                if preset.get("initial_optimizer", "fresh") != config.get("initial_optimizer", "fresh"):
+                    raise RuntimeError("Resume initial optimizer differs from recorded run")
                 if preset.get("kl_reference") != config.get("kl_reference"):
                     raise RuntimeError("Resume KL reference differs from recorded run")
                 if preset.get("max_pieces", 10000) != config["max_pieces"]:
@@ -639,6 +642,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     if not config.get("candidate_policy") or sha256(Path(initial["path"])) != initial["sha256"]:
                         raise RuntimeError("Candidate initial model integrity failed")
                     config["initial_model"] = initial
+                from training.initialization import validate_initial_optimizer
+                config["initial_optimizer"] = validate_initial_optimizer(preset)
                 if "kl_reference" in preset:
                     from training.kl_maskable_ppo import validate_kl_beta
                     reference = preset["kl_reference"]
@@ -767,8 +772,11 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     **extra_algorithm)
                 if config.get("initial_model"):
                     source = MaskablePPO.load(config["initial_model"]["path"], device="cpu")
-                    model.policy.load_state_dict(source.policy.state_dict(), strict=True)
-                    # Preserve the fresh optimizer, timestep zero, and independent RNG.
+                    from training.initialization import initialize_policy
+                    initialization = initialize_policy(model.policy, source.policy,
+                                                       config.get("initial_optimizer", "fresh"))
+                    atomic_json(run_dir / "initialization.json", initialization)
+                    # Keep timestep zero and the independent run RNG in either mode.
                     if model.num_timesteps != 0:
                         raise RuntimeError("Fine-tune run must start at PPO step zero")
                 if config.get("kl_reference"):
