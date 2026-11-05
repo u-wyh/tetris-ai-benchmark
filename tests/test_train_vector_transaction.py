@@ -40,16 +40,18 @@ def test_ppo_overrides_accept_lower_rate_without_mutating_preset():
         validate_ppo_overrides({"batch_size": 128})
 
 
-def test_training_source_identity_rejects_changed_environment(tmp_path):
+@pytest.mark.parametrize("relative", ["training/tetris_core/legal_placements.py", "training/kl_maskable_ppo.py"])
+def test_training_source_identity_rejects_changed_environment(tmp_path, relative):
+    assert relative in TRAINING_SOURCE_FILES
     for name in TRAINING_SOURCE_FILES:
         target = tmp_path / name
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes((ROOT / name).read_bytes())
     meta = {"training_source_sha256": training_source_identity(tmp_path)}
     verify_training_source_identity(meta, tmp_path)
-    changed = tmp_path / "training/tetris_core/legal_placements.py"
+    changed = tmp_path / relative
     changed.write_bytes(changed.read_bytes() + b"\n# changed\n")
-    with pytest.raises(RuntimeError, match="training/tetris_core/legal_placements.py"):
+    with pytest.raises(RuntimeError, match=relative):
         verify_training_source_identity(meta, tmp_path)
 
 

@@ -1,10 +1,17 @@
 """KL regularizer uses legal actions and updates only the current actor."""
 import torch
+import pytest
 from sb3_contrib import MaskablePPO
 
 from training.imitation_bc import batch, records
-from training.kl_maskable_ppo import KLMaskablePPO, masked_policy_kl
+from training.kl_maskable_ppo import KLMaskablePPO, masked_policy_kl, validate_kl_beta
 from training.train_ppo import ROOT
+
+
+@pytest.mark.parametrize("beta", [-0.01, float('nan'), float('inf'), True, '0.3'])
+def test_kl_coefficient_rejects_values_that_can_poison_training(beta):
+    with pytest.raises(ValueError, match="finite and nonnegative"):
+        validate_kl_beta(beta)
 
 
 def test_masked_kl_gradient_and_save_load(tmp_path):

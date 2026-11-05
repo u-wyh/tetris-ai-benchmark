@@ -1,4 +1,5 @@
 """Mask-aware PPO regularized toward any frozen compatible actor."""
+import math
 import numpy as np
 import torch
 from gymnasium import spaces
@@ -18,13 +19,18 @@ def masked_policy_kl(current_policy, reference_policy, observations, action_mask
     return (current.probs.masked_fill(~mask, 0.0) * (log_p - log_q)).sum(-1).mean()
 
 
+def validate_kl_beta(value):
+    if (isinstance(value, bool) or not isinstance(value, (int, float))
+            or not math.isfinite(value) or value < 0):
+        raise ValueError("KL coefficient must be finite and nonnegative")
+    return float(value)
+
+
 class KLMaskablePPO(MaskablePPO):
     """Original MaskablePPO losses plus beta KL(current || frozen reference)."""
 
     def __init__(self, *args, kl_beta=0.02, **kwargs):
-        self.kl_beta = float(kl_beta)
-        if self.kl_beta < 0:
-            raise ValueError("KL coefficient must be nonnegative")
+        self.kl_beta = validate_kl_beta(kl_beta)
         self.reference_policy = None
         super().__init__(*args, **kwargs)
 

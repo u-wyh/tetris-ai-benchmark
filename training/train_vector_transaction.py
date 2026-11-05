@@ -39,6 +39,7 @@ TRAINING_SOURCE_FILES = (
     "training/train_ppo.py",
     "training/vector_env.py",
     "training/long_run.py",
+    "training/kl_maskable_ppo.py",
     "training/evaluation/hybrid_queue.py",
     "training/candidate_policy.py",
     "training/candidate_features.py",
@@ -639,10 +640,11 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                         raise RuntimeError("Candidate initial model integrity failed")
                     config["initial_model"] = initial
                 if "kl_reference" in preset:
+                    from training.kl_maskable_ppo import validate_kl_beta
                     reference = preset["kl_reference"]
+                    validate_kl_beta(reference["beta"])
                     if (not config.get("candidate_policy") or
-                            sha256(Path(reference["path"])) != reference["sha256"] or
-                            float(reference["beta"]) < 0):
+                            sha256(Path(reference["path"])) != reference["sha256"]):
                         raise RuntimeError("KL reference integrity failed")
                     if not config.get("initial_model") or config["initial_model"]["sha256"] != reference["sha256"]:
                         raise RuntimeError("KL run must start from its frozen reference")

@@ -129,7 +129,9 @@ def run(args):
     if not command:
         raise ValueError("A child command is required")
     if not os.path.isabs(command[0]):
-        command[0] = str((ROOT / command[0]).resolve())
+        # Preserve a virtualenv's executable path: resolving its symlink selects
+        # the system interpreter and silently loses installed training packages.
+        command[0] = os.path.abspath(ROOT / command[0])
     cpus = physical_cpus(profile["reserve_physical_cores"], profile["max_physical_cores"])
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=False)

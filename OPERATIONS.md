@@ -565,3 +565,43 @@
 - 2026-11-05T16:05:55+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
 
 - 2026-11-05T16:09:10+08:00：修复小时续办把历史usageLimited误作当前限额的问题：达到一小时间隔后读取实时普通用量许可，只有明确可用且再次确认未暂停/预算限制才恢复原目标；不可用则等待。保留原目标/预算/已用量，不调用重置券或账户修改。14项定向测试通过，新Unix WebSocket RPC客户端真实查询成功；16:05:55原定时器已投递成功（回执01a1aabe-370e-7c20-8132-17e32545d663）。证据：scripts/codex_local_rpc.py；tests/test_codex_quota_recovery.py；runs/autonomous_development_20261105/hourly.jsonl、quota_recovery_verification.json。
+
+- 2026-11-05T16:14:31+08:00：资源保护：启动受保护任务 tetris-guard-69321-1793866471053762014，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/kl_source_tests。
+
+- 2026-11-05T16:14:33+08:00：资源保护：tetris-guard-69321-1793866471053762014 结束：command_failed:exit-code，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/kl_source_tests。
+
+- 2026-11-05T16:16:27+08:00：补齐训练来源清单中的KL实现，新增有限非负KL系数校验；首轮受保护测试启动发现相对.venv/bin/python被resolve解为系统解释器，导致pytest模块缺失（未执行训练/测试）。已改为保留虚拟环境符号链接的绝对路径，重新运行同一组定向测试。泛化既有参数控制器支持仅比较KL beta及20K配对评测，选择门槛2项纯逻辑测试通过。证据：runs/autonomous_development_20261105/kl_source_tests/command.log；scripts/resource_guard.py；tests/test_parameter_screen_selection.py。
+
+- 2026-11-05T16:16:29+08:00：资源保护：启动受保护任务 tetris-guard-70099-1793866589219406393，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/kl_source_tests_retry。
+
+- 2026-11-05T16:16:33+08:00：资源保护：tetris-guard-70099-1793866589219406393 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/kl_source_tests_retry。
+
+- 2026-11-05T16:18:17+08:00：完成历史KL实验复核：旧beta0.03、LR3e-4、训练上限100000的两分支均未改善，避免重复。新建同初始模型/参考、LR3e-5、gamma0.995/GAE0.95、单局10000的beta0.03与0.3对照，训练同1600000–1600007种子，各先262144步，直接同8×20000块开发评测。预声明通过后另8个验证种子复核，不消耗最终测试集。KL源码来源覆盖、有效梯度与保存/加载10项测试通过，参数选择2项测试通过；准备两事务GPU8恢复试运行。证据：runs/autonomous_kl_control_20261105/protocol.json；runs/autonomous_development_20261105/kl_source_tests_retry/。
+
+- 2026-11-05T16:18:19+08:00：资源保护：启动受保护任务 tetris-guard-70652-1793866699107227437，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/weak_reference_smoke_first。
+
+- 2026-11-05T16:18:35+08:00：资源保护：tetris-guard-70652-1793866699107227437 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/weak_reference_smoke_first。
+
+- 2026-11-05T16:22:48+08:00：资源保护：启动受保护任务 tetris-guard-71697-1793866968458116050，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/weak_reference_smoke_task_02。
+
+- 2026-11-05T16:23:04+08:00：资源保护：tetris-guard-71697-1793866968458116050 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/weak_reference_smoke_task_02。
+
+- 2026-11-05T16:23:04+08:00：资源保护：启动受保护任务 tetris-guard-71835-1793866984962397725，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/strong_reference_smoke_task_01。
+
+- 2026-11-05T16:23:21+08:00：资源保护：tetris-guard-71835-1793866984962397725 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/strong_reference_smoke_task_01。
+
+- 2026-11-05T16:23:22+08:00：资源保护：启动受保护任务 tetris-guard-71929-1793867001980786114，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/strong_reference_smoke_task_02。
+
+- 2026-11-05T16:23:38+08:00：资源保护：tetris-guard-71929-1793867001980786114 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/strong_reference_smoke_task_02。
+
+- 2026-11-05T16:23:39+08:00：资源保护：启动受保护任务 tetris-guard-72054-1793867018996110678，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/verification_guard。
+
+- 2026-11-05T16:23:43+08:00：资源保护：tetris-guard-72054-1793867018996110678 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/verification_guard。
+
+- 2026-11-05T16:23:43+08:00：资源保护：弱/强KL两事务CUDA8恢复验证通过；自动接续原预声明参数对照。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/smoke_verification.json。
+
+- 2026-11-05T16:23:46+08:00：资源保护：启动kl_beta受控实验，各262144步开发筛选，不自动替换正式模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105。
+
+- 2026-11-05T16:23:46+08:00：资源保护：启动受保护任务 tetris-guard-72106-1793867026166462792，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_kl_control_20261105/guards/weak_reference_training_00。
+
+- 2026-11-05T16:27:00+08:00：两组KL真实CUDA8两事务恢复验证通过（各8192步，optimizer/8worker/实际beta与LR/参考SHA核验）；试运行脚本自动启动持久tetris-kl-control-20261105.service，弱组接续原事务，强组待串行运行。补齐报告、协议/当前接手点与源码证据；准备提交本会话修改，不纳入已有其他未提交报告/longlife/viewer文件。证据：runs/autonomous_kl_control_20261105/smoke_verification.json、pilot_source_identity.json、status.json；reports/experiments/reference_kl_control_20261105.md。
