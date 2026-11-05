@@ -80,3 +80,48 @@ def test_live_quota_unavailable_waits_an_hour_without_delivering(tmp_path,monkey
     assert reads==['target']
     events=[json.loads(line) for line in (tmp_path/'hourly.jsonl').read_text().splitlines()]
     assert [e['action'] for e in events]==['quota_unavailable','interval_not_elapsed']
+
+
+def test_wrong_execution_machine_never_reads_quota_or_delivers(tmp_path, monkeypatch):
+    path=control_file(tmp_path)
+    control=json.loads(path.read_text())
+    control.update(execution_host='remote-ssh-discovered:lightbook', execution_machine_id='wrong-machine')
+    path.write_text(json.dumps(control))
+    def forbidden(*args, **kwargs):
+        raise AssertionError('Wrong host must not inspect or dispatch')
+    monkeypatch.setattr(module,'inspect',forbidden)
+    monkeypatch.setattr(module.subprocess,'run',forbidden)
+    assert module.run(path,clock=lambda:4000)==1
+    event=json.loads((tmp_path/'hourly.jsonl').read_text())
+    assert event['action']=='check_failed'
+
+
+def test_pending_message_does_not_deadlock_quota_recovery(tmp_path, monkeypatch):
+    monkeypatch.setattr(module,'ROOT',tmp_path)
+    states=iter([('usageLimited',1),('active',1),('active',1)])
+    monkeypatch.setattr(module,'inspect',lambda *args:next(states))
+    reads=[]
+    monkeypatch.setattr(module,'recover_goal',lambda thread:(reads.append(thread) or
+        dict(ready=True,action='quota_available_goal_resumed')))
+    def forbidden(*args, **kwargs):
+        raise AssertionError('Existing pending message must not be duplicated')
+    monkeypatch.setattr(module.subprocess,'run',forbidden)
+    path=control_file(tmp_path)
+    assert module.run(path,clock=lambda:4000)==0
+    assert module.run(path,clock=lambda:4001)==0
+    assert reads==['target']
+    assert [json.loads(line)['action'] for line in (tmp_path/'hourly.jsonl').read_text().splitlines()]==[
+        'already_queued','already_queued']
+
+
+def test_pending_message_with_unavailable_quota_still_waits_one_hour(tmp_path, monkeypatch):
+    monkeypatch.setattr(module,'inspect',lambda *args:('usageLimited',1))
+    reads=[]
+    monkeypatch.setattr(module,'recover_goal',lambda thread:(reads.append(thread) or
+        dict(ready=False,action='quota_unavailable')))
+    path=control_file(tmp_path)
+    assert module.run(path,clock=lambda:4000)==0
+    assert module.run(path,clock=lambda:4001)==0
+    assert reads==['target']
+    assert [json.loads(line)['action'] for line in (tmp_path/'hourly.jsonl').read_text().splitlines()]==[
+        'quota_unavailable','interval_not_elapsed']

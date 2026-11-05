@@ -1,0 +1,18 @@
+[Unit]
+Description=Guarded read-only restoration audit of original CUDA8 context
+ConditionPathExists=!/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_original_context_20261105/summary.json
+
+[Service]
+Type=exec
+WorkingDirectory=/home/wyh/projects/tetris-ai-benchmark
+ExecCondition=/home/wyh/projects/tetris-ai-benchmark/.venv/bin/python /home/wyh/projects/tetris-ai-benchmark/scripts/development_allowed.py --thread-id 01a191e9-a3ee-7530-99c1-b4171e601ec1 --run-dir /home/wyh/projects/tetris-ai-benchmark/runs/autonomous_original_context_20261105
+ExecStart=/home/wyh/projects/tetris-ai-benchmark/.venv/bin/python /home/wyh/projects/tetris-ai-benchmark/scripts/resource_guard.py --output /home/wyh/projects/tetris-ai-benchmark/runs/autonomous_original_context_20261105/guard --seconds 300 -- /home/wyh/projects/tetris-ai-benchmark/.venv/bin/python /home/wyh/projects/tetris-ai-benchmark/scripts/audit_original_context.py --output /home/wyh/projects/tetris-ai-benchmark/runs/autonomous_original_context_20261105
+Environment="PATH=/home/wyh/.local/bin:/home/wyh/.nvm/versions/node/v24.18.0/bin:/usr/local/bin:/usr/bin:/bin"
+Slice=tetris-compute.slice
+CPUQuota=250%
+MemoryMax=6G
+TimeoutStopSec=35
+RuntimeMaxSec=360
+
+[Install]
+WantedBy=default.target

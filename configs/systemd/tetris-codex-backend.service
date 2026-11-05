@@ -1,9 +1,10 @@
 [Unit]
-Description=Bootstrap the local Codex backend at login-independent user startup
+Description=Ensure local Codex backend at login-independent user startup
 
 [Service]
 Type=oneshot
-ExecStart=/home/wyh/.local/bin/codex app-server daemon bootstrap
+ExecStart=/home/wyh/.local/bin/codex app-server daemon start
+Environment="PATH=/home/wyh/.local/bin:/home/wyh/.nvm/versions/node/v24.18.0/bin:/usr/local/bin:/usr/bin:/bin"
 RemainAfterExit=yes
 TimeoutStartSec=60
 

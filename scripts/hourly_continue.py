@@ -56,6 +56,10 @@ def run(control_path, dry_run=False, clock=time.time):
         event=dict(at=datetime.now(ZoneInfo('Asia/Shanghai')).isoformat(timespec='seconds'),dry_run=dry_run)
         code=0
         try:
+            if control.get('execution_host') and (
+                    control['execution_host'] != 'remote-ssh-discovered:lightbook'
+                    or control.get('execution_machine_id') != Path('/etc/machine-id').read_text().strip()):
+                raise RuntimeError('Execution host identity does not match authorized lightbook')
             status,pending=inspect(Path.home()/'.codex',control['thread_id'])
             action=decision(control['enabled'],status,pending)
             event.update(goal_status=status,pending_messages=pending,action=action)
@@ -65,10 +69,14 @@ def run(control_path, dry_run=False, clock=time.time):
             attempt_file=folder/'hourly_last_attempt.json'
             last=(json.loads(attempt_file.read_text())['epoch'] if attempt_file.exists()
                   else datetime.fromisoformat(control['created_at']).timestamp())
-            if action=='queue' and clock()-last<interval:
+            # A pending message must not prevent recovery of a usage-limited
+            # goal: otherwise that message could remain blocked indefinitely.
+            check_needed=(action=='queue' or (action=='already_queued' and
+                          status in ('usageLimited','usage_limited')))
+            if check_needed and clock()-last<interval:
                 action='interval_not_elapsed'
                 event['action']=action
-            if action=='queue' and not dry_run:
+            if check_needed and action!='interval_not_elapsed' and not dry_run:
                 # Record before delivery: even a failed or interrupted attempt waits an hour.
                 temporary=attempt_file.with_suffix('.tmp')
                 temporary.write_text(json.dumps(dict(epoch=clock()))+'\n')
@@ -87,7 +95,7 @@ def run(control_path, dry_run=False, clock=time.time):
                             with (ROOT/'OPERATIONS.md').open('a') as f:
                                 f.write(f"\n- {event['at']}：实时账户允许正常使用，恢复原目标的旧usageLimited状态，保留目标、预算和用量；未消耗额度重置券。证据：{folder/'hourly.jsonl'}。\n")
             if action=='queue' and not dry_run:
-                result=subprocess.run([control['codex_cli'],'queue','--thread',control['thread_id'],
+                result=subprocess.run([control['codex_cli'],'queue','--remote','unix://','--thread',control['thread_id'],
                                        '--message',control['prompt']],cwd=ROOT,
                                       capture_output=True,text=True,timeout=30)
                 event.update(returncode=result.returncode,acknowledgement=result.stdout.strip()[:300])

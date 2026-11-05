@@ -863,3 +863,19 @@
 - 2026-11-05T18:23:29+08:00：资源保护：位图/原特征两组AB/BA真实CUDA8事务比较完成；未发布模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_summary.json。
 
 - 2026-11-05T18:36:02+08:00：真实AB/BA GPU8两对事务对照及恢复验证全部通过：模型/Adam/完整RNG/8worker/非计时指标精确相同；训练环节几何平均吞吐+6.56%，两对均更快、全程CPU250%/未降载。峰值CPU76℃、GPU53℃、内存3582MiB，服务MainPID0/Result=success，未使用最终测试或发布模型。采用显式bitboard供后续新实验，补齐推荐配置和边界报告。原PPO30M最后完整事务存在且模型匹配冻结final，作为下轮完整上下文恢复审计入口；缺来源SHA未迁移。证据：runs/autonomous_feature_cpu_20261105/gpu_summary.json；reports/experiments/feature_backend_cpu_20261105.md；configs/ppo30m_guarded_bitboard.json。
+
+- 2026-11-05T20:50:31+08:00：用户将无人值守执行设为首要任务；查实19:06额度不可用、20:06本地检查超时。当前实时普通额度允许后按原授权恢复旧usageLimited目标，未重置用量或账户。结果quota_available_goal_resumed。证据：runs/autonomous_development_20261105/user_priority_recovery.json、hourly.jsonl。
+
+- 2026-11-05T20:54:23+08:00：资源保护：启动受保护任务 tetris-guard-142450-1793883263603566248，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_original_context_20261105/guard。
+
+- 2026-11-05T20:54:31+08:00：资源保护：tetris-guard-142450-1793883263603566248 结束：command_failed:exit-code，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_original_context_20261105/guard。
+
+- 2026-11-05T20:55:49+08:00：无人值守恢复审计实际GPU8已运行并安全退出，完整trainer/RNG与旧worker观测/掩码校验已通过，完整worker字典比较失败；查到旧快照缺后续显式默认配置字段，审计仅在内存补录已声明默认并记录字段，不修改旧断点，准备定向复核。首轮失败保留failed_attempt01.json及guard_attempt01。证据：runs/autonomous_original_context_20261105/。
+
+- 2026-11-05T20:55:50+08:00：资源保护：启动受保护任务 tetris-guard-143212-1793883350875163977，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_original_context_20261105/guard。
+
+- 2026-11-05T20:55:59+08:00：资源保护：tetris-guard-143212-1793883350875163977 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_original_context_20261105/guard。
+
+- 2026-11-05T20:57:05+08:00：按用户首要任务完成无人值守可靠性修复。旧bootstrap对正在运行的非托管backend报错，改为原生幂等daemon start；已启用成功且不打断本机PID1后台。增加5分钟watchdog，本机machine-id绑定、原生RPC/目标核验、既有4个sleep targets masked核验；额度RPC总时限12→35秒，小时service90秒。timer每分钟仅检查本地去重/间隔，实际额度查询与投递仍至少3600秒；显式unix://留在轻薄本，暂停/取消仍拒绝。18项定向测试及systemd配置验证通过，20:56健康核验成功。原断点CUDA8只读恢复审计20:55:57通过，旧8worker仅缺reward_profile=default，逐一显式记录后状态/RNG一致，旧文件未改，未训练或发布。原生续办消息01a1abc7-a16f-7662-a6b5-1a5f099f028f已实际投递，但尚未把排队当成下一轮已经执行。证据：unattended_health.json、unattended_acceptance_dispatch.json、runs/autonomous_original_context_20261105/summary.json；完整桌面断线/重启端到端尚未验证。
+
+- 2026-11-05T20:58:10+08:00：补修无人值守队列边界：旧代码在已有待办且目标usageLimited时先返回already_queued，可能永久不查额度。现在仍按至少3600秒间隔查询恢复资格，额度允许后恢复目标并保留原消息、不重复投递；额度不足照常一小时等待，暂停/预算限制不查询不恢复。新增两项回归，当前20项定向测试通过；真实本机dry-run确认active/pending=1并去重。证据：tests/test_hourly_continue.py；runs/autonomous_development_20261105/unattended_acceptance_dispatch.json。

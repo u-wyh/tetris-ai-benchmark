@@ -14,7 +14,7 @@ import time
 
 
 class LocalRPC:
-    def __init__(self, timeout=12):
+    def __init__(self, timeout=35):
         self.deadline = time.monotonic() + timeout
         self.buffer = b''
         self.sequence = 0

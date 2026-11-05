@@ -153,3 +153,15 @@
 - 完整对照训练环节1.064917/1.066252倍，几何平均吞吐+6.56%，全程CPU250%/无降载，峰值CPU76℃、GPU53℃、内存3582MiB。预声明≥1.05门槛通过，后续新实验采用显式bitboard后端，推荐准备配置configs/ppo30m_guarded_bitboard.json；它不是棋力胜出结论，不直接盲跑2M。
 - 新后端及位图实现纳入23文件来源、模式写入config/resume核验，21项定向环境/来源测试通过。所有benchmark服务已结束释放资源。当前没有训练在跑，小时续办仍active（18:05:58真实投递成功）。
 - 下一步先核查原PPO30M task_007325完整训练上下文：已确认模型与冻结final一致，原CUDA配置，完整trainer/vector快照及worker_digests存在，但原metadata缺少来源SHA。先审计版本/配置/原观测恢复是否一致，再在独立副本设计上下文保留的继续训练；禁止跳过旧来源核验、静默迁移或未经证据称精确续接。此前新组迁移了权重/Adam，但环境/RNG上下文仍重新建立。
+
+### 2026-11-05T20:57:05+08:00 用户首要任务：无人值守执行验收，优先于历史实验
+
+- 用户明确纠正：首要任务是配置自动执行。查实19:06额度不足、20:06额度检查超时，不能把已配置timer等同于全天正常执行。当前实时ordinaryUsageAllowed=true后恢复原目标，保留用量；不绕过额度。
+- 后台服务已改为幂等daemon start并启动成功；新增5分钟watchdog检查本机身份、后台RPC、目标与既有休眠保护，后台失去后尝试原生start，不重启活跃backend。linger=yes，sleep/suspend/hibernate/hybrid-sleep四target已masked，logind实际lid/idle为ignore。全部服务与工作副本在lightbook。
+- hourly timer每分钟只做本地状态检查，实际quota检查/投递有3600秒持久间隔和队列去重；35秒RPC/90秒service避免旧12秒超时，显式unix://。control.json记录execution_machine_id；错机拒绝。用户暂停、完成、取消/disabled、STOP或预算限制均拒绝继续。
+- systemd已独立执行GPU8完整原断点审计（不是新增训练）：20:55:57通过，trainer/RNG一致、8worker观测/掩码一致，旧快照reward_profile缺省明确记录default后完整状态一致，18项Adam状态存在，旧文件未修改。来源SHA旧记录缺失仍不能称原始代码已核验。服务完成后不重复启动。
+- 已实际向本聊天排队自动验收续办消息01a1abc7-a16f-7662-a6b5-1a5f099f028f。下一轮先在OPERATIONS.md记录本消息确已开始执行，再继续有证据开发；当前只证明投递，尚未证明本轮结束后的消息执行或关闭桌面后的端到端。不得把待验收写成已验收。
+- 当前未训练，原模型未发布。下一研究动作仍是按已通过的原完整上下文审计设计独立副本续训，保留Adam/env/RNG，显式处理30M步数偏移和当前来源23身份；不要复跑已失败候选，也不要绕过门槛直接2M。
+- 证据：runs/autonomous_development_20261105/unattended_health.json、unattended_acceptance_dispatch.json；runs/autonomous_original_context_20261105/summary.json。17项旧验证加错机拒绝现共18项定向测试通过，systemd verify通过。
+
+- 最后补修：已有pending消息不再阻断usageLimited恢复检查；仍一小时最小间隔、额度不足等待、恢复后保留原消息而不重复投递。最终定向测试20项通过。真实dry-run为active/pending=1/already_queued；下一轮必须核验真实执行，不把这个去重状态解释为失败或再次排队。

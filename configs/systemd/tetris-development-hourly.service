@@ -1,0 +1,13 @@
+[Unit]
+Description=Tetris development hourly continuation delivery
+Wants=tetris-codex-backend.service
+After=tetris-codex-backend.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/wyh/projects/tetris-ai-benchmark
+ExecStart=/home/wyh/projects/tetris-ai-benchmark/.venv/bin/python /home/wyh/projects/tetris-ai-benchmark/scripts/hourly_continue.py --control /home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/control.json
+Environment="PATH=/home/wyh/.local/bin:/home/wyh/.nvm/versions/node/v24.18.0/bin:/usr/local/bin:/usr/bin:/bin"
+TimeoutStartSec=90
+MemoryMax=256M
+Nice=10

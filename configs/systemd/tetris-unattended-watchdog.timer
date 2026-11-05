@@ -1,0 +1,11 @@
+[Unit]
+Description=Maintain lightbook unattended readiness every five minutes
+
+[Timer]
+OnBootSec=1min
+OnUnitInactiveSec=5min
+AccuracySec=10s
+Unit=tetris-unattended-watchdog.service
+
+[Install]
+WantedBy=timers.target
