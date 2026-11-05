@@ -1,10 +1,10 @@
 """Evaluate a committed model in an independent process; never call learn()."""
 
 import argparse
+import hashlib
 from concurrent.futures import ProcessPoolExecutor
 import json
 from multiprocessing import get_context
-import os
 import statistics
 import time
 from pathlib import Path
@@ -13,6 +13,7 @@ from gymnasium import spaces
 
 from training.env import TetrisEnv
 from training.train_ppo import atomic_json, now
+from training.evaluation.worker_budget import automatic_workers, detect_resources
 
 
 def best_key(result):
@@ -128,15 +129,24 @@ def main():
     parser.add_argument("--committed-steps", type=int, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--workers", type=int, default=0,
-                        help="0 selects up to eight CPU workers for independent seeds")
+                        help="0 selects up to eight workers within affinity, CPU quota and memory headroom")
     args = parser.parse_args()
     seeds = json.loads(args.seeds_file.read_text())[args.seed_set][:args.seed_count]
     if len(seeds) != args.seed_count or len(set(seeds)) != len(seeds):
         raise ValueError("Seed count or uniqueness mismatch")
-    workers = min(8, os.cpu_count() or 1, len(seeds)) if args.workers == 0 else args.workers
-    atomic_json(args.output, evaluate_model(args.model, seeds, args.max_pieces,
-                                            args.protocol, args.committed_steps,
-                                            workers=workers))
+    budget = detect_resources() if args.workers == 0 else None
+    workers = automatic_workers(len(seeds), budget) if args.workers == 0 else args.workers
+    result = evaluate_model(args.model, seeds, args.max_pieces,
+                            args.protocol, args.committed_steps, workers=workers)
+    result["evaluation_workers"] = workers
+    result["model_sha256"] = hashlib.sha256(args.model.read_bytes()).hexdigest()
+    result["evaluation_source_sha256"] = {
+        "evaluate.py": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "worker_budget.py": hashlib.sha256(Path(__file__).with_name("worker_budget.py").read_bytes()).hexdigest(),
+    }
+    if budget is not None:
+        result["automatic_worker_budget"] = budget
+    atomic_json(args.output, result)
 
 
 if __name__ == "__main__":

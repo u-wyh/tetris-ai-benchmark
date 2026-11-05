@@ -68,6 +68,21 @@ CURRICULUM_METRIC_FIELDS = ("snapshot_steps", "normal_steps", "true_deaths",
                             "source_seed_counts_json", "death_sources_json")
 
 
+def validate_ppo_overrides(overrides):
+    if not isinstance(overrides, dict) or set(overrides) - {"gamma", "gae_lambda", "learning_rate"}:
+        raise ValueError("Unsupported PPO override")
+    for name, value in overrides.items():
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+            raise ValueError(f"Invalid PPO {name} override")
+        if name == "gamma" and not 0.99 < value < 1:
+            raise ValueError("Invalid PPO gamma override")
+        if name == "gae_lambda" and not 0.9 <= value <= 1:
+            raise ValueError("Invalid PPO GAE override")
+        if name == "learning_rate" and value <= 0:
+            raise ValueError("Invalid PPO learning_rate override")
+    return dict(overrides)
+
+
 def reward_settings(config):
     return (config.get("reward_version", RAW_REWARD_VERSION),
             config.get("hole_penalty_coef", 0.0), config.get("height_penalty_coef", 0.0))
@@ -592,13 +607,7 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                                        reward_profile=preset.get("reward_profile", "default"),
                                        candidate_policy=bool(preset.get("candidate_policy", False)),
                                        max_pieces=preset.get("max_pieces", 10000))
-                overrides = preset.get("ppo_overrides", {})
-                if set(overrides) - {"gamma", "gae_lambda"}:
-                    raise ValueError("Unsupported PPO override")
-                if "gamma" in overrides and not 0.99 < overrides["gamma"] < 1:
-                    raise ValueError("Invalid PPO gamma override")
-                if "gae_lambda" in overrides and not 0.9 <= overrides["gae_lambda"] <= 1:
-                    raise ValueError("Invalid PPO GAE override")
+                overrides = validate_ppo_overrides(preset.get("ppo_overrides", {}))
                 config["ppo_overrides"] = overrides
                 config["ppo"].update(overrides)
                 if preset.get("fast_candidate_env", False) and not preset.get("candidate_policy", False):

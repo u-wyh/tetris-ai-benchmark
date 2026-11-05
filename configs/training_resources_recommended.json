@@ -1,0 +1,20 @@
+{
+  "at": "2026-11-01T23:39:22+08:00",
+  "device": "cuda",
+  "n_envs": 8,
+  "initial_cpu_quota": 250,
+  "max_cpu_quota": 250,
+  "guard_profile": "configs/training_resources.json",
+  "benchmark_path": "/home/wyh/projects/tetris-ai-benchmark/runs/resource_comparison_20261101",
+  "sustained_result": "/home/wyh/projects/tetris-ai-benchmark/runs/resource_comparison_20261101/sustained_cuda8_q250/result.json",
+  "reason": "Fastest sustained finalist meeting temperature targets and 15% memory headroom; six screened configurations",
+  "physical_cpus": [
+    4,
+    6,
+    8,
+    10,
+    12,
+    14
+  ],
+  "training_started": false
+}

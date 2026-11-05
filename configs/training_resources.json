@@ -1,0 +1,17 @@
+{
+  "initial_cpu_quota": 250,
+  "max_cpu_quota": 250,
+  "min_cpu_quota": 100,
+  "quota_step": 50,
+  "cpu_soft_c": 82,
+  "cpu_stop_c": 90,
+  "gpu_soft_c": 75,
+  "gpu_stop_c": 85,
+  "cooldown_seconds": 30,
+  "sample_seconds": 2,
+  "reserve_physical_cores": 2,
+  "max_physical_cores": 6,
+  "memory_max_gib": 6,
+  "minimum_available_mib": 1024,
+  "require_gpu_telemetry": true
+}

@@ -18,10 +18,26 @@ from training.env import TetrisEnv
 from training.train_vector_transaction import (
     TRAINING_SOURCE_FILES, TransactionTetrisEnv, restore_task,
     training_source_identity, vector_config, verify_training_source_identity,
+    validate_ppo_overrides,
 )
 from training.vector_env import make_vector_env
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+@pytest.mark.parametrize("rate", [0, -0.01, float("nan"), float("inf"), True])
+def test_ppo_overrides_reject_invalid_learning_rates(rate):
+    with pytest.raises(ValueError, match="learning_rate"):
+        validate_ppo_overrides({"learning_rate": rate})
+
+
+def test_ppo_overrides_accept_lower_rate_without_mutating_preset():
+    preset = {"gamma": 0.995, "gae_lambda": 0.95, "learning_rate": 3e-5}
+    validated = validate_ppo_overrides(preset)
+    assert validated == preset and validated is not preset
+    assert validate_ppo_overrides({}) == {}
+    with pytest.raises(ValueError, match="Unsupported"):
+        validate_ppo_overrides({"batch_size": 128})
 
 
 def test_training_source_identity_rejects_changed_environment(tmp_path):
