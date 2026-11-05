@@ -469,3 +469,85 @@
 - 2026-11-05T15:12:19+08:00：按用户要求恢复无人值守执行；官方thread/goal/set仅恢复status=active，保留既有目标、用量与预算。复核源码及断点后，通过lightbook的用户systemd服务重启原学习率控制器；reference_rate由139264步继续，当前已提交159744步，未另开训练。定时器dry-run确认active/queue。证据：runs/autonomous_development_20261105/authorized_resume_evidence.json、development_status.json；runs/autonomous_lr_control_20261105/status.json；服务tetris-lr-control-20261105。
 
 - 2026-11-05T15:14:23+08:00：更新轻薄本后台托管、目标恢复及原断点接手文档，纠正此前必须界面恢复的说明；准备提交本会话文档变更，不包含已有其他报告或viewer改动。证据：AUTONOMOUS_PLAN.md、reports/experiments/autonomous_lr_control_20261105.md。
+
+- 2026-11-05T15:15:26+08:00：资源保护：tetris-guard-47316-1793862687968695253 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105/guards/reference_rate_training_02。
+
+- 2026-11-05T15:15:26+08:00：资源保护：启动受保护任务 tetris-guard-48990-1793862926556470791，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105/guards/reference_rate_evaluation_00。
+
+- 2026-11-05T15:15:27+08:00：尝试原生codex app-server daemon bootstrap以完善轻薄本长期守护；返回“app server is running but is not managed by codex app-server daemon”，未安装接管、未停止现有后台。当前后台仍独立运行，训练由用户服务托管；避免中断当前实验，后续评测完成后再安排受控守护迁移。证据：CLI退出码1；进程13827及用户服务tetris-lr-control-20261105。
+
+- 2026-11-05T15:15:30+08:00：资源保护：tetris-guard-48990-1793862926556470791 自动调整CPU配额250%→200%，CPU85.375°C/GPU50.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105/guards/reference_rate_evaluation_00。
+
+- 2026-11-05T15:15:32+08:00：资源保护：tetris-guard-48990-1793862926556470791 自动调整CPU配额200%→150%，CPU87.25°C/GPU49.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105/guards/reference_rate_evaluation_00。
+
+- 2026-11-05T15:15:34+08:00：资源保护：tetris-guard-48990-1793862926556470791 自动调整CPU配额150%→100%，CPU82.875°C/GPU49.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105/guards/reference_rate_evaluation_00。
+
+- 2026-11-05T15:16:09+08:00：资源保护：tetris-guard-48990-1793862926556470791 自动调整CPU配额100%→150%，CPU66.5°C/GPU43.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105/guards/reference_rate_evaluation_00。
+
+- 2026-11-05T15:17:16+08:00：资源保护：tetris-guard-48990-1793862926556470791 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105/guards/reference_rate_evaluation_00。
+
+- 2026-11-05T15:17:17+08:00：资源保护：启动受保护任务 tetris-guard-49521-1793863037600024173，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105/guards/lower_rate_training_00。
+
+- 2026-11-05T15:20:51+08:00：参考学习率组262144步开发评测完成，7/8局触顶、100004在1678块结束，平均得分比0.884402527，未达到扩展门槛，不追加该组；低学习率组继续预定训练。新增只读配对失败重放工具，CLI加载验证通过，重型重放等待现有队列结束串行执行。证据：runs/autonomous_lr_control_20261105/reference_rate/comparison.json；scripts/diagnose_development_failure.py。
+
+- 2026-11-05T15:25:14+08:00：在查看低学习率结果前声明后续开发门槛：仅初筛合格者做同8种子×20000块配对评测，无候选则不扩展。两侧评测统一150%起步/200%上限、固定2进程以降低已观测的启动热峰；训练GPU8/CPU250%及所有温控阈值不变。证据：runs/autonomous_lr_control_20261105/longer_development_protocol.json。
+
+- 2026-11-05T15:25:20+08:00：资源保护：tetris-guard-49521-1793863037600024173 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105/guards/lower_rate_training_00。
+
+- 2026-11-05T15:25:20+08:00：资源保护：启动受保护任务 tetris-guard-52224-1793863520740471673，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105/guards/lower_rate_evaluation_00。
+
+- 2026-11-05T15:25:24+08:00：资源保护：tetris-guard-52224-1793863520740471673 自动调整CPU配额250%→200%，CPU86.0°C/GPU50.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105/guards/lower_rate_evaluation_00。
+
+- 2026-11-05T15:25:26+08:00：资源保护：tetris-guard-52224-1793863520740471673 自动调整CPU配额200%→150%，CPU87.75°C/GPU50.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105/guards/lower_rate_evaluation_00。
+
+- 2026-11-05T15:25:29+08:00：资源保护：tetris-guard-52224-1793863520740471673 自动调整CPU配额150%→100%，CPU83.25°C/GPU50.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105/guards/lower_rate_evaluation_00。
+
+- 2026-11-05T15:26:03+08:00：资源保护：tetris-guard-52224-1793863520740471673 自动调整CPU配额100%→150%，CPU67.125°C/GPU44.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105/guards/lower_rate_evaluation_00。
+
+- 2026-11-05T15:27:17+08:00：资源保护：tetris-guard-52224-1793863520740471673 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105/guards/lower_rate_evaluation_00。
+
+- 2026-11-05T15:27:17+08:00：资源保护：两学习率开发筛选完成，待复核候选lower_rate；未自动追加长期训练或替换正式模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_control_20261105/summary.json。
+
+- 2026-11-05T15:30:38+08:00：低学习率组262144步初筛完成，8/8局触顶，平均得分比0.998864662，3胜5负；通过预声明的探索性扩展筛选，尚无改善结论。更长局门槛3项定向测试通过（逐局严重损失/失败数/得分退化）；冻结输入、源码、模型及较低评测配额，准备串行执行失败重放和8×20000块配对评测，正式模型不替换。证据：runs/autonomous_lr_control_20261105/summary.json；runs/autonomous_lr_longcap_20261105/protocol.json；tests/test_longer_development_screen.py。
+
+- 2026-11-05T15:30:42+08:00：资源保护：启动串行失败重放与8种子×20000块配对开发评测，训练保持停止。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_longcap_20261105。
+
+- 2026-11-05T15:30:48+08:00：资源保护：更长局开发队列停止：FileNotFoundError(2, 'No such file or directory')，保留结果和断点。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_longcap_20261105。
+
+- 2026-11-05T15:34:58+08:00：修复无人值守队列启动故障：此前NVIDIA启动查询3秒超时，未启动计算；50%配额下重新实测查询0.027秒返回正常。控制器配额由25%改为50%，配合评测上限200%不超总额250%；启动前查询仅允许一次有限重试，持续失败或温度危险仍禁止启动并保存原始错误。9项定向测试通过。保留原协议和失败日志，操作修订不改变数值源码、模型、种子或评测门槛。证据：runs/autonomous_lr_longcap_20261105/protocol_before_preflight_fix.json、protocol.json、guards/failure_replay_00.log；tests/test_resource_guard.py。
+
+- 2026-11-05T15:35:00+08:00：资源保护：启动串行失败重放与8种子×20000块配对开发评测，训练保持停止。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_longcap_20261105。
+
+- 2026-11-05T15:35:02+08:00：资源保护：启动受保护任务 tetris-guard-55536-1793864102506910542，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_longcap_20261105/guards/failure_replay_01。
+
+- 2026-11-05T15:35:29+08:00：资源保护：tetris-guard-55536-1793864102506910542 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_longcap_20261105/guards/failure_replay_01。
+
+- 2026-11-05T15:35:30+08:00：资源保护：启动受保护任务 tetris-guard-55877-1793864130415728414，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_longcap_20261105/guards/baseline_00。
+
+- 2026-11-05T15:42:19+08:00：资源保护：tetris-guard-55877-1793864130415728414 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_longcap_20261105/guards/baseline_00。
+
+- 2026-11-05T15:42:21+08:00：资源保护：启动受保护任务 tetris-guard-58364-1793864541529040865，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_longcap_20261105/guards/candidate_00。
+
+- 2026-11-05T15:42:49+08:00：按用户明确的无人值守要求配置后续自动决策：等待当前长局结果，门槛通过后从低学习率原事务续训，在524288/1048576/1572864/2097152步自动复核短局，1M与2M复核长局；退化、温控/传感器失败或用户暂停则保存停止，不等待逐项确认，不发布模型。控制器6小时总预算。新增统一tetris-compute.slice，CPU总上限250%、内存6GiB，真实子进程cgroup与配额已核验；12项定向测试通过。启用下次用户后台启动时原生Codex bootstrap，现有后台保持运行，尚未实测重启。证据：runs/autonomous_lr_unattended_20261105/protocol.json；configs/systemd/；tests/test_unattended_extension.py。
+
+- 2026-11-05T15:42:49+08:00：资源保护：启动无人值守续训决策：先等待长局门槛，通过后逐段训练至最多2097152步，退化即止损。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_unattended_20261105。
+
+- 2026-11-05T15:43:51+08:00：资源保护：无人值守续训停止：KeyboardInterrupt('Unattended extension interrupted')，检查点与证据保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_unattended_20261105。
+
+- 2026-11-05T15:44:11+08:00：在等待阶段停止/补充/恢复无人值守续训控制器，补充上游摘要与成功状态一致性检查，防止残留摘要误触发训练；未中断长局评测、未开始新的训练。13项定向测试通过，控制器恢复等待同一服务，原协议与修订均保存。证据：runs/autonomous_lr_unattended_20261105/protocol_initial.json、protocol.json、status.json；tests/test_unattended_extension.py。
+
+- 2026-11-05T15:46:35+08:00：将临时无人值守控制器改为持久用户服务（临时单元停止后被systemd回收，原restart未执行任何计算）；增加已完成阶段/终态去重及原子检查点保存，支持重启后接手。14项定向测试通过。当前长局评测继续运行，未重做已完成评测。证据：configs/systemd/tetris-unattended-extension-20261105.service、tetris-lr-longcap-20261105.service；runs/autonomous_lr_unattended_20261105/protocol_before_persistence.json、protocol.json。
+
+- 2026-11-05T15:46:35+08:00：资源保护：启动无人值守续训决策：先等待长局门槛，通过后逐段训练至最多2097152步，退化即止损。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_unattended_20261105。
+
+- 2026-11-05T15:49:06+08:00：资源保护：tetris-guard-58364-1793864541529040865 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_longcap_20261105/guards/candidate_00。
+
+- 2026-11-05T15:49:06+08:00：资源保护：更长局开发评测完成，扩展门槛通过=False；未替换正式模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_longcap_20261105/summary.json。
+
+- 2026-11-05T15:49:15+08:00：资源保护：无人值守开发结束：not_eligible，Longer-cap screen failed the predeclared extension gate；未替换正式模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_unattended_20261105/summary.json。
+
+- 2026-11-05T15:50:37+08:00：长局配对完成：冻结模型8/8到20000块；低学习率候选1局提前结束，平均存活比0.9773625、平均得分比0.960181509（5胜3负）。无人值守控制器自行判定not_eligible，取消后续训练，未等待确认、未替换正式模型。这是自动止损流程的真实正向验证。准备对该长局失败做只读精确重放，以支持下一轮设计。证据：runs/autonomous_lr_longcap_20261105/summary.json；runs/autonomous_lr_unattended_20261105/summary.json。
+
+- 2026-11-05T15:50:39+08:00：资源保护：启动受保护任务 tetris-guard-61563-1793865039350660289，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_longcap_20261105/guards/low_rate_failure_replay。
+
+- 2026-11-05T15:52:02+08:00：整理无人值守配置、14项定向测试、两组与长局结果及真实自动止损证据，准备提交本会话代码/文档；已有其他报告、traditional_longlife和viewer改动不纳入。长局失败精确重放独立受保护运行，后续按证据选新方向，不重启已拒绝组。证据：reports/experiments/unattended_development_20261105.md；AUTONOMOUS_PLAN.md；runs/autonomous_development_20261105/development_status.json。

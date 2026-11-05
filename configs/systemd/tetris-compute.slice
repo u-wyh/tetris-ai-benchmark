@@ -1,0 +1,8 @@
+[Unit]
+Description=Combined budget for guarded Tetris development workloads
+
+[Slice]
+CPUQuota=250%
+CPUQuotaPeriodSec=20ms
+MemoryMax=6G
+MemorySwapMax=0

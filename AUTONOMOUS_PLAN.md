@@ -53,3 +53,19 @@
 - 用户要求纠正停工后，已通过官方App Server的thread/goal/set接口仅将原目标status从paused恢复为active；目标文本、已用tokens172576和tokenBudget保持不变。之前声称必须用户界面点击恢复的结论不准确，已纠正。证据runs/autonomous_development_20261105/authorized_resume_evidence.json。该恢复仅对应本次用户明确要求，小时任务不得自行解除今后的用户暂停。
 - 已复核原训练源码哈希与两组事务，没有重复训练进程；从reference_rate139264步、lower_rate8192步接续原实验。控制器改由lightbook用户服务tetris-lr-control-20261105.service托管，独立于桌面终端和SSH连接；仍套用原GPU8/CPU250%温控保护，未改数值源码。接手时检查服务及status.json，不再查旧tmux会话。
 - 原先的“控制器在tmux运行”和“目标仍暂停”均为历史状态。恢复后定时器dry-run已返回goal_status=active、action=queue；不重复投递，等待原小时定时器或原生goal续办。
+
+## 2026-11-05 无人值守执行接手点（优先于上述历史状态）
+
+- 两学习率各262144步初筛已完成：参考3e-4有1局1678块结束，得分比0.884403，不追加；低学习率3e-5全部触顶，得分比0.998865，仅通过开发筛选，尚无改善结论。
+- 当前长局队列`runs/autonomous_lr_longcap_20261105/`，服务`tetris-lr-longcap-20261105.service`。失败重放完全复现；冻结模型8×20000块已全部触顶，低学习率候选正在同协议评测。以实际status.json、服务MainPID及样本为准。
+- 用户进一步明确要求无人值守自行完成任务。后续由持久服务`tetris-unattended-extension-20261105.service`自动等待并应用已冻结门槛；通过才接续低学习率原事务，按524288/1048576/1572864/2097152步复核，1M/2M追加长局评测。失败或退化自动止损并留证，不等用户逐项确认；不替换正式模型。
+- 续训状态、协议、阶段快照在`runs/autonomous_lr_unattended_20261105/`。已有完整阶段和终态会去重；不要另行重复启动训练。核查失败原因后再恢复服务，不盲目循环重试。
+- 新保护任务及续训控制器共用`tetris-compute.slice`：CPU总250%、内存6GiB、无swap；各任务仍执行原温控和守护清理。服务与安装配置存于`configs/systemd/`，启用用户linger、小时定时器、续训开机接手和原生Codex后台bootstrap；完整重启/游戏本关机后的端到端续办未实测。
+- 账号状态若为usageLimited，不将其手动改为active、不绕过限制。已有有限本地计算按本次授权继续，AI续办按小时等待。paused仍代表必须停止，小时任务不能擅自解除未来的用户暂停。
+- 详情及证据：reports/experiments/unattended_development_20261105.md。
+
+### 15:49 更新：自动止损已实际触发
+
+- 长局队列已完成：低学习率候选在100007种子16378块结束，其余7局触顶；平均存活比0.9773625、得分比0.960181509。未达到门槛，后续无人值守控制器已自行以not_eligible结束，未启动追加训练。不要将其误判为卡住后重新加步数；终态再次启动也不重训。
+- 当前只读诊断：tetris-longcap-failure-diagnosis-20261105.service，目录runs/autonomous_lr_longcap_20261105/guards/low_rate_failure_replay，输出low_rate_failure_replay.json。先检查真实服务和输出，避免重复重放。
+- 下一步：核对该长局失败重放，再结合已经存在的KL/奖励/课程实验选新方向；若考虑KL，先核查训练来源清单是否完整覆盖KL实现。原PPO30M、BC和所有已评测模型继续冻结。原生goal曾显示usageLimited，小时续办应正常等待账号恢复，不手动解除额度限制。

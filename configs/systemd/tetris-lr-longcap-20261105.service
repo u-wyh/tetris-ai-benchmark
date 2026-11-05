@@ -1,0 +1,16 @@
+[Unit]
+Description=Guarded Tetris replay and longer development screen
+
+[Service]
+Type=simple
+WorkingDirectory=/home/wyh/projects/tetris-ai-benchmark
+ExecStart=/home/wyh/projects/tetris-ai-benchmark/.venv/bin/python -u /home/wyh/projects/tetris-ai-benchmark/scripts/run_longer_development_screen.py --run-dir /home/wyh/projects/tetris-ai-benchmark/runs/autonomous_lr_longcap_20261105
+Slice=tetris-compute.slice
+CPUQuota=50%
+MemoryMax=1G
+MemorySwapMax=0
+Environment=PATH=/home/wyh/.local/bin:/home/wyh/.nvm/versions/node/v24.18.0/bin:/usr/local/bin:/usr/bin:/bin
+Environment=OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+TimeoutStopSec=40
+KillMode=mixed
+RuntimeMaxSec=1h

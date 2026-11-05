@@ -122,13 +122,31 @@ def run(args):
     if not os.path.isabs(command[0]):
         command[0] = str((ROOT / command[0]).resolve())
     cpus = physical_cpus(profile["reserve_physical_cores"], profile["max_physical_cores"])
-    baseline = read_telemetry(profile["require_gpu_telemetry"])
-    quota = profile["initial_cpu_quota"]
-    quota, _, decision = control(baseline, quota, None, 0, profile)
-    if decision.startswith("stop:"):
-        raise RuntimeError("Unsafe startup conditions: " + decision)
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=False)
+    # No workload exists during preflight. A cold NVIDIA query may time out;
+    # retry once with fresh telemetry, never reuse a failed or stale reading.
+    try:
+        for attempt in range(2):
+            try:
+                baseline = read_telemetry(profile["require_gpu_telemetry"])
+                break
+            except subprocess.TimeoutExpired as exc:
+                write_json(output / "preflight.json", dict(at=now(), attempt=attempt + 1,
+                                                          error=repr(exc)))
+                if attempt:
+                    raise
+                time.sleep(2)
+        quota = profile["initial_cpu_quota"]
+        quota, _, decision = control(baseline, quota, None, 0, profile)
+        if decision.startswith("stop:"):
+            raise RuntimeError("Unsafe startup conditions: " + decision)
+    except Exception as exc:
+        result = dict(at=now(), outcome="startup_failed", exit_code=1, error=repr(exc))
+        write_json(output / "result.json", result)
+        operation(f"启动前检查失败，未启动计算：{exc!r}", output)
+        print(json.dumps(result, ensure_ascii=False), flush=True)
+        return 1
     unit = f"tetris-guard-{os.getpid()}-{time.time_ns()}"
     metadata = dict(at=now(),unit=unit,profile=profile,physical_cpus=cpus,
                     command=command,seconds=args.seconds,baseline=baseline)

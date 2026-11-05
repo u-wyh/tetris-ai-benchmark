@@ -1,0 +1,11 @@
+[Unit]
+Description=Bootstrap the local Codex backend at login-independent user startup
+
+[Service]
+Type=oneshot
+ExecStart=/home/wyh/.local/bin/codex app-server daemon bootstrap
+RemainAfterExit=yes
+TimeoutStartSec=60
+
+[Install]
+WantedBy=default.target

@@ -1,6 +1,9 @@
 import importlib.util
 import json
 from pathlib import Path
+from types import SimpleNamespace
+
+import pytest
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -37,3 +40,30 @@ def test_memory_pressure_and_quota_ceiling():
     assert guard.control(sample(available=500), 200, None, 0, PROFILE)[2] == "stop:memory_pressure"
     ceiling = PROFILE["max_cpu_quota"]
     assert guard.control(sample(), ceiling, 0, 100, PROFILE)[0] == ceiling
+
+
+@pytest.mark.parametrize('recovered', [False, True])
+def test_preflight_timeout_never_starts_work_without_a_fresh_safe_reading(tmp_path, monkeypatch, recovered):
+    calls = []
+    def telemetry(required):
+        calls.append(required)
+        if len(calls) == 1 or not recovered:
+            raise guard.subprocess.TimeoutExpired('nvidia-smi', 3)
+        # A second reading can be fresh yet unsafe. It must still reject work.
+        return sample(cpu=90)
+    monkeypatch.setattr(guard, 'read_telemetry', telemetry)
+    monkeypatch.setattr(guard, 'physical_cpus', lambda *args: [0])
+    monkeypatch.setattr(guard.time, 'sleep', lambda seconds: None)
+    monkeypatch.setattr(guard, 'operation', lambda *args: None)
+    def unexpected_launch(*args, **kwargs):
+        pytest.fail('No child may launch during failed preflight')
+    monkeypatch.setattr(guard.subprocess, 'run', unexpected_launch)
+    output = tmp_path/'guard'
+    args = SimpleNamespace(profile=ROOT/'configs/training_resources.json', output=output,
+                           seconds=10, command=['--', '/bin/true'])
+    assert guard.run(args) == 1
+    assert len(calls) == 2
+    result = json.loads((output/'result.json').read_text())
+    assert result['outcome'] == 'startup_failed'
+    assert ('stop:temperature' if recovered else 'TimeoutExpired') in result['error']
+    assert not (output/'launch.json').exists()
