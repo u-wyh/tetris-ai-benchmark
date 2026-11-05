@@ -58,9 +58,25 @@ def test_fast_manual_restart_cannot_queue_twice_within_hour(tmp_path,monkeypatch
 
 def test_failed_delivery_also_waits_before_retry(tmp_path,monkeypatch):
     monkeypatch.setattr(module,'inspect',lambda *args:('usageLimited',0))
+    monkeypatch.setattr(module,'recover_goal',lambda thread:dict(ready=True,action='goal_changed'))
     calls=[]
     monkeypatch.setattr(module.subprocess,'run',lambda *args,**kw:(calls.append(args) or SimpleNamespace(returncode=1,stdout='')))
     path=control_file(tmp_path)
     assert module.run(path,clock=lambda:4000)==1
     assert module.run(path,clock=lambda:4001)==0
     assert len(calls)==1
+
+
+def test_live_quota_unavailable_waits_an_hour_without_delivering(tmp_path,monkeypatch):
+    monkeypatch.setattr(module,'inspect',lambda *args:('usageLimited',0))
+    reads=[]
+    monkeypatch.setattr(module,'recover_goal',lambda thread:(reads.append(thread) or dict(ready=False,action='quota_unavailable')))
+    def forbidden(*args,**kwargs):
+        raise AssertionError('Unavailable quota must not start a turn')
+    monkeypatch.setattr(module.subprocess,'run',forbidden)
+    path=control_file(tmp_path)
+    assert module.run(path,clock=lambda:4000)==0
+    assert module.run(path,clock=lambda:4001)==0
+    assert reads==['target']
+    events=[json.loads(line) for line in (tmp_path/'hourly.jsonl').read_text().splitlines()]
+    assert [e['action'] for e in events]==['quota_unavailable','interval_not_elapsed']

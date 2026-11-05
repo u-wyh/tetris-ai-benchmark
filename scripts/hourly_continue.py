@@ -40,6 +40,11 @@ def inspect(codex_dir, thread):
     return row[0] if row else None,pending
 
 
+def recover_goal(thread):
+    from codex_local_rpc import recover_available_goal
+    return recover_available_goal(thread)
+
+
 def run(control_path, dry_run=False, clock=time.time):
     control=json.loads(control_path.read_text())
     folder=control_path.parent
@@ -68,6 +73,20 @@ def run(control_path, dry_run=False, clock=time.time):
                 temporary=attempt_file.with_suffix('.tmp')
                 temporary.write_text(json.dumps(dict(epoch=clock()))+'\n')
                 temporary.replace(attempt_file)
+                if status in ('usageLimited','usage_limited'):
+                    recovery=recover_goal(control['thread_id'])
+                    event['quota_recovery']=recovery
+                    if not recovery['ready']:
+                        action=recovery['action']
+                        event['action']=action
+                    else:
+                        status,pending=inspect(Path.home()/'.codex',control['thread_id'])
+                        action=decision(control['enabled'],status,pending)
+                        event.update(goal_status=status,pending_messages=pending,action=action)
+                        if recovery['action']=='quota_available_goal_resumed':
+                            with (ROOT/'OPERATIONS.md').open('a') as f:
+                                f.write(f"\n- {event['at']}：实时账户允许正常使用，恢复原目标的旧usageLimited状态，保留目标、预算和用量；未消耗额度重置券。证据：{folder/'hourly.jsonl'}。\n")
+            if action=='queue' and not dry_run:
                 result=subprocess.run([control['codex_cli'],'queue','--thread',control['thread_id'],
                                        '--message',control['prompt']],cwd=ROOT,
                                       capture_output=True,text=True,timeout=30)

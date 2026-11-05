@@ -61,7 +61,7 @@
 - 用户进一步明确要求无人值守自行完成任务。后续由持久服务`tetris-unattended-extension-20261105.service`自动等待并应用已冻结门槛；通过才接续低学习率原事务，按524288/1048576/1572864/2097152步复核，1M/2M追加长局评测。失败或退化自动止损并留证，不等用户逐项确认；不替换正式模型。
 - 续训状态、协议、阶段快照在`runs/autonomous_lr_unattended_20261105/`。已有完整阶段和终态会去重；不要另行重复启动训练。核查失败原因后再恢复服务，不盲目循环重试。
 - 新保护任务及续训控制器共用`tetris-compute.slice`：CPU总250%、内存6GiB、无swap；各任务仍执行原温控和守护清理。服务与安装配置存于`configs/systemd/`，启用用户linger、小时定时器、续训开机接手和原生Codex后台bootstrap；完整重启/游戏本关机后的端到端续办未实测。
-- 账号状态若为usageLimited，不将其手动改为active、不绕过限制。已有有限本地计算按本次授权继续，AI续办按小时等待。paused仍代表必须停止，小时任务不能擅自解除未来的用户暂停。
+- goal的usageLimited可能是历史标记；实际可用性以实时account/rateLimits/read的ordinaryUsageAllowed为准。真实账户仍不可用则按小时等待，不绕过限制。paused和budgetLimited仍禁止自动解除；详见后续额度恢复修正。
 - 详情及证据：reports/experiments/unattended_development_20261105.md。
 
 ### 15:49 更新：自动止损已实际触发
@@ -73,3 +73,11 @@
 ### 2026-11-05T15:59:22+08:00 诊断已完成，修复收尾竞态
 
 低学习率长局失败重放已经完成，种子100007的双方终局/得分/奖励及模型SHA再次核对完全一致。旧guard误报technical_failure，已保留原结果并在diagnosis_reconciliation.json记录核对。原因对应systemd回收空cgroup的采样竞态，已用回归测试及真实进程退出注入复现并修复；18项测试通过。完成态长局服务现在开机重复启动会直接去重，不因历史保护脚本版本变化重放。当前无训练/诊断计算在跑；下次小时续办先读已完成证据，再设计新实验，原生usageLimited不手动解除。
+
+### 16:03 更新：实时额度已可用，旧标记已恢复
+
+用户指出当前已经能正常使用。实时account/rateLimits/read证实ordinaryUsageAllowed=true（当次5小时18%、周3%），原goal的usageLimited是旧标记，不能据此继续停工。已仅恢复原status=active，保留目标、预算和tokensUsed240995；没有消耗重置券、变更账户或付费配置。证据quota_recovery_verification.json。
+
+小时续办已修正：仅在到达原一小时间隔且goal为usageLimited时查询实时账户；明确允许使用后，再读goal确认用户没有暂停/取消，才恢复原目标并投递。额度仍不足或读取不明则保留进度等下一小时；paused/blocked/budgetLimited/complete不恢复，未知状态失败关闭。14项额度/续办定向测试通过，新本地RPC客户端也已实测读取成功。16:05:55真实定时器已自动投递成功，下次17:05:55；不要重复投递已有队列。
+
+当前继续开发：复核已有KL/奖励实验与长局失败，再选择新有界实验。两组学习率均已被长局门槛拒绝，不能因额度恢复就重跑原组或重复诊断。

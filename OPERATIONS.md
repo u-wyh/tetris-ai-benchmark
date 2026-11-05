@@ -559,3 +559,9 @@
 - 2026-11-05T15:57:50+08:00：资源保护：tetris-guard-64359-1793865469697646280 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/exit_race_verification。
 
 - 2026-11-05T15:59:22+08:00：用户要求复核运行状态时发现guard收尾误报：诊断真实退出0且产物正确，采样阶段遇到已回收的cgroup文件。回归先复现2项失败，修复后18项测试通过；真实systemd进程退出注入确认缺失文件竞态并正确返回completed/0。再次逐项核对长局诊断与原评测/模型SHA完全一致，保留旧失败结果，新增reconciliation证据；清理该已核对服务的failed标记，不重跑已有工作。证据：runs/autonomous_development_20261105/exit_race_verification/；runs/autonomous_lr_longcap_20261105/diagnosis_reconciliation.json；tests/test_resource_guard.py。
+
+- 2026-11-05T16:03:12+08:00：按用户纠正核查实时账户接口，ordinaryUsageAllowed=true（5小时18%、周3%），旧goal的usageLimited不是当前额度拒绝。通过官方thread/goal/set恢复原目标active，保留目标、tokensUsed240995和预算；未消耗重置券、未改账户或付费。后续修复小时续办的真实可用性判断。证据：runs/autonomous_development_20261105/quota_recovery_verification.json。
+
+- 2026-11-05T16:05:55+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-05T16:09:10+08:00：修复小时续办把历史usageLimited误作当前限额的问题：达到一小时间隔后读取实时普通用量许可，只有明确可用且再次确认未暂停/预算限制才恢复原目标；不可用则等待。保留原目标/预算/已用量，不调用重置券或账户修改。14项定向测试通过，新Unix WebSocket RPC客户端真实查询成功；16:05:55原定时器已投递成功（回执01a1aabe-370e-7c20-8132-17e32545d663）。证据：scripts/codex_local_rpc.py；tests/test_codex_quota_recovery.py；runs/autonomous_development_20261105/hourly.jsonl、quota_recovery_verification.json。
