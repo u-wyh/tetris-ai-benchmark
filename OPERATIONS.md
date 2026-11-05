@@ -677,3 +677,47 @@
 - 2026-11-05T17:01:54+08:00：PATH重试后真实CUDA8完成4096步→退出→恢复8192步；18份Adam参数状态计数586000→586160，LR仍3e-5、参考SHA未变、8worker快照齐全，恢复验证通过。试运行已自动启动持久tetris-optimizer-control-20261105.service，从8192继续原262144预算；部署同门槛的合格者额外8验证/分段2M接力，当前仅等待，不启动并发训练。证据：runs/autonomous_optimizer_transfer_20261105/smoke_verification.json、pilot_verification_guard/；runs/autonomous_optimizer_followup_20261105/protocol.json。
 
 - 2026-11-05T17:03:05+08:00：补齐KL最终失败结论和Adam迁移试验协议/当前接手点，记录历史控制限制及已恢复的两项技术失败。新控制器86590、接力86900真实运行，后者等待；未启动第二训练。准备提交本会话源码/测试/服务/报告，不包含已有其他报告、longlife和viewer修改。证据：reports/experiments/optimizer_state_transfer_20261105.md、AUTONOMOUS_PLAN.md；runs/autonomous_development_20261105/development_status.json。
+
+- 2026-11-05T17:05:56+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-05T17:09:35+08:00：资源保护：tetris-guard-86599-1793869262224795860 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/guards/restored_optimizer_training_00。
+
+- 2026-11-05T17:09:38+08:00：资源保护：启动受保护任务 tetris-guard-90231-1793869778428738300，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/guards/restored_optimizer_evaluation_00。
+
+- 2026-11-05T17:10:15+08:00：资源保护：启动受保护任务 tetris-guard-90470-1793869815122662439，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/resumable_evaluator_verification_20261105/intentional_interruption。
+
+- 2026-11-05T17:10:19+08:00：资源保护：tetris-guard-90231-1793869778428738300 自动调整CPU配额150%→100%，CPU82.875°C/GPU47.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/guards/restored_optimizer_evaluation_00。
+
+- 2026-11-05T17:10:19+08:00：资源保护：tetris-guard-90470-1793869815122662439 自动调整CPU配额100%→50%，CPU82.625°C/GPU47.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/resumable_evaluator_verification_20261105/intentional_interruption。
+
+- 2026-11-05T17:10:30+08:00：资源保护：主动中断评测恢复验证：第一个seed已持久提交，保留缓存后停止保护子任务。证据：/home/wyh/projects/tetris-ai-benchmark/runs/resumable_evaluator_verification_20261105/intentional_interruption。
+
+- 2026-11-05T17:10:32+08:00：资源保护：tetris-guard-90470-1793869815122662439 结束：interrupted，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/resumable_evaluator_verification_20261105/intentional_interruption。
+
+- 2026-11-05T17:10:32+08:00：资源保护：启动受保护任务 tetris-guard-90794-1793869832507055435，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/resumable_evaluator_verification_20261105/resume。
+
+- 2026-11-05T17:10:38+08:00：资源保护：tetris-guard-90794-1793869832507055435 自动调整CPU配额100%→50%，CPU83.0°C/GPU47.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/resumable_evaluator_verification_20261105/resume。
+
+- 2026-11-05T17:10:47+08:00：资源保护：tetris-guard-90794-1793869832507055435 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/resumable_evaluator_verification_20261105/resume。
+
+- 2026-11-05T17:10:47+08:00：资源保护：启动受保护任务 tetris-guard-90913-1793869847509050687，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/resumable_evaluator_verification_20261105/complete_cache。
+
+- 2026-11-05T17:10:49+08:00：资源保护：tetris-guard-90913-1793869847509050687 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/resumable_evaluator_verification_20261105/complete_cache。
+
+- 2026-11-05T17:10:50+08:00：资源保护：启动受保护任务 tetris-guard-90952-1793869850007779830，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/resumable_evaluator_verification_20261105/unchanged_reference。
+
+- 2026-11-05T17:10:56+08:00：资源保护：tetris-guard-90952-1793869850007779830 自动调整CPU配额100%→50%，CPU82.875°C/GPU47.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/resumable_evaluator_verification_20261105/unchanged_reference。
+
+- 2026-11-05T17:10:59+08:00：新增独立逐seed可恢复评测入口，保留原冻结评测器；每局原子写入并fsync文件及目录，校验模型/完整训练环境源码/评测源码/运行库/种子顺序/上限/协议与每行摘要，互斥锁防重复。10项中断恢复/缓存身份/损坏/无效终局测试通过。启动一次真实中断验证服务，等待本轮GPU训练结束再在同一总slice内CPU100%/内存2GiB执行；主动中断属于预期故障注入，不重启训练。17:05:56小时投递再次成功，未绕过额度。证据：training/evaluation/evaluate_resumable.py、tests/test_evaluation_cache.py；runs/resumable_evaluator_verification_20261105/；runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-05T17:11:19+08:00：资源保护：tetris-guard-90952-1793869850007779830 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/resumable_evaluator_verification_20261105/unchanged_reference。
+
+- 2026-11-05T17:11:19+08:00：资源保护：启动受保护任务 tetris-guard-91165-1793869879627770692，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/resumable_evaluator_verification_20261105/parallel_spawn。
+
+- 2026-11-05T17:11:28+08:00：资源保护：tetris-guard-91165-1793869879627770692 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/resumable_evaluator_verification_20261105/parallel_spawn。
+
+- 2026-11-05T17:11:28+08:00：资源保护：真实逐seed评测中断/恢复/完整缓存去重/原评测一致性/双进程验证通过。证据：/home/wyh/projects/tetris-ai-benchmark/runs/resumable_evaluator_verification_20261105/summary.json。
+
+- 2026-11-05T17:11:59+08:00：资源保护：tetris-guard-90231-1793869778428738300 自动调整CPU配额100%→150%，CPU67.75°C/GPU44.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/guards/restored_optimizer_evaluation_00。
+
+- 2026-11-05T17:14:34+08:00：真实评测恢复验证全部通过：首局持久提交后主动中断、确认子服务清理，只补缺局、全缓存零新算、原评测结果/聚合相同、双spawn进程通过。验证服务MainPID0/Result=success；峰值CPU83℃触发原软降载，后续重型验证改为串行以减少启动叠加；不改阈值。补齐报告与接手计划。当前Adam迁移262144已提交并在原协议8×20000评测中。证据：runs/resumable_evaluator_verification_20261105/summary.json及各guard；reports/experiments/resumable_evaluation_20261105.md。
