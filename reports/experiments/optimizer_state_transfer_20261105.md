@@ -37,3 +37,11 @@
 - 保持lightbook、CUDA8、总CPU250%/内存6GiB、原温控与有限时间预算。查看实际MainPID/status/guard，避免重复启动；运行中来源与支持文件冻结。
 
 尚无本组长局结果，不能宣称恢复Adam已经改善棋力。
+
+## 首轮结果与实际自动接力（17:18）
+
+262144步、同8×20000开发比较完成：8/8触顶，平均已观察块数比1.0、得分比1.0019875537，得分6胜2负，通过冻结门槛。历史fresh强KL组4/8触顶、得分比0.684014；这里只支持本次保留Adam的候选继续研究，不证明Adam重置是所有退化的原因，也不构成独立泛化结论。双方触顶均右截断，不宣称真实寿命提高；约0.20%得分差异也未做独立确认。
+
+17:17:05接力服务自动复核候选SHA、来源、262144步和门槛后写`handed_off`，自动启动额外8种子配对与条件续训服务。实测核验：接力MainPID0/Result=success；pair实例MainPID93337在baseline阶段；extension实例MainPID93341正常等待上游状态。不是需要人工确认的暂停，尚未开始额外训练。后续必须完成100008–100015的基线及候选配对并通过原门槛，再恢复原事务；失败自动止损。
+
+证据：`runs/autonomous_optimizer_transfer_20261105/summary.json`、`restored_optimizer/stage1_8x20k.json`；`runs/autonomous_optimizer_followup_20261105/summary.json`；`runs/autonomous_optimizer_extra_20261105/status.json`及`extension/status.json`。当前源码与支持文件继续冻结，不在活动试验中改评测器。

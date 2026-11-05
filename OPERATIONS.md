@@ -721,3 +721,17 @@
 - 2026-11-05T17:11:59+08:00：资源保护：tetris-guard-90231-1793869778428738300 自动调整CPU配额100%→150%，CPU67.75°C/GPU44.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/guards/restored_optimizer_evaluation_00。
 
 - 2026-11-05T17:14:34+08:00：真实评测恢复验证全部通过：首局持久提交后主动中断、确认子服务清理，只补缺局、全缓存零新算、原评测结果/聚合相同、双spawn进程通过。验证服务MainPID0/Result=success；峰值CPU83℃触发原软降载，后续重型验证改为串行以减少启动叠加；不改阈值。补齐报告与接手计划。当前Adam迁移262144已提交并在原协议8×20000评测中。证据：runs/resumable_evaluator_verification_20261105/summary.json及各guard；reports/experiments/resumable_evaluation_20261105.md。
+
+- 2026-11-05T17:16:57+08:00：资源保护：tetris-guard-90231-1793869778428738300 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/guards/restored_optimizer_evaluation_00。
+
+- 2026-11-05T17:16:59+08:00：资源保护：initial_optimizer开发筛选完成，待复核候选restored_optimizer；未自动追加长期训练或替换正式模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_transfer_20261105/summary.json。
+
+- 2026-11-05T17:17:05+08:00：资源保护：参数比较自动接力：restored_optimizer进入额外8种子长局复核，通过才分段续训；无人工确认或发布。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_followup_20261105/summary.json。
+
+- 2026-11-05T17:17:05+08:00：资源保护：启动无人值守续训决策：先等待长局门槛，通过后逐段训练至最多2097152步，退化即止损。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_extra_20261105/extension。
+
+- 2026-11-05T17:17:07+08:00：资源保护：启动串行失败重放与8种子×20000块配对开发评测，训练保持停止。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_extra_20261105。
+
+- 2026-11-05T17:17:09+08:00：资源保护：启动受保护任务 tetris-guard-93350-1793870229915168327，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_optimizer_extra_20261105/guards/baseline_00。
+
+- 2026-11-05T17:20:18+08:00：核验Adam迁移8×20000初筛通过（8/8触顶、得分比1.0019875537、6胜2负），自动接力已真实handed_off并退出成功。额外8种子pair服务93337在baseline阶段、条件续训93341正常等待；未人工启动后续实例，不重复训练。补齐结果限制、实测接力正例及当前接手点。证据：runs/autonomous_optimizer_transfer_20261105/summary.json；runs/autonomous_optimizer_followup_20261105/summary.json；runs/autonomous_optimizer_extra_20261105/及extension/status.json。

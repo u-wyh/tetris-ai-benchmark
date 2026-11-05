@@ -118,3 +118,10 @@
 - 真实保护进程主动中断→只补缺局→完整缓存零重算→与原评测器两局2048块及聚合完全一致→2个spawn worker通过；验证服务已完成释放资源。证据runs/resumable_evaluator_verification_20261105/summary.json。
 - 验证期间CPU83℃触发软降载，保护阈值未变。后续重型验证串行，不在长局评测期间叠加额外启动负载。下一份新实验才考虑启用新入口，需基线/候选匹配扩展身份；当前控制器集成须待被冻结的活动试验及接力结束。
 - 小时续办17:05:56再次真实投递成功，消息01a1aaf5-2cd0-70d1-a05c-0e9cadd96a1f；不需要再次安装定时器。
+
+### 17:18 更新：Adam迁移初筛通过，真实自动接力运行
+
+- Adam迁移262144步的8×20000全部触顶，得分比1.0019875537（6胜2负），通过门槛；不是生存改善或独立确认结论。
+- 原参数控制器已结束；optimizer_followup于17:17:05自动handed_off后正常退出。当前计算在runs/autonomous_optimizer_extra_20261105/；pair实例tetris-development-pair@autonomous_optimizer_extra_20261105.service，MainPID93337，先跑额外8种子冻结基线，再同协议候选；条件续训实例tetris-development-extension@autonomous_optimizer_extra_20261105.service，MainPID93341，waiting_for_longer_screen。
+- 已实测比较→额外验证正例自动接力及上游状态文件启动竞态修复；验证→实际续训仍待本轮门槛，不能提前称其成功。若合格则4段至2M，失败/暂停/保护异常停止；不重复启动。
+- 支持文件继续冻结。后续评测入口集成和“Review before extending”旧说明文字统一待本轮全部终止后处理；这些旧文字不是人工审批要求，原生目标授权的接力会自行按门槛执行。
