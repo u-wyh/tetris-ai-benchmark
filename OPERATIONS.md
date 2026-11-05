@@ -1065,3 +1065,7 @@
 - 2026-11-05T22:35:43+08:00：资源保护：tetris-guard-180353-1793889339516251975 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_candidate_construction_profile_20261105/guard_retry01。
 
 - 2026-11-05T22:37:40+08:00：完整上下文低LR筛选4/8触顶、得分比0.5898042639，自动拒绝extra8/扩训；完成后扩展两种初始化的CUDA8故障恢复回归2项通过（输入SHA未变）；静态16worker/480次构造剖析完成，落点搜索约75.4%仅作下一步假设。全局状态及接力计划已据实际结果更新；未替换模型。证据：runs/autonomous_context_lr_screen_20261105/summary.json；runs/autonomous_context_extension_verify_20261105/summary.json；runs/autonomous_candidate_construction_profile_20261105/profile.json；两份对应实验报告。
+
+- 2026-11-05T22:46:08+08:00：用户重申首要任务为轻薄本无人值守，停止性能优化方向。实查目标paused导致定时器goal_paused，无STOP/错机；持久服务/linger/防休眠及GPU和250%/6GiB/swap0已核验。按本次无人值守指令通过官方本地goal/set恢复原目标active，仅改状态、保留objective/预算/用量；小时prompt提高无人值守验收优先级，未绕过额度/暂停保护。29项后台/续办/额度回归通过。证据：runs/autonomous_development_20261105/unattended_goal_resume_20261105.json。
+
+- 2026-11-05T22:47:21+08:00：无人值守补强已部署本机user unit并daemon-reload/enable --now；live watchdog于22:46:08 healthy，goal active、backend及两timer enabled/active、linger=yes、防休眠均通过。watchdog RPC时限35秒、unit120秒，避免短时限误报；新增禁用timer/未驻留/缺后台不再误报健康的测试。GPU可用、AC在线、kernel250%/6GiB/swap0已核验。没有重置小时重试时钟；真实断开桌面/重启仍未测试。证据：runs/autonomous_development_20261105/unattended_configuration_receipt.json。

@@ -7,12 +7,48 @@ No daemon restart is used: the native start command preserves a running backend.
 import argparse
 from datetime import datetime
 import json
+import os
 from pathlib import Path
 import socket
 import subprocess
 
 from codex_local_rpc import LocalRPC
 from development_allowed import allowed
+
+REQUIRED_UNITS = ('tetris-codex-backend.service', 'tetris-development-hourly.timer',
+                  'tetris-unattended-watchdog.timer')
+
+
+def desktop_proxies(proc_root=Path('/proc')):
+    pids = []
+    for entry in proc_root.iterdir():
+        if not entry.name.isdigit():
+            continue
+        try:
+            args = (entry/'cmdline').read_bytes().split(b'\0')
+            if (len(args) >= 3 and Path(os.fsdecode(args[0])).name == 'codex'
+                    and args[1:3] == [b'app-server', b'proxy']):
+                pids.append(int(entry.name))
+        except (FileNotFoundError, PermissionError, ProcessLookupError):
+            continue
+    return sorted(pids)
+
+
+def startup_readiness():
+    result = subprocess.run(['systemctl', '--user', 'show', *REQUIRED_UNITS,
+                             '-p', 'Id', '-p', 'ActiveState', '-p', 'UnitFileState'],
+                            check=True, timeout=10, capture_output=True, text=True)
+    services = {}
+    for block in result.stdout.strip().split('\n\n'):
+        fields = dict(line.split('=', 1) for line in block.splitlines() if '=' in line)
+        if fields.get('Id') in REQUIRED_UNITS:
+            services[fields.pop('Id')] = fields
+    linger = subprocess.run(['loginctl', 'show-user', str(os.getuid()), '-p', 'Linger', '--value'],
+                            check=True, timeout=10, capture_output=True, text=True).stdout.strip()
+    ready = (linger == 'yes' and len(services) == len(REQUIRED_UNITS)
+             and all(row.get('ActiveState') == 'active' and row.get('UnitFileState') == 'enabled'
+                     for row in services.values()))
+    return dict(ready=ready, linger=linger, units=services)
 
 
 def authorized(control, folder, machine_id):
@@ -34,7 +70,7 @@ def run(control_path):
             # Native start is idempotent and detaches from SSH/desktop lifetime.
             subprocess.run([control['codex_cli'], 'app-server', 'daemon', 'start'],
                            check=True, timeout=45, capture_output=True)
-            with LocalRPC(timeout=10) as rpc:
+            with LocalRPC(timeout=35) as rpc:
                 goal = rpc.request('thread/goal/get', dict(threadId=control['thread_id']))['goal']
             # Recheck a pause/control change arriving during the local health read.
             current = json.loads(control_path.read_text())
@@ -50,6 +86,13 @@ def run(control_path):
             if permitted and not sleep_blocked:
                 event.update(action='sleep_protection_missing')
                 code = 1
+            if permitted:
+                startup = startup_readiness()
+                event.update(startup=startup, desktop_proxy_pids=desktop_proxies())
+                # A reachable backend alone does not prove unattended startup.
+                if not startup['ready']:
+                    event.update(action='unattended_setup_incomplete')
+                    code = 1
     except Exception as exc:
         event.update(action='health_check_failed', error=type(exc).__name__)
         code = 1
