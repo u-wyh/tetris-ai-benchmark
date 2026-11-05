@@ -231,3 +231,9 @@
 - 新scripts/profile_candidate_construction.py对原30M与新候选各8worker静态状态做480次函数剖析。输出指纹与输入SHA未变，正式落点搜索占构造累计约75.4%，位图特征约24.5%；含cProfile开销，不是端到端收益。证据runs/autonomous_candidate_construction_profile_20261105/profile.json。首试导入名错误已修复，guard_retry01通过。
 - 当前所有本轮计算已释放；继续前查实际PID，防重复。下一步先检查已有落点性能工作，再归档当前23数值/20推理身份的确切运行代码，在独立lightbook副本试搜索优化；必须保留action排序/path/边界规则。先差分状态与边界验证、配对计时，再实际GPU8完整事务/恢复精确一致，合格才启用。不得重标原缓存/断点。原30M仍冻结参考，暂无棋力提升候选。
 - 保持lightbook、GPU8、总CPU250%/6GiB/原温控和时间预算；新静态profiling单任务CPU100%/2GiB，无训练。每小时续办与watchdog保持，额度/暂停规则不变；实际桌面断开/重启验收仍未实测。
+
+### 2026-11-05T23:30:47+08:00 本次自动续办已执行，既有搜索微基准通过
+
+- 23:26:21排队消息已于23:27:14实际执行，unattended_resume_clarified_20261105.json已标记automatic_execution_observed；目标active、后台healthy。没有重复代理暂停测试。
+- 既有fast_legal复用差分+环境回归177项通过，19状态×30AB/BA固定CPU100%微基准中位1.16418667、最慢对1.09332，源/输入SHA不变；正式训练及推理20身份未改，未创建新训练候选。证据runs/autonomous_candidate_search_20261105/summary.json。
+- 下一步归档当前23数值/20推理代码，在独立lightbook副本增加显式训练搜索后端，默认formal不变。真实CUDA8预声明两组种子、AB/BA各8192及跨进程恢复；所有policy/Adam/更新/RNG/8worker/非计时指标必须一致，测得足够收益才采纳。不得用静态+16.4%代替训练收益，不能直接恢复旧SHA实验。

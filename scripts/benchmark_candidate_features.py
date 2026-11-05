@@ -1,4 +1,4 @@
-"""Compare existing feature implementations on identical public training states.
+"""Compare existing features or full construction on public training states.
 
     Run under resource_guard, after other heavy work has finished. This does not
     change the production environment or establish an end-to-end training gain.
@@ -25,12 +25,15 @@ def main():
     from training.evaluation.fast_candidate_features import candidate_features as accelerated
     from training.tetris_core import TetrisCore
     from training.tetris_core.pieces import make_piece
+    from training.tetris_core.legal_placements import get_legal_placements as formal_placements
+    from training.evaluation.fast_legal import get_legal_placements as bitboard_placements
     from resource_guard import now,operation,write_json
 
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--snapshot',type=Path,action='append',required=True)
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--repeats',type=int,default=30)
+    parser.add_argument('--component',choices=['features','construction'],default='features')
     args=parser.parse_args()
     if args.repeats<3:parser.error('Use at least three paired repeats')
     args.output.parent.mkdir(parents=True,exist_ok=True)
@@ -60,6 +63,8 @@ def main():
     rows=[];prepared=[]
     for name,core in fixtures:
         public=core.get_public_observation();placements=core.get_legal_placements()
+        if args.component=='construction' and bitboard_placements(public)!=placements:
+            raise RuntimeError('Ordered placements or paths differ: '+name)
         slow=reference(public,placements);fast=accelerated(public,placements)
         if not all(np.array_equal(a,b) and a.dtype==b.dtype for a,b in zip(slow,fast)):
             raise RuntimeError('Features or mask differ: '+name)
@@ -68,9 +73,14 @@ def main():
             features_and_mask_sha256=hashlib.sha256(slow[0].tobytes()+slow[1].tobytes()).hexdigest()))
         prepared.append((public,placements))
     timings=[]
+    def reference_construction(public, placements):
+        return accelerated(public,formal_placements(public))
+    def bitboard_construction(public, placements):
+        return accelerated(public,bitboard_placements(public))
     for repeat in range(args.repeats):
         pair={}
-        order=[('reference',reference),('bitboard',accelerated)]
+        order=([('reference',reference),('bitboard',accelerated)] if args.component=='features'
+               else [('reference',reference_construction),('bitboard',bitboard_construction)])
         if repeat%2:order.reverse()
         for name,method in order:
             began=time.process_time_ns()
@@ -82,19 +92,26 @@ def main():
              'training/evaluation/fast_candidate_features.py']
     sources += ['training/tetris_core/'+name for name in
                 ['__init__.py','core.py','actions.py','pieces.py','rng.py','legal_placements.py']]
-    result=dict(at=now(),parity='all_features_and_masks_exact',states=len(rows),repeats=args.repeats,
+    if args.component=='construction':sources.append('training/evaluation/fast_legal.py')
+    speedup_key=('median_paired_feature_speedup' if args.component=='features'
+                 else 'median_paired_construction_speedup')
+    scope=('Feature construction with identical precomputed formal placements; excludes legal search, IPC, inference and optimizer'
+           if args.component=='features' else
+           'Precomputed public observation to legal search and bitboard features; excludes public-state conversion, IPC, inference and optimizer')
+    result=dict(at=now(),component=args.component,parity=('all_features_and_masks_exact' if args.component=='features'
+                else 'all_ordered_placements_paths_features_and_masks_exact'),states=len(rows),repeats=args.repeats,
         numpy_version=np.__version__,python_version=platform.python_version(),
-        scope='Feature construction with identical precomputed formal placements; excludes legal search, IPC, inference and optimizer',
+        scope=scope,
         interpretation='Existing public-state implementation microbenchmark; no production adoption or end-to-end gain claim',
         input_snapshot_sha256=inputs,source_sha256={n:hashlib.sha256((ROOT/n).read_bytes()).hexdigest() for n in sources},
-        fixtures=rows,paired_process_cpu_seconds=timings,median_paired_feature_speedup=statistics.median(ratios),
+        fixtures=rows,paired_process_cpu_seconds=timings,**{speedup_key:statistics.median(ratios)},
         reference_median_batch_cpu_seconds=statistics.median(r['reference'] for r in timings),
         bitboard_median_batch_cpu_seconds=statistics.median(r['bitboard'] for r in timings),
         peak_rss_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
         next_gate='Before adoption: paired GPU8 transactions, exact policy tensors/non-timing metrics and deterministic resume')
     args.output.parent.mkdir(parents=True,exist_ok=True);write_json(args.output,result)
-    operation('公开训练状态的既有候选特征实现配对微基准完成，当前训练未改实现',args.output)
-    print(json.dumps({k:result[k] for k in ['states','parity','median_paired_feature_speedup','peak_rss_kib']}))
+    operation('公开训练状态的既有候选实现配对微基准完成：'+args.component+'；当前训练未改实现',args.output)
+    print(json.dumps({k:result[k] for k in ['states','parity',speedup_key,'peak_rss_kib']}))
 
 
 if __name__=='__main__':main()

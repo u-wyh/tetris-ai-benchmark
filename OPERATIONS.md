@@ -1077,3 +1077,15 @@
 - 2026-11-05T23:26:20+08:00：用户明确澄清轻薄本需持续执行无人值守，之前只回复并非取消持续开发。按本次明确授权通过官方本地goal/set将paused恢复active，保留原目标/预算/用量；更新小时投递上下文，未来明确暂停/取消仍遵守，不自动绕过暂停或额度。主机仍lightbook，GPU8/CPU250%/原保护不变。证据：runs/autonomous_development_20261105/unattended_resume_clarified_20261105.json。
 
 - 2026-11-05T23:26:21+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-05T23:27:58+08:00：23:26:21投递的续办已于23:27:14实际开始，原目标active、本机后台healthy，无存活guard或重复训练；已补记恢复回执。继续未完成落点搜索研究：复用既有fast_legal和归档边界用例，先核验完整动作/路径/特征并固定CPU配对计时，不更改训练/推理后端或断点身份。证据：runs/autonomous_development_20261105/unattended_resume_clarified_20261105.json；tests/test_fast_legal_edges.py。
+
+- 2026-11-05T23:29:20+08:00：启动前检查无重复计算，原推理20 SHA仍完全匹配。冻结已有落点复用的边界/轨迹差分和30次AB/BA构造微基准，固定CPU100%/2GiB/原温控/120秒；候选门槛median≥1.10且每对更快。独立本机systemd服务，无训练、无后端替换。证据：runs/autonomous_candidate_search_20261105/design.json。
+
+- 2026-11-05T23:29:31+08:00：资源保护：启动受保护任务 tetris-guard-195883-1793892570906332448，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_candidate_search_20261105/guard。
+
+- 2026-11-05T23:29:39+08:00：资源保护：公开训练状态的既有候选实现配对微基准完成：construction；当前训练未改实现。证据：runs/autonomous_candidate_search_20261105/construction_microbenchmark.json。
+
+- 2026-11-05T23:29:40+08:00：资源保护：tetris-guard-195883-1793892570906332448 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_candidate_search_20261105/guard。
+
+- 2026-11-05T23:30:47+08:00：落点复用受保护微基准完成，177项通过，19状态/30ABBA中位1.16418667、每对>1.09；输入SHA及推理20不变，无后端替换/训练。先归档现代码再进入独立GPU8验证。证据：runs/autonomous_candidate_search_20261105/summary.json；reports/experiments/candidate_search_micro_20261105.md。
