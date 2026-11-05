@@ -1073,3 +1073,7 @@
 - 2026-11-05T22:53:42+08:00：按无人值守验收优先级准备30秒桌面代理暂停测试，native backend PID13827、父进程1；代理[13928]，PID/starttime/pidfd限定且禁止选择后台进程。finally与systemd ExecStopPost恢复，40秒硬上限、CPU10%/128MiB/共同slice，无训练；18项代理/后台定向测试通过。尚未声称暂停期间AI执行通过。证据：runs/unattended_desktop_probe_20261105/design.json。
 
 - 2026-11-05T22:55:46+08:00：恢复active后本轮22:48:17实际自动执行；无人值守30秒桌面代理通信暂停实测通过：22:53:52–22:54:22，代理13928为T期间22:53:56及22:54:22两次AI工具调用成功，后一次本地goal=active；工具祖先为原生后台13827→1。随后代理自动恢复S，后台PID/starttime不变，service Resultsuccess，冻结输入SHA未变。18项代理/后台定向回归通过。配置回执与计划已更新，未物理关机/重启、未扩大证明范围、未改变GPU8/250%保护。证据：runs/unattended_desktop_probe_20261105/；reports/experiments/unattended_desktop_probe_20261105.md。
+
+- 2026-11-05T23:26:20+08:00：用户明确澄清轻薄本需持续执行无人值守，之前只回复并非取消持续开发。按本次明确授权通过官方本地goal/set将paused恢复active，保留原目标/预算/用量；更新小时投递上下文，未来明确暂停/取消仍遵守，不自动绕过暂停或额度。主机仍lightbook，GPU8/CPU250%/原保护不变。证据：runs/autonomous_development_20261105/unattended_resume_clarified_20261105.json。
+
+- 2026-11-05T23:26:21+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
