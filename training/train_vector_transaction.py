@@ -26,6 +26,7 @@ from training.env import TetrisEnv
 from training.env.candidate_env import CandidateTetrisEnv, OBSERVATION_VERSION
 from training.env.fast_candidate_env import FastCandidateTetrisEnv
 from training.env.bitboard_candidate_env import BitboardCandidateTetrisEnv, validate_feature_backend
+from training.env.bitboard_search_env import BitboardSearchCandidateTetrisEnv, validate_search_backend
 from training.candidate_features import FEATURE_VERSION
 from training.candidate_policy import CandidateScoringPolicy
 from training.env.tetris_env import (BALANCED_REWARD_VERSION, HEIGHT_REWARD_VERSION, HOLE_HEIGHT_REWARD_VERSION,
@@ -50,7 +51,9 @@ TRAINING_SOURCE_FILES = (
     "training/env/candidate_env.py",
     "training/env/fast_candidate_env.py",
     "training/env/bitboard_candidate_env.py",
+    "training/env/bitboard_search_env.py",
     "training/evaluation/fast_candidate_features.py",
+    "training/evaluation/fast_legal.py",
     "training/env/failure_curriculum_env.py",
     "training/tetris_core/__init__.py",
     "training/tetris_core/actions.py",
@@ -128,6 +131,10 @@ class TransactionFastCandidateEnv(FastCandidateTetrisEnv, TransactionTetrisEnv):
 
 class TransactionBitboardCandidateEnv(BitboardCandidateTetrisEnv, TransactionTetrisEnv):
     """Same formal placements and trajectory state, with bitboard features."""
+
+
+class TransactionBitboardSearchCandidateEnv(BitboardSearchCandidateTetrisEnv, TransactionTetrisEnv):
+    """Explicit bitboard search with the same transaction metadata hooks."""
 
 
 def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
@@ -557,6 +564,7 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     or meta.get("candidate_feature_version") != config.get("candidate_feature_version")
                     or meta.get('initial_context') != config.get('initial_context')
                     or meta.get('source_steps_offset', 0) != config.get('source_steps_offset', 0)
+                    or meta.get('candidate_search_backend', 'formal') != config.get('candidate_search_backend', 'formal')
                     or meta.get("failure_curriculum") != config.get("failure_curriculum")):
                 raise RuntimeError("Run config and metadata disagree")
             if config_file:
@@ -595,6 +603,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     raise RuntimeError("Resume Candidate environment differs from recorded run")
                 if preset.get("candidate_feature_backend", "official") != config.get("candidate_feature_backend", "official"):
                     raise RuntimeError("Resume Candidate feature backend differs from recorded run")
+                if preset.get('candidate_search_backend', 'formal') != config.get('candidate_search_backend', 'formal'):
+                    raise RuntimeError('Resume Candidate search backend differs from recorded run')
                 if preset.get("reward_profile", "default") != config.get("reward_profile", "default"):
                     raise RuntimeError("Resume reward profile differs from recorded run")
             if config.get("initial_model"):
@@ -640,6 +650,7 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     raise ValueError("Fast Candidate environment requires Candidate policy")
                 config["fast_candidate_env"] = bool(preset.get("fast_candidate_env", False))
                 config["candidate_feature_backend"] = validate_feature_backend(preset)
+                config['candidate_search_backend'] = validate_search_backend(preset)
                 config["overnight_monitor"] = bool(preset.get("overnight_monitor", False))
                 if "failure_curriculum" in preset:
                     from training.env.failure_curriculum_env import REWARD_VERSION, file_sha256
@@ -737,6 +748,7 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                          "action_space_version": config["action_space_version"],
                          "initial_context": config.get("initial_context"),
                          "source_steps_offset": config.get("source_steps_offset", 0),
+                         "candidate_search_backend": config.get('candidate_search_backend', 'formal'),
                          "resume_episode_policy": "Restore each worker exactly from committed Task."})
             atomic_json(run_dir / "metadata.json", meta)
             state = initial_state(config)
@@ -765,6 +777,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                          else TransactionCandidateEnv) if config.get("candidate_policy") else TransactionTetrisEnv
             if config.get("candidate_feature_backend") == "bitboard":
                 env_class = TransactionBitboardCandidateEnv
+            if validate_search_backend(config) == 'bitboard':
+                env_class = TransactionBitboardSearchCandidateEnv
         env = make_vector_env(config["ppo"]["n_envs"], config["run_seed"],
                               config["max_pieces"],
                               env_class=env_class,

@@ -1099,3 +1099,5 @@
 - 2026-11-05T23:47:20+08:00：新实证：非模拟情况下本机桌面代理已为0，本次AI工具调用前后均确认无代理，工具祖先为原生后台13827→1，local RPC目标active，开机/两timer/linger检查通过。已证明实际桌面连接缺席时仍执行，回执已更新；不推断游戏本物理电源状态，不声称重启或下一整轮无桌面启动已测。证据：runs/autonomous_development_20261105/unattended_no_desktop_execution_20261105.json。
 
 - 2026-11-05T23:48:58+08:00：新搜索完整上下文扩展/中断恢复23:46:58 passed，1项通过/2 deselected，CPU250%/6GiB保护，源formal→目标bitboard完整上下文及状态计数一致；全部GPU43和上下文31冻结输入仍相同，推理20与旧长基线匹配。采纳门槛具备，准备将独立副本已测代码合入主副本；旧23代码归档补齐本机venv/runs链接以便实际恢复，不改旧断点/缓存身份。证据：runs/autonomous_candidate_search_20261105/adoption_gate.json。
+
+- 2026-11-05T23:35:04+08:00：独立副本增加显式candidate_search_backend（formal默认/bitboard需既有位图特征），训练来源闭包增加新env和既有fast_legal共25项；配置/metadata/带preset恢复均固定搜索模式。推理20不改。准备原特征固定为bitboard的正式/位图搜索真实CUDA8两组对照，增加PPO更新计数比较及错误搜索preset恢复拒绝核验；主副本保持23来源不动。

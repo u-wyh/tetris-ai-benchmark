@@ -6,6 +6,7 @@ import pytest
 from training.env.candidate_env import CandidateTetrisEnv
 from training.env.fast_candidate_env import FastCandidateTetrisEnv
 from training.env.bitboard_candidate_env import BitboardCandidateTetrisEnv, validate_feature_backend
+from training.env.bitboard_search_env import BitboardSearchCandidateTetrisEnv
 from training.evaluation.failure_curriculum_eval import LongCandidateTetrisEnv
 from training.candidate_features import candidate_features
 from training.evaluation.fast_candidate_features import candidate_features as fast_candidate_features
@@ -14,7 +15,7 @@ from training.tetris_core.pieces import make_piece
 
 
 @pytest.mark.parametrize("seed", [42, 1234000, 20261013])
-@pytest.mark.parametrize("fast_class", [FastCandidateTetrisEnv, BitboardCandidateTetrisEnv])
+@pytest.mark.parametrize("fast_class", [FastCandidateTetrisEnv, BitboardCandidateTetrisEnv, BitboardSearchCandidateTetrisEnv])
 def test_fast_candidate_matches_original(seed, fast_class):
     slow = CandidateTetrisEnv(max_pieces=200)
     fast = fast_class(max_pieces=200)
@@ -44,7 +45,7 @@ def test_fast_candidate_matches_original(seed, fast_class):
         fast.close()
 
 
-@pytest.mark.parametrize("fast_class", [FastCandidateTetrisEnv, BitboardCandidateTetrisEnv])
+@pytest.mark.parametrize("fast_class", [FastCandidateTetrisEnv, BitboardCandidateTetrisEnv, BitboardSearchCandidateTetrisEnv])
 def test_fast_candidate_snapshot_restores_original_state(fast_class):
     fast = fast_class(max_pieces=100)
     restored = CandidateTetrisEnv(max_pieces=100)

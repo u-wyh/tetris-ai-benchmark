@@ -60,7 +60,7 @@ def run(folder):
                               '--run-dir',str(folder)],'evaluation_resources.json')
         if not (folder/'gpu_summary.json').exists():raise RuntimeError('Verifier produced no summary')
         write_json(folder/'gpu_status.json',dict(at=now(),stage='completed'))
-        operation('位图/原特征两组AB/BA真实CUDA8事务比较完成；未发布模型',folder/'gpu_summary.json')
+        operation('候选环境后端两组AB/BA真实CUDA8事务比较完成；未发布模型',folder/'gpu_summary.json')
     except BaseException as exc:
         write_json(folder/'gpu_status.json',dict(at=now(),stage='stopped',error=repr(exc)))
         operation(f'特征后端GPU对照停止：{exc!r}，已保留事务与证据',folder)
