@@ -783,3 +783,13 @@
 - 2026-11-05T17:45:38+08:00：资源保护：启动受保护任务 tetris-guard-103093-1793871938241347566，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rng_isolation_20261105/baseline_guard。
 
 - 2026-11-05T17:50:29+08:00：新RNG协议真实CUDA8恢复8192、实际seed1700000、18份Adam586000→586160及GPU分配通过；新入口控制器短局真实接力通过并复用既有训练。PID102258已串行进入完整8×20000基线一致性验证，当前有逐seed缓存进度；未提前启动主训练。补齐原额外失败、RNG缺陷适用范围和新协议报告。只读观察工具新增缓存完整性进度/损坏不覆盖活跃PID结论，6项测试通过。证据：runs/autonomous_rng_isolation_20261105/smoke_verification.json、controller_smoke_verification.json、pilot_status.json、baseline.seeds/；reports/experiments/rng_isolation_and_resumable_screen_20261105.md。
+
+- 2026-11-05T17:52:34+08:00：资源保护：tetris-guard-103093-1793871938241347566 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rng_isolation_20261105/baseline_guard。
+
+- 2026-11-05T17:52:35+08:00：资源保护：正确run RNG的CUDA8恢复、可恢复控制器与完整基线一致性通过，自动继续262144步开发筛选。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rng_isolation_20261105/pilot_summary.json。
+
+- 2026-11-05T17:52:37+08:00：资源保护：启动initial_optimizer受控实验，各262144步开发筛选，不自动替换正式模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rng_isolation_20261105。
+
+- 2026-11-05T17:52:37+08:00：资源保护：启动受保护任务 tetris-guard-105556-1793872357418993107，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rng_isolation_20261105/guards/rng_isolated_training_00。
+
+- 2026-11-05T17:55:04+08:00：完整新入口8×20000冻结基线与原评测逐局/聚合一致，17:52:34验证通过；试运行17:52:35自动创建/启用主筛选及门槛接力后正常退出。实测主控制器105527、接力105531活跃，pilot MainPID0/Result=success，从既有8192继续，不重复训练。代码df908fe及新协议来源冻结；更新当前接手状态。证据：runs/autonomous_rng_isolation_20261105/baseline_equivalence.json、pilot_summary.json、protocol.json；runs/autonomous_rng_isolation_20261105_followup/status.json。

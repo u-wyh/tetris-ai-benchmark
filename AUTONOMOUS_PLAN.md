@@ -139,3 +139,9 @@
 - 新run runs/autonomous_rng_isolation_20261105/，设计design.json已在训练前冻结。服务tetris-rng-isolation-pilot-20261105，PID102258：CUDA8两事务8192恢复、实际seed1700000、18份Adam计数、GPU分配、参考SHA已验证；新评测控制器2×64短局已实测通过，无额外训练。
 - 当前baseline_guard正用新入口采集8×20000完整冻结基线，已完成局持久缓存。全部逐局等同原基线后，脚本才自动创建主协议并启动262144步筛选及合格者接力；不需要人工确认。当前数值及支持文件冻结。
 - 只读observe_development.py现可校验并展示逐seed缓存进度、阶段文件损坏仍保留真实PID结论；6项观测测试通过。后续先查该命令与pilot_status，避免把全局旧阶段字段当实际运行。
+
+### 17:53 更新：新完整基线一致，主筛选已自动运行
+
+- 新可恢复入口8×20000基线已完成，逐局及聚合与原评测器完全相同，baseline_equivalence.json通过；新数据真实记录24文件与运行库身份。pilot于17:52:35自动handed_off，MainPID0/Result=success。
+- 当前tetris-parameter-screen@autonomous_rng_isolation_20261105.service（PID105527），从已提交8192继续262144；接力tetris-parameter-followup@autonomous_rng_isolation_20261105.service（PID105531）等待。来源df908fe，当前protocol.json及*_followup/protocol.json冻结，禁止改关键文件或重开训练。
+- 先查observe_development.py实际活动/提交步数/逐seed评测进度及温控，再跟踪新组原8×20000门槛；合格才额外8配对，通过才分段2M。旧Adam额外失败组继续停止，不重跑。用户暂停/取消时停止所有续办。
