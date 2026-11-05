@@ -1,0 +1,13 @@
+[Unit]
+Description=Bounded native-backend test with automatic desktop-proxy recovery
+
+[Service]
+Type=exec
+WorkingDirectory=/home/wyh/projects/tetris-ai-benchmark
+ExecStart=/home/wyh/projects/tetris-ai-benchmark/.venv/bin/python /home/wyh/projects/tetris-ai-benchmark/scripts/probe_unattended_desktop.py run --run-dir /home/wyh/projects/tetris-ai-benchmark/runs/unattended_desktop_probe_20261105
+ExecStopPost=/home/wyh/projects/tetris-ai-benchmark/.venv/bin/python /home/wyh/projects/tetris-ai-benchmark/scripts/probe_unattended_desktop.py restore --run-dir /home/wyh/projects/tetris-ai-benchmark/runs/unattended_desktop_probe_20261105
+CPUQuota=10%
+Slice=tetris-compute.slice
+MemoryMax=128M
+RuntimeMaxSec=40
+TimeoutStopSec=5

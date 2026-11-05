@@ -1069,3 +1069,7 @@
 - 2026-11-05T22:46:08+08:00：用户重申首要任务为轻薄本无人值守，停止性能优化方向。实查目标paused导致定时器goal_paused，无STOP/错机；持久服务/linger/防休眠及GPU和250%/6GiB/swap0已核验。按本次无人值守指令通过官方本地goal/set恢复原目标active，仅改状态、保留objective/预算/用量；小时prompt提高无人值守验收优先级，未绕过额度/暂停保护。29项后台/续办/额度回归通过。证据：runs/autonomous_development_20261105/unattended_goal_resume_20261105.json。
 
 - 2026-11-05T22:47:21+08:00：无人值守补强已部署本机user unit并daemon-reload/enable --now；live watchdog于22:46:08 healthy，goal active、backend及两timer enabled/active、linger=yes、防休眠均通过。watchdog RPC时限35秒、unit120秒，避免短时限误报；新增禁用timer/未驻留/缺后台不再误报健康的测试。GPU可用、AC在线、kernel250%/6GiB/swap0已核验。没有重置小时重试时钟；真实断开桌面/重启仍未测试。证据：runs/autonomous_development_20261105/unattended_configuration_receipt.json。
+
+- 2026-11-05T22:53:42+08:00：按无人值守验收优先级准备30秒桌面代理暂停测试，native backend PID13827、父进程1；代理[13928]，PID/starttime/pidfd限定且禁止选择后台进程。finally与systemd ExecStopPost恢复，40秒硬上限、CPU10%/128MiB/共同slice，无训练；18项代理/后台定向测试通过。尚未声称暂停期间AI执行通过。证据：runs/unattended_desktop_probe_20261105/design.json。
+
+- 2026-11-05T22:55:46+08:00：恢复active后本轮22:48:17实际自动执行；无人值守30秒桌面代理通信暂停实测通过：22:53:52–22:54:22，代理13928为T期间22:53:56及22:54:22两次AI工具调用成功，后一次本地goal=active；工具祖先为原生后台13827→1。随后代理自动恢复S，后台PID/starttime不变，service Resultsuccess，冻结输入SHA未变。18项代理/后台定向回归通过。配置回执与计划已更新，未物理关机/重启、未扩大证明范围、未改变GPU8/250%保护。证据：runs/unattended_desktop_probe_20261105/；reports/experiments/unattended_desktop_probe_20261105.md。
