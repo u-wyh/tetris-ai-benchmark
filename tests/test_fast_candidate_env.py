@@ -5,6 +5,7 @@ import pytest
 
 from training.env.candidate_env import CandidateTetrisEnv
 from training.env.fast_candidate_env import FastCandidateTetrisEnv
+from training.env.bitboard_candidate_env import BitboardCandidateTetrisEnv, validate_feature_backend
 from training.evaluation.failure_curriculum_eval import LongCandidateTetrisEnv
 from training.candidate_features import candidate_features
 from training.evaluation.fast_candidate_features import candidate_features as fast_candidate_features
@@ -13,9 +14,10 @@ from training.tetris_core.pieces import make_piece
 
 
 @pytest.mark.parametrize("seed", [42, 1234000, 20261013])
-def test_fast_candidate_matches_original(seed):
+@pytest.mark.parametrize("fast_class", [FastCandidateTetrisEnv, BitboardCandidateTetrisEnv])
+def test_fast_candidate_matches_original(seed, fast_class):
     slow = CandidateTetrisEnv(max_pieces=200)
-    fast = FastCandidateTetrisEnv(max_pieces=200)
+    fast = fast_class(max_pieces=200)
     try:
         slow_obs, slow_info = slow.reset(seed=seed)
         fast_obs, fast_info = fast.reset(seed=seed)
@@ -42,8 +44,9 @@ def test_fast_candidate_matches_original(seed):
         fast.close()
 
 
-def test_fast_candidate_snapshot_restores_original_state():
-    fast = FastCandidateTetrisEnv(max_pieces=100)
+@pytest.mark.parametrize("fast_class", [FastCandidateTetrisEnv, BitboardCandidateTetrisEnv])
+def test_fast_candidate_snapshot_restores_original_state(fast_class):
+    fast = fast_class(max_pieces=100)
     restored = CandidateTetrisEnv(max_pieces=100)
     try:
         fast.reset(seed=101)
@@ -107,3 +110,12 @@ def test_fast_candidate_features_match_scoring_and_topout_edges(fixture):
     for original, accelerated in zip(candidate_features(public, placements),
                                      fast_candidate_features(public, placements)):
         np.testing.assert_array_equal(original, accelerated)
+
+
+def test_bitboard_backend_is_explicit_and_cannot_be_silently_ignored():
+    assert validate_feature_backend({})=='official'
+    valid=dict(candidate_policy=True,fast_candidate_env=True,candidate_feature_backend='bitboard')
+    assert validate_feature_backend(valid)=='bitboard'
+    for patch in [dict(candidate_policy=False),dict(fast_candidate_env=False),
+                  dict(failure_curriculum={'mode':'normal'}),dict(candidate_feature_backend='unknown')]:
+        with pytest.raises(ValueError):validate_feature_backend({**valid,**patch})

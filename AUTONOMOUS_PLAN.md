@@ -145,3 +145,11 @@
 - 新可恢复入口8×20000基线已完成，逐局及聚合与原评测器完全相同，baseline_equivalence.json通过；新数据真实记录24文件与运行库身份。pilot于17:52:35自动handed_off，MainPID0/Result=success。
 - 当前tetris-parameter-screen@autonomous_rng_isolation_20261105.service（PID105527），从已提交8192继续262144；接力tetris-parameter-followup@autonomous_rng_isolation_20261105.service（PID105531）等待。来源df908fe，当前protocol.json及*_followup/protocol.json冻结，禁止改关键文件或重开训练。
 - 先查observe_development.py实际活动/提交步数/逐seed评测进度及温控，再跟踪新组原8×20000门槛；合格才额外8配对，通过才分段2M。旧Adam额外失败组继续停止，不重跑。用户暂停/取消时停止所有续办。
+
+### 18:28 更新：位图后端训练环节约快6.56%，原RNG新组已止损
+
+- 正确RNG组初筛7/8触顶、100001于3320块结束，得分比0.8811558348；接力18:07:56自动no_eligible_candidate。无追加训练，8个完整逐seed缓存保留，旧组来源21不迁移到当前来源23。
+- 20秒只读CPU采样显示环境worker占83.02%；既有位图特征27状态精确一致、微基准1.7516倍。随后两组种子AB/BA真实GPU8各2事务恢复，policy/Adam/完整RNG/8worker状态及非计时指标全部精确一致。
+- 完整对照训练环节1.064917/1.066252倍，几何平均吞吐+6.56%，全程CPU250%/无降载，峰值CPU76℃、GPU53℃、内存3582MiB。预声明≥1.05门槛通过，后续新实验采用显式bitboard后端，推荐准备配置configs/ppo30m_guarded_bitboard.json；它不是棋力胜出结论，不直接盲跑2M。
+- 新后端及位图实现纳入23文件来源、模式写入config/resume核验，21项定向环境/来源测试通过。所有benchmark服务已结束释放资源。当前没有训练在跑，小时续办仍active（18:05:58真实投递成功）。
+- 下一步先核查原PPO30M task_007325完整训练上下文：已确认模型与冻结final一致，原CUDA配置，完整trainer/vector快照及worker_digests存在，但原metadata缺少来源SHA。先审计版本/配置/原观测恢复是否一致，再在独立副本设计上下文保留的继续训练；禁止跳过旧来源核验、静默迁移或未经证据称精确续接。此前新组迁移了权重/Adam，但环境/RNG上下文仍重新建立。

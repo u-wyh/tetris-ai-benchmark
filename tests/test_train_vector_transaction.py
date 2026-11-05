@@ -40,7 +40,7 @@ def test_ppo_overrides_accept_lower_rate_without_mutating_preset():
         validate_ppo_overrides({"batch_size": 128})
 
 
-@pytest.mark.parametrize("relative", ["training/tetris_core/legal_placements.py", "training/kl_maskable_ppo.py", "training/initialization.py"])
+@pytest.mark.parametrize("relative", ["training/tetris_core/legal_placements.py", "training/kl_maskable_ppo.py", "training/initialization.py", "training/env/bitboard_candidate_env.py", "training/evaluation/fast_candidate_features.py"])
 def test_training_source_identity_rejects_changed_environment(tmp_path, relative):
     assert relative in TRAINING_SOURCE_FILES
     for name in TRAINING_SOURCE_FILES:

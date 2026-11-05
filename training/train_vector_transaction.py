@@ -25,6 +25,7 @@ from training.train_transaction import (
 from training.env import TetrisEnv
 from training.env.candidate_env import CandidateTetrisEnv, OBSERVATION_VERSION
 from training.env.fast_candidate_env import FastCandidateTetrisEnv
+from training.env.bitboard_candidate_env import BitboardCandidateTetrisEnv, validate_feature_backend
 from training.candidate_features import FEATURE_VERSION
 from training.candidate_policy import CandidateScoringPolicy
 from training.env.tetris_env import (BALANCED_REWARD_VERSION, HEIGHT_REWARD_VERSION, HOLE_HEIGHT_REWARD_VERSION,
@@ -48,6 +49,8 @@ TRAINING_SOURCE_FILES = (
     "training/env/tetris_env.py",
     "training/env/candidate_env.py",
     "training/env/fast_candidate_env.py",
+    "training/env/bitboard_candidate_env.py",
+    "training/evaluation/fast_candidate_features.py",
     "training/env/failure_curriculum_env.py",
     "training/tetris_core/__init__.py",
     "training/tetris_core/actions.py",
@@ -121,6 +124,10 @@ class TransactionCandidateEnv(CandidateTetrisEnv, TransactionTetrisEnv):
 
 class TransactionFastCandidateEnv(FastCandidateTetrisEnv, TransactionTetrisEnv):
     """Opt-in reuse of already validated legal placements during training steps."""
+
+
+class TransactionBitboardCandidateEnv(BitboardCandidateTetrisEnv, TransactionTetrisEnv):
+    """Same formal placements and trajectory state, with bitboard features."""
 
 
 def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
@@ -576,6 +583,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                     raise RuntimeError("Resume PPO overrides differ from recorded run")
                 if bool(preset.get("fast_candidate_env", False)) != bool(config.get("fast_candidate_env", False)):
                     raise RuntimeError("Resume Candidate environment differs from recorded run")
+                if preset.get("candidate_feature_backend", "official") != config.get("candidate_feature_backend", "official"):
+                    raise RuntimeError("Resume Candidate feature backend differs from recorded run")
                 if preset.get("reward_profile", "default") != config.get("reward_profile", "default"):
                     raise RuntimeError("Resume reward profile differs from recorded run")
             if config.get("initial_model"):
@@ -617,6 +626,7 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                 if preset.get("fast_candidate_env", False) and not preset.get("candidate_policy", False):
                     raise ValueError("Fast Candidate environment requires Candidate policy")
                 config["fast_candidate_env"] = bool(preset.get("fast_candidate_env", False))
+                config["candidate_feature_backend"] = validate_feature_backend(preset)
                 config["overnight_monitor"] = bool(preset.get("overnight_monitor", False))
                 if "failure_curriculum" in preset:
                     from training.env.failure_curriculum_env import REWARD_VERSION, file_sha256
@@ -732,6 +742,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
         else:
             env_class = (TransactionFastCandidateEnv if config.get("fast_candidate_env")
                          else TransactionCandidateEnv) if config.get("candidate_policy") else TransactionTetrisEnv
+            if config.get("candidate_feature_backend") == "bitboard":
+                env_class = TransactionBitboardCandidateEnv
         env = make_vector_env(config["ppo"]["n_envs"], config["run_seed"],
                               config["max_pieces"],
                               env_class=env_class,

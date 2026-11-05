@@ -793,3 +793,73 @@
 - 2026-11-05T17:52:37+08:00：资源保护：启动受保护任务 tetris-guard-105556-1793872357418993107，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rng_isolation_20261105/guards/rng_isolated_training_00。
 
 - 2026-11-05T17:55:04+08:00：完整新入口8×20000冻结基线与原评测逐局/聚合一致，17:52:34验证通过；试运行17:52:35自动创建/启用主筛选及门槛接力后正常退出。实测主控制器105527、接力105531活跃，pilot MainPID0/Result=success，从既有8192继续，不重复训练。代码df908fe及新协议来源冻结；更新当前接手状态。证据：runs/autonomous_rng_isolation_20261105/baseline_equivalence.json、pilot_summary.json、protocol.json；runs/autonomous_rng_isolation_20261105_followup/status.json。
+
+- 2026-11-05T18:01:14+08:00：资源保护：tetris-guard-105556-1793872357418993107 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rng_isolation_20261105/guards/rng_isolated_training_00。
+
+- 2026-11-05T18:01:16+08:00：资源保护：启动受保护任务 tetris-guard-109023-1793872876603740667，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rng_isolation_20261105/guards/rng_isolated_evaluation_00。
+
+- 2026-11-05T18:05:58+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-05T18:07:44+08:00：资源保护：tetris-guard-109023-1793872876603740667 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rng_isolation_20261105/guards/rng_isolated_evaluation_00。
+
+- 2026-11-05T18:07:46+08:00：资源保护：initial_optimizer开发筛选完成，门槛合格候选None；由已配置接力处理后续，未替换正式模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rng_isolation_20261105/summary.json。
+
+- 2026-11-05T18:07:56+08:00：资源保护：参数比较没有合格候选，自动取消额外评测与续训。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rng_isolation_20261105_followup/summary.json。
+
+- 2026-11-05T18:08:05+08:00：对实际CUDA8进程做20秒只读CPU计数采样，PID/starttime全部一致；环境36.92 CPU秒、主训练7.54 CPU秒，环境占受保护任务83.02%，提交步数131072→139264。检查已有实现，位图候选特征仅在部分评测路径使用，当前训练仍用原特征。准备同公开状态/同正式落点的逐项一致性及配对CPU微基准；不改活动数值路径，等待当前计算终止后串行运行。证据：runs/autonomous_rng_isolation_20261105/cpu_process_profile.json；scripts/benchmark_candidate_features.py。
+
+- 2026-11-05T18:09:00+08:00：正确RNG新组262144步完成，新可恢复评测8局中7局触顶、100001于3320块结束，得分比0.8811558348；主/接力均退出成功，no_eligible_candidate，无追加训练。确认全部实际进程已清理后，串行启动既有位图特征实现的27状态配对验证/CPU微基准，原生产特征未替换；CPU100%/内存1GiB/180秒、原温控及GPU遥测保护。证据：runs/autonomous_rng_isolation_20261105/summary.json、*_followup/summary.json；runs/autonomous_feature_cpu_20261105/。
+
+- 2026-11-05T18:09:02+08:00：资源保护：启动受保护任务 tetris-guard-111616-1793873342163289122，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限1GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/microbenchmark_guard。
+
+- 2026-11-05T18:09:03+08:00：资源保护：公开训练状态的既有候选特征实现配对微基准完成，当前训练未改实现。证据：runs/autonomous_feature_cpu_20261105/feature_microbenchmark.json。
+
+- 2026-11-05T18:09:04+08:00：资源保护：tetris-guard-111616-1793873342163289122 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/microbenchmark_guard。
+
+- 2026-11-05T18:13:30+08:00：微基准真实完成，27个真实训练/边界状态特征及掩码逐项一致，30次AB/BA配对CPU计时中位加速1.7516倍（仅特征构造，非整体训练）。添加显式bitboard训练后端供配对验证，默认仍official，正式合法落点生成器不变；模式写入配置并在恢复核验，两实现均纳入数值来源。当前无活动训练；开始串行等价性/来源定向测试，之后实际CUDA8事务对照。证据：runs/autonomous_feature_cpu_20261105/feature_microbenchmark.json、microbenchmark_guard/；training/env/bitboard_candidate_env.py。
+
+- 2026-11-05T18:13:31+08:00：资源保护：启动受保护任务 tetris-guard-112432-1793873611756936729，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/verification_guard。
+
+- 2026-11-05T18:13:35+08:00：资源保护：tetris-guard-112432-1793873611756936729 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/verification_guard。
+
+- 2026-11-05T18:20:59+08:00：21项环境逐步/快照/边界及来源测试受保护通过。预声明GPU8完整事务对照：两种子1800000/1800100，official→bitboard及反序，每case4096→退出→恢复8192，总32768步，目标仍2M防止触发最终测试；精确比较policy/Adam/全局RNG/8worker状态/非计时指标。仅若配额全程250%、两对均更快且几何均值≥1.05才准许供后续新实验采用，微基准不代替该门槛。冻结23数值文件及支持/预设；原失败长局组不再扩训。证据：runs/autonomous_feature_cpu_20261105/gpu_design.json；verification_guard/command.log。
+
+- 2026-11-05T18:21:05+08:00：资源保护：启动受保护任务 tetris-guard-114257-1793874065642442877，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_guards/r0_official_task_01。
+
+- 2026-11-05T18:21:22+08:00：资源保护：tetris-guard-114257-1793874065642442877 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_guards/r0_official_task_01。
+
+- 2026-11-05T18:21:23+08:00：资源保护：启动受保护任务 tetris-guard-114422-1793874083201428024，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_guards/r0_official_task_02。
+
+- 2026-11-05T18:21:40+08:00：资源保护：tetris-guard-114422-1793874083201428024 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_guards/r0_official_task_02。
+
+- 2026-11-05T18:21:40+08:00：资源保护：启动受保护任务 tetris-guard-114509-1793874100306254667，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_guards/r0_bitboard_task_01。
+
+- 2026-11-05T18:21:57+08:00：资源保护：tetris-guard-114509-1793874100306254667 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_guards/r0_bitboard_task_01。
+
+- 2026-11-05T18:21:57+08:00：资源保护：启动受保护任务 tetris-guard-114643-1793874117486126857，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_guards/r0_bitboard_task_02。
+
+- 2026-11-05T18:22:14+08:00：资源保护：tetris-guard-114643-1793874117486126857 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_guards/r0_bitboard_task_02。
+
+- 2026-11-05T18:22:14+08:00：资源保护：启动受保护任务 tetris-guard-114745-1793874134587670422，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_guards/r1_bitboard_task_01。
+
+- 2026-11-05T18:22:31+08:00：资源保护：tetris-guard-114745-1793874134587670422 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_guards/r1_bitboard_task_01。
+
+- 2026-11-05T18:22:32+08:00：资源保护：启动受保护任务 tetris-guard-114884-1793874152607717214，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_guards/r1_bitboard_task_02。
+
+- 2026-11-05T18:22:49+08:00：资源保护：tetris-guard-114884-1793874152607717214 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_guards/r1_bitboard_task_02。
+
+- 2026-11-05T18:22:49+08:00：资源保护：启动受保护任务 tetris-guard-114998-1793874169710348754，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_guards/r1_official_task_01。
+
+- 2026-11-05T18:23:06+08:00：资源保护：tetris-guard-114998-1793874169710348754 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_guards/r1_official_task_01。
+
+- 2026-11-05T18:23:07+08:00：资源保护：启动受保护任务 tetris-guard-115126-1793874187806726605，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_guards/r1_official_task_02。
+
+- 2026-11-05T18:23:24+08:00：资源保护：tetris-guard-115126-1793874187806726605 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_guards/r1_official_task_02。
+
+- 2026-11-05T18:23:24+08:00：资源保护：启动受保护任务 tetris-guard-115260-1793874204900750498，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_guards/verification。
+
+- 2026-11-05T18:23:29+08:00：资源保护：tetris-guard-115260-1793874204900750498 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_guards/verification。
+
+- 2026-11-05T18:23:29+08:00：资源保护：位图/原特征两组AB/BA真实CUDA8事务比较完成；未发布模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_feature_cpu_20261105/gpu_summary.json。
+
+- 2026-11-05T18:36:02+08:00：真实AB/BA GPU8两对事务对照及恢复验证全部通过：模型/Adam/完整RNG/8worker/非计时指标精确相同；训练环节几何平均吞吐+6.56%，两对均更快、全程CPU250%/未降载。峰值CPU76℃、GPU53℃、内存3582MiB，服务MainPID0/Result=success，未使用最终测试或发布模型。采用显式bitboard供后续新实验，补齐推荐配置和边界报告。原PPO30M最后完整事务存在且模型匹配冻结final，作为下轮完整上下文恢复审计入口；缺来源SHA未迁移。证据：runs/autonomous_feature_cpu_20261105/gpu_summary.json；reports/experiments/feature_backend_cpu_20261105.md；configs/ppo30m_guarded_bitboard.json。
