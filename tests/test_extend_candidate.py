@@ -46,8 +46,8 @@ def assert_same(left, right):
 
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA continuation contract")
-@pytest.mark.parametrize("full_context", [False, True])
-def test_completed_candidate_extension_and_interrupted_resume(tmp_path, full_context):
+@pytest.mark.parametrize("full_context,search_backend", [(False, 'formal'), (True, 'formal'), (True, 'bitboard')])
+def test_completed_candidate_extension_and_interrupted_resume(tmp_path, full_context, search_backend):
     source = tmp_path / "source"
     extended = tmp_path / "extended"
     control = tmp_path / "control"
@@ -62,7 +62,8 @@ def test_completed_candidate_extension_and_interrupted_resume(tmp_path, full_con
         origin_preset.write_text(json.dumps(dict(preset, target_total_steps=4096)))
         train(origin, origin_preset)
         files = ["config.json", "metadata.json", "committed/task_000001/manifest.json"]
-        preset.update(ppo_overrides={"learning_rate": 0.00003}, initial_context={
+        preset.update(candidate_search_backend=search_backend,
+                      ppo_overrides={"learning_rate": 0.00003}, initial_context={
             "run_dir": str(origin), "task": 1,
             "files_sha256": {name: hashlib.sha256((origin / name).read_bytes()).hexdigest()
                              for name in files},

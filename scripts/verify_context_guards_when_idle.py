@@ -42,13 +42,14 @@ def run(folder):
         check();guard=folder/'guard'
         if guard.exists():raise RuntimeError('Previous guard output exists; inspect before retry')
         write_json(folder/'status.json',dict(at=now(),stage='protected_gpu_validation',guard=str(guard)))
+        tests=design.get('test_targets',['tests/test_full_context_validation_guards.py',
+            'tests/test_full_context_runtime_guards.py','tests/test_full_context_initialization.py',
+            'tests/test_initialization.py'])
         with (folder/'guard.log').open('w') as stream:
             child=subprocess.Popen([sys.executable,'-u',str(ROOT/'scripts/resource_guard.py'),
-                '--profile',str(folder/'profile.json'),'--output',str(guard),'--seconds','180','--',
+                '--profile',str(folder/'profile.json'),'--output',str(guard),'--seconds',str(design.get('command_seconds',180)),'--',
                 '/usr/bin/env','TETRIS_ORIGINAL_CONTEXT_DIR='+design['original_context'],
-                sys.executable,'-m','pytest','-q','tests/test_full_context_validation_guards.py',
-                'tests/test_full_context_runtime_guards.py','tests/test_full_context_initialization.py',
-                'tests/test_initialization.py'],cwd=ROOT,stdout=stream,stderr=subprocess.STDOUT)
+                sys.executable,'-m','pytest','-q',*tests],cwd=ROOT,stdout=stream,stderr=subprocess.STDOUT)
             while child.poll() is None:check();time.sleep(1)
         result=json.loads((guard/'result.json').read_text())
         if child.returncode or result['outcome']!='completed':raise RuntimeError('Staged runtime verification failed')
