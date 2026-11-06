@@ -6,6 +6,20 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T14:51:40+08:00 最新接手点：增量特征静态未过门，不启动GPU
+
+隔离/home/wyh/projects/tetris-delta-feature-validation，codex/delta-candidate-features/52afbfd，新增bitboard_delta/compact显式后端、来源28，123项差分/保护测试过（1024列mask逐格参考、各piece/hold/board、清行/已有满行/全不可见/负y/溢出/重复/200步轨迹快照）。main准确27已归档/home/wyh/projects/tetris-runtime-43cc26f，与当前冻结数据27SHA同；推理20在main/隔离/归档逐项同。
+
+新静态27状态30对中位1.6902730368、最小1.5984726373，虽全部feature/mask精确及每对更快，**低于预声明1.8**。runs/autonomous_delta_features_20261106/micro/qualification.json资格false，guard14:46:29 completed，未启动GPU对照/真实错误feature恢复/完整上下文扩展故障验收，均未测。不合入52afbfd、不放宽门槛/重计时；main27/原bitboard+row masks/pipe/原30M保持。报告delta_features_20261106.md。
+
+静态CPU41.375℃/GPU37℃/内存13.2MiB；测试CPU60.875℃/GPU36℃/299.1MiB，均原100%/2GiB保护，无训练。38冻结静态输入未改。旧fused1.049118端到端及本delta静态负结果都保留，不复跑；当前所有有限计算终态。原生goal首工具14:41:31执行见native_goal_delta_features_execution_20261106.json。
+
+下一先核对是否已有**批量NumPy候选特征**工作；若无，从main另建lightbook隔离副本（不要改旧delta/fused/归档）研究明确不同的bitboard_batched后端：将所有候选列/行位图与统计批量化，使用整数位操作/小型bit_count/bit_length查表，避免浮点log2与逐候选全统计。清行候选可完整回退；非法/异常输入可退回原参考实现以保留错误语义。NumPy已安装，不新增编译器依赖或动态二进制身份；仍需新训练来源SHA和显式配置，推理20不改。main准确27归档43cc26f可复用，只需再核对SHA，**无需再造相同归档**。
+
+先差分全部边界/快照轨迹/完整矩阵和非法行零；再预声明新静态同27状态30对、相对当前bitboard中位≥1.8且每对更快才进入真实GPU，不据结果调版反复计时。若通过，再新seed2900000/2900100 AB/BA8192/跨4096进程、两臂同新来源/compact/pipe/CUDA8/250%/6GiB/原温控，模型/Adam/PPO/RNG/8worker/非计时精确+错feature拒绝且提交不变+几何≥1.05且每对更快/无降载；只有GPU合格才条件串行完整上下文合成扩展/故障恢复。若失败保留证据止损，不改main模板或启动质量训练/2M。
+
+所有开发/续办在lightbook；GPU不可用保留进度，无CPU训练/其他主机fallback；额度/用户暂停规则保持。先查真实PID/summary避免重复。已有cc可用但numba未装，此轮未采用编译方案，不为此安装依赖。
+
 ### 2026-11-06T14:41:09+08:00 最新接手点：纯IPC潜力不足，下一隔离增量候选特征
 
 runs/autonomous_observation_ipc_20261106于14:37:51 passed、eligible_for_isolated_transport_prototype=false，父guard14:37:52 completed/MainPID0success。8进程固定保存观测（每worker16个均匀时间点）、8对AB/BA各512vector往返，full/cached时间中位.146333/.074413秒、配对省.072565<预声明.4秒；8对均省但绝对潜力不足。cached仅父缓存索引乐观对照，**非共享内存**，不构建transport/不重跑该有限基准，不能当端到端吞吐或旧等待分摊。1项真实多进程协议/堆叠/清理测试过，58输入未改；0环境/策略/优化器更新。报告observation_ipc_20261106.md。

@@ -1451,3 +1451,11 @@
 - 2026-11-06T14:37:52+08:00：资源保护：8进程保存观测纯通信测量完成，内容/堆叠一致，无游戏推进或模型训练；工程潜力门已记录。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_observation_ipc_20261106/summary.json。
 
 - 2026-11-06T14:41:09+08:00：保存观测纯IPC14:37:51 passed/父guard14:37:52 completed，但工程潜力门未过：8对AB/BA512往返，配对中位省.072565<.4秒；full/cached中位.146333/.074413，非共享内存或端到端吞吐。暂不构建transport/不重复计时；1项真实进程协议/堆叠/清理过、58输入未改，CPU58.25℃/GPU37℃/内存428.9MiB，全250%。下一归档main27并隔离研究有实质变化的增量特征，先差分与预声明新静态门，原pipe/main27/推理20及旧fused负结果保持。证据reports/experiments/observation_ipc_20261106.md。
+
+- 2026-11-06T14:42:00+08:00：改动前归档当前main27至/home/wyh/projects/tetris-runtime-43cc26f（detached43cc26f），27文件SHA与当前冻结数据design/主副本逐项同；新隔离worktree /home/wyh/projects/tetris-delta-feature-validation（codex/delta-candidate-features）同基点，venv/runs仅本机链接。main及旧fused/旧断点不改身份。证据runs/autonomous_delta_features_20261106/runtime_archive.json。
+
+- 2026-11-06T14:45:07+08:00：隔离副本新增delta列统计与仅触及行清行检测，显式bitboard_delta/要求compact搜索，训练来源28/推理20保持；已有满行、全不可见、负y与清行完整回退保留。先跑独立格子统计1024列掩码/边界/200步轨迹快照及原backend保护，未改main/未计时或启动GPU。证据/home/wyh/projects/tetris-delta-feature-validation/tests/test_delta_candidate_features.py。
+
+- 2026-11-06T14:46:25+08:00：隔离delta123项差分/保护测试通过（1024列mask逐格参考、多/非连续清行、已有满行与全不可见、边界、200步轨迹快照）。冻结38输入/训练28，预声明新特征27状态30对AB/BA相对bitboard中位≥1.8且每对>1才进GPU；CPU100%/2GiB/原温控、90秒命令/300秒队列，无模型更新或main采用。证据runs/autonomous_delta_features_20261106/micro/design.json。
+
+- 2026-11-06T14:51:40+08:00：隔离delta52afbfd/来源28，123项差分保护过、推理20同main/准确27归档43cc26f；静态27状态30对中位1.690273/min1.598473未过1.8，38输入未改，资格false。不启动GPU/真实错feature恢复/扩展故障验收、不合入main/不放宽或重计时。静态CPU41.375℃/GPU37℃，测试CPU60.875℃；原保护保持。下一另隔离研究批量NumPy整数特征，复用main27归档，不修补本版重复计时。证据reports/experiments/delta_features_20261106.md。
