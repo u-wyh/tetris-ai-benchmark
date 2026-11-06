@@ -1163,3 +1163,9 @@
 - 2026-11-06T09:06:39+08:00：归档已完成诊断与早期评测：00:07:53原上下文梯度16批通过，0优化器步，policy/Adam/更新数不变；00:23:45既存8192检查点7/8触顶，100003=17033，得分比0.9673989069未过门槛，无追加计算或推广。当前优先queue/start真实自动执行验收，其后再考虑克隆Adam更新归因，未把梯度大小当棋力结论。证据：reports/experiments/ppo_gradient_attribution_20261106.md。
 
 - 2026-11-06T09:08:39+08:00：本次09:07:12新轮实际调用工具、queue已空，但queued_start_last_attempt不存在且桌面连接在场，不能将其归因新queue/start修复。准备独立30秒跨轮边界验收，暂停proxy通信且finally/ExecStopPost恢复，既有本机小时服务消费专用已排队验收消息；不重复训练或原旧短时测试，不声称物理断电/重启。证据：runs/unattended_queue_dispatch_20261106/boundary_probe/。
+
+- 2026-11-06T09:09:15+08:00：已单次投递跨轮验收消息并启动30秒proxy通信暂停及独立idle观察器；finally/ExecStopPost恢复，本轮即将结束以提供真实边界。此刻只证明试验启动/排队，不证明下一轮已执行。证据：runs/unattended_queue_dispatch_20261106/boundary_probe/queued.json、state.json及后续observation。
+
+- 2026-11-06T09:09:55+08:00：跨轮验收实测通过：proxy通信09:09:15暂停后，新轮01a1ae67-36dd-75b0-a27c-34f3f97015d9于2026-11-06T09:09:22+08:00开始，首个AI工具09:09:26 observe成功，proxy294825=T且工具祖先13827→1；专用提示匹配、queue清空、goal active。此轮由原生队列在边界自行消费，未调用显式queue/start，不据此声称卸载线程恢复路径已实测；代理待原定30秒自动恢复。证据：runs/unattended_queue_dispatch_20261106/boundary_probe/execution_receipt.json、observation.json。
+
+- 2026-11-06T09:10:41+08:00：跨轮验收代理09:09:46自动恢复Ssl，两一次性服务MainPID0/Resultsuccess，原后台PID/start不变，实际GPU可用/共享250%/6GiB/swap0。原生队列已自行接续，不补造未发生的queue/start/idle观察；跨轮无桌面通信范围通过，卸载恢复/断电/重启范围保留。更新计划与回执，下一项继续克隆Adam步长诊断。证据：runs/unattended_queue_dispatch_20261106/boundary_probe/。

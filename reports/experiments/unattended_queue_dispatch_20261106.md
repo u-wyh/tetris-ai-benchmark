@@ -13,3 +13,9 @@
 08:57:55旧回执的“该条小时投递已处理”已纠正：本轮08:56:59早于08:57:45投递，且原消息仍在官方queue/list。同文提示不能证明具体消息ID被消费。保留原回执及unattended_hourly_processing_reconciliation_20261106.json。
 
 证据：runs/unattended_queue_dispatch_20261106/deployment.json、test_guard/；runs/autonomous_development_20261105/hourly.jsonl、development_status.json。历史桌面缺席执行证据继续保留，未测试物理游戏本断电或轻薄本重启。
+
+## 实际跨轮验收结果
+
+09:09:15–09:09:46暂停所有桌面代理通信；新轮01a1ae67-36dd-75b0-a27c-34f3f97015d9于09:09:22启动，09:09:26首个AI工具observe成功，proxy294825=T且工具来自原生后台13827→1。原生队列自行接续，未发生显式queue/start；观察器未捕获短暂idle，无dispatch_observation文件，不能补造该文件或称卸载线程恢复已实测。09:09:46finally自动恢复，ExecStopPost也正常，两服务成功退出，代理Ssl。
+
+这补齐了真正跨轮、无桌面通信的新AI工具执行；未测物理断电/重启。证据boundary_probe/execution_receipt.json及observation.json。后续继续开发，不重复同验收。

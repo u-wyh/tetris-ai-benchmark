@@ -4,9 +4,11 @@
 
 ## 用户最新首要任务：轻薄本无人值守
 
-### 最新验收进行中：跨轮、桌面通信暂停30秒
+### 最新验收结果：09:09跨轮无桌面通信实际执行通过
 
-09:07:12本轮已实际执行，queue已空，但没有queue/start启动记录且桌面仍连接，不能算修复的无桌面验收。独立目录`runs/unattended_queue_dispatch_20261106/boundary_probe/`正在准备专用下一轮：本轮结束后，proxy暂停30秒，观察器发现idle即调用既有小时服务消费原排队验收消息，finally及ExecStopPost恢复。下一轮首个工具应在仍暂停时运行`probe_unattended_desktop.py observe --run-dir <该绝对目录>`，若已恢复则如实记录；必须核对dispatch_observation、turn_id和实际AI工具，未过不启动新训练。原短时测试仅证明轮内工具，不覆盖本次跨轮路径。
+09:09:15暂停桌面代理后，专用新轮`01a1ae67-36dd-75b0-a27c-34f3f97015d9`于09:09:22开始，首个AI工具09:09:26 observe成功，proxy294825=T、工具祖先13827→1，专用提示匹配且queue清空。09:09:46自动恢复Ssl，两一次性服务均MainPID0/Resultsuccess。证据`runs/unattended_queue_dispatch_20261106/boundary_probe/execution_receipt.json`和`observation.json`。
+
+此次由原生队列在轮边界自行接续，观察器未捕获idle，也未调用显式queue/start；不能称卸载线程恢复、物理断电或重启已实测。真实跨轮无桌面通信执行已验收，不重复此试验；显式notLoaded唤醒保留41项测试及后续真实事件核验。下一开发动作：克隆Adam真实步长归因；不得重复被拒绝训练或把诊断当棋力提升。
 
 ### 2026-11-06 09:05 最新接手点：优先验收已修复的排队唤醒
 
