@@ -6,6 +6,22 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T19:36:50+08:00 最新接手：8k自身长程捕获全部完成，下一只恢复两条真实死亡的最后分歧状态
+
+**已完成，禁止重跑**：runs/autonomous_own_policy_capture_20261106（root/phase_02/03/04全部guard+controller成功），capture_summary 2026-11-06T19:32:00+08:00，trajectory_audit 19:33:31 passed/audit_cached guard19:33:31/controller19:33:32 completed。新代码own_policy_capture.py、capture_own_policy_trajectories.py、verify_own_policy_capture_restart.py、audit_own_policy_capture.py及7项定向测试（真实forkserver/显式seed/停槽/完整worker恢复/概率mode/RNG/坏SHA/不可覆盖链）通过；新审计在真实全量数据验证，不改主31/推理20/compiled native或旧15对runner/helpers。
+
+实际5进程416816→416889→417616→418355→418929，80完整8worker快照（chunk_0000初始+79动作段），**144936唯一环境步、candidate和shadow各20000 GPU批次/0optimizer**。4阶段新增2048+38912、37662、35840、30474步，首阶段真实重建进程且初始/首段SHA不变，后续复用21/41/61快照；每段256全局round，最终20000轮。全部连续round/pieces/seed/只终止一次、动作特征清行与实际结果、奖励行数/完整末态、进程实际工作量交叉精确，policy/完整Adam/计数和父全局+worker reset/action采样RNG不变。根design/models/source31/native身份固定；根design不可改，不能重跑verify_restart或再启动捕获。
+
+同8开发seed100000..7：100002 **17994死亡**，100005 **6942死亡**，其他6×20000 cap。端点pieces/score/lines/reward/死亡删失与旧CPU candidate.json逐项相同；旧CPU没有action trace，**不能声称CPU/GPU全轨迹一致/其他seed通用，也不推广8k/不扩2M**。新CUDA最高float32/TF32false/active批次为本诊断协议。原30M shadow在8k自己的状态仅观察：共3476分歧；两个死亡最终action1246/1727都与shadow相同，死亡前32步分歧0/1，不能说不可救或已证明因果。报告own_policy_capture_20261106.md、completion_audit.json、trajectory_audit.json是当前证据。
+
+4 GPU阶段保护器19:24:16/19:27:02/19:29:55/19:32:01 completed，共383.249秒，全250%/6GiB/原温控，无降载；50/75/96/116冻结输入未改，采样最高CPU74.875℃/GPU51℃/3518.73MiB。首次audit因NpzFile逐行重复解压，19:32:46主动停/guard19:32:48 interrupted45.107秒，**保留audit原证据及source_original.py SHA67617e…**；仅审计改为每段一次物化后audit_cached 2.092秒/100%/2GiB/140输入未改通过，无新环境或forward，15.89MiB采样错过真实峰不作内存峰值声明。所有本协议有限service终态，keeper仍后台运行。
+
+**下一实际开发（尚未开始）**：只读取已hash验证的79段rows.npz，在每段只物化一次数组避免解压bug；对全部两条真实死亡轨迹，找各自**死亡前最后一个candidate action != shadow action**，报告精确step/距离/特征/概率，按同规则保留两者，不挑原15处状态/不扩旧256horizon/不重新评测整局。先做静态提取并冻结目标，暂不预定救活结论或新PPO。若最后分歧距离很长，仍先恢复完整状态，不能按结果盲目扩大模拟预算。
+
+对应完整上下文可由其前一chunk state.pkl（初始0或最近256轮提交）恢复全部8worker，再按已保存真实actions重放至目标前；每步核对pre观测/mask SHA、实际选中feature、reward/终止/seed/pieces/holes/height，末状态与该chunk原快照核验。目标可能在不同chunk，预声明最大重放轮/步、保留停止槽、GPU8/原250%6GiB温控和有限时间；0新策略采样/0optimizer，实际重放环境步要算非0。所有pickle先由冻结manifest/全链SHA验证，不能在加载坏缓存后才校验。可以新小型loader返回指定安全chunk，**不要修改已冻结捕获helper/runner/原design**。先定向真实停槽恢复校验，然后再另行预声明有限干预；既有BranchControls支持完整state但旧runner硬编码15/256，不可直接冒套成新目标。
+
+无人值守：19:32:38health healthy/四单元enabled+active/linger yes/睡眠masked/proxy空/后台13827→1，原目标active。当前仍19:04:57原生goal轮01a1b088-7bcc-7af2-8d90-93c0895b979c、19:06:07首工具、捕获阶段19:16:04首工具；19:04小时submission01a1b088-7bec-7902-af0c-36c1a33c5358于19:33:29仍pending/thread_busy，**未声称新投递已消费**。native_goal_own_capture_execution_20261106.json记录真实开始/完成与该范围。未重做短暂停或声称OS重启实测。所有工作留lightbook；无主机/GPU时保留无CPU/他机fallback，额度不足等小时不改账户，暂停取消即停。不要完成无限持续目标，也别因旧有限任务终态重复启动。
+
 ### 2026-11-06T19:12:44+08:00 最新接手：C/D续走对照完成且无短程劣势，下一自身长程轨迹捕获
 
 新增verify_rank_continuation_factorial.py与13项定向校验，复用未改runner/helpers和旧A/B，不改主训练31/推理20/C产物。新C/D同15状态/首步清4与清0、后续换冻结8k016b6b…，同GPU8/4对批次/最高float32/TF32false/256含首步。固定原首步C−A清行总+2、四行事件+2、reward约+5（6差/4同/5好）；固定8k首步D−B清行+6、四行+4、reward约+17（5差/4同/6好）。四臂60条全到256、0死亡/0TimeLimit，均删失；**不支持这15处清行假设解释长期退化**，也不能推广8k或声称长期等价。不延长本协议horizon。

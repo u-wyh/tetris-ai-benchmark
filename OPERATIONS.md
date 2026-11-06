@@ -1605,3 +1605,61 @@
 - 2026-11-06T19:04:55+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
 
 - 2026-11-06T19:12:44+08:00：C/D及四臂因子比较完成：固定原首步C−A清行+2/reward约+5，固定8k首步D−B清行+6/reward约+17；60臂全256删失/0观察死亡，不支持所选15处的短程退化解释，不推广/不延长。13测试过；新增7680步/1020GPU预测/0optimizer，进程390776→390859复用首4对、旧A/B及首批SHA未改，145输入未改，guard16:45:26/controller16:45:27 completed，全250%/6GiB，采样CPU74.375℃/GPU50℃/3713.50MiB。后因额度限制（16:47:45至19:03:45已观察limited）暂停，19:04:55官方允许/goal恢复，原生goal19:06:07实际工具继续审计；19:04小时消息仍pending，未称消费。原CPU8k指标核实2/8死亡(6942/17994)，下一新自身轨迹捕获，不重跑旧分支/训练。证据reports/experiments/rank_continuation_factorial_20261106.md。
+
+- 2026-11-06T19:21:02+08:00：后台4单元驻留/开机/续办/防休眠健康、proxy为0，原生goal同19:04轮已实际执行，19:04小时消息仍排队不称消费。新增8k自身长程捕获诊断，显式8seed、死亡/触顶停槽、每256轮完整worker/RNG链式提交、原30M shadow仅旁观，保持训练31/现有分支代码不改。先100%/2GiB/120秒原温控定向测试（含少量真实模拟/CPU单测推理），尚未正式长程捕获/训练。证据runs/autonomous_own_policy_capture_20261106/unit/design.json及native_goal_own_capture_execution_20261106.json。
+
+- 2026-11-06T19:21:04+08:00：资源保护：启动受保护任务 tetris-guard-416523-1793964064664647594，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/unit/guard。
+
+- 2026-11-06T19:21:12+08:00：资源保护：tetris-guard-416523-1793964064664647594 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/unit/guard。
+
+- 2026-11-06T19:21:13+08:00：资源保护：自身轨迹显式seed/死亡停槽/真实worker恢复/概率mode/RNG/链式缓存定向检查完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/unit/summary.json。
+
+- 2026-11-06T19:22:22+08:00：自身捕获7项定向测试过（含真实forkserver跨进程/停槽/完整RNG），现预声明8开发seed100000..7、每局cap20000、总唯一上限160000步；8k CUDA最高float32/TF32false greedy，原30M shadow仅观察同状态。每256轮完整8worker+全局RNG/观测mask摘要/实际动作及特征原子链式提交，死/触顶不reset；首阶段双进程先1段再19段（≤5120轮/40960步），核验前缀文件不变，300秒命令/600秒wall/250%/6GiB原温控。主31/推理20/模型/Adam不改；CUDA轨迹不能冒替旧CPU质量失败结论。冻结50输入，证据runs/autonomous_own_policy_capture_20261106/design.json。
+
+- 2026-11-06T19:22:24+08:00：资源保护：启动受保护任务 tetris-guard-416800-1793964144555374404，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/guard。
+
+- 2026-11-06T19:24:16+08:00：资源保护：tetris-guard-416800-1793964144555374404 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/guard。
+
+- 2026-11-06T19:24:16+08:00：资源保护：8k自身GPU8轨迹首阶段及真实跨进程逐段恢复完成，原策略仅旁观、无优化器更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/summary.json。
+
+- 2026-11-06T19:25:22+08:00：自身GPU8捕获首阶段完成40960环境步/5120轮，两个模型各5120次GPU批量forward、0optimizer。进程416816→416889真实恢复，初始/首段文件SHA不变；完整worker/active观测mask、policy/Adam/计数/全局采样RNG核验通过。guard2026-11-06T19:24:16+08:00/controller2026-11-06T19:24:16+08:00 completed，50输入未改、112.136秒、配额[250]；采样峰值{'cpu_c': 74.875, 'gpu_c': 51.0, 'memory_mib': 3518.73046875}。8seed目前均5120步未终止，不当长期通过。现从该链启用第二有限阶段≤20段/5120轮/40960新增步，300秒命令/600秒wall及原250%/6GiB温控；不重跑前缀或训练。证据runs/autonomous_own_policy_capture_20261106/restart_receipt.json及phases/phase_02/design.json。
+
+- 2026-11-06T19:25:25+08:00：资源保护：启动受保护任务 tetris-guard-417604-1793964324971008489，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/phases/phase_02/guard。
+
+- 2026-11-06T19:27:02+08:00：资源保护：tetris-guard-417604-1793964324971008489 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/phases/phase_02/guard。
+
+- 2026-11-06T19:27:03+08:00：资源保护：自身轨迹捕获第二有界阶段从5120轮断点续走，无重复已提交前缀。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/phases/phase_02/summary.json。
+
+- 2026-11-06T19:28:21+08:00：自身捕获第二阶段guard2026-11-06T19:27:02+08:00/controller2026-11-06T19:27:03+08:00 completed，进程417616复用21份已提交初始/段快照，新增37662步/5120轮、两模型各5120 GPU批次；累计78622步/10240轮，active=[0, 1, 2, 3, 4, 6, 7]，无reset/optimizer。75冻结输入未改，97.813秒/配额[250]，采样峰值{'cpu_c': 73.625, 'gpu_c': 50.0, 'memory_mib': 3233.328125}。现从同链启动第三有限阶段≤20段/5120轮/40960新增步，原250%/6GiB/温控/300秒命令600秒wall不变；只保存诊断，不推广模型。证据phases/phase_02与phase_03。
+
+- 2026-11-06T19:28:23+08:00：资源保护：启动受保护任务 tetris-guard-418325-1793964503585136628，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/phases/phase_03/guard。
+
+- 2026-11-06T19:29:55+08:00：资源保护：tetris-guard-418325-1793964503585136628 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/phases/phase_03/guard。
+
+- 2026-11-06T19:29:55+08:00：资源保护：自身轨迹捕获第三有界阶段从原链断点续走，无重复已提交前缀。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/phases/phase_03/summary.json。
+
+- 2026-11-06T19:30:37+08:00：自身捕获第三阶段guard2026-11-06T19:29:55+08:00/controller2026-11-06T19:29:55+08:00 completed，进程418355复用41份已提交初始/段快照，新增35840步/5120轮、两模型各5120 GPU批次；累计114462步/15360轮，active=[0, 1, 2, 3, 4, 6, 7]，无reset/optimizer。96冻结输入未改，91.764秒/配额[250]，采样峰值{'cpu_c': 73.25, 'gpu_c': 50.0, 'memory_mib': 3232.3125}。现从同链启动第四有限阶段≤20段/5120轮/40960新增步，至原20000上限；原250%/6GiB/温控/300秒命令600秒wall不变。证据phases/phase_03与phase_04。
+
+- 2026-11-06T19:30:40+08:00：资源保护：启动受保护任务 tetris-guard-418917-1793964640151440506，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/phases/phase_04/guard。
+
+- 2026-11-06T19:31:27+08:00：预声明轨迹独立交叉审计，在phase4成功结束后串行读取全链，核验每seed连续pieces/round、终止仅一次、清行特征与实际结果对齐、奖励行数与完整末状态精确、父与worker reset/action采样RNG、实际进程步数/两模型批次总量；shadow不作反事实生存结论。100%/2GiB/120秒命令300秒wall原温控，0环境/0forward/0optimizer。阶段4仍运行，审计仅排队，不预写通过。证据runs/autonomous_own_policy_capture_20261106/audit/design.json。
+
+- 2026-11-06T19:32:01+08:00：资源保护：tetris-guard-418917-1793964640151440506 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/phases/phase_04/guard。
+
+- 2026-11-06T19:32:02+08:00：资源保护：自身轨迹捕获第四有界阶段从原链断点续走至原20000上限，无重复前缀。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/phases/phase_04/summary.json。
+
+- 2026-11-06T19:32:03+08:00：资源保护：启动受保护任务 tetris-guard-419365-1793964723034399308，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/audit/guard。
+
+- 2026-11-06T19:32:46+08:00：资源保护：隔离上下文验证停止并保留进度：KeyboardInterrupt('Staged context verification interrupted')。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/audit。
+
+- 2026-11-06T19:32:48+08:00：资源保护：tetris-guard-419365-1793964723034399308 结束：interrupted，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/audit/guard。
+
+- 2026-11-06T19:33:27+08:00：phase4捕获已完成，但末端审计反复访问NpzFile导致逐行重复解压；19:32:46人工停止该低效只读审计，guard19:32:48 interrupted/45.107秒，0环境/forward/optimizer。保留audit全部失败/中断证据及source_original.py（SHA=67617e394926c91ed793b637c4166cc3b476628744e8079fbd250791ce61a6bd），修改仅审计按256轮段一次物化数组，重启新audit_cached保护目录、120秒/100%/2GiB原温控；全部捕获数据/模型/主31不改，不重复模拟。尚未声称审计通过。证据audit/status.json、guard/result.json及audit_cached/design.json。
+
+- 2026-11-06T19:33:29+08:00：资源保护：启动受保护任务 tetris-guard-419745-1793964809695067436，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/audit_cached/guard。
+
+- 2026-11-06T19:33:31+08:00：资源保护：tetris-guard-419745-1793964809695067436 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/audit_cached/guard。
+
+- 2026-11-06T19:33:32+08:00：资源保护：缓存每段数组后完整自身轨迹一致性交叉审计完成，未重跑环境或模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/audit_cached/summary.json。
+
+- 2026-11-06T19:35:42+08:00：自身长程捕获与独立审计完成：80快照/79动作段，5进程416816→416889→417616→418355→418929不重采已提交前缀；实际144936环境步，两模型各20000次GPU批次/0optimizer。8seed端点步数/分数/行数/reward/死亡删失与旧CPU指标逐项相同（不能声称无旧CPU trace的全轨迹相同）；100002=17994、100005=6942死亡，其余6×20000 cap，质量仍失败不推广。两个死亡最终动作均与旁观原策相同，死亡前32步分歧分别0/1，不能因单步旁观归因或声称不可救。4 GPU保护阶段全completed，383.249秒/all250%/6GiB，50/75/96/116冻结输入未改，采样最高CPU74.875℃/GPU51℃/3518.73MiB；policy/完整Adam/计数、父和worker reset/action采样RNG不变。初次只读审计45.107秒手动中断保留，缓存修正版2.092秒/100%/2GiB通过（140输入未改，采样峰值非真实内存峰值）。后台19:32:38健康、原目标active、proxy空；19:04小时投递仍pending，不冒称消费，本轮原生目标实际工具执行及结果receipt已更新。下一仅提取两条真死亡轨迹的最后分歧并恢复对应完整上下文，不重跑捕获/旧15对分支/训练。证据completion_audit.json、trajectory_audit.json与reports/experiments/own_policy_capture_20261106.md。
