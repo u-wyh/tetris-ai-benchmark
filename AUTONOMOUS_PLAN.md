@@ -6,6 +6,30 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T15:39:06+08:00 最新接手：C特征训练/恢复已通过并采用main31，下一离线动作排序诊断
+
+原型d229934/集成66f3266，lightbook隔离/home/wyh/projects/tetris-native-feature-validation保留。main准确31训练来源SHA逐项同测试隔离（包括C/wrapper/runtime/extend），推理20同main/隔离/旧27归档43cc26f；旧27断点用归档，新31 checkpoint可用保留的66f3266隔离恢复，不重标任何旧来源。guarded模板显式bitboard_native/compact+固定本机artifact manifest，GPU8/250%/6GiB/原温控保持；**原模板2M只是配置，未启动，不启动质量训练。** C/wrapper/二进制仍与静态6.935倍同源。
+
+49项训练集成检查整体过；首次49断言过但测试截断已加载库导致SIGBUS(-7)整次失败，修正夹具原子替换后整体passed，原失败保留。GPU两组新seed2900000/2900100 AB/BA8192/跨4096，速度1.054335808/1.073699307，几何**1.063973508，约6.4%整体训练吞吐提升**，每对快/全250%无降载。完整policy/Adam/PPO/RNG/8worker/非计时精确；真实错feature/manifest声明拒绝及克隆坏binary恢复拒绝整runSHA不变，58输入未改。CPU72.375℃/GPU53℃/3585.97MiB。不是静态6.94倍整体提速或模型质量改进。
+
+条件完整上下文完成/扩展/注入中断恢复1passed、77.32秒，guard15:33:36 completed，60输入未改/all250；CPU70.625℃/GPU51℃/3884.29MiB。主副本采用后受保护加载验证15:36:04 completed，31 SHA/固定运行时/实际native reset features及mask与控制精确。所有有限任务现已终态，不重启GPU/扩展测试。报告native_features_training_20261106.md，adoption_audit.json、gpu_summary.json、extension/resource_audit.json为权威证据。固定artifact missing/mismatch拒绝；普通旧backend无artifact仍可用，不隐式编译/回退/改账户。
+
+下一回到**为何8k PPO退化**的有界离线证据，勿继续微优化或旧LR/GAE/KL/critic拟合调参。先搜索既有“同状态动作排序/greedy分歧”工作避免重复；main现仅搜到无关hybrid救援归因，尚无本轮配对诊断。复用runs/autonomous_independent_critic_data_20261106已持久化4段16384观测/masks及终止信息，不再采样；比较原30M eb859b…与已拒绝8k actor016b6b…（准确路径/SHA见autonomous_stochastic_alignment_20261106/design.json）。之前stochastic平均ratio.863无改善，critic fit非终止RMSE1.136失败；这些负路线保持停止。
+
+建议预声明一次纯forward/CUDA诊断、无env/nooptimizer：在相同保存观测/合法mask上，两个固定模型各计算概率/logits、masked KL、greedy动作、原策略top2合法logit间距、被翻转动作的feature差（holes/height/clear）；记录worker/time/chunk/终止距离，按预先固定margin区间/原8worker汇总，保留逐行数据可恢复。只读取保存信息，不引入未来隐藏状态或采样动作，不改变任一模型/PPO/Adam计数，验证CPU/CUDA RNG无变化、mask和行对齐以及保存输入SHA。必须先检查现有collector数据格式/现有推理API，写明数值精度/合法概率0处理、差分/缓存身份保护并先定向测试。诊断不说明greedy轨迹因果或质量提升；若排序变化很小也保留，不根据结果调阈值/再训练。先核对GPU和真实PID，CUDA可用才做，250%/6GiB原温控/有限时间，GPU不可用保留进度无CPU训练/其他机器fallback。
+
+原生goal续轮01a1afbc-8531-7550-8821-a97fb3998aed首工具15:22:19真实执行，非新小时投递，证据native_goal_native_integration_execution_20261106.json。15:35:35无人值守health正常/goal active/proxy空；开机驻留/每小时/防休眠保持，OS重启/整夜无新实测。所有开发/副本/续办留lightbook，额度不足保留等每小时，用户暂停取消即停。
+
+### 2026-11-06T15:32:06+08:00 当前运行接手：C训练集成49测试过，GPU对照及条件恢复验收在运行
+
+隔离/home/wyh/projects/tetris-native-feature-validation新增正式bitboard_native/compact，来源31，C/wrapper/artifact与静态6.935倍原型未改。配置/run/task metadata固定完整manifest/二进制/compiler/ABI身份；恢复/扩展在锁和目录写入前拒绝错误，普通旧后端不加载artifact。首次integration49断言过但测试原地截断已加载.so导致退出SIGBUS(-7)，整次失败保留；只修正测试为原子替换，integration_atomic_artifact49项整体passed/退出0。推理20同main/归档。
+
+15:30:01启动tetris-native-features-benchmark-20261106.service（实际controller PID376471，最近15:31:34 r1_official_task01），runs/autonomous_native_features_20261106/gpu_design.json冻结58输入/准确来源31。新seed2900000/2900100、AB/BA各8192、跨4096进程，CUDA8/250%/6GiB原温控；完整policy/Adam/PPO/RNG/8worker/非计时精确、错feature和运行时/克隆坏binary恢复拒绝整run不变，几何≥1.05且每对更快/无降载。**尚无结果，不重复启动或更改冻结代码/测试/artifact。**
+
+15:31:11条件服务tetris-native-features-extension-20261106.service已启动等待，runs/autonomous_native_extension_20261106/design.json；等待上述GPU服务终态且gpu_summary资格true，false自动跳过不计算。只有合格才执行test_extend_candidate.py -k bitboard_native的CUDA8完整上下文完成/扩展/故障恢复，240秒/250%/6GiB原温控。先查真实PID/status/summary，观察超时不可重启；main27/原30M/模板不改，尚未采用或质量训练。
+
+本原生goal续轮01a1afbc-8531-7550-8821-a97fb3998aed首工具15:22:19真实执行，非新小时投递消费，证据native_goal_native_integration_execution_20261106.json。此前轮有实质进展。开发/续办/副本留lightbook，GPU/主机不可用保留进度无CPU/其他主机fallback，用户暂停取消/额度不足按原规则。
+
 ### 2026-11-06T15:21:54+08:00 最新接手点：C原型静态6.935倍通过，下一先集成严格训练运行时身份
 
 lightbook隔离/home/wyh/projects/tetris-native-feature-validation，codex/native-candidate-features/d229934；完整C整数特征+ctypes打包，当前只是原型，**没有正式训练backend**。GCC13.3/O3共享库显式编译，manifest记录编译器路径/版本/driverSHA/flags/平台/C与wrapperSHA/二进制SHA/ABI；加载必须外部固定manifestSHA，不匹配/缺失拒绝。artifact二进制bff6f8e64a1516ad577ceaee7c5d9b79ece4800147bf33a718ead6f9c2b9642f。不要修改已冻结C/wrapper或重编覆盖该artifact。

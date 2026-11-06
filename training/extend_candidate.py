@@ -13,11 +13,13 @@ from training.long_run import evaluate_atomic
 from training.env.tetris_env import RAW_REWARD_VERSION
 from training.train_ppo import atomic_json, now
 from training.train_transaction import fsync_dir, fsync_tree, task_name
-from training.train_vector_transaction import sha256, verify_task
+from training.train_vector_transaction import sha256, verify_task, verify_training_source_identity
+from training.native_feature_runtime import verify_runtime_identity
 
 
 def verify_continuation(run_dir: Path, config: dict, state: dict, metadata: dict):
     """Reject any extension that changes training settings or its source checkpoint."""
+    verify_runtime_identity(config, metadata)
     record = json.loads((run_dir / "continuation.json").read_text())
     expected = copy.deepcopy(record["source_config"])
     expected.update(target_total_steps=record["actual_target_steps"],
@@ -43,11 +45,17 @@ def prepare(source: Path, destination: Path, requested_target: int = 10_000_000,
         raise FileExistsError("Continuation destination must be new and separate")
     if requested_target <= 0:
         raise ValueError("Target must be positive")
+    config = json.loads((source / 'config.json').read_text())
+    metadata = json.loads((source / 'metadata.json').read_text())
+    verify_training_source_identity(metadata)
+    verify_runtime_identity(config, metadata)
     with (source / ".train.lock").open("a+") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         config = json.loads((source / "config.json").read_text())
         state = json.loads((source / "transaction_state.json").read_text())
         metadata = json.loads((source / "metadata.json").read_text())
+        verify_training_source_identity(metadata)
+        verify_runtime_identity(config, metadata)
         if (state["status"] != "completed" or state["working_task"] is not None
                 or state["committed_steps"] != state["target_steps"]
                 or state["committed_steps"] != config["target_total_steps"]

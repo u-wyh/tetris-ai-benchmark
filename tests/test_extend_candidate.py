@@ -1,10 +1,12 @@
 """A completed Candidate checkpoint continues without resetting PPO or workers."""
 
 import json
+import os
 import hashlib
 import pickle
 import subprocess
 import sys
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -46,11 +48,12 @@ def assert_same(left, right):
 
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA continuation contract")
-@pytest.mark.parametrize("full_context,search_backend,momentum", [
-    (False, 'formal', 'preserve'), (True, 'formal', 'preserve'),
-    (True, 'bitboard', 'preserve'), (True, 'bitboard', 'zero_first_moment'),
-    (True, 'bitboard_compact', 'preserve')])
-def test_completed_candidate_extension_and_interrupted_resume(tmp_path, full_context, search_backend, momentum):
+@pytest.mark.parametrize("full_context,search_backend,momentum,feature_backend", [
+    (False, 'formal', 'preserve', 'bitboard'), (True, 'formal', 'preserve', 'bitboard'),
+    (True, 'bitboard', 'preserve', 'bitboard'), (True, 'bitboard', 'zero_first_moment', 'bitboard'),
+    (True, 'bitboard_compact', 'preserve', 'bitboard'),
+    (True, 'bitboard_compact', 'preserve', 'bitboard_native')])
+def test_completed_candidate_extension_and_interrupted_resume(tmp_path, full_context, search_backend, momentum, feature_backend):
     source = tmp_path / "source"
     extended = tmp_path / "extended"
     control = tmp_path / "control"
@@ -74,6 +77,10 @@ def test_completed_candidate_extension_and_interrupted_resume(tmp_path, full_con
         })
         if momentum != 'preserve':
             preset['initial_context']['actor_momentum_after_restore'] = momentum
+    if feature_backend == 'bitboard_native':
+        manifest=Path(os.environ['TETRIS_NATIVE_MANIFEST'])
+        preset.update(candidate_feature_backend=feature_backend,native_feature_runtime=dict(
+            manifest=str(manifest),sha256=hashlib.sha256(manifest.read_bytes()).hexdigest()))
     short = tmp_path / "short.json"
     full = tmp_path / "full.json"
     short.write_text(json.dumps(dict(preset, target_total_steps=4096)))

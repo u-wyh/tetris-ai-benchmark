@@ -25,8 +25,10 @@ from training.train_transaction import (
 from training.env import TetrisEnv
 from training.env.candidate_env import CandidateTetrisEnv, OBSERVATION_VERSION
 from training.env.fast_candidate_env import FastCandidateTetrisEnv
-from training.env.bitboard_candidate_env import BitboardCandidateTetrisEnv, validate_feature_backend
-from training.env.bitboard_search_env import BitboardSearchCandidateTetrisEnv, CompactSearchCandidateTetrisEnv, validate_search_backend
+from training.env.bitboard_candidate_env import BitboardCandidateTetrisEnv
+from training.env.bitboard_search_env import (BitboardSearchCandidateTetrisEnv, CompactSearchCandidateTetrisEnv,
+    NativeSearchCandidateTetrisEnv, validate_search_backend, validate_training_feature_backend as validate_feature_backend)
+from training.native_feature_runtime import preflight as preflight_native_runtime, runtime_identity, verify_runtime_identity
 from training.candidate_features import FEATURE_VERSION
 from training.candidate_policy import CandidateScoringPolicy
 from training.env.tetris_env import (BALANCED_REWARD_VERSION, HEIGHT_REWARD_VERSION, HOLE_HEIGHT_REWARD_VERSION,
@@ -54,6 +56,10 @@ TRAINING_SOURCE_FILES = (
     "training/env/bitboard_candidate_env.py",
     "training/env/bitboard_search_env.py",
     "training/compact_legal.py",
+    "training/native_candidate_features.c",
+    "training/native_candidate_features.py",
+    "training/native_feature_runtime.py",
+    "training/extend_candidate.py",
     "training/evaluation/fast_candidate_features.py",
     "training/evaluation/fast_legal.py",
     "training/env/failure_curriculum_env.py",
@@ -141,6 +147,10 @@ class TransactionBitboardSearchCandidateEnv(BitboardSearchCandidateTetrisEnv, Tr
 
 class TransactionCompactSearchCandidateEnv(CompactSearchCandidateTetrisEnv, TransactionTetrisEnv):
     """Compact visited search with unchanged transaction hooks."""
+
+
+class TransactionNativeSearchCandidateEnv(NativeSearchCandidateTetrisEnv, TransactionTetrisEnv):
+    """Pinned native features with unchanged transaction and worker state hooks."""
 
 
 def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
@@ -264,6 +274,10 @@ def verify_task(task_dir, number, config):
         if not file.is_file() or file.stat().st_size != record["size"] or sha256(file) != record["sha256"]:
             raise RuntimeError(f"Committed Task {number} checksum failed: {name}")
     meta = json.loads((task_dir / "task_meta.json").read_text())
+    if (meta.get('native_feature_runtime_identity') != config.get('native_feature_runtime_identity') or
+            ('candidate_feature_backend' in meta and
+             meta['candidate_feature_backend'] != config.get('candidate_feature_backend', 'official'))):
+        raise RuntimeError(f"Committed Task {number} feature runtime disagrees with run config")
     if (meta["task_id"] != number or meta["end_step"] != number * config["task_steps"]
             or meta["device"] != config["device"] or meta["n_envs"] != config["ppo"]["n_envs"]
             or meta["n_steps"] != config["ppo"]["n_steps"]
@@ -448,6 +462,8 @@ def commit_vector_task(run_dir, state, working_dir, model, env, callback, captur
                  "height_penalty_coef": reward_settings(config)[2],
                  "observation_version": config["observation_version"], "policy": config["policy"],
                  "candidate_feature_version": config.get("candidate_feature_version"),
+                 "candidate_feature_backend": config.get('candidate_feature_backend', 'official'),
+                 "native_feature_runtime_identity": config.get('native_feature_runtime_identity'),
                  "gpu_peak_mib": gpu_peak,
                  "worker_seeds": config["worker_seeds"], "worker_digests": digests})
     checkpoint_bytes = write_manifest(working_dir)
@@ -531,6 +547,10 @@ def inspect_status(run_dir):
 
 def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
         crash_during_task=None, config_file=None):
+    # Artifact/backend rejection must happen before mkdir or truncating .train.lock.
+    preflight_native_runtime(run_dir, resume, config_file)
+    if resume:
+        verify_training_source_identity(json.loads((run_dir / "metadata.json").read_text()))
     import gymnasium
     import sb3_contrib
     import stable_baselines3
@@ -558,6 +578,7 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
             state = read_state(run_dir)
             meta = json.loads((run_dir / "metadata.json").read_text())
             verify_training_source_identity(meta)
+            verify_runtime_identity(config, meta)
             if (run_dir / "continuation.json").exists():
                 from training.extend_candidate import verify_continuation
                 verify_continuation(run_dir, config, state, meta)
@@ -657,6 +678,8 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                 config["fast_candidate_env"] = bool(preset.get("fast_candidate_env", False))
                 config["candidate_feature_backend"] = validate_feature_backend(preset)
                 config['candidate_search_backend'] = validate_search_backend(preset)
+                if preset.get('native_feature_runtime') is not None:
+                    config['native_feature_runtime'] = preset['native_feature_runtime']
                 config["overnight_monitor"] = bool(preset.get("overnight_monitor", False))
                 if "failure_curriculum" in preset:
                     from training.env.failure_curriculum_env import REWARD_VERSION, file_sha256
@@ -714,12 +737,17 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                 raise ValueError("Invalid long-run schedule")
             if config["device"] == "cuda" and not torch.cuda.is_available():
                 raise RuntimeError("CUDA unavailable; refusing to create run")
+            native_identity = runtime_identity(config)
+            if native_identity is not None:
+                config['native_feature_runtime_identity'] = native_identity
             for name in ("working", "committed", "abandoned", "logs", "reports",
                          "metric_history", "milestones", "best_versions", "evaluations"):
                 (run_dir / name).mkdir(exist_ok=True)
             atomic_json(config_path, config)
             meta = metadata(torch, gymnasium, stable_baselines3, sb3_contrib)
             meta["training_source_sha256"] = training_source_identity()
+            meta['native_feature_runtime_identity'] = native_identity
+            meta['candidate_feature_backend'] = config.get('candidate_feature_backend', 'official')
             try:
                 driver = subprocess.run(["nvidia-smi", "--query-gpu=driver_version",
                                          "--format=csv,noheader,nounits"],
@@ -788,6 +816,9 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                 env_class = TransactionBitboardSearchCandidateEnv
             elif search_backend == 'bitboard_compact':
                 env_class = TransactionCompactSearchCandidateEnv
+            if config.get('candidate_feature_backend') == 'bitboard_native':
+                env_class = TransactionNativeSearchCandidateEnv
+                env_kwargs['native_feature_runtime'] = config['native_feature_runtime']
         env = make_vector_env(config["ppo"]["n_envs"], config["run_seed"],
                               config["max_pieces"],
                               env_class=env_class,

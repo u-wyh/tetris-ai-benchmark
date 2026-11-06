@@ -34,6 +34,10 @@
     "beta": 0.3
   },
   "initial_optimizer": "restore_state",
-  "candidate_feature_backend": "bitboard",
-  "candidate_search_backend": "bitboard_compact"
+  "candidate_feature_backend": "bitboard_native",
+  "candidate_search_backend": "bitboard_compact",
+  "native_feature_runtime": {
+    "manifest": "/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_native_features_20261106/artifact/manifest.json",
+    "sha256": "fc2b36a881a6275fe376c35a8588e61d2b7db532ff9868c5755b08dbc26a21d2"
+  }
 }

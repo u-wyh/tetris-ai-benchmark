@@ -1,6 +1,8 @@
 """Verify semantic state and measured timing of paired GPU feature backends."""
 
 import argparse
+import hashlib
+import shutil
 import json
 import math
 from pathlib import Path
@@ -33,6 +35,7 @@ def main():
     from training.kl_maskable_ppo import KLMaskablePPO
     from training.train_vector_transaction import verify_task,verify_training_source_identity
     from training.train_ppo import atomic_json,now
+    from training.native_feature_runtime import verify_runtime_identity
 
     torch.set_num_threads(1)
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--run-dir',type=Path,required=True)
@@ -51,7 +54,10 @@ def main():
             assert all(config.get(key,'formal' if key=='candidate_search_backend' else 'official')==value
                        for key,value in backends[backend].items())
             assert config['run_seed']==seed and state['committed_steps']==8192 and state['pid'] is None
-            verify_training_source_identity(json.loads((training/'metadata.json').read_text()))
+            metadata=json.loads((training/'metadata.json').read_text())
+            verify_training_source_identity(metadata)
+            if design.get('verify_native_runtime_resume_rejection'):
+                assert verify_runtime_identity(config,metadata)==design['native_feature_runtime_identity']
             tasks=[]
             for task in (1,2):
                 checkpoint=training/'committed'/f'task_{task:06d}';verify_task(checkpoint,task,config)
@@ -82,24 +88,64 @@ def main():
     speedup=statistics.geometric_mean(p['speedup'] for p in pairs)
     eligible=all(p['quota250_throughout'] and p['speedup']>1 for p in pairs) and speedup>=design['minimum_speedup']
     resume_rejection=None
-    if design.get('verify_search_resume_rejection'):
+    mismatch_field = None
+    if design.get('verify_search_resume_rejection') or design.get('verify_feature_resume_rejection'):
+        kind = 'feature' if design.get('verify_feature_resume_rejection') else 'search'
+        mismatch_field = f'candidate_{kind}_backend'
         case=folder/'gpu_pairs/r0_official';training=case/'training'
-        tracked=('config.json','metadata.json','transaction_state.json')
-        before={name:(training/name).read_bytes() for name in tracked}
+        def tree_hashes(directory):
+            return {str(p.relative_to(directory)):hashlib.sha256(p.read_bytes()).hexdigest()
+                    for p in directory.rglob('*') if p.is_file()}
+        before=tree_hashes(training)
         preset=json.loads((case/'preset.json').read_text())
-        preset['candidate_search_backend']=backends['bitboard'].get('candidate_search_backend','bitboard')
+        original_backend = preset.get(mismatch_field, 'formal' if kind == 'search' else 'official')
+        preset[mismatch_field] = backends['bitboard'][mismatch_field]
+        assert preset[mismatch_field] != original_backend, 'Resume rejection must change the selected backend'
         wrong=folder/'mismatched_resume_preset.json';atomic_json(wrong,preset)
         attempt=subprocess.run([sys.executable,'-m','training.train_vector_transaction',
             '--run-dir',str(training),'--config-file',str(wrong),'--resume'],
             cwd=ROOT,capture_output=True,text=True,timeout=60)
-        assert attempt.returncode!=0 and 'Resume Candidate search backend differs' in attempt.stderr
-        assert all((training/name).read_bytes()==payload for name,payload in before.items())
-        resume_rejection=dict(rejected=True,committed_state_config_metadata_unchanged=True)
+        assert attempt.returncode!=0 and f'Resume Candidate {kind} backend differs' in attempt.stderr
+        assert tree_hashes(training)==before
+        resume_rejection=dict(rejected=True,field=mismatch_field,committed_state_config_metadata_unchanged=True,entire_run_file_hashes_unchanged=True)
         atomic_json(folder/'resume_rejection.json',resume_rejection)
+    native_rejection=None
+    if design.get('verify_native_runtime_resume_rejection'):
+        case=folder/'gpu_pairs/r0_bitboard';training=case/'training'
+        before=tree_hashes(training)
+        preset=json.loads((case/'preset.json').read_text())
+        preset['native_feature_runtime']['sha256']='0'*64
+        wrong=folder/'wrong_native_runtime_preset.json';atomic_json(wrong,preset)
+        attempt=subprocess.run([sys.executable,'-m','training.train_vector_transaction',
+            '--run-dir',str(training),'--config-file',str(wrong),'--resume'],
+            cwd=ROOT,capture_output=True,text=True,timeout=60)
+        assert attempt.returncode!=0 and 'Resume native feature runtime differs' in attempt.stderr
+        assert tree_hashes(training)==before
+        # Corrupt a copied artifact and cloned checkpoint, preserving all real
+        # benchmark files and the frozen compiled binary. No native code runs.
+        probe=folder/'corrupt_runtime_probe';probe.mkdir()
+        artifact=probe/'artifact';artifact.mkdir()
+        identity=design['native_feature_runtime_identity']['artifact'].copy()
+        binary=artifact/'candidate_features.so';binary.write_bytes(b'corrupted')
+        identity['binary']=str(binary)
+        manifest=artifact/'manifest.json';atomic_json(manifest,identity)
+        clone=probe/'training';shutil.copytree(training,clone)
+        config=json.loads((clone/'config.json').read_text())
+        config['native_feature_runtime']=dict(manifest=str(manifest),sha256=hashlib.sha256(manifest.read_bytes()).hexdigest())
+        atomic_json(clone/'config.json',config)
+        clone_before=tree_hashes(clone)
+        attempt=subprocess.run([sys.executable,'-m','training.train_vector_transaction',
+            '--run-dir',str(clone),'--resume'],cwd=ROOT,capture_output=True,text=True,timeout=60)
+        assert attempt.returncode!=0 and 'Native feature runtime identity mismatch' in attempt.stderr
+        assert tree_hashes(clone)==clone_before and tree_hashes(training)==before
+        native_rejection=dict(requested_runtime_change_rejected=True,corrupted_binary_on_cloned_checkpoint_rejected=True,
+            entire_real_and_probe_run_file_hashes_unchanged=True,probe_does_not_modify_frozen_artifact=True)
+        atomic_json(folder/'native_runtime_resume_rejection.json',native_rejection)
     result=dict(at=now(),status='passed',pairs=pairs,geometric_mean_training_speedup=speedup,
         eligible_for_new_experiments=eligible,minimum_speedup=design['minimum_speedup'],device='cuda',n_envs=8,
-        comparison_backends=backends,
-        search_resume_rejection=resume_rejection,
+        comparison_backends=backends,native_runtime_resume_rejection=native_rejection,
+        search_resume_rejection=resume_rejection if mismatch_field == 'candidate_search_backend' else None,
+        feature_resume_rejection=resume_rejection if mismatch_field == 'candidate_feature_backend' else None,
         interpretation='Two paired8192-step CUDA8 runs per backend; local throughput evidence, not a universal speedup or policy improvement',
         metrics_timing_fields_excluded=sorted(timing_excluded),model_promotion='none',final_test_used=False)
     atomic_json(folder/'gpu_summary.json',result);print(json.dumps(result,indent=2))

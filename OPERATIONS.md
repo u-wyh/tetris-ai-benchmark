@@ -1489,3 +1489,21 @@
 - 2026-11-06T15:20:33+08:00：C整数原型129项测试过，静态27状态30对中位6.935352764/min6.336642214通过预声明1.8，feature/mask精确；build/unit/micro冻结输入逐项未改，推理20同main/归档。只获显式训练backend集成资格，尚无GPU吞吐/检查点编译身份集成，GPU资格false，不合入或启动训练。证据runs/autonomous_native_features_20261106/micro/qualification.json及resource_audit.json。
 
 - 2026-11-06T15:21:54+08:00：隔离C原型d229934结果已报告/接手：129测试过、静态6.935353/min6.336642通过，仅获训练backend集成资格。main27/推理20保持，全部有限任务终态；编译/测试/静态保护100%/2GiB，测试CPU62.5℃/GPU37℃、静态43.125℃/39℃。下一先固定正式训练config/checkpoint/worker编译身份和恢复拒绝，再新GPU8/250%对照；尚未集成/未测GPU/未采用。小时执行证据追加该实质结果。证据reports/experiments/native_features_prototype_20261106.md。
+
+- 2026-11-06T15:26:38+08:00：隔离接入显式bitboard_native/compact、每worker固定manifest加载，来源31（加入C/wrapper/runtime/extend），config/run与task metadata固定完整编译身份。恢复和扩展在锁/目录写入前校验，普通旧后端无artifact不加载；未改冻结C/wrapper或原静态证据。开始定向真实环境轨迹、整run拒绝字节不变、来源/推理闭包保护检查，120秒/CPU100%/2GiB原温控，尚无GPU对照。证据runs/autonomous_native_features_20261106/integration/design.json。
+
+- 2026-11-06T15:27:59+08:00：首次integration的49断言通过但整进程SIGBUS退出（guard watchdog exit_code=-7、父command_failed），不能记整体通过；损坏测试原地截断已dlopen库导致退出故障。只修正测试夹具为原子替换inode以验真身份拒绝，保留原失败证据/未改冻结C或wrapper。新integration_atomic_artifact重新冻结定向49测试，原120秒/100%/2GiB保护，无训练。证据runs/autonomous_native_features_20261106/integration/guard/watchdog_result.json。
+
+- 2026-11-06T15:30:01+08:00：修正后integration_atomic_artifact49项检查整体passed/退出0，冻结42未改；原SIGBUS失败保留。C/wrapper/二进制/静态基准源与原6.935倍测量逐项同，只新增训练身份集成，准确来源31。预声明seed2900000/2900100两组AB/BA、各臂8192/4096跨进程、完整状态精确/错feature和编译身份恢复拒绝整run不变/几何≥1.05且各对更快无降载；58输入冻结，GPU8/CPU250%/6GiB/原温控，命令300秒/总1800秒。仅隔离吞吐验收，无质量训练/main采用。证据runs/autonomous_native_features_20261106/gpu_design.json。
+
+- 2026-11-06T15:31:11+08:00：原生goal续轮01a1afbc-8531-7550-8821-a97fb3998aed实际首工具2026-11-06T15:22:19+08:00，不是新小时投递消费。CUDA8对照controller真实PID376471在运行；配置条件完整上下文扩展/故障恢复验收，等待该服务终态+GPU资格true，false则自动跳过，240秒/250%/6GiB原保护，不提前计算。证据runs/autonomous_native_extension_20261106/design.json与native_goal_native_integration_execution_20261106.json。
+
+- 2026-11-06T15:33:33+08:00：原生C/来源31真实GPU8两组AB/BA通过，速度1.054335808/1.073699307，几何1.063973508≥1.05；完整policy/Adam/PPO/RNG/8worker/非计时精确，错feature与运行时/克隆坏binary恢复拒绝整run文件SHA不变，58输入未改，全250%。GPU对照15:32:10 passed/controller15:32:13终态。条件扩展恢复验收15:32:16实际启动，controller PID376978仍活跃；未通过前不采用。资源CPU72.375℃/GPU53.0℃/内存3586.0MiB，原保护保持。证据runs/autonomous_native_features_20261106/gpu_summary.json与gpu_resource_audit.json。
+
+- 2026-11-06T15:35:31+08:00：原生C完整上下文合成完成/扩展/故障恢复1passed（77.32秒）、guard15:33:36 completed；60冻结输入未改，全250%，CPU70.625℃/GPU51.0℃/内存3884.3MiB。两门均过后从隔离66f3266合入main，准确31训练文件SHA全同testedchild，推理20与main/隔离/旧27归档全同。guarded模板显式native+固定manifest，原2M目标只是旧模板未执行；原30M/数值/资源保护保持，旧断点用43cc26f，不重标来源。无长训练或质量模型推广。证据runs/autonomous_native_features_20261106/adoption_audit.json。
+
+- 2026-11-06T15:36:02+08:00：资源保护：启动受保护任务 tetris-guard-378388-1793950562337128861，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_native_features_20261106/adoption_guard。
+
+- 2026-11-06T15:36:04+08:00：资源保护：tetris-guard-378388-1793950562337128861 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_native_features_20261106/adoption_guard。
+
+- 2026-11-06T15:39:06+08:00：main采用后保护加载15:36:04 completed，31来源及固定编译身份同testedchild，实际reset矩阵/mask精确，未重复GPU/恢复试验。已保存训练6.397%吞吐提升及完整上下文恢复报告、原失败SIGBUS夹具范围；不称质量提升/不启动2M。下一复用独立16384保存观测做同状态动作排序/greedy分歧离线诊断，尚未开始，不重复采样或旧网格。证据reports/experiments/native_features_training_20261106.md。
