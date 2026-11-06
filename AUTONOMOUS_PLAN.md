@@ -6,6 +6,18 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T14:41:09+08:00 最新接手点：纯IPC潜力不足，下一隔离增量候选特征
+
+runs/autonomous_observation_ipc_20261106于14:37:51 passed、eligible_for_isolated_transport_prototype=false，父guard14:37:52 completed/MainPID0success。8进程固定保存观测（每worker16个均匀时间点）、8对AB/BA各512vector往返，full/cached时间中位.146333/.074413秒、配对省.072565<预声明.4秒；8对均省但绝对潜力不足。cached仅父缓存索引乐观对照，**非共享内存**，不构建transport/不重跑该有限基准，不能当端到端吞吐或旧等待分摊。1项真实多进程协议/堆叠/清理测试过，58输入未改；0环境/策略/优化器更新。报告observation_ipc_20261106.md。
+
+CPU58.25℃/GPU37℃/内存428.9MiB，全250%无降载，原温控/6GiB/额度暂停规则保持；main27/推理20、原30M/row masks/pipe模板保持。原生goal轮01a1af8f-7105-7ff3-8c5a-c291619620da首工具14:33:06，见native_goal_ipc_execution_20261106.json，非新的小时消息消费。
+
+下一先将当前**准确main27训练代码**归档本机worktree并与当前冻结metadata逐项SHA核对，然后在新隔离lightbook worktree研究显式`bitboard_delta`特征，main及旧fused worktree不改。现有特征每candidate扫描20行/统计10列；新算法预计算底板holes/aggregate/max/bumpiness/wells/top_four，无清行时仅更新触及列及相邻高度项，按column mask预计算受影响索引，避免每候选反复建set。先检查已有实现，未有则新增training-only模块、显式配置/训练来源身份，不改推理20。
+
+需严格保留：已有满行也按旧语义清除、完全不可见放置不清行、负y/顶出、连续/多行清除、重复action、uint8范围溢出、合法action排序/矩阵非法行全0。清行/特殊边界可完整重算；新速度不能以漏边界换取。固定边界与真实轨迹/快照差分→新静态27状态30对AB/BA（只特征、预先固定落点），相对当前bitboard特征中位≥1.8且每对更快才进入真实GPU，不根据结果重复计时。旧fused几何1.049118<1.05仍不采用，新算法必须有实质变化/新SHA。
+
+若静态合格，再预声明新seed2900000/2900100、AB/BA每臂8192/4096跨进程，baseline/candidate都使用同一新训练来源清单（实际计数由代码派生）、compact搜索/pipe/GPU8/CPU250%/6GiB/原温控，所有policy/Adam/PPO/RNG/8worker/非计时精确，错误feature恢复拒绝且提交字节不变；每对更快且几何≥1.05且未降载才合格。仅合格才条件接力完整上下文合成完成/扩展/故障恢复；两者通过才考虑采用。不得启动质量训练/扩2M或重标旧断点。GPU/主机不可用保留进度，无CPU训练/其他主机fallback。先读真实PID/summary，不重复启动既有任务。
+
 ### 2026-11-06T14:32:45+08:00 最新接手点：critic副本保留能力失败，停止该路线
 
 runs/autonomous_critic_fit_20261106于14:27:15诊断passed、eligible_for_ppo_path_study=false，父guard14:27:17 completed/MainPID0success。固定旧critic Adam/lr3e-4/.5MSE/.5clip/256×5epoch，副本critic160次更新；原policy/Adam/PPO计数未变、副本actor及其Adam逐项未变，0env step/0采样。不要泛称所有优化器0更新；5项保护测试通过、72输入未改。报告critic_fit_feasibility_20261106.md。

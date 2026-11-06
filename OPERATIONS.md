@@ -1435,3 +1435,19 @@
 - 2026-11-06T14:27:17+08:00：资源保护：副本critic固定160次拟合完成，原模型/actor及其Adam不变，最终独立worker可行性门已记录，不代表质量推广。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_fit_20261106/summary.json。
 
 - 2026-11-06T14:32:45+08:00：critic副本固定160更新14:27:15诊断passed但可行性失败、父guard14:27:17 completed。验证overall/终止窗口RMSE比.922104/.908561通过，其他8128条1.136381>1.05失败，停止预拟合路线/不推广诊断权重/不启动相关PPO/不追加调参。源模型/Adam/PPO及副本actor/其Adam不变、0采样，72输入未改，5项保护测试过。CPU57℃/GPU38℃/内存537.8MiB，全250%无降载；下一先查既有IPC/增量特征工作，必要时复用观测量纯通信而非新训练。证据reports/experiments/critic_fit_feasibility_20261106.md。
+
+- 2026-11-06T14:36:36+08:00：原生goal轮实际首工具14:33:06执行，后台健康/无重任务；未找到独立纯IPC测量，新增复用保存观测的8进程wire基准（无环境/策略/训练），先测试真实forkserver full/cached协议内容/dtype/堆叠及清理。cached是父进程已缓存数组的乐观对照，非共享内存实现或完整吞吐。证据runs/autonomous_development_20261105/native_goal_ipc_execution_20261106.json。
+
+- 2026-11-06T14:36:38+08:00：资源保护：启动受保护任务 tetris-guard-366324-1793946998194919491，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_observation_ipc_20261106/unit_guard。
+
+- 2026-11-06T14:36:40+08:00：资源保护：tetris-guard-366324-1793946998194919491 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_observation_ipc_20261106/unit_guard。
+
+- 2026-11-06T14:37:45+08:00：真实forkserver full/cached内容/元数据/dtype/SB3堆叠及子进程清理测试通过。预声明8进程重放每worker16个固定保存观测、8组AB/BA各512vector step，纯pipe/序列化/堆叠，无环境/模型；cached仅乐观父缓存对照。进入隔离transport实现的工程潜力门：中位省≥.4秒/512往返且8对均省，非训练吞吐门。冻结58输入、180秒命令/600秒队列、CPU250%/6GiB/原温控与GPU遥测，不启动训练或重采样。证据runs/autonomous_observation_ipc_20261106/design.json。
+
+- 2026-11-06T14:37:48+08:00：资源保护：启动受保护任务 tetris-guard-366544-1793947068193598929，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_observation_ipc_20261106/guard。
+
+- 2026-11-06T14:37:52+08:00：资源保护：tetris-guard-366544-1793947068193598929 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_observation_ipc_20261106/guard。
+
+- 2026-11-06T14:37:52+08:00：资源保护：8进程保存观测纯通信测量完成，内容/堆叠一致，无游戏推进或模型训练；工程潜力门已记录。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_observation_ipc_20261106/summary.json。
+
+- 2026-11-06T14:41:09+08:00：保存观测纯IPC14:37:51 passed/父guard14:37:52 completed，但工程潜力门未过：8对AB/BA512往返，配对中位省.072565<.4秒；full/cached中位.146333/.074413，非共享内存或端到端吞吐。暂不构建transport/不重复计时；1项真实进程协议/堆叠/清理过、58输入未改，CPU58.25℃/GPU37℃/内存428.9MiB，全250%。下一归档main27并隔离研究有实质变化的增量特征，先差分与预声明新静态门，原pipe/main27/推理20及旧fused负结果保持。证据reports/experiments/observation_ipc_20261106.md。
