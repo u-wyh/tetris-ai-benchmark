@@ -6,6 +6,20 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T16:19:17+08:00 最新接手：15上下文完整恢复/8环境重放已完成，下一实际执行有限分支
+
+新增scripts/restore_rank_contexts.py及4项定向测试，准确31训练来源及固定native产物保持；只读hash核验原worker快照，不重标旧27来源训练metadata。全部15个delta_cleared=-4上下文已保存至runs/autonomous_rank_contexts_20261106/contexts/<key>/state.pkl+manifest.json；contexts_summary.json列target（chunk/worker/global/local step/reference/candidate action）及identity。载入可复用restore_rank_contexts.load_context(directory, expected_identity)，必须先冻结manifest/state并核对identity、SHA；pickle仅自己的已验证本机文件。
+
+四段原保存actions真实8环境重放完成：每步obs_state/obs_candidate/mask/raw reward/done/truncated/seed/pieces/清行孔洞高度精确，每段末**完整worker/Core/bag/gameplay/numpy/action RNG/episode状态**同原快照。进程385456算1/2、385535复用其receipt/context并算3/4，前两段文件SHA未改。实际环境步8192+8192=16384，0policy forward/0optimizer、未采样新动作/未推进训练模型。16:15:29 contexts/restart passed，guard及父controller16:15:30 completed；69冻结输入未改，全250%/6GiB/28.855秒，CPU69℃/GPU48℃（仅遥测）/2743.89MiB，原温控保持。单测4passed含真实forkserver/3次reset/完整RNG、100%/2GiB/CPU55.25℃。报告rank_context_replay_20261106.md。全部有限任务终态，**不重跑prefix/排序/几何**。
+
+下一按上一接手点既定方案执行有限分支：全部15上下文×2臂，首动作强制保存reference/candidate（真实第一步清4/0），之后都用冻结原30M eb859b… CUDA greedy，固定总horizon256含首步、最多7680 active环境步；不得根据结果延长或挑context。8环境一次装4对，两臂同完整state克隆/原bag及RNG；hold导致后续queue差异属于动作效果。active/dead/尾批空槽必须停住，不能用SubprocVecEnv.step自动reset扩大采样；诊断专用env_method branch_activate/branch_step_active可管理，主训练核心31勿改。
+
+先新增/测试诊断专用helper与脚本：无state激活标inactive且不得观察未reset env；inactive step不推进/不重开，死亡/TimeLimit/horizon区分；首步固定保存动作，后续只batch active观测，padding不参与forward和统计；每pair状态前hash/完整状态相同、未来RNG来自原克隆；累计reward/lines/pieces/死亡/截断/终端board保存，有限horizon存删失标记。主模型加载后policy/完整Adam/PPO计数及CPU/CUDA sampling RNG不变，greedy不采样。结果逐pair原子提交、设计/模型/context/来源/batch协议身份不同拒绝；真实部分提交跨进程续办复用已完成pair，不能重复完整prefix或改source metadata。
+
+原模型精确path/SHA见autonomous_action_ranks_20261106/design.json models.reference，native_runtime见当前guarded模板；source31/inference20同采用验证，保持CUDA可用check/8环境/250%/6GiB/原温控/有限命令及wall预算。只得出“首动作在原策略续走下的局部影响”，15来自选择的失去四行状态且时序相关，不可归因整个8k策略/推广或启动PPO/奖励/旧网格/2M。先预声明并定向测试后实际执行，不能用静态计划替代。
+
+本次小时16:03:05 submission01a1afe1-fb01-7c23-9608-1a088c828e84由新轮01a1afe4-436b-72e3-a1c6-b941ec5825b5实际首工具16:05:47消费，queue空，序列归因非clientId相等证明；hourly_prefix_replay_execution_20261106.json已记结果。后台13827→1、驻留/每小时/防休眠/goal active/无桌面正常，不重做暂停验收或声称OS重启已测。开发/副本/续办留lightbook，GPU/主机不可用保存无CPU训练/其他机器fallback，额度不足保留等下一小时，暂停取消即停。
+
 ### 2026-11-06T16:04:40+08:00 最新接手：431动作几何/守恒核查完成，下一恢复15个失去四行的上下文
 
 scripts/analyze_action_rank_geometry.py及91测试，后续描述静态分析15:59:50 passed/guard15:59:52 completed/父controller15:59:53。421处visible cells不同，10处同visible/full cells但hold不同；同visible+piece+hold为0，不能把431当编号旋转别名。联合227处hold/piece/占格均换，2处同piece但换hold/占格，192同hold/piece但换占格，10同piece/占格换hold。

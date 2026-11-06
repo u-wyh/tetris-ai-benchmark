@@ -1547,3 +1547,21 @@
 - 2026-11-06T16:04:40+08:00：431动作几何描述passed/guard15:59:53 completed、41输入未改；421占格不同/10同占格但换hold，无同占格+hold+piece别名；clear少23/多6/同402，净−63，其中15处4→0。底板占格独立守恒逐行精确，aggregate净+634=holes+4−10×(−63)，不能叠加成独立质量证据。91测试过/0forward/0env/0optimizer，原100%/2GiB保护，主31/推理20不变。确认初始/段末全worker快照存在，下一先hash核验+重放保存动作恢复15上下文，再固定有限分支；未开始分支或训练。证据reports/experiments/action_rank_geometry_20261106.md。
 
 - 2026-11-06T16:05:24+08:00：时间精度更正：前条“guard15:59:53”对应父controller summary完成；保护器result.json实际15:59:52 completed。结果/门槛和其他证据不变，报告及当前接手点已更正。证据runs/autonomous_rank_geometry_20261106/guard/result.json与summary.json。
+
+- 2026-11-06T16:13:13+08:00：16:03:05小时消息新轮01a1afe4-436b-72e3-a1c6-b941ec5825b5实际首工具16:05:47，queue已空/后台驻留防休眠正常，不等同accepted或笼统额度恢复；见hourly_prefix_replay_execution_20261106.json。新增保存动作重放恢复完整15上下文脚本，先真实forkserver/reset/RNG/校验和与不可覆盖cache定向测试，100%/2GiB/120秒原保护；单测会推进小型模拟环境，非0env，无策略新采样或训练。正式8环境重放尚未开始。证据runs/autonomous_rank_contexts_20261106/unit/design.json。
+
+- 2026-11-06T16:13:15+08:00：资源保护：启动受保护任务 tetris-guard-385092-1793952795416226190，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rank_contexts_20261106/unit/guard。
+
+- 2026-11-06T16:13:19+08:00：资源保护：tetris-guard-385092-1793952795416226190 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rank_contexts_20261106/unit/guard。
+
+- 2026-11-06T16:13:20+08:00：资源保护：快照/上下文身份、真实forkserver动作重放含自动reset与完整worker RNG恢复定向测试完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rank_contexts_20261106/unit/summary.json。
+
+- 2026-11-06T16:14:59+08:00：快照/真实forkserver自动reset与完整RNG/缓存4项测试通过。预声明从hash核验initial/每段末worker快照，8环境固定native/准确31来源，重放已保存4×4096=16384环境步，逐步obs/mask/reward/终止/seed/孔洞/清行精确并核对各段末完整Core/RNG；恢复全部15个−4清行上下文。两实际进程先段1/2，再复用其receipt/context并算3/4，0策略forward/新动作采样/优化器，**重放环境步非0**。冻结69输入、300秒/600秒队列/250%/6GiB/原温控，CUDA不可用执行前拒绝；未开始分支或训练。证据runs/autonomous_rank_contexts_20261106/design.json。
+
+- 2026-11-06T16:15:01+08:00：资源保护：启动受保护任务 tetris-guard-385438-1793952901511520360，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rank_contexts_20261106/guard。
+
+- 2026-11-06T16:15:30+08:00：资源保护：tetris-guard-385438-1793952901511520360 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rank_contexts_20261106/guard。
+
+- 2026-11-06T16:15:30+08:00：资源保护：8环境原保存动作完整重放16384步、15上下文恢复及真实跨进程前两段复用完成，无新动作采样/训练。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rank_contexts_20261106/summary.json。
+
+- 2026-11-06T16:19:17+08:00：8环境保存动作重放passed，15完整上下文均恢复，四段每步obs/mask/reward/终止/seed/信息和末端完整worker/Core/RNG逐项精确；进程385456→385535实际复用1/2文件再算3/4，SHA未改。实际16384模拟环境步、0policy forward/0optimizer，未推进训练；contexts/restart16:15:29 passed，父guard/controller16:15:30 completed，69输入未改，CPU69℃/GPU48℃/2743.89MiB/all250%，原保护保持。4项定向测试过。小时投递实际执行与结果已记录，下一固定15×2×256有限分支，尚未开始分支或长训练。证据reports/experiments/rank_context_replay_20261106.md。
