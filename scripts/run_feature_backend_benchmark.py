@@ -11,6 +11,7 @@ import sys
 import time
 
 from hourly_continue import inspect
+from keep_codex_thread import permitted
 from resource_guard import ROOT,now,operation,write_json
 
 
@@ -23,6 +24,10 @@ def run(folder):
     def stopped(*args):raise KeyboardInterrupt('GPU feature benchmark interrupted')
     for sig in (signal.SIGTERM,signal.SIGINT,signal.SIGHUP):signal.signal(sig,stopped)
     def check():
+        if design.get('control'):
+            control_path=Path(design['control'])
+            if not permitted(control_path, design['thread_id']):
+                raise RuntimeError('Unattended control stopped or host/workspace changed')
         if hashlib.sha256((folder/'gpu_design.json').read_bytes()).hexdigest()!=design_hash:
             raise RuntimeError('Benchmark design changed')
         if inspect(Path.home()/'.codex',design['thread_id'])[0] not in ('active','usageLimited','usage_limited') or (folder/'STOP').exists():

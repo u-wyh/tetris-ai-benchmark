@@ -26,7 +26,7 @@ from training.env import TetrisEnv
 from training.env.candidate_env import CandidateTetrisEnv, OBSERVATION_VERSION
 from training.env.fast_candidate_env import FastCandidateTetrisEnv
 from training.env.bitboard_candidate_env import BitboardCandidateTetrisEnv, validate_feature_backend
-from training.env.bitboard_search_env import BitboardSearchCandidateTetrisEnv, validate_search_backend
+from training.env.bitboard_search_env import BitboardSearchCandidateTetrisEnv, CompactSearchCandidateTetrisEnv, validate_search_backend
 from training.candidate_features import FEATURE_VERSION
 from training.candidate_policy import CandidateScoringPolicy
 from training.env.tetris_env import (BALANCED_REWARD_VERSION, HEIGHT_REWARD_VERSION, HOLE_HEIGHT_REWARD_VERSION,
@@ -53,6 +53,7 @@ TRAINING_SOURCE_FILES = (
     "training/env/fast_candidate_env.py",
     "training/env/bitboard_candidate_env.py",
     "training/env/bitboard_search_env.py",
+    "training/compact_legal.py",
     "training/evaluation/fast_candidate_features.py",
     "training/evaluation/fast_legal.py",
     "training/env/failure_curriculum_env.py",
@@ -136,6 +137,10 @@ class TransactionBitboardCandidateEnv(BitboardCandidateTetrisEnv, TransactionTet
 
 class TransactionBitboardSearchCandidateEnv(BitboardSearchCandidateTetrisEnv, TransactionTetrisEnv):
     """Explicit bitboard search with the same transaction metadata hooks."""
+
+
+class TransactionCompactSearchCandidateEnv(CompactSearchCandidateTetrisEnv, TransactionTetrisEnv):
+    """Compact visited search with unchanged transaction hooks."""
 
 
 def vector_config(task_steps=4096, target_steps=32768, device="cuda", n_envs=8,
@@ -778,8 +783,11 @@ def run(run_dir, resume=False, target_steps=32768, max_tasks=None,
                          else TransactionCandidateEnv) if config.get("candidate_policy") else TransactionTetrisEnv
             if config.get("candidate_feature_backend") == "bitboard":
                 env_class = TransactionBitboardCandidateEnv
-            if validate_search_backend(config) == 'bitboard':
+            search_backend = validate_search_backend(config)
+            if search_backend == 'bitboard':
                 env_class = TransactionBitboardSearchCandidateEnv
+            elif search_backend == 'bitboard_compact':
+                env_class = TransactionCompactSearchCandidateEnv
         env = make_vector_env(config["ppo"]["n_envs"], config["run_seed"],
                               config["max_pieces"],
                               env_class=env_class,

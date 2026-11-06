@@ -87,7 +87,7 @@ def main():
         tracked=('config.json','metadata.json','transaction_state.json')
         before={name:(training/name).read_bytes() for name in tracked}
         preset=json.loads((case/'preset.json').read_text())
-        preset['candidate_search_backend']='bitboard'
+        preset['candidate_search_backend']=backends['bitboard'].get('candidate_search_backend','bitboard')
         wrong=folder/'mismatched_resume_preset.json';atomic_json(wrong,preset)
         attempt=subprocess.run([sys.executable,'-m','training.train_vector_transaction',
             '--run-dir',str(training),'--config-file',str(wrong),'--resume'],

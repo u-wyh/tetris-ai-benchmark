@@ -6,7 +6,16 @@ import numpy as np
 import pytest
 from training.candidate_features import candidate_features
 from training.evaluation.fast_candidate_features import candidate_features as fast_candidate_features
-from training.evaluation.fast_legal import get_legal_placements as fast_legal_placements
+from training.evaluation.fast_legal import get_legal_placements as reference_placements
+from training.compact_legal import get_legal_placements as compact_placements
+
+
+def fast_legal_placements(public):
+    original = reference_placements(public)
+    compact = compact_placements(public)
+    assert compact == original
+    return compact
+
 from training.tetris_core import TetrisCore
 from training.tetris_core.pieces import CELLS, MATRICES, ROTATIONS, make_piece
 
@@ -112,3 +121,18 @@ def test_fast_evaluation_matches_reachable_core_states():
     assert actions >= 1000
     print(f"reachable states={verified}, legal actions={actions}")
 
+
+
+@pytest.mark.parametrize("kind", "IJLOSTZ")
+@pytest.mark.parametrize("rotation", range(4))
+def test_compact_visited_negative_y_boundaries(kind, rotation):
+    core = TetrisCore(42)
+    core.current = make_piece(kind)
+    core.current["rotation"] = ROTATIONS[rotation]
+    core.current["matrix"] = [list(row) for row in MATRICES[kind, rotation]]
+    core.hold_used = True
+    for y in (-20, -12, -10, -9, -8, -7, -6, -5, -3, -1, 0, 17, 19, 20):
+        for x in (-4, -3, -2, 0, 3, 7, 9, 10):
+            core.current.update(x=x, y=y)
+            public = core.get_public_observation()
+            assert compact_placements(public) == reference_placements(public)

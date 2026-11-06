@@ -27,6 +27,7 @@ def main():
     from training.tetris_core.pieces import make_piece
     from training.tetris_core.legal_placements import get_legal_placements as formal_placements
     from training.evaluation.fast_legal import get_legal_placements as bitboard_placements
+    from training.compact_legal import get_legal_placements as compact_placements
     from resource_guard import now,operation,write_json
 
     parser=argparse.ArgumentParser(description=__doc__)
@@ -34,7 +35,12 @@ def main():
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--repeats',type=int,default=30)
     parser.add_argument('--component',choices=['features','construction'],default='features')
+    parser.add_argument('--reference-search', choices=['formal','bitboard'], default='formal')
+    parser.add_argument('--candidate-search', choices=['bitboard','bitboard_compact'], default='bitboard')
     args=parser.parse_args()
+    searches={'formal':formal_placements,'bitboard':bitboard_placements,'bitboard_compact':compact_placements}
+    reference_search=searches[args.reference_search]
+    candidate_search=searches[args.candidate_search]
     if args.repeats<3:parser.error('Use at least three paired repeats')
     args.output.parent.mkdir(parents=True,exist_ok=True)
     lock=args.output.with_suffix('.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
@@ -63,7 +69,7 @@ def main():
     rows=[];prepared=[]
     for name,core in fixtures:
         public=core.get_public_observation();placements=core.get_legal_placements()
-        if args.component=='construction' and bitboard_placements(public)!=placements:
+        if args.component=='construction' and (reference_search(public)!=placements or candidate_search(public)!=placements):
             raise RuntimeError('Ordered placements or paths differ: '+name)
         slow=reference(public,placements);fast=accelerated(public,placements)
         if not all(np.array_equal(a,b) and a.dtype==b.dtype for a,b in zip(slow,fast)):
@@ -74,9 +80,9 @@ def main():
         prepared.append((public,placements))
     timings=[]
     def reference_construction(public, placements):
-        return accelerated(public,formal_placements(public))
+        return accelerated(public,reference_search(public))
     def bitboard_construction(public, placements):
-        return accelerated(public,bitboard_placements(public))
+        return accelerated(public,candidate_search(public))
     for repeat in range(args.repeats):
         pair={}
         order=([('reference',reference),('bitboard',accelerated)] if args.component=='features'
@@ -92,13 +98,13 @@ def main():
              'training/evaluation/fast_candidate_features.py']
     sources += ['training/tetris_core/'+name for name in
                 ['__init__.py','core.py','actions.py','pieces.py','rng.py','legal_placements.py']]
-    if args.component=='construction':sources.append('training/evaluation/fast_legal.py')
+    if args.component=='construction':sources += ['training/evaluation/fast_legal.py','training/compact_legal.py']
     speedup_key=('median_paired_feature_speedup' if args.component=='features'
                  else 'median_paired_construction_speedup')
     scope=('Feature construction with identical precomputed formal placements; excludes legal search, IPC, inference and optimizer'
            if args.component=='features' else
            'Precomputed public observation to legal search and bitboard features; excludes public-state conversion, IPC, inference and optimizer')
-    result=dict(at=now(),component=args.component,parity=('all_features_and_masks_exact' if args.component=='features'
+    result=dict(at=now(),component=args.component,reference_search_backend=args.reference_search,candidate_search_backend=args.candidate_search,parity=('all_features_and_masks_exact' if args.component=='features'
                 else 'all_ordered_placements_paths_features_and_masks_exact'),states=len(rows),repeats=args.repeats,
         numpy_version=np.__version__,python_version=platform.python_version(),
         scope=scope,

@@ -48,7 +48,8 @@ def assert_same(left, right):
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA continuation contract")
 @pytest.mark.parametrize("full_context,search_backend,momentum", [
     (False, 'formal', 'preserve'), (True, 'formal', 'preserve'),
-    (True, 'bitboard', 'preserve'), (True, 'bitboard', 'zero_first_moment')])
+    (True, 'bitboard', 'preserve'), (True, 'bitboard', 'zero_first_moment'),
+    (True, 'bitboard_compact', 'preserve')])
 def test_completed_candidate_extension_and_interrupted_resume(tmp_path, full_context, search_backend, momentum):
     source = tmp_path / "source"
     extended = tmp_path / "extended"
