@@ -1341,3 +1341,5 @@
 - 2026-11-06T10:40:33+08:00：在lightbook创建隔离worktree /home/wyh/projects/tetris-feature-fusion-validation，分支codex/fused-candidate-features/基点0447e37；主27与既有row masks验证副本保持。新特征只先差分/静态配对，后端/恢复身份及GPU验证另预声明，不自动采用。
 
 - 2026-11-06T10:46:32+08:00：主副本接手点更新：worker只读样本完成；隔离da4586b fused特征142项通过、静态中位1.679165042/最小1.606928375，51冻结输入GPU8新两seed AB/BA/恢复对照实际执行中，conditional extension只合格才启动。main27/推理20未改。协议继承计数说明误27已单独勘误，实际冻结/metadata28逐项确认，不动冻结协议或训练身份。
+
+- 2026-11-06T10:51:27+08:00：fused GPU8对照10:47:17完整状态passed但性能不合格：1.04936231/1.04887455、几何1.049118398<1.05，未四舍五入/重计时。51输入未改、错feature恢复拒绝/提交不变；CPU71.875℃/GPU53.0℃，全250%。10:47:20 conditional extension自动skipped、validation_startedfalse/无guard/子计算，未测完整上下文恢复。main27/推理20保持row masks，不合入fused/不扩2M；下一先查冻结模型stochastic诊断避免重复失败训练。证据reports/experiments/fused_features_20261106.md。

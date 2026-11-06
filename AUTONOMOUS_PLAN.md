@@ -6,6 +6,16 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T10:51:27+08:00 最新终态：fused+4.91%未达门槛，自动跳过依赖计算
+
+worker profile已完成，隔离fused实现da4586b/142项/静态+67.9%通过；真实GPU8 AB/BA两seed各8192于10:47:17一致性passed但eligiblefalse：1.04936231/1.04887455、几何1.049118398<1.05。全policy/Adam/PPO/RNG/8worker/非计时精确、错feature恢复拒绝/提交不变，51输入未变。无重跑/四舍五入凑门槛。
+
+条件接力10:47:20真实skipped_ineligible_upstream、validation_started=false、无guard/子计算；两个父服务MainPID0。完整上下文扩展恢复未测，别称通过/重启它。main保持27/推理20及已采用+9.44%的row masks+bitboard特征；不合入fused，不启动2M/质量推广。报告fused_features_20261106.md。协议继承说明计数27勘误为实际28已独立保存，不改冻结协议或训练身份。
+
+下一转向训练目标与greedy质量的对应：先搜索已有stochastic评测/诊断，检查原30M与已拒绝actor8K模型/现有greedy缓存，避免重复。若尚无等价数据，设计**只评测冻结模型**的有界stochastic配对：开发seed100000–100007、每seed独立动作RNG2400000+i、cap2000、原模型对actor8K，各8局，2worker CPU150%/6GiB/原温控/GPU遥测（这是评测，非CPU训练fallback），总≤900秒。复用已有greedy结果的存活下界，不将20k分数与2k分数比；冻结推理20/模型/运行库/脚本，逐seed可恢复。原/候选同评测协议、无训练/源模型更新/普通checkpoint/质量推广。若全cap或结论不清如实记录，不自动增cap或挑seed。先有证据再选学习假设，不复跑失败PPO/LR/KL/actor-moment配方。
+
+所有执行与工作副本在lightbook，GPU/主机不可用保留进度，无其他主机/无保护CPU训练。原GPU8/CPU250%训练限制、温控/内存/时间预算/额度与用户暂停规则保持。
+
 ### 2026-11-06T10:46:32+08:00 当前：worker剖析完成，fused特征GPU对照执行中
 
 worker CPU剖析10:37:10 completed/真实8worker各512step/1reset，历史rollout SHA同、原模型0更新、57输入未改。process_time cProfile开销大，CPU和110.7084秒非墙钟；搜索53.8496/特征50.4645为主要工作。报告worker_cpu_profile_20261106.md，勿复跑该只读样本。
