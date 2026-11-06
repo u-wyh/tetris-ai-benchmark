@@ -6,6 +6,20 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T15:03:23+08:00 最新接手点：batch特征静态未过门，剖析发现回退与小数组开销
+
+隔离/home/wyh/projects/tetris-batch-feature-validation，codex/batched-candidate-features/1524460，bitboard_batched/来源28，131项差分保护过；推理20与main/归档43cc26f逐项同，main准确27归档复用未重复创建。新静态27状态30对中位1.1109091353/min1.0433057156<预声明1.8，38输入未改、资格false。**不合入/不重复计时/不放宽，不启动GPU/真实错误feature恢复/完整上下文扩展验收，均未测**。main27/原bitboard+row masks/pipe/原30M保持。
+
+拒绝后仅同27状态20轮cProfile，14:59:38 passed/guard14:59:40 completed，41输入未改；batch候选540次cumulative1.08612CPU秒，参考函数回退360次/.35037秒，batch统计1080次/.28450秒。均有剖析开销/累计嵌套，非普通耗时或速度资格。**参考360次是总回退，含清行/空候选等，未分支单独计数；旧简记“清行回退360次”不够精确，以本条和报告为准**。报告batched_features_20261106.md。
+
+测试CPU60℃/GPU35℃/300.7MiB，静态41.5℃/37℃/15.4MiB，剖析56.25℃/37℃/280.2MiB；全100%/2GiB/原温控遥测，无环境推进/模型更新。所有有限计算已终态，不重启；旧delta/fused/critic失败路线保持停止。原生goal首工具14:51:58实际执行见native_goal_batched_features_execution_20261106.json，非新小时投递消费。
+
+下一先查是否有**完整向量化清行**既有工作；若无，从main另建lightbook隔离副本研究明确新bitboard_vectorized后端（不要改旧batch/delta/fused）：保留整数byte LUT，但将清行压缩与列重建也批量处理，避免正常合法清行回到Python参考函数；底板只需holes/max两项，直接整数算，不对单元素启动六项NumPy统计。异常输入仍可参考回退保留语义。新module/显式配置/来源身份，推理20不变，复用准确main27归档无需再造。
+
+清行批量算法须区分visiblefalse的已有满行（不能清），只对visible且cleared>0候选压缩：keep行按cumsum索引移至底部/顶部补0，再按20个行bit权重重建10列；始终整数uint32/有符号高度差，防溢出。先独立逐格参考检验多/非连续/已有满行/负y/不可见/重复cells、完整矩阵与异常、真实轨迹快照。再新固定27状态30对静态门（当前bitboard参考，中位≥1.8且每对>1），不依据结果反复调版计时。若通过，再新seed2900000/2900100 AB/BA8192/跨4096进程，同新来源/CUDA8/250%/6GiB/原温控、完整模型/Adam/PPO/RNG/8worker/非计时精确/错feature拒绝提交不变/几何≥1.05且每对更快无降载；仅GPU合格才串行完整上下文合成扩展/故障恢复。若失败保留结果止损，不能靠降低门槛采用。
+
+全部开发/续办留lightbook；GPU或主机不可用保留进度，不转CPU训练/其他主机。额度/暂停规则保持，先核对真实PID与summary避免重复。没有安装numba/编译扩展或改变账户付费。
+
 ### 2026-11-06T14:51:40+08:00 最新接手点：增量特征静态未过门，不启动GPU
 
 隔离/home/wyh/projects/tetris-delta-feature-validation，codex/delta-candidate-features/52afbfd，新增bitboard_delta/compact显式后端、来源28，123项差分/保护测试过（1024列mask逐格参考、各piece/hold/board、清行/已有满行/全不可见/负y/溢出/重复/200步轨迹快照）。main准确27已归档/home/wyh/projects/tetris-runtime-43cc26f，与当前冻结数据27SHA同；推理20在main/隔离/归档逐项同。

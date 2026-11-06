@@ -1459,3 +1459,15 @@
 - 2026-11-06T14:46:25+08:00：隔离delta123项差分/保护测试通过（1024列mask逐格参考、多/非连续清行、已有满行与全不可见、边界、200步轨迹快照）。冻结38输入/训练28，预声明新特征27状态30对AB/BA相对bitboard中位≥1.8且每对>1才进GPU；CPU100%/2GiB/原温控、90秒命令/300秒队列，无模型更新或main采用。证据runs/autonomous_delta_features_20261106/micro/design.json。
 
 - 2026-11-06T14:51:40+08:00：隔离delta52afbfd/来源28，123项差分保护过、推理20同main/准确27归档43cc26f；静态27状态30对中位1.690273/min1.598473未过1.8，38输入未改，资格false。不启动GPU/真实错feature恢复/扩展故障验收、不合入main/不放宽或重计时。静态CPU41.375℃/GPU37℃，测试CPU60.875℃；原保护保持。下一另隔离研究批量NumPy整数特征，复用main27归档，不修补本版重复计时。证据reports/experiments/delta_features_20261106.md。
+
+- 2026-11-06T14:53:55+08:00：复用43cc26f准确27归档，main/新隔离副本/归档27SHA逐项同，未再建相同归档。新lightbook worktree /home/wyh/projects/tetris-batch-feature-validation（codex/batched-candidate-features），无既有同类批量特征实现；研究批量NumPy整数列/行统计，旧delta/fused负结果保持。证据runs/autonomous_batched_features_20261106/runtime_archive.json。
+
+- 2026-11-06T14:55:20+08:00：隔离新增NumPy批量整数行/列特征，显式bitboard_batched/compact、来源28，清行与异常输入参考回退；Byte LUT避免float log2，无新依赖。先保护验证随机列/2的幂边界/完整矩阵/异常类型/轨迹快照；main27/推理20及旧delta保持，未开始计时或GPU。证据/home/wyh/projects/tetris-batch-feature-validation/tests/test_batched_candidate_features.py。
+
+- 2026-11-06T14:56:19+08:00：批量整数特征131项差分/保护测试过（随机20-bit列与2幂边界、完整矩阵/溢出与异常语义、清行/不可见/轨迹快照）；预声明新静态27状态30对相对bitboard中位≥1.8且每对更快才进GPU。冻结38输入、实际训练28来源，CPU100%/2GiB/原温控，90秒命令/300秒队列，无模型更新/主采用。证据runs/autonomous_batched_features_20261106/micro/design.json。
+
+- 2026-11-06T14:59:33+08:00：批量NumPy静态27状态30对中位1.110909/min1.043306<1.8，资格false，不启动GPU/真实恢复，不改门槛/重复计时；38输入未改。另预声明仅该已拒绝内核的27状态20轮cProfile定位开销，保留冻结来源/相同公开状态SHA，非速度资格/吞吐或采用，90秒命令/100%/2GiB原保护。证据runs/autonomous_batched_features_20261106/profile/design.json。
+
+- 2026-11-06T15:01:55+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-06T15:03:23+08:00：隔离batch1524460/来源28，131项差分保护过，静态1.110909/min1.043306未过1.8，资格false，不合入/不启动GPU恢复/不重计时。补充静态cProfile发现参考总回退360次/.35037累计CPU秒，统计1080次/.28450秒（含剖析开销，回退并未分支计数；前条“清行回退360次”应以总回退为准），剖析41/静态38输入未改，推理20同main/归档。测试CPU60℃、静态41.5℃/GPU37℃，原保护保持。下一另隔离研究完整向量化清行和直接底板统计，尚无收益结论。证据reports/experiments/batched_features_20261106.md。
