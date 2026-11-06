@@ -8,7 +8,7 @@
 
 ### 2026-11-06T16:04:40+08:00 最新接手：431动作几何/守恒核查完成，下一恢复15个失去四行的上下文
 
-scripts/analyze_action_rank_geometry.py及91测试，后续描述静态分析15:59:50 passed/guard15:59:53 completed。421处visible cells不同，10处同visible/full cells但hold不同；同visible+piece+hold为0，不能把431当编号旋转别名。联合227处hold/piece/占格均换，2处同piece但换hold/占格，192同hold/piece但换占格，10同piece/占格换hold。
+scripts/analyze_action_rank_geometry.py及91测试，后续描述静态分析15:59:50 passed/guard15:59:52 completed/父controller15:59:53。421处visible cells不同，10处同visible/full cells但hold不同；同visible+piece+hold为0，不能把431当编号旋转别名。联合227处hold/piece/占格均换，2处同piece但换hold/占格，192同hold/piece但换占格，10同piece/占格换hold。
 
 清行candidate−reference分布 -4:15、-3:2、-2:2、-1:4、0:402、+1:4、+3:1、+4:1；23更少/6更多，合计−63。15处原清4候选清0，尚未实际执行分支，不能称长期少63或致死。对应保存底板前200格独立占用数逐行精确验证aggregate=holes+baseblocks+visible−10cleared；净aggregate+634=holes+4−10×(−63)+visible0，两个指标非独立证据。encoded x/y是占格bbox左上角，必须CELLS减min后平移；不是matrix原点。报告action_rank_geometry_20261106.md。
 
