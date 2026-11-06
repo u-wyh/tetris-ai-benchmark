@@ -1691,3 +1691,31 @@
 - 2026-11-06T19:46:33+08:00：资源保护：两真实死亡最后分歧前完整上下文及8worker保存动作片段重放/跨进程复用验证完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_death_contexts_20261106/summary.json。
 
 - 2026-11-06T19:50:39+08:00：两真实死亡最后分歧前上下文全部恢复：seed100002 step17823前pieces17822（实际死亡17994、含当前172动作）、seed100005 step6921前pieces6920（死亡6942、22动作）。进程422039重放chunk28的1822步，422089复用其receipt/context仅重放70的1792步，共3614真实环境步/512轮/0policy forward/新采样/optimizer；每步摘要/特征/reward/终止/seed/info、两段末全部8worker/Core/bag/RNG/active观测mask和父采样RNG精确，首批SHA未改。contexts19:46:29/restart19:46:30 passed、guard19:46:32/controller19:46:33 completed，153输入未改/20.603秒/all250%/6GiB/采样CPU73.5℃/GPU45℃/2846.84MiB。静态选择3测试+恢复3测试通过，未干预/无因果或质量通过声明。小时投递真实消费执行receipt更新，19:48:05后台健康、proxy空、19:48:25 queue空。下一预声明这两自身状态四臂有限对照（不重跑旧15处/捕获/恢复或训练）。证据reports/experiments/own_death_contexts_20261106.md及hourly_own_death_context_execution_20261106.json。
+
+- 2026-11-06T19:55:33+08:00：原生目标续轮01a1b0b2-b11e-7da3-a810-10ddc3cd44ee首真实工具19:51:12；前轮0df2308已恢复两真实死亡上下文，本轮新增两case四臂混合续走helper/runner，不改捕获/恢复/旧15处代码与主31。先100%/2GiB/120秒原温控定向检查固定8槽/两策略active路由、首步强制、停槽不reset、源D action/pre-view/outcome逐步复现失败封闭、整组原子缓存不可覆盖；含少量单测模拟，无新模型训练或正式干预。证据runs/autonomous_own_death_factorial_20261106/unit/design.json及native_goal_own_factorial_execution_20261106.json。
+
+- 2026-11-06T19:55:35+08:00：资源保护：启动受保护任务 tetris-guard-423708-1793966135849613196，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_death_factorial_20261106/unit/guard。
+
+- 2026-11-06T19:55:37+08:00：资源保护：tetris-guard-423708-1793966135849613196 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_death_factorial_20261106/unit/guard。
+
+- 2026-11-06T19:55:38+08:00：资源保护：自身死亡四臂混合续走路由/停槽/源D精确复现失败封闭/整组缓存定向校验完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_death_factorial_20261106/unit/summary.json。
+
+- 2026-11-06T19:56:46+08:00：新四臂5项定向检查过。现预声明全部两个自身死亡上下文、每case A=shadow首步→原30M，B=candidate首步→原30M，C=shadow首步→8k，D=candidate首步→8k；固定8槽先100002后100005、每case A/B/C/D，horizon256含首步/最多2048新环境步，首步均清0。D逐步核对保存源action/pre-view/mask/features/reward/终止/总分pieces/几何，须复现172/22动作死亡，否则保存实际失败事件/步数且不作因果解释。两个冻结模型CUDA最高float32/TF32false/确定性，policy/完整Adam/计数/CPU+CUDA RNG不变；250%/6GiB/原温控/180秒命令420秒wall，169冻结输入，0optimizer，不延长协议/不推广8k。证据runs/autonomous_own_death_factorial_20261106/design.json。
+
+- 2026-11-06T19:56:48+08:00：资源保护：启动受保护任务 tetris-guard-423920-1793966208618713080，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_death_factorial_20261106/guard。
+
+- 2026-11-06T19:56:58+08:00：资源保护：tetris-guard-423920-1793966208618713080 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_death_factorial_20261106/guard。
+
+- 2026-11-06T19:56:59+08:00：资源保护：两自身死亡状态GPU8四臂有限对照与原D逐步死亡路径重现校验完成，无训练或整体质量推广。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_death_factorial_20261106/summary.json。
+
+- 2026-11-06T20:00:59+08:00：新四臂已成功完成944新环境步、两冻结模型各255 GPU批次/0optimizer，D源路径172/22逐步精确重现。seed100002 A/C均256 horizon删失，B/D172死亡；seed100005四臂均22死亡。B/D全trace逐项相同；100005 A/B仅前2动作不同，不把同分当同完整状态。现预声明静态比较8臂完整末state，并对100005只重放前三保存动作×4臂=12环境步（8env/4padding inactive），每步核对原trace并比较完整Core/RNG与views；0policy forward/optimizer、250%6GiB/120秒命令300秒wall原温控，不改四臂horizon/源/模型、不重跑944步。证据runs/autonomous_own_death_factorial_20261106/convergence/design.json。
+
+- 2026-11-06T20:01:01+08:00：资源保护：启动受保护任务 tetris-guard-424691-1793966461632476605，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_death_factorial_20261106/convergence/guard。
+
+- 2026-11-06T20:01:07+08:00：资源保护：tetris-guard-424691-1793966461632476605 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_death_factorial_20261106/convergence/guard。
+
+- 2026-11-06T20:01:08+08:00：资源保护：四臂完整末状态与seed100005前三保存动作状态收敛审计完成，无策略推理或训练。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_death_factorial_20261106/convergence/summary.json。
+
+- 2026-11-06T20:04:10+08:00：两自身死亡状态四臂完成，实际944新环境步/原与8k各255 GPU批次/0optimizer，进程423929；D逐步pre-view/mask/action/features/reward/终止/总分pieces/几何精确重现172/22死亡。100002 A/C均256 horizon删失、B/D172死亡且全trace/完整末态相同；持同续走模型换首动作改变该局部窗口内死亡，不能推广长期或隔离hold。100005四臂均22死亡，额外预声明12保存动作重放证明第2步后四臂完整worker/Core/bag/RNG和views全部相同、第3步仍同，末state也全同；其最后分歧是这组续走下的两步收敛，下一须看更早分歧，不能重复该状态。GPU guard19:56:58/controller19:56:59完成，169输入未改/10.289秒/all250%6GiB/采样CPU62.625℃/GPU41℃/3173.12MiB，模型policy/完整Adam/源计数和CPU+CUDA全局采样RNG不变。5定向测试通过；convergence独立保护成功、176输入未改/250%6GiB/12步0forward。旧质量失败/无推广/不扩2M保持；主31/推理20/旧捕获恢复分支未改。证据runs/autonomous_own_death_factorial_20261106/completion_audit.json及reports/experiments/own_death_factorial_20261106.md。
+
+- 2026-11-06T20:05:45+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。

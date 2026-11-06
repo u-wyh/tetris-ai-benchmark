@@ -6,6 +6,22 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T20:05:46+08:00 最新接手：两自身状态四臂已完成，1处局部死亡受首步影响/另1处两步收敛；下一静态回溯100005更早8个分歧
+
+**已完成，禁止重跑**：runs/autonomous_own_death_factorial_20261106，5项定向检查通过（mixed-policy active路由/首步强制/停槽/源D action/pre-view/reward失败封闭并记实际工作/整组缓存身份与不可覆盖）。进程423929正式**944新环境步、原30M和8k各255 GPU批次/0optimizer**；固定8槽100002:A/B/C/D+100005:A/B/C/D，horizon256含首步。D逐步匹配原pre-observation/mask/action/features/outcome，精确重现**172/22**动作死亡，模型policy/完整Adam/计数原30003200/36625、8k8192/36635及CPU+CUDA全局采样RNG不变。factorial_summary/group/完成receipt已保存，旧捕获/恢复/15对分支与主31/推理20/compiled产物未改。
+
+A=shadow首步→原续走，B=candidate首步→原，C=shadow首步→8k，D=candidate首步→8k。**100002 A/C都256 horizon删失（104/103行），B/D都172死亡（60行）**，B/D全trace/完整末state相同；固定任一续走策略换首动作，在共同172步多8行/reward+20并改变这个256窗口内死亡。不能称长期生存、隔离hold因果或整体质量已改好。**100005四臂全22死亡/4行**，A/B只前2动作不同，A/C和B/D各自全trace同。
+
+为解决“同分是否同状态”的具体风险，独立convergence目录预声明仅前三保存动作×4臂=**额外12真实环境步/0policy forward/0optimizer**（8env/4padding inactive）。第1步A/C与B/D两组不同，**第2步后四完整worker/Core/bag/游戏与np/action RNG、active观测mask精确相同**，第3步仍同，22步末完整state也全同。故100005已测最后分歧是这组续走下的两步收敛；不能归因这次死亡或把所有hold分歧泛化无害。不要重复这个上下文/收敛探针或扩它的horizon。
+
+正式guard19:56:58/controller19:56:59 completed，169冻结输入未改/10.289秒/all250%6GiB，采样CPU62.625℃/GPU41℃/3173.12MiB/无降载；convergence summary20:01:06/guard20:01:07/controller20:01:08完成，176输入未改/6.244秒/all250%6GiB，CPU56.625℃/GPU38℃/2375.09MiB。单位测试100%2GiB/2.076秒采样错过峰，不把12.36MiB当真实内存峰。正式944与附加12步分开，单测少量模拟另计。报告own_death_factorial_20261106.md、completion_audit.json。新代码own_death_factorial_helpers.py/run_own_death_factorial.py/audit_own_factorial_convergence.py和5测试，全部有限服务终态，不能按旧status或空闲重复启动。原2/8质量失败/无推广/不扩2M保持。
+
+**下一开发（尚未开始）**：先只读capture已校验rows，按时间规则提取seed100005在已证明收敛的step6921**之前的最近8次actual candidate!=shadow分歧**，全8纳入不按hold/清行/期望效果筛选，记录step、到6942死亡的含当前动作距离、source chunk/pre snapshot、actual与shadow动作/特征/概率。不要重新评测20k、采样prefix或从原参考策略15处选点。每chunk数组只物化一次，全部manifest/NPZ来源固定，0环境/forward/optimizer；先看距离和分布，再冻结新恢复目标和有限工作预算，不能把计划写成已执行。
+
+新的更早8点可能跨多个256轮原片段；可复用restore_own_death_contexts.load_verified_chunk/restore_vector/replay_chunk等已冻结函数，但旧run wrapper硬编码2目标，**不改旧捕获/恢复/四臂设计及代码**。先按源chunk分组、从原快照重放保存actions恢复全部目标，片段末8worker/RNG/active views必须精确并如实计重放步数。后续因果模拟协议需在已知源距离后另行固定时限/总步数/观察窗口，纳入所有预声明点并保留负结果；不能扩刚结束2点/原15处的horizon凑效果，也不能只因rank flip或同summary声称有害/无害。8k质量未通过，禁止盲调PPO网格或用单个因果例子当训练质量修复。
+
+本轮为原生goal续轮01a1b0b2-b11e-7da3-a810-10ddc3cd44ee，首真实工具19:51:12，前轮0df2308为实质进展；native_goal_own_factorial_execution_20261106.json记录真实执行和上述结果，**没有声称又消费新小时消息**。19:37小时消费已核实见hourly_own_death_context_execution_20261106.json。后台驻留/每小时/linger/防休眠保持，所有执行/副本留lightbook；主机或GPU不可用保留无CPU训练/他机fallback，额度不足等小时不绕限或改账户，用户暂停取消即停。无限目标active不标complete。
+
 ### 2026-11-06T19:50:39+08:00 最新接手：本次小时投递已实际消费，两自身死亡上下文完整恢复；下一新2状态四臂对照
 
 **无人值守证据更新**：19:04:55 submission01a1b088-7bec-7902-af0c-36c1a33c5358已由新轮01a1b0a6-18c7-73e3-96f2-6bc8108c19b6在19:37:17消费，userMessage.clientId=01a1b088-7bec-7b03-b3a3-b9db3e02f7e8与原queue一致、queue为空；rollout新turn_context后19:37:28.139真实exec/call_0352af07bc624082a3f68bf0e4c7b100。不是accepted而已。hourly_own_death_context_execution_20261106.json已记录实际开始与完成（3614步恢复开发）。19:48:05health healthy/goal active/四enabled+active/linger yes/sleep masked/proxy空，后台13827→1，19:48:25 queue_empty。以下旧19:33“仍pending”仅历史时刻，不能当当前状态。未新测OS重启或短暂停，不改额度/账户。
