@@ -6,6 +6,18 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T14:23:26+08:00 最新接手点：独立16384样本与跨进程恢复完成，下一仅副本critic拟合可行性
+
+runs/autonomous_independent_critic_data_20261106于14:19:48数据passed/14:19:49重启passed/父guard14:19:50 completed、MainPID0success。固定seed2600000–7/动作2700000，CUDA8每worker2048/4×4096，原30M policy/Adam/PPO更新数未变（采样计数30003200→30019584）。前4worker拟合、后4验证，各8192/2次终止0截断，实际episode_seed无重叠。各段完整buffer/末bootstrap/终止孔洞/episode标记持久化，回读/逐数组hash/SB3 GAE精确重建；**不重复采样这些数据**。报告independent_critic_data_20261106.md。
+
+真实两进程363063→363174，8192后从chunk2恢复worker/观测/mask/CPU与CUDA RNG/计数精确，继续后8192、未重采提交段；无连续vs恢复重复采样对照或突然断电验收，不夸大范围。采样器在SB3.load之后重新seed，实际reset核验2600000–7而非源seed42；2项受保护测试通过。55输入未改，CPU75.25℃/GPU53℃/内存3717.0MiB，全250%无降载，40.956秒。main27/推理20/原30M/row masks未改。
+
+下一预声明**一次离线副本critic拟合可行性**：复用四段数据、同worker拆分，源模型/actor及actor Adam状态冻结；只在policy副本value_net更新，以原vf_coef=.5×MSE、原lr3e-4/原Adam critic状态、max_grad_norm=.5、batch256、5epoch（160次critic更新）、固定排列seed2800000。保留所有样本，不挑尾部/改loss/网格/重复采样；验证组仅最终一次检查，不选最好epoch。先测试actor参数及其Adam状态确实不动、计数与分组不泄漏。原PPO_n_updates/源文件不改，副本critic的160更新必须如实记录，不能泛称0优化器更新；不推进环境/不启动PPO质量训练。
+
+最终对固定源GAE目标检查独立验证RMSE≤源0.95倍，终止前32步组RMSE不恶化、其余步RMSE≤源1.05倍（跨四段拼接终止窗口，不能跨episode），并报告每worker/拟合组。**这些仅可行性门，不是质量门**；固定GAE仍有bootstrap偏差、仅4验证worker/2次终止/时序相关。只存明确诊断critic权重/状态，不存普通model.zip，不推广。若失败保留结果，不自动换LR/epoch/损失或补种子；若通过也先设计真实PPO副本路径和严格质量/恢复验收，不能直接扩训练。
+
+该离线检查CUDA/CPU250%/6GiB/原温控，180秒命令/600秒队列，GPU不可用保留断点无CPU/其他主机fallback。先查真实PID/summary避免重复。当前数据采集已全部终态，不重启有限任务；持续目标保持active，额度/用户暂停规则和lightbook限制保持。原生goal轮01a1af7d-9510-7580-8689-70453365a2c7于14:13:25开始/14:13:36首工具，不误称新小时投递消费；见native_goal_independent_data_execution_20261106.json。
+
 ### 2026-11-06T14:13:13+08:00 最新接手点：失败尾部梯度证实；下一查独立校准数据
 
 runs/autonomous_critic_tail_gradients_20261106于14:09:37 passed/父guard14:09:38 completed、MainPID0success。复用原4096 NPZ，0env step/0采样/0optimizer update、原policy/Adam/PPO计数不变，60输入未改；seed2500000新16批排列保存，**非历史minibatch顺序**。5项保护测试通过；两组均用原整批分母，合成最大相对误差2.5532e-7。report critic_tail_gradients_20261106.md。

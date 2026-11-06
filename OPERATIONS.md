@@ -1403,3 +1403,19 @@
 - 2026-11-06T14:09:38+08:00：资源保护：持久样本critic尾部梯度分解完成，互补梯度合成通过，0采样/0优化器更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_tail_gradients_20261106/summary.json。
 
 - 2026-11-06T14:13:13+08:00：复用持久4096数据的critic梯度归属14:09:37 passed/父14:09:38 completed；0采样/0优化器更新、原policy/Adam/PPO计数不变、60输入未改。终止前32条整体方向投影比.872639，top41 .904402，互补梯度合成误差≤2.5532e-7；clip反事实未执行训练，不作因果/质量宣称。5项测试过，CPU57℃/GPU38℃/内存613.5MiB，全250%无降载。下一先查独立数据，必要时预声明不同seed固定16384只读采样/持久化，不重复本窗口/不自动扩预算。证据reports/experiments/critic_tail_gradients_20261106.md。
+
+- 2026-11-06T14:18:17+08:00：原生goal续轮首工具14:13:36实际执行，后台health正常/无重任务；搜索未见独立原策略GAE数据或critic-only拟合实现，lookahead npz为其他评测轨迹，非本原策略完整buffer。新增冻结策略分段采样器：修正SB3.load重置seed后重新应用新worker种子、原子数据/环境/RNG提交，可恢复且拒绝重复完成任务；先受保护种子及恢复重放/损坏拒绝测试，未启动采样。证据runs/autonomous_development_20261105/native_goal_independent_data_execution_20261106.json。
+
+- 2026-11-06T14:18:19+08:00：资源保护：启动受保护任务 tetris-guard-362871-1793945899443241097，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_independent_critic_data_20261106/unit_guard。
+
+- 2026-11-06T14:18:23+08:00：资源保护：tetris-guard-362871-1793945899443241097 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_independent_critic_data_20261106/unit_guard。
+
+- 2026-11-06T14:19:06+08:00：2项受保护真实环境/SB3测试通过（加载不覆盖fresh seed、快照恢复后动作重放/RNG一致、身份/字节损坏拒绝）。预声明CUDA8冻结原30M，seed2600000–7/动作2700000，固定4段共16384、前4worker拟合后4验证、max10000，不按死亡数追加；两实际进程8192后重启并恢复，不重复已提交样本。冻结55输入，逐数组哈希/GAE回建/每段worker+RNG恢复状态，原policy/Adam/PPO更新数不变；180秒命令/600秒队列/250%/6GiB/原温控，无质量训练/推广。证据runs/autonomous_independent_critic_data_20261106/design.json。
+
+- 2026-11-06T14:19:09+08:00：资源保护：启动受保护任务 tetris-guard-363048-1793945949091101860，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_independent_critic_data_20261106/guard。
+
+- 2026-11-06T14:19:50+08:00：资源保护：tetris-guard-363048-1793945949091101860 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_independent_critic_data_20261106/guard。
+
+- 2026-11-06T14:19:51+08:00：资源保护：独立冻结策略数据4段持久提交完成，实际跨进程恢复worker/RNG/观测/mask通过，0优化器更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_independent_critic_data_20261106/summary.json。
+
+- 2026-11-06T14:23:26+08:00：独立冻结策略16384 CUDA8样本14:19:48 passed，4段buffer及GAE回建/哈希精确；真实363063→363174于8192后恢复并继续，14:19:49重启验收passed/父guard14:19:50 completed。两组各8192/2死0截断、实际episode种子无重叠；原policy/Adam/PPO更新数不变，无质量训练。55输入未改，CPU75.25℃/GPU53℃/内存3717.0MiB，全250%无降载，2项真实种子/恢复重放测试过。下一只设计单次副本critic拟合固定160更新/独立最终验证，不重复采样/不自动调参/推广。证据reports/experiments/independent_critic_data_20261106.md。
