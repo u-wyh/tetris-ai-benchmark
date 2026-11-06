@@ -4,6 +4,14 @@
 
 ## 用户最新首要任务：轻薄本无人值守
 
+### 2026-11-06 09:46 最新接手点：actor转换恢复全部通过，8K质量筛选实际运行
+
+原上下文探针09:40:53 passed/服务09:40:54 success，合成扩展/故障恢复09:42:26 passed（1项/3 deselected，87.03秒），均MainPID0，勿重跑。26来源/57保护回归，错误动量preset恢复拒绝且提交文件不变；详见报告`reports/experiments/actor_momentum_20261106.md`。初始化只清零actor exp_avg，保持二阶矩/step/critic；旧25代码归档tetris-runtime-3d8ed0f，新source不重标旧缓存。
+
+当前实际服务`tetris-development-pair@autonomous_actor_quality_8k_20261106.service`，MainPID312326，目录`runs/autonomous_actor_quality_8k_20261106/`，stage=candidate。候选SHA016b6be1bdc320ca1ab2ca31c677924b2511f7884ec3932dc1d73c389af33673，已有8192步/累计30011392，非新重训；8×20000、CPU150%/2worker/6GiB/原温控与1800秒预算。冻结当前26数值/20推理及47支持输入，活跃期间勿改这些文件（含共享keeper/hourly/guard支持）；只可整理非关键文档或先停并归档。控制器新增全局STOP/禁用/主机固定检查，5项保护测试通过。
+
+先查真实进程、status、candidate.seeds与summary，不重复启动或重算已缓存seed。原baseline.json为冻结bitboard基线原字节链接。门槛未变：均存活/得分比≥.99、失败不多于基线、单seed≥.9；若通过只进入额外8种子确认，在任何追加训练前完成，不能自动推广/扩2M；失败则保留并停止该候选，不复跑。本轮没有证据证明棋力改善，结果仍待完成。原Codex后台/302731常驻订阅与小时timer持续正常，整夜离线仍只以未来真实记录核验。
+
 ### 2026-11-06 09:41 当前：actor转换已显式实现，恢复验收后才筛选
 
 3d8ed0f的160步actor一阶隔离达到原定诊断门槛，报告`reports/experiments/actor_momentum_20261106.md`。现44306c5实现显式initial_context.actor_momentum_after_restore=zero_first_moment，默认preserve，新optimizer_transition.py纳入26数值来源；旧25完整代码归档本机tetris-runtime-3d8ed0f，SHA一致，旧断点不静默迁移。57项保护测试通过，生产转换与诊断状态精确同。
