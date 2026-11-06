@@ -43,6 +43,7 @@ TRAINING_SOURCE_FILES = (
     "training/long_run.py",
     "training/kl_maskable_ppo.py",
     "training/initialization.py",
+    "training/optimizer_transition.py",
     "training/evaluation/hybrid_queue.py",
     "training/candidate_policy.py",
     "training/candidate_features.py",

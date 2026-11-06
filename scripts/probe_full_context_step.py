@@ -34,6 +34,14 @@ def direct(folder):
             model.learning_rate=transition;model.lr_schedule=FloatSchedule(transition)
             model.policy.optimizer.defaults['lr']=transition
             for group in model.policy.optimizer.param_groups:group['lr']=transition
+        momentum=json.loads((folder/'design.json').read_text()).get('actor_momentum_after_restore','preserve')
+        if momentum=='zero_first_moment':
+            # Independent reference, deliberately not the production transition.
+            for name,parameter in model.policy.named_parameters():
+                if not name.startswith('value_net.'):
+                    model.policy.optimizer.state[parameter]['exp_avg'].zero_()
+        elif momentum!='preserve':
+            raise ValueError('Unsupported direct-reference momentum transition')
         for number in (1,2):
             task=folder/'direct'/f'task_{number:06d}';task.mkdir(parents=True,exist_ok=False)
             model.set_logger(configure(str(task),[]))
@@ -59,6 +67,12 @@ def verify(folder):
     design=json.loads((folder/'design.json').read_text())
     initialization=json.loads((training/'initialization.json').read_text())
     transition=design.get('learning_rate_after_restore')
+    momentum=design.get('actor_momentum_after_restore','preserve')
+    assert initialization.get('actor_momentum_after_restore','preserve')==momentum
+    if momentum=='zero_first_moment':
+        assert config['initial_context']['actor_momentum_after_restore']==momentum
+        assert initialization['actor_momentum_transition']['transition']=='zero_actor_exp_avg_only'
+        assert len(initialization['actor_momentum_transition']['actor_parameters'])==12
     if transition is not None:
         assert config['ppo']['learning_rate']==transition
         assert initialization['learning_rate_transition_declared']
@@ -93,6 +107,7 @@ def verify(folder):
         assert sha256(source/relative)==sha256(original/relative)==expected,'Original source copy changed'
     result=dict(at=now(),status='passed',device='cuda',n_envs=8,source_steps_offset=offset,
                 learning_rate_after_restore=transition,
+                actor_momentum_after_restore=momentum,
                 source_original_files_unchanged=True,tasks=records,
                 interpretation='Current-code direct official continuation equals rebased bitboard continuation across process resume. Original source identity remains unproven; no policy-quality claim.',
                 final_test_used=False,model_promotion='none')

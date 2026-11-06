@@ -17,6 +17,13 @@ def context_learning_rate(spec):
     return rate
 
 
+def context_actor_momentum(spec):
+    mode = spec.get('actor_momentum_after_restore', 'preserve')
+    if mode not in ('preserve', 'zero_first_moment'):
+        raise ValueError('Invalid actor_momentum_after_restore')
+    return mode
+
+
 def validate_initial_context(preset):
     spec = preset.get('initial_context')
     if spec is None:
@@ -30,12 +37,13 @@ def validate_initial_context(preset):
         raise ValueError('Full context initialization requires CUDA8 Candidate policy')
     required_keys = {'run_dir', 'task', 'files_sha256'}
     if (not isinstance(spec, dict) or not required_keys <= set(spec)
-            or not set(spec) <= required_keys | {'learning_rate_after_restore'}
+            or not set(spec) <= required_keys | {'learning_rate_after_restore','actor_momentum_after_restore'}
             or not isinstance(spec['run_dir'], str)
             or not Path(spec['run_dir']).is_absolute()
             or type(spec['task']) is not int or spec['task'] < 1):
         raise ValueError('Invalid frozen full context specification')
     context_learning_rate(spec)
+    context_actor_momentum(spec)
     required = {'config.json', 'metadata.json', f'committed/task_{spec["task"]:06d}/manifest.json'}
     hashes = spec['files_sha256']
     if (not isinstance(hashes, dict) or set(hashes) != required
@@ -47,6 +55,7 @@ def validate_initial_context(preset):
 
 def context_source_config(spec, config):
     """Verify immutable artifacts and recipe before any new run is created."""
+    context_actor_momentum(spec)
     root = Path(spec['run_dir'])
     for name, expected in spec['files_sha256'].items():
         if hashlib.sha256((root/name).read_bytes()).hexdigest() != expected:
@@ -129,6 +138,11 @@ def restore_initial_context(spec, config, env):
         for group in model.policy.optimizer.param_groups:
             group['lr'] = rate
     validate_context_model_recipe(model, config)
+    momentum = context_actor_momentum(spec)
+    transition = None
+    if momentum == 'zero_first_moment':
+        from training.optimizer_transition import zero_actor_first_moment
+        transition = zero_actor_first_moment(model.policy)
     # Only the new run's progress counter is rebased. Preserve optimizer updates,
     # saved observations/episode starts, all workers and all restored RNG state.
     model.num_timesteps = 0
@@ -137,6 +151,8 @@ def restore_initial_context(spec, config, env):
         source_learning_rate=source_config['ppo']['learning_rate'],
         learning_rate_after_restore=rate,
         learning_rate_transition_declared='learning_rate_after_restore' in spec,
+        actor_momentum_after_restore=momentum,
+        actor_momentum_transition=transition,
         source_ppo_update_count=model._n_updates,
         new_run_start_step=0, source_task=spec['task'], source_run_dir=spec['run_dir'],
         optimizer_state_entries=len(model.policy.optimizer.state),

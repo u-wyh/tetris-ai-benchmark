@@ -23,6 +23,11 @@ def run(folder):
     for sig in (signal.SIGTERM,signal.SIGINT,signal.SIGHUP):signal.signal(sig,stop)
     def check():
         if not allowed(design['thread_id'],folder):raise RuntimeError('Goal stopped or STOP file')
+        if design.get('control'):
+            path=Path(design['control']);control=json.loads(path.read_text())
+            if (control.get('enabled') is not True or (path.parent/'STOP').exists()
+                    or control.get('execution_machine_id')!=Path('/etc/machine-id').read_text().strip()):
+                raise RuntimeError('Global control stopped or execution host changed')
         if time.monotonic()>deadline:raise RuntimeError('Full context probe time budget exhausted')
         for path,expected in design['frozen_files'].items():
             if hashlib.sha256(Path(path).read_bytes()).hexdigest()!=expected:

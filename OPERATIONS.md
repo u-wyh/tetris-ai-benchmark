@@ -1215,3 +1215,19 @@
 - 2026-11-06T09:29:22+08:00：资源保护：tetris-guard-308561-1793928558749479342 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_momentum_20261106_unit。
 
 - 2026-11-06T09:30:09+08:00：上一轮为实质进展（682f88e实际PPO/KL诊断完成并归档），本轮核验常驻订阅/无活动guard后新增仅actor Adam exp_avg清零副本诊断。7项保护测试通过，含AMSGrad第二矩/step/group/critic及权重不变、不完整后部状态拒绝且无部分修改、非有限状态/非Adam拒绝。当前25训练/20推理及旧49输入未改；准备原/低LR各80步，与已完成原轨迹同rollout/probe/RNG。
+
+- 2026-11-06T09:30:09+08:00：冻结51输入及提交3d8ed0f，启动GPU8/CPU250%/6GiB/原温控持久副本诊断：仅actor exp_avg清零，原/低LR各80步，240秒命令/600秒队列。预声明仅当两组探针最终KL与峰值均更低且贪心一致率不下降，才考虑开发有界质量筛选；这不是棋力门槛或推广。旧原轨迹直接复用，不重训基线、不存普通断点。证据：runs/autonomous_actor_momentum_20261106/design.json。
+
+- 2026-11-06T09:30:20+08:00：资源保护：启动受保护任务 tetris-guard-308769-1793928620788076957，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_momentum_20261106/guard。
+
+- 2026-11-06T09:30:36+08:00：资源保护：tetris-guard-308769-1793928620788076957 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_momentum_20261106/guard。
+
+- 2026-11-06T09:30:36+08:00：资源保护：actor一阶动量隔离GPU8诊断完成；原模型/Adam未更新，保留二阶矩及critic状态，结果按预声明探针门槛记录。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_momentum_20261106/summary.json。
+
+- 2026-11-06T09:31:49+08:00：actor一阶动量隔离09:30:35 passed，父服务已完成MainPID0success；同rollout/16批摘要/64probe，160副本步，原模型0步。原LR最终/峰KL比0.97097/0.36187、低LR0.41446/0.41446，贪心一致率均未降，达到预声明诊断门槛但非棋力证据。已归档完整25数值源码至本机tetris-runtime-3d8ed0f，SHA逐项相同，51冻结输入未改；准备显式初始状态转换及恢复验证，暂未新训练。证据：runs/autonomous_actor_momentum_20261106/adoption_diagnostic_gate.json。
+
+- 2026-11-06T09:33:40+08:00：资源保护：启动受保护任务 tetris-guard-309527-1793928820883128783，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_context_20261106_unit。
+
+- 2026-11-06T09:33:45+08:00：资源保护：tetris-guard-309527-1793928820883128783 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_context_20261106_unit。
+
+- 2026-11-06T09:39:33+08:00：将已诊断转换作为显式initial_context.actor_momentum_after_restore=zero_first_moment实现，默认preserve；记录初始化转换，配置/metadata/resume原有完整spec比较固定该选项。生产实现与诊断函数状态精确同，57项保护回归通过；新增optimizer_transition纳入26来源。增加独立手工参考/跨进程恢复及合成扩展故障恢复的待执行门槛，暂不新棋力筛选。证据：reports/experiments/actor_momentum_20261106.md。

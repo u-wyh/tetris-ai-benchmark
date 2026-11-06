@@ -46,8 +46,10 @@ def assert_same(left, right):
 
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA continuation contract")
-@pytest.mark.parametrize("full_context,search_backend", [(False, 'formal'), (True, 'formal'), (True, 'bitboard')])
-def test_completed_candidate_extension_and_interrupted_resume(tmp_path, full_context, search_backend):
+@pytest.mark.parametrize("full_context,search_backend,momentum", [
+    (False, 'formal', 'preserve'), (True, 'formal', 'preserve'),
+    (True, 'bitboard', 'preserve'), (True, 'bitboard', 'zero_first_moment')])
+def test_completed_candidate_extension_and_interrupted_resume(tmp_path, full_context, search_backend, momentum):
     source = tmp_path / "source"
     extended = tmp_path / "extended"
     control = tmp_path / "control"
@@ -69,6 +71,8 @@ def test_completed_candidate_extension_and_interrupted_resume(tmp_path, full_con
                              for name in files},
             "learning_rate_after_restore": 0.00003,
         })
+        if momentum != 'preserve':
+            preset['initial_context']['actor_momentum_after_restore'] = momentum
     short = tmp_path / "short.json"
     full = tmp_path / "full.json"
     short.write_text(json.dumps(dict(preset, target_total_steps=4096)))
@@ -94,6 +98,7 @@ def test_completed_candidate_extension_and_interrupted_resume(tmp_path, full_con
     assert a._n_updates == b._n_updates
     assert a.policy.optimizer.param_groups[0]["lr"] == b.policy.optimizer.param_groups[0]["lr"]
     if full_context:
+        assert config['initial_context'].get('actor_momentum_after_restore','preserve') == momentum
         assert config["source_steps_offset"] == 4096
         task = json.loads((extended / "committed/task_000003/task_meta.json").read_text())
         assert task["source_steps_offset"] == 4096
@@ -108,6 +113,16 @@ def test_completed_candidate_extension_and_interrupted_resume(tmp_path, full_con
         for key, value in a.policy.optimizer.state[parameter_a].items():
             other = b.policy.optimizer.state[parameter_b][key]
             assert torch.equal(value, other) if isinstance(value, torch.Tensor) else value == other
+    if momentum == 'zero_first_moment':
+        # A resumed run must not silently reinterpret or repeat its transition.
+        bad_preset=json.loads(full.read_text())
+        bad_preset['initial_context']['actor_momentum_after_restore']='preserve'
+        bad=tmp_path/'wrong_momentum.json';bad.write_text(json.dumps(bad_preset))
+        before_files={name:(control/name).read_bytes() for name in
+                      ['config.json','metadata.json','transaction_state.json']}
+        rejected=train(control,bad,'--resume',succeeds=False)
+        assert 'Resume initial context' in rejected.stderr
+        assert before_files=={name:(control/name).read_bytes() for name in before_files}
     config["ppo"]["learning_rate"] *= 2
     (extended / "config.json").write_text(json.dumps(config))
     rejected = train(extended, None, "--resume", succeeds=False)
