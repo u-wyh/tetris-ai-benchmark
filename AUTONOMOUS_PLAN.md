@@ -6,6 +6,22 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T19:50:39+08:00 最新接手：本次小时投递已实际消费，两自身死亡上下文完整恢复；下一新2状态四臂对照
+
+**无人值守证据更新**：19:04:55 submission01a1b088-7bec-7902-af0c-36c1a33c5358已由新轮01a1b0a6-18c7-73e3-96f2-6bc8108c19b6在19:37:17消费，userMessage.clientId=01a1b088-7bec-7b03-b3a3-b9db3e02f7e8与原queue一致、queue为空；rollout新turn_context后19:37:28.139真实exec/call_0352af07bc624082a3f68bf0e4c7b100。不是accepted而已。hourly_own_death_context_execution_20261106.json已记录实际开始与完成（3614步恢复开发）。19:48:05health healthy/goal active/四enabled+active/linger yes/sleep masked/proxy空，后台13827→1，19:48:25 queue_empty。以下旧19:33“仍pending”仅历史时刻，不能当当前状态。未新测OS重启或短暂停，不改额度/账户。
+
+**已完成，禁止重跑**：新增locate_own_policy_divergences.py（3测试）和restore_own_death_contexts.py（3测试，真实forkserver/真实死亡停槽/完整状态RNG/hash先验/观测mask/预算）全部通过。runs/autonomous_own_death_targets_20261106/targets.json按全部真实死亡各自最后actual candidate != shadow选出：100002 step17823前pieces/round17822、chunk70/pre69、cand1510 vs shadow382，距原死亡17994含当前**172**动作；100005 step6921前pieces/round6920、chunk28/pre27、cand1665 vs shadow102，距原死亡6942含当前**22**动作。两处均cand hold1/shadow hold0、都清0、holes/aggregate相同，piece/hold/落点一起改变，未隔离hold因果。
+
+runs/autonomous_own_death_contexts_20261106：contexts19:46:29/restart19:46:30 passed，guard19:46:32/controller19:46:33 completed。进程422039真实重放28的1822步，422089保留首批SHA复用28仅重放70的1792步；实际**3614环境步/512轮/0policy forward/0optimizer/无新动作采样**。每步obs/mask摘要、两方所选features、reward/终止/seed/pieces/holes/height和两段末完整8worker/Core/bag/游戏/np/action RNG及active views精确，父采样RNG不变；153冻结输入未改/20.603秒/all250%6GiB，采样CPU73.5℃/GPU45℃/2846.84MiB、无降载，CUDA必须可用但此重放无GPU策略推理。所有有限服务已终态，原捕获/主31/推理20/compiled native/旧分支代码未改。不能再启动捕获、target选择、上下文重放或旧15处实验。
+
+恢复上下文目录contexts/seed_100002_step_17823和contexts/seed_100005_step_6921（state.pkl+manifest.json）。用restore_rank_contexts.load_context(directory, expected_identity)，expected_identity=dict(contexts_summary['identity'], target=target)；必须先冻结并核验context文件。**max_pieces=20000**，分支env默认10000不能恢复。完整单worker state含Core/bag/所有游戏及worker RNG，已由原8worker完整重放核验；没有保存整个pre-action vector，若需原始批次支撑仍可按原snapshot恢复，别冒称已保存。报告own_death_contexts_20261106.md。
+
+**下一（尚未执行）**：基于这2个真正8k自身失败状态预声明四臂，各case A=shadow首步→原30M续走、B=candidate首步→原30M、C=shadow首步→8k、D=candidate首步→8k。固定horizon256含首步（覆盖原172/22动作死亡，不能据结果延长），两case×4臂=8环境，最多2048新模拟步，原GPU/250%6GiB/温控/有限180或300秒命令和420或600秒wall。首步两方都实际清0，勿复制旧15处清4/0断言。初始克隆完整state且action合法/观测mask一致、死亡/TimeLimit/horizon停住不reset；固定8槽顺序先100002的A/B/C/D再100005的A/B/C/D，两个模型分别仅按本模型active槽序做CUDA最高float32/TF32false确定性greedy。原模型SHA eb859b…计数30003200/36625，8kSHA016b6b…计数8192/36635，路径见根capture design.models.shadow/candidate；policy/完整Adam/计数及CPU/CUDA采样RNG必须不变。
+
+先小型mixed-policy lane routing/强制首步/停止槽定向测试，再冻结设计/模型/context/source/runtime后运行；不要修改已冻结capture/recovery或旧runner。旧BranchControls可复用，旧run_rank_branches硬编码15/256不能直接冒套，新runner需支持每槽续走模型。**D需逐步与原保存自身trajectory的action/pre-view/reward/终止核对**（跨chunk原rows已保存），应重现172/22死亡；当前新批次4/更少与原capture7/8不同，若数值导致source path不重现，保留并标记失败范围，不能把不同轨迹当原死亡的因果反事实或改精度/挑样本达门。每case固定首步比较续走模型、固定续走模型比较首步，common-window指标与死亡/cap/horizon删失分开。仅局部干预，不推广8k或打开2M训练；旧质量仍2/8死亡。若需恢复缓存，部分8槽组要整组重算核验已有输出不改，不能通过恢复重新分组改变浮点批次。
+
+继续保持所有开发/副本/续办留lightbook。无主机/GPU保留进度、无CPU训练/他机fallback；额度不足等小时不绕限或改账户，用户暂停取消即停；无限持续目标仍active，不因有限实验结束标complete。
+
 ### 2026-11-06T19:36:50+08:00 最新接手：8k自身长程捕获全部完成，下一只恢复两条真实死亡的最后分歧状态
 
 **已完成，禁止重跑**：runs/autonomous_own_policy_capture_20261106（root/phase_02/03/04全部guard+controller成功），capture_summary 2026-11-06T19:32:00+08:00，trajectory_audit 19:33:31 passed/audit_cached guard19:33:31/controller19:33:32 completed。新代码own_policy_capture.py、capture_own_policy_trajectories.py、verify_own_policy_capture_restart.py、audit_own_policy_capture.py及7项定向测试（真实forkserver/显式seed/停槽/完整worker恢复/概率mode/RNG/坏SHA/不可覆盖链）通过；新审计在真实全量数据验证，不改主31/推理20/compiled native或旧15对runner/helpers。

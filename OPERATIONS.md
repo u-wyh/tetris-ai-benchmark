@@ -1663,3 +1663,31 @@
 - 2026-11-06T19:33:32+08:00：资源保护：缓存每段数组后完整自身轨迹一致性交叉审计完成，未重跑环境或模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_policy_capture_20261106/audit_cached/summary.json。
 
 - 2026-11-06T19:35:42+08:00：自身长程捕获与独立审计完成：80快照/79动作段，5进程416816→416889→417616→418355→418929不重采已提交前缀；实际144936环境步，两模型各20000次GPU批次/0optimizer。8seed端点步数/分数/行数/reward/死亡删失与旧CPU指标逐项相同（不能声称无旧CPU trace的全轨迹相同）；100002=17994、100005=6942死亡，其余6×20000 cap，质量仍失败不推广。两个死亡最终动作均与旁观原策相同，死亡前32步分歧分别0/1，不能因单步旁观归因或声称不可救。4 GPU保护阶段全completed，383.249秒/all250%/6GiB，50/75/96/116冻结输入未改，采样最高CPU74.875℃/GPU51℃/3518.73MiB；policy/完整Adam/计数、父和worker reset/action采样RNG不变。初次只读审计45.107秒手动中断保留，缓存修正版2.092秒/100%/2GiB通过（140输入未改，采样峰值非真实内存峰值）。后台19:32:38健康、原目标active、proxy空；19:04小时投递仍pending，不冒称消费，本轮原生目标实际工具执行及结果receipt已更新。下一仅提取两条真死亡轨迹的最后分歧并恢复对应完整上下文，不重跑捕获/旧15对分支/训练。证据completion_audit.json、trajectory_audit.json与reports/experiments/own_policy_capture_20261106.md。
+
+- 2026-11-06T19:39:48+08:00：19:04:55小时投递submission01a1b088-7bec-7902-af0c-36c1a33c5358已由19:37:17新轮01a1b0a6-18c7-73e3-96f2-6bc8108c19b6消费，userMessage.clientId与原queue相同、现queue空，rollout首真实exec19:37:28.139/call_0352af07bc624082a3f68bf0e4c7b100。后台13827→1/轻薄本machine-id匹配、原goal active/4单元驻留防休眠健康；这证明本条实际执行，不外推持续额度。上一轮ced99ee完整捕获/审计已成功，本轮下一只定位两真实死亡的最后分歧并恢复上下文，不重跑捕获/旧分支/训练。证据hourly_own_death_context_execution_20261106.json。
+
+- 2026-11-06T19:40:21+08:00：按上一接手点新增只读最后分歧提取器及3项定向校验，纳入全部两死亡seed100002/100005，明确1-based动作step与前状态round=step−1、包含当前决策的死亡距离，不按cap或结果挑样本。先100%/2GiB/120秒命令300秒wall原温控测试并在hash核验完整capture链后提取；0环境/forward/optimizer，未恢复上下文/运行干预或重采样。原捕获helper/runner/design和主31不改。证据runs/autonomous_own_death_targets_20261106/design.json。
+
+- 2026-11-06T19:40:24+08:00：资源保护：启动受保护任务 tetris-guard-420969-1793965224175719680，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_death_targets_20261106/guard。
+
+- 2026-11-06T19:40:28+08:00：资源保护：tetris-guard-420969-1793965224175719680 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_death_targets_20261106/guard。
+
+- 2026-11-06T19:40:29+08:00：资源保护：全部真实死亡轨迹最后模式分歧静态提取及选择/步数偏移/不遗漏终止定向校验完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_death_targets_20261106/summary.json。
+
+- 2026-11-06T19:44:33+08:00：最后分歧静态提取已passed/3测试过，100002选择step17823（含当前至死亡172动作）、100005选择step6921（22动作），来自chunk70与28；仅描述未归因。新增冻结manifest/file先验加载和保存动作片段恢复，原捕获helper/runner/design不改；先100%/2GiB/120秒原温控做真实forkserver死亡停槽/完整状态RNG/观测mask/预算定向校验，含少量模拟但0策略新采样/optimizer，尚未正式恢复目标。证据runs/autonomous_own_death_targets_20261106/targets.json及runs/autonomous_own_death_contexts_20261106/unit/design.json。
+
+- 2026-11-06T19:44:35+08:00：资源保护：启动受保护任务 tetris-guard-421710-1793965475841765310，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_death_contexts_20261106/unit/guard。
+
+- 2026-11-06T19:44:44+08:00：资源保护：tetris-guard-421710-1793965475841765310 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_death_contexts_20261106/unit/guard。
+
+- 2026-11-06T19:44:44+08:00：资源保护：自身片段恢复hash先验/真实死亡停槽/跨worker进程完整RNG/观测mask及有界重放定向校验完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_death_contexts_20261106/unit/summary.json。
+
+- 2026-11-06T19:46:09+08:00：自身上下文恢复3项定向检查通过（5.73秒真实forkserver/真实死亡停槽/完整RNG/hash先验与观测mask/预算拒绝）。现冻结全部两目标：seed100005 chunk28/pre27与seed100002 chunk70/pre69，8worker从各原快照重放保存动作至整段末，前状态在步6921/17823决策前提取，段末全部worker/Core/bag/RNG/观测mask与原快照精确才提交。真实双进程先chunk28，再复用其receipt/context仅算70；最大512轮/4096环境步，0policy forward/新动作采样/optimizer。CUDA不可用拒绝，GPU原动作来源/遥测保持，环境重放本身CPU执行不称GPU推理；250%/6GiB/原温控/180秒命令420秒wall，153冻结输入，原捕获与主31不改。证据runs/autonomous_own_death_contexts_20261106/design.json。
+
+- 2026-11-06T19:46:12+08:00：资源保护：启动受保护任务 tetris-guard-422029-1793965572194122910，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_death_contexts_20261106/guard。
+
+- 2026-11-06T19:46:32+08:00：资源保护：tetris-guard-422029-1793965572194122910 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_death_contexts_20261106/guard。
+
+- 2026-11-06T19:46:33+08:00：资源保护：两真实死亡最后分歧前完整上下文及8worker保存动作片段重放/跨进程复用验证完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_own_death_contexts_20261106/summary.json。
+
+- 2026-11-06T19:50:39+08:00：两真实死亡最后分歧前上下文全部恢复：seed100002 step17823前pieces17822（实际死亡17994、含当前172动作）、seed100005 step6921前pieces6920（死亡6942、22动作）。进程422039重放chunk28的1822步，422089复用其receipt/context仅重放70的1792步，共3614真实环境步/512轮/0policy forward/新采样/optimizer；每步摘要/特征/reward/终止/seed/info、两段末全部8worker/Core/bag/RNG/active观测mask和父采样RNG精确，首批SHA未改。contexts19:46:29/restart19:46:30 passed、guard19:46:32/controller19:46:33 completed，153输入未改/20.603秒/all250%/6GiB/采样CPU73.5℃/GPU45℃/2846.84MiB。静态选择3测试+恢复3测试通过，未干预/无因果或质量通过声明。小时投递真实消费执行receipt更新，19:48:05后台健康、proxy空、19:48:25 queue空。下一预声明这两自身状态四臂有限对照（不重跑旧15处/捕获/恢复或训练）。证据reports/experiments/own_death_contexts_20261106.md及hourly_own_death_context_execution_20261106.json。
