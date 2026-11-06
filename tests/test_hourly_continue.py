@@ -135,3 +135,21 @@ def test_local_stop_disables_quota_recovery_and_dispatch(tmp_path,monkeypatch):
     monkeypatch.setattr(module.subprocess,'run',forbidden)
     assert module.run(path,clock=lambda:4000)==0
     assert json.loads((tmp_path/'hourly.jsonl').read_text())['action']=='disabled'
+
+
+def test_pending_active_message_reaches_headless_dispatch_without_duplicate_queue(tmp_path,monkeypatch):
+    import sys
+    sys.path.insert(0,str(Path(__file__).resolve().parents[1]/'scripts'))
+    import start_queued_turn
+    path=control_file(tmp_path)
+    control=json.loads(path.read_text());control['start_queued_turns']=True
+    path.write_text(json.dumps(control))
+    monkeypatch.setattr(module,'inspect',lambda *args:('active',1))
+    calls=[]
+    monkeypatch.setattr(start_queued_turn,'start_queued_turn',lambda *args:
+        (calls.append(args[:3]) or dict(action='thread_busy')))
+    monkeypatch.setattr(module.subprocess,'run',lambda *args,**kwargs:
+        (_ for _ in ()).throw(AssertionError('Do not add a duplicate')))
+    assert module.run(path,clock=lambda:4000)==0
+    assert len(calls)==1
+    assert json.loads((tmp_path/'hourly.jsonl').read_text())['queued_start']['action']=='thread_busy'

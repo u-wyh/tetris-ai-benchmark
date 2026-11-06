@@ -1125,3 +1125,39 @@
 - 2026-11-06T00:05:48+08:00：资源保护：启动受保护任务 tetris-guard-204323-1793894747971437476，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_ppo_gradient_audit_20261105/unit_guard_retry01。
 
 - 2026-11-06T00:05:50+08:00：资源保护：tetris-guard-204323-1793894747971437476 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_ppo_gradient_audit_20261105/unit_guard_retry01。
+
+- 2026-11-06T00:07:30+08:00：snapshot容器类型修复的保护回归3项通过，使用独立retry01目录及e99d4a3新冻结协议重启诊断；首轮原协议/guard不覆盖。相同原源断点、GPU8/CPU250%/6GiB/原温控，仍零优化器步，逐批输出持久化，只有最终policy/Adam/计数不变及来源SHA校验通过才接受结果。证据：runs/autonomous_ppo_gradient_audit_20261105_retry01/design.json。
+
+- 2026-11-06T00:07:41+08:00：资源保护：启动受保护任务 tetris-guard-204687-1793894861448690321，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_ppo_gradient_audit_20261105_retry01/guard。
+
+- 2026-11-06T00:07:55+08:00：资源保护：tetris-guard-204687-1793894861448690321 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_ppo_gradient_audit_20261105_retry01/guard。
+
+- 2026-11-06T00:07:55+08:00：资源保护：原完整上下文GPU8固定策略梯度诊断完成；policy/Adam/PPO更新数保持，无优化器更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_ppo_gradient_audit_20261105_retry01/summary.json。
+
+- 2026-11-06T00:17:30+08:00：检索无相同模型SHA的20K评测后，对既存低LR完整上下文8192检查点启动8×20000开发门槛；不新训练/复跑262144。原23来源与归档65fd092逐项相同，当前推理20/运行库匹配，基线JSON原字节symlink复用（added steps=0），候选added8192/lifetime30011392单独记录，不改训练身份。固定2worker/CPU150%/原温控、1800秒；合格后还需extra8，无自动扩训/推广。证据：runs/autonomous_early_context_lr_8k_20261106/protocol.json。
+
+- 2026-11-06T00:17:33+08:00：资源保护：启动匹配种子的长局配对开发评测，后续按预声明门槛处理。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_early_context_lr_8k_20261106。
+
+- 2026-11-06T00:17:35+08:00：资源保护：启动受保护任务 tetris-guard-206454-1793895455798096769，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_early_context_lr_8k_20261106/guards/candidate_00。
+
+- 2026-11-06T00:23:43+08:00：资源保护：tetris-guard-206454-1793895455798096769 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_early_context_lr_8k_20261106/guards/candidate_00。
+
+- 2026-11-06T00:23:45+08:00：资源保护：更长局开发评测完成，扩展门槛通过=False；未替换正式模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_early_context_lr_8k_20261106/summary.json。
+
+- 2026-11-06T02:27:35+08:00：实时账户允许正常使用，恢复原目标的旧usageLimited状态，保留目标、预算和用量；未消耗额度重置券。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-06T02:27:35+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-06T08:57:45+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-06T08:57:55+08:00：本次小时投递已实际处理，投递记录2026-11-06T08:57:45+08:00，合入正在执行的原目标轮；fresh desktop proxy=[294825]、goal=active。保留既有早期断点评测，不重复启动；无额度绕过。证据：runs/autonomous_development_20261105/unattended_hourly_no_desktop_processing_20261106.json。
+
+- 2026-11-06T09:04:42+08:00：发现02:27额度恢复后既存消息排队至08:57，原小时服务仅queue不启动idle/unloaded线程；新增本机官方queue/start唤醒，保留当前活跃轮、暂停/STOP/主机/工作副本检查，启动前查普通额度，失败或额度不足等3600秒。尚未启用，先保护回归。评测模板已补Install并真实启动终态实例，already_completed去重，MainPID0/Resultsuccess/enabled。证据：runs/unattended_queue_dispatch_20261106/。
+
+- 2026-11-06T09:04:44+08:00：资源保护：启动受保护任务 tetris-guard-298272-1793927084319009547，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/unattended_queue_dispatch_20261106/test_guard。
+
+- 2026-11-06T09:04:46+08:00：资源保护：tetris-guard-298272-1793927084319009547 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/unattended_queue_dispatch_20261106/test_guard。
+
+- 2026-11-06T09:05:17+08:00：无人值守队列修复保护回归41项通过，已开启start_queued_turns，由既有每分钟轻检查投递器在idle/notLoaded时消费原排队消息；无新聊天/桌面/主机或CPU fallback，启动前查普通额度，失败/不足等待3600秒。当前轮active不打断，尚待退出本轮后的真实queue/start→新工具证据。纠正08:57:55回执：当前轮08:56:59早于08:57:45消息，且该ID仍在queue/list，不能声称此条投递已被消费。证据：runs/unattended_queue_dispatch_20261106/deployment.json；runs/autonomous_development_20261105/unattended_hourly_processing_reconciliation_20261106.json。
+
+- 2026-11-06T09:06:39+08:00：归档已完成诊断与早期评测：00:07:53原上下文梯度16批通过，0优化器步，policy/Adam/更新数不变；00:23:45既存8192检查点7/8触顶，100003=17033，得分比0.9673989069未过门槛，无追加计算或推广。当前优先queue/start真实自动执行验收，其后再考虑克隆Adam更新归因，未把梯度大小当棋力结论。证据：reports/experiments/ppo_gradient_attribution_20261106.md。

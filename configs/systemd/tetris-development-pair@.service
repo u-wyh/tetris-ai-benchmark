@@ -15,3 +15,6 @@ Environment=OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
 TimeoutStopSec=40
 KillMode=mixed
 RuntimeMaxSec=1h
+
+[Install]
+WantedBy=default.target

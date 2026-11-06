@@ -105,6 +105,19 @@ def run(control_path, dry_run=False, clock=time.time):
                 else:
                     with (ROOT/'OPERATIONS.md').open('a') as f:
                         f.write(f"\n- {event['at']}：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：{folder/'hourly.jsonl'}。\n")
+            if (control.get('start_queued_turns') is True and not dry_run
+                    and status == 'active' and action in ('queue','already_queued','interval_not_elapsed')):
+                from start_queued_turn import start_queued_turn
+                def permitted():
+                    latest=json.loads(control_path.read_text())
+                    return (latest.get('enabled') is True and not (folder/'STOP').exists()
+                            and latest['thread_id']==control['thread_id']
+                            and latest.get('execution_host')=='remote-ssh-discovered:lightbook'
+                            and latest.get('execution_machine_id')==Path('/etc/machine-id').read_text().strip())
+                event['queued_start']=start_queued_turn(control['thread_id'],folder,ROOT,permitted)
+                if event['queued_start']['action']=='queued_turn_start_accepted':
+                    with (ROOT/'OPERATIONS.md').open('a') as f:
+                        f.write(f"\n- {event['at']}：本机官方queue/start已接受既存续办消息，turn={event['queued_start']['turn_id']}；仍需后续工具/开发结果确认实际执行，不重复投递。证据：{folder/'hourly.jsonl'}。\n")
         except Exception as exc:
             event.update(action='check_failed',error=repr(exc))
             code=1
