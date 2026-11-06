@@ -1583,3 +1583,25 @@
 - 2026-11-06T16:32:23+08:00：资源保护：15对固定首动作后同策略CUDA8有限分支及真实跨进程首批复用完成，无训练或质量模型推广。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rank_branches_20261106/summary.json。
 
 - 2026-11-06T16:38:01+08:00：15对固定首步后原策略续走对照passed，256步全部删失/无观察死亡；清行较少4对/同10/多1，总−7行/四行事件−1/reward约−14。不能将整体8k退化归因一次漏清行或无死亡当等价。进程388410→388487实际复用首4对，文件SHA未改；7680环境步/1020 GPU预测/0optimizer，模型policy/Adam/计数和采样RNG不变。86输入未改，guard/controller16:32:23 completed，全250%/6GiB，CPU72.75℃/GPU49℃/3431.32MiB。5测试过。下一新固定C/D以8k续走、复用A/B和同256协议，不重复旧计算或训练。证据reports/experiments/rank_first_action_branches_20261106.md。
+
+- 2026-11-06T16:42:50+08:00：原生goal续轮实际首工具16:39:02，非新小时投递消费，后台健康/无重任务。开始预定C/D续走8k对照，保持现有runner/helper及A/B输出不改；新增verifier校验只模型不同、context/source/group/horizon/native一致、首步/trace/model计数/删失、固定首步后的共同窗口对比。先CPU100%/2GiB原温控定向测试，无模拟或模型更新。证据runs/autonomous_rank_branches_candidate_continuation_20261106/unit/design.json及native_goal_continuation_factorial_execution_20261106.json。
+
+- 2026-11-06T16:42:52+08:00：资源保护：启动受保护任务 tetris-guard-390383-1793954572685741853，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rank_branches_candidate_continuation_20261106/unit/guard。
+
+- 2026-11-06T16:42:54+08:00：资源保护：tetris-guard-390383-1793954572685741853 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rank_branches_candidate_continuation_20261106/unit/guard。
+
+- 2026-11-06T16:42:55+08:00：资源保护：续走策略因子对照的身份/轨迹/模型计数/删失及共同窗口定向检查完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rank_branches_candidate_continuation_20261106/unit/summary.json。
+
+- 2026-11-06T16:44:51+08:00：续走因子13项定向检查过，现预声明C/D只将续走模型换为冻结8k actor016b6b…，同15上下文/首步4与0/固定4对批次/GPU8/256含首步，旧A/B完整输出冻结且不重算。新计划最多7680active模拟步，跨进程首组复用；固定首步分别A/C、B/D共同窗口reward/清行/四行及死亡/删失对比，计数预期原30003200/36625、8k8192/36635，policy/Adam/RNG不变。冻结145输入，300秒命令/600秒wall/250%/6GiB原温控，不延长horizon/不作总体质量推广/0optimizer。证据runs/autonomous_rank_branches_candidate_continuation_20261106/design.json。
+
+- 2026-11-06T16:44:54+08:00：资源保护：启动受保护任务 tetris-guard-390740-1793954694094035769，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rank_branches_candidate_continuation_20261106/guard。
+
+- 2026-11-06T16:45:26+08:00：资源保护：tetris-guard-390740-1793954694094035769 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rank_branches_candidate_continuation_20261106/guard。
+
+- 2026-11-06T16:45:27+08:00：资源保护：冻结8k策略续走C/D两臂及原A/B固定首步因子比较完成，无训练/模型推广。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rank_branches_candidate_continuation_20261106/summary.json。
+
+- 2026-11-06T19:04:55+08:00：实时账户允许正常使用，恢复原目标的旧usageLimited状态，保留目标、预算和用量；未消耗额度重置券。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-06T19:04:55+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-06T19:12:44+08:00：C/D及四臂因子比较完成：固定原首步C−A清行+2/reward约+5，固定8k首步D−B清行+6/reward约+17；60臂全256删失/0观察死亡，不支持所选15处的短程退化解释，不推广/不延长。13测试过；新增7680步/1020GPU预测/0optimizer，进程390776→390859复用首4对、旧A/B及首批SHA未改，145输入未改，guard16:45:26/controller16:45:27 completed，全250%/6GiB，采样CPU74.375℃/GPU50℃/3713.50MiB。后因额度限制（16:47:45至19:03:45已观察limited）暂停，19:04:55官方允许/goal恢复，原生goal19:06:07实际工具继续审计；19:04小时消息仍pending，未称消费。原CPU8k指标核实2/8死亡(6942/17994)，下一新自身轨迹捕获，不重跑旧分支/训练。证据reports/experiments/rank_continuation_factorial_20261106.md。

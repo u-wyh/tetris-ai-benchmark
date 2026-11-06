@@ -6,6 +6,24 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T19:12:44+08:00 最新接手：C/D续走对照完成且无短程劣势，下一自身长程轨迹捕获
+
+新增verify_rank_continuation_factorial.py与13项定向校验，复用未改runner/helpers和旧A/B，不改主训练31/推理20/C产物。新C/D同15状态/首步清4与清0、后续换冻结8k016b6b…，同GPU8/4对批次/最高float32/TF32false/256含首步。固定原首步C−A清行总+2、四行事件+2、reward约+5（6差/4同/5好）；固定8k首步D−B清行+6、四行+4、reward约+17（5差/4同/6好）。四臂60条全到256、0死亡/0TimeLimit，均删失；**不支持这15处清行假设解释长期退化**，也不能推广8k或声称长期等价。不延长本协议horizon。
+
+新进程390776算首4对2048环境步/255GPU预测、390859复用首批算11对5632/765；新增7680模拟步/1020GPU预测/0optimizer。首批及原A/B输出SHA不变，8k policy/完整Adam/计数8192/36635和CPU/CUDA采样RNG不变。branch16:45:24/restart16:45:25/factorial均passed，guard16:45:26/controller16:45:27 completed，145冻结输入未改，全250%/6GiB/32.797秒/原温控，采样CPU74.375℃/GPU50℃/3713.50MiB。所有有限服务终态，**不重跑A/B/C/D/prefix/排序/几何**。报告rank_continuation_factorial_20261106.md。
+
+重新读原CPU质量事实：autonomous_actor_quality_8k_20261106/candidate.json中模型016b6b… **2/8死亡、6/8触顶**，100002=17994、100005=6942，cap20000/mean18117；原基线8/8 cap。不要把其他路线7/8触顶误成此模型7/8死亡。已选15状态来自原策略随机轨迹，不是8k自身长程偏移；短256不覆盖真实晚期失败，旧质量门失败/不扩2M保持。
+
+下一先查已有8k自己走出的trace/snapshot（按modelSHA和设备核验）；已知candidate.seeds只有指标，ppo30m_death_capture硬编码原30M/CPU，不能直接当8k已有恢复轨迹。若缺失，实施新**有界自身greedy轨迹捕获**，不要继续挑原策略状态/扩大既有15对horizon或调PPO网格。现行GPU8约束保持：全部8开发seed100000..7，单episode最多原cap20000（总唯一上限160000环境步），冻结8k CUDA highest/TF32false，active槽死亡/TimeLimit/cap后停住，不自动重开；这是新带状态诊断，不是重复纯指标评测。明确CPU旧失败未必按CUDA/batch复现，不能预写死亡数或拿新GPU结果冒替原CPU质量门。
+
+建议用新诊断helper而不改已冻结BranchControls/run_rank_branches/主31：可继承BranchNativeEnv添显式capture_reset(seed)，确认SB3.load(env=None)与env.seed/reset顺序不把8seed变42；控制模型加载后再按各seed reset，核验实际episode_seed/pieces0。按256全局决策round一段，保存8worker完整state（含dead状态/active标记）、实际actions、公共观测/feature/mask摘要、outcome/episode_seed，必要的所选feature/logit/margin；每段原子提交/数组hash/模型与来源身份，恢复从最后提交段的全部active/worker状态，逐段前缀不可重采。自有pickle必须外部固定SHA后再载入。恢复要覆盖未完episode与已死槽，固定lane排序/active batch，CPU/CUDA采样RNG在greedy观察中不变、policy/Adam/PPO计数不变；实际模拟步与预测次数如实计。
+
+可同时在相同自身观测上用原30M shadow greedy仅观察选择/概率/危险feature差（不执行shadow动作、不改变candidate轨迹/RNG），以便后续回放晚期危险段；权重两模型与模型SHA明确。不要保存每步全1840矩阵造成无谓IO，公共摘要+实际动作+稀疏完整snapshot可供精确重放；关键点需验证所选feature来自当前mask合法action。无训练新数据更新/无model promotion。
+
+先定向seed/停止槽/跨段恢复/坏SHA/数值旁观不改RNG测试，然后预声明源/模型/compiled runtime/预算。长capture应分有限阶段（例如每进程最多20段=5120round、≤40960环境步；180或300秒命令/600秒wall原保护），完成就保存让下一轮从最后段续，不用超长无界服务；实际每段时间决定一次可执行段数，不能突破预算/改账户。整轮CUDA unavailable执行前拒绝，GPU8/CPU250%/6GiB/原温控/暂停规则；只保留进度无CPU训练/其他机fallback。
+
+额度与执行：小时日志16:47:45到19:03:45已观察usage_limited，19:04:55官方ordinary_usage_allowedtrue/goal active恢复；新原生goal轮01a1b088-7bcc-7af2-8d90-93c0895b979c于19:04:57开始，19:06:07实际工具执行后补审计。19:04新小时投递仍pending，**未声称已消费**；native_goal_continuation_factorial_execution_20261106.json保留旧16:39开始及本次恢复证据，不能声称2小时中在跑这个已终态任务。后台health19:07正常，留lightbook，不依赖桌面。前轮2ec01f7与本轮新计算/13测试有实质进展；额度不足保存等小时、不绕过限制，用户暂停取消即停。
+
 ### 2026-11-06T16:38:01+08:00 最新接手：15对首步干预完成，原策略常补回；下一隔离续走策略C/D
 
 新增scripts/rank_branch_helpers.py、run_rank_branches.py及5项定向测试，不改主训练31/推理20/C产物。全部15上下文×2首步（强制保存action、实际清4/0），后面**均原30M eb859b… CUDA greedy**，256步含首步。固定每4对/8槽批次与顺序，尾3对inactive停住，死亡/TimeLimit/horizon不reset。每pair原子提交、partial group必须全原组重算核验已提交pair而不覆盖，防止恢复改变float32 batch；最高matmul精度/TF32false。
