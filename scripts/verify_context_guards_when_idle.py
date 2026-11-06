@@ -14,6 +14,16 @@ from development_allowed import allowed
 from resource_guard import ROOT,now,write_json,operation
 
 
+def upstream_eligible(path):
+    receipt = json.loads(Path(path).read_text())
+    if receipt.get('status') != 'passed':
+        raise RuntimeError('Upstream verification did not pass')
+    eligible = receipt.get('eligible_for_new_experiments')
+    if type(eligible) is not bool:
+        raise RuntimeError('Upstream eligibility must be explicit')
+    return eligible
+
+
 def run(folder):
     if (folder/'summary.json').exists():return
     lock=(folder/'queue.lock').open('a');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
@@ -44,6 +54,14 @@ def run(folder):
                 '--no-legend','--plain','tetris-guard-*.service'],capture_output=True,text=True,check=True,timeout=10)
             if not busy and not guards.stdout.strip():break
             time.sleep(5)
+        if design.get('required_upstream_receipt'):
+            check()
+            if not upstream_eligible(design['required_upstream_receipt']):
+                write_json(folder/'summary.json',dict(at=now(),status='skipped_ineligible_upstream',
+                    source_receipt=design['required_upstream_receipt'],validation_started=False))
+                write_json(folder/'status.json',dict(at=now(),stage='skipped_ineligible_upstream'))
+                operation('上游性能门槛未过，自动跳过后续恢复验收；没有启动计算',folder/'summary.json')
+                return
         check();guard=folder/'guard'
         if guard.exists():raise RuntimeError('Previous guard output exists; inspect before retry')
         write_json(folder/'status.json',dict(at=now(),stage='protected_gpu_validation',guard=str(guard)))
