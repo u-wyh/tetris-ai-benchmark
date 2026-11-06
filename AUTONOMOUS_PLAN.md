@@ -6,6 +6,26 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T21:33:44+08:00 最新接手：本次小时已真实执行；原30M KL离线副本对照未过支持门，下一验证完整GPU评测的并发worker派发
+
+**本次小时真实执行**：21:05:59 submission01a1b0f7-4d16-71e0-b863-b958661cb953→新轮01a1b101-81c6-7311-be4e-18e4e4194f2f，userMessage.clientId精确01a1b0f7-4d15-7d23-84ba-fd85c6e338c6，首工具21:17:18.206/call_ff2f3064c30a43eb9f786fb013d0288a；queue空，13827→1/proxy空/4单元enabled active/linger yes/睡眠masked/目标active，真实receipt hourly_original_kl_execution_20261106.json，不能只拿accepted当执行。前轮1d707af为实质开发/完整评测，禁止重跑。
+
+**已完成，禁止重跑/调beta翻案**：新增scripts/audit_original_kl.py及9项tests/test_original_kl_audit.py，复用旧KLMaskablePPO而非重复实现。runs/autonomous_original_kl_20261106固定旧4096条CUDA8缓存（dataset SHA124e0495…，逐数组与GAE精确），源eb859b…/实际30003200/36625、完整policy/Adam，两克隆仅清actor exp_avg、LR3e-5、β0 vs .02，新固定排列3500000/5epoch×16批/每克隆80步，**正式克隆160 optimizer更新、原0、新环境0**；unit另10次合成CPU optimizer步骤/0环境，单列不冒充训练。源和teacher policy/完整Adam/计数/父采样RNG不变，step log160行完整。unit beta0与原生SB3的policy/Adam/epoch精确等价是合成CPU范围；正式CUDA两case均既有KL train，不夸大unit范围。
+
+最终KL(ref||current) control0.0002362431615、anchor0.0002325909127；最终比**0.9845402983**/峰值比**0.9878623253**，未过事先<.95（至少5%下降）门，greedy两边1.0仅64训练态。训练KL(current||ref)最终探针比0.9846992193。末固定256batch加权anchor actor梯度.004274467、PG1.032339573、比例.004140563（0.414%），critic侧KL梯度0；不以梯度范数推断长期因果或改大beta重试。原样本重算value/log_prob最大差6.1035e-5/7.6294e-6在原容差，不宣称跨batch bit一致。诊断计算passed !=方案支持；**diagnostic_supported=false/eligible_for_training_extension=false**，不启动PPO/不保存普通model.zip/不推广。
+
+正式GPU进程442238，guard21:25:24/controller21:25:25 completed，64冻结输入未改/8.179秒/all250%6GiB/采样CPU58.5℃GPU42℃1359.18MiB/4hold无降载；unit9 passed/1.81秒，guard21:24:29/controller21:24:30/100%2GiB。主31/推理20/模板及initialization中full-context与kl_reference互斥保护均未改。证据reports/experiments/original_kl_offline_20261106.md、根kl_audit/steps/permutations/completion_audit和run/unit guard/controller。所有有限service终态，不因空闲重启。
+
+**修正历史理解**：原30M作reference已试过，非仅BC reference：KL .03/.3 fresh首8均失败；restore .3首8曾过（存活比1/分比1.00198755），但extra8在100014/15346死、均比.9709125/.94875291失败；RNG隔离restore .3首8也失败（.89575/.88115583）。不能称restore从未过首筛，也不把这些不同初始化的历史成绩当本轮因果对照。不再复做KL/LR/GAE/critic预拟合/旧actor一阶转换长训练。
+
+**下一实际开发（未开始，先查重）**：验证**完整GPU质量评测**worker派发可否加速，不是PPO训练侧IPC优化。309797步完整评测的354稳态样本（elapsed≥10s）CPU used cores中位0.9984507576，预算2.5核；scripts/own_policy_capture.py advance_round逐lane同步env_method('capture_step',action,indices=[lane])，而SB3 env_method本身能先发送全部目标再按顺序收集。此结构/利用率只是待检假设，旧训练IPC乐观上界.0726秒<.4结论保持，不能直接认定通信瓶颈或宣称训练提速。已定向搜索没有capture_step批量派发现成实现。
+
+新独立wrapper/worker子类可新增capture_step_by_seed(actions_by_seed)，调用原capture_step，父端一次env.env_method派发所有active indices，按原lane顺序取回。本协议8个episode_seed唯一且无autoreset，可用固定seed→action映射；同seed多context不能冒用。保持GPU两模型forward/active batch形状/精度、观测mask/selected feature与所有原rows字段完全相同，不修改旧已冻结own_policy_capture/capture runner/旧design/缓存或主31/20；先测试错映射/停槽/死槽与新进程恢复，实际状态/RNG保存不漏。
+
+**先冻结新有限协议再跑**：可从runs/autonomous_gpu_quality_4k_20261106/baseline/chunk_0000完整八worker状态开始（外部manifest/state SHA+原identity先验核对，复用load_verified_chunk而非裸pickle），原30M实际控环境、已有4k仅旁观。固定有序8seed100000..7/真实max20000，一套env同起点恢复做**A串行/B并发/B并发/A串行**，每arm512轮/4096新环境步，合最多**16384新环境步**，0optimizer。每arm恢复同全worker/active views/父RNG；预热仅做GPU forward、不推进环境，CUDA synchronize计时边界。逐步全trace含自然actions/probs/selected features/obs-mask digest/outcome与完整末worker/RNG/模型Adam必须精确；同一GPU batch形状，不改变actions或降精度凑速度。计时覆盖两GPU模型+全部环境推进/返回、摘要/状态导出，明确是否含commit I/O/启动成本，不能把局部通信改善当完整管线加速。预声明配对几何加速≥1.05且两pair方向一致才支持进一步集成，失败保存不复测计时翻案。另停槽验收最多512新步（可用末cap保存状态与前32步混合active槽，或定向单测），总模拟≤16896/250%6GiB/原温控/180秒命令600秒wall；必须先检查已有进程避免重复。
+
+即便性能通过，仍需新capture wrapper的真实分段提交→新进程恢复、错误cache/source拒绝和已提交前缀SHA不变验收，缓存明确新的dispatch来源；不要直接续写旧完成评测或改变旧identity。只有证据足够再接入后续评测。4k完整质量7cap/1死9797和8k6cap/2死均保持拒绝，不为benchmark重训或扩大2M。所有执行/副本/每小时留lightbook，GPU或主机不可用保存无CPU训练/他机fallback；原CPU250%/温控/内存时间预算、额度不足等小时不绕限改账户，用户暂停取消即停。无限目标active不标complete。
+
 ### 2026-11-06T21:16:28+08:00 最新接手：原30M/已有4k匹配GPU8整局均完成，4k质量失败；停止旧配方，下一原30M KL锚定离线对照
 
 **本轮有实际进展，不是等待/状态复述**：原生goal续轮01a1b0eb-73e0-7a02-9f41-c364176c009c首工具20:53:11.172，新增scripts/compare_gpu_quality.py与9项防设备/数值来源/模型计数和旁观角色混用测试，均passed；实际完成两模型完整GPU8评测并审计，不能重算。前轮d696451快检亦为真实进展。

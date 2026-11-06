@@ -1845,3 +1845,23 @@
 - 2026-11-06T21:11:09+08:00：资源保护：原30M与已有4k两完整GPU8轨迹独立审计及原始质量门比较完成，无新模拟/优化器更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/audit/summary.json。
 
 - 2026-11-06T21:14:22+08:00：匹配原30M/已有4k完整GPU8质量评测及579输入独立审计完成。原160000步/8cap，4k149797步/7cap/1真实死亡（100006/9797），均存活比0.93623125/均分比0.9069937767931345/最差seed0.48985/死亡1>0，四门均失败，无扩训/推广/额外seed资格验证。合309797新环境步/80000实际GPU forward批次/0optimizer，10真实进程/两根各80提交，恢复前缀SHA不变、完整worker/trace/模型Adam/计数/RNG审计passed。原GPU与旧SHA核验CPU基线8seed的pieces/score/死亡/cap终点相同，不声称全trace同。8 GPU阶段guard803.134秒/全250%6GiB/采样CPU74℃GPU51℃内存3515.32MiB/无降载；unit9检查过，最终audit guard/controller21:11:09/6.171秒/100%2GiB。快检4k8cap不代表整局通过；拒绝再跑旧配方或扩回溯。原目标active、21:10:13无人值守healthy/proxy空；21:05:59小时消息仍pending，未冒称消费。证据reports/experiments/gpu_quality_4k_20261106.md、completion_audit.json、quality_comparison.json及native_goal_gpu_quality_4k_execution_20261106.json。
+
+- 2026-11-06T21:18:39+08:00：21:05:59小时submission01a1b0f7-4d16-71e0-b863-b958661cb953由新轮01a1b101-81c6-7311-be4e-18e4e4194f2f消费，userMessage.clientId精确匹配01a1b0f7-4d15-7d23-84ba-fd85c6e338c6，首exec21:17:18.206/call_ff2f3064c30a43eb9f786fb013d0288a，queue空；本机13827→1/proxy空/4单元enabled active/linger yes/睡眠masked/GPU正常。真实续办已执行，不以accepted代替执行；前轮1d707af评测终态不重跑。历史原30M reference KL .03/.3及restore/RNG隔离均已有失败，不重复其长训练；核对当前拟议固定4096缓存/原完整Adam+actor一阶转换的离线对照是否同等，再决定实现。证据hourly_original_kl_execution_20261106.json。
+
+- 2026-11-06T21:24:23+08:00：新预声明离线原30M-reference KL对照。历史KL .03/.3 fresh均失败；restore .3曾首8seed过，但extra8seed失败（100014/15346），RNG修正版首8亦失败，不能说restore从未通过首筛。新实验只复用已有SHA124e0495…4096样本/完整Adam，在副本统一清actor一阶、LR3e-5，β0对β.02、固定新排列3500000、5epoch每副本最多80实际更新/合160，原模型0更新/0新环境，不重做已拒长训练。先验门：最终/峰值原策略KL均至少改善5%、greedy一致率不降，诊断不替代质量，失败不扫beta。先100%2GiB原温控9项定向测试（10次合成CPU模型optimizer step、0环境），正式另250%6GiB/180秒命令600秒wall/CUDA必须。主31/推理20及initialization保护不改。证据runs/autonomous_original_kl_20261106/design.json和unit/design.json。
+
+- 2026-11-06T21:24:25+08:00：资源保护：启动受保护任务 tetris-guard-442025-1793971465322923487，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_original_kl_20261106/unit/guard。
+
+- 2026-11-06T21:24:29+08:00：资源保护：tetris-guard-442025-1793971465322923487 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_original_kl_20261106/unit/guard。
+
+- 2026-11-06T21:24:30+08:00：资源保护：离线KL副本beta0实际SB3等价/Adam与参考隔离/非法mask和错误缓存先验拒绝检查完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_original_kl_20261106/unit/summary.json。
+
+- 2026-11-06T21:25:14+08:00：9项离线KL保护检查通过（1.81秒；含原生PPO与KLβ0的policy/完整Adam/epoch精确等价、冻结参考无梯度/错mask与archive先验拒绝），unit guard21:24:29/controller21:24:30完成。现新run controller冻结原design和unit成功receipt，只执行已预声明两GPU副本路径，最多160 clone更新/原0/新环境0，不变更beta/排序/质量门或主31。证据runs/autonomous_original_kl_20261106/run/design.json。
+
+- 2026-11-06T21:25:16+08:00：资源保护：启动受保护任务 tetris-guard-442224-1793971516722538164，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_original_kl_20261106/run/guard。
+
+- 2026-11-06T21:25:24+08:00：资源保护：tetris-guard-442224-1793971516722538164 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_original_kl_20261106/run/guard。
+
+- 2026-11-06T21:25:25+08:00：资源保护：原30M KL锚定固定缓存副本更新对照完成，原模型未变，无新环境采样。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_original_kl_20261106/run/summary.json。
+
+- 2026-11-06T21:31:53+08:00：原30M KL固定缓存离线对照完成，9检查passed；GPU进程442238正式两副本各80更新/共160、原模型0更新/新环境0，另unit10次合成CPU optimizer单列。β.02相对β0最终原策略KL比0.9845402983/峰值比0.9878623253，均未过预声明<.95门；greedy两边1.0仅64训练态，不作质量结论，无后续训练或beta调整。最终锚定actor梯度占PG约0.414%，critic梯度0；source/teacher policy完整Adam、计数30003200/36625和全局RNG未改，逐数组/GAE身份过。run guard21:25:24/controller21:25:25完成，64冻结输入未改/8.179秒/250%6GiB/采样CPU58.5℃GPU42℃1359.18MiB/无降载，主31/推理20与初始化保护保持。小时投递真实执行结果已记hourly_original_kl_execution_20261106.json。下一研究GPU完整评测逐lane同步dispatch的可证加速，不重做旧训练IPC或失败PPO配方。证据reports/experiments/original_kl_offline_20261106.md、kl_audit.json与completion_audit.json。
