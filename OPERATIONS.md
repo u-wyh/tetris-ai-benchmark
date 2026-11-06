@@ -1479,3 +1479,13 @@
 - 2026-11-06T15:06:30+08:00：完整vectorized133项差分保护过（独立行压缩/列重建与正常清行无回退、整数统计边界、完整矩阵/异常/轨迹快照）。预声明新静态27状态30对相对bitboard中位≥1.8且每对更快才进入GPU；冻结38输入/实际来源28，CPU100%/2GiB/原温控，90秒命令/300秒队列，无模型更新/主采用。证据runs/autonomous_vectorized_features_20261106/micro/design.json。
 
 - 2026-11-06T15:14:06+08:00：完整向量化清行隔离a2efe9d/来源28，133项差分保护通过；新静态27状态30对中位1.378821/min1.351846未过1.8，38输入未改、资格false。不合入main/不放宽或重计时，不启动GPU/真实错误feature恢复/扩展验收；推理20同main/归档。测试CPU60.625℃、静态41.75℃/GPU37℃，100%/2GiB原保护。小时消息实际首工具15:03:47、新轮和queue证据已补开发结果；15:09:55后台健康/proxy空。下一仅新隔离原生整数内核可行性，不继续NumPy微调，尚未开发。证据reports/experiments/vectorized_features_20261106.md。
+
+- 2026-11-06T15:15:08+08:00：准确main27与复用归档43cc26f/新隔离副本逐项SHA同；新lightbook worktree /home/wyh/projects/tetris-native-feature-validation（codex/native-candidate-features）。无既有原生特征实现，开始C完整整数内核可行性原型，不接训练后端/改配置，不修补旧拒绝路线。证据runs/autonomous_native_features_20261106/runtime_archive.json。
+
+- 2026-11-06T15:17:46+08:00：隔离C原型与严格manifest/二进制/ABI加载、独立逐格/边界测试已写；编译前冻结源/脚本/编译器共37输入，60秒命令/180秒队列、CPU100%/2GiB/原温控GPU遥测。仅编译，不接训练backend/不启动GPU训练。证据runs/autonomous_native_features_20261106/build/design.json。
+
+- 2026-11-06T15:19:05+08:00：C原型编译成功，manifest固定GCC13.3/flags/C与wrapper源SHA/二进制bff6f8e64a15…/ABI，129项逐格差分/整数越界/异常/轨迹和篡改身份拒绝测试通过。预声明新27状态30对AB/BA相对当前bitboard特征中位≥1.8且每对>1，45输入冻结，90秒命令/300秒队列/CPU100%/2GiB/原温控遥测。尚无训练backend/GPU吞吐或采用，静态计入打包与ctypes调用，不计一次加载。证据runs/autonomous_native_features_20261106/micro/design.json。
+
+- 2026-11-06T15:20:33+08:00：C整数原型129项测试过，静态27状态30对中位6.935352764/min6.336642214通过预声明1.8，feature/mask精确；build/unit/micro冻结输入逐项未改，推理20同main/归档。只获显式训练backend集成资格，尚无GPU吞吐/检查点编译身份集成，GPU资格false，不合入或启动训练。证据runs/autonomous_native_features_20261106/micro/qualification.json及resource_audit.json。
+
+- 2026-11-06T15:21:54+08:00：隔离C原型d229934结果已报告/接手：129测试过、静态6.935353/min6.336642通过，仅获训练backend集成资格。main27/推理20保持，全部有限任务终态；编译/测试/静态保护100%/2GiB，测试CPU62.5℃/GPU37℃、静态43.125℃/39℃。下一先固定正式训练config/checkpoint/worker编译身份和恢复拒绝，再新GPU8/250%对照；尚未集成/未测GPU/未采用。小时执行证据追加该实质结果。证据reports/experiments/native_features_prototype_20261106.md。

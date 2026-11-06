@@ -6,6 +6,22 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T15:21:54+08:00 最新接手点：C原型静态6.935倍通过，下一先集成严格训练运行时身份
+
+lightbook隔离/home/wyh/projects/tetris-native-feature-validation，codex/native-candidate-features/d229934；完整C整数特征+ctypes打包，当前只是原型，**没有正式训练backend**。GCC13.3/O3共享库显式编译，manifest记录编译器路径/版本/driverSHA/flags/平台/C与wrapperSHA/二进制SHA/ABI；加载必须外部固定manifestSHA，不匹配/缺失拒绝。artifact二进制bff6f8e64a1516ad577ceaee7c5d9b79ece4800147bf33a718ead6f9c2b9642f。不要修改已冻结C/wrapper或重编覆盖该artifact。
+
+129项差分/保护测试过（1024列组/幂边界、128逐格清行、正常清行无回退、整数极值/异常、200步轨迹和身份篡改拒绝）。同27状态30对AB/BA静态，中位6.9353527644/min6.3366422140≥预声明1.8且每对快，完整feature/mask精确。包含Python打包/ctypes/分配，排除一次加载；**不是完整训练吞吐**。build/unit/micro冻结37/41/45未改；main27和推理20保持，复用准确27归档43cc26f；报告native_features_prototype_20261106.md。
+
+eligible_for_training_backend_integration=true，**eligible_for_gpu_benchmark=false**，因训练检查点运行时身份尚未集成；不要直接启动GPU或宣称已采用。全部有限任务终态：编译CPU39℃/GPU34℃，测试62.5℃/37℃/300.34MiB，静态43.125℃/39℃/14.46MiB，全100%/2GiB原温控。原30M、row masks、pipe/GPU8默认保持，无环境训练/模型更新；旧vectorized/batch/delta/fused负结果不重测。
+
+下一先读取实际trainer/config/metadata/恢复代码和已有GPU对照脚本，在本隔离副本新增**明确bitboard_native/compact**正式后端；不要改冻结C/wrapper。如需新的辅助Python运行时文件，把它与C/wrapper加入准确训练来源清单，数量AST派生，别写死27/29。普通旧backend无manifest时必须不需要.so/编译器。native必须显式配置manifest绝对路径+expected SHA，父进程和每worker加载都核验；checkpoint metadata须固定完整编译运行时身份（manifestSHA/binarySHA/compiler/flags/ABI），不仅是C源SHA。恢复/扩展应在任何目录/日志/提交/wip变更之前校验config/metadata与当前artifact，错feature/manifest/二进制/ABI要拒绝且提交逐字节不变；新来源不重标旧30M，旧源恢复用准确归档。
+
+GPU配对两臂须同一新训练来源、同一实验运行时声明（baseline仍bitboard；若显式声明相同固定artifact可核验但不执行C），避免来源差异混淆。先受保护定向测试：默认旧后端无artifact兼容、配置要求、cache/state轨迹、metadata/恢复/错身份failclosed；再核验推理20不变。集成不改已完成静态测量/资格，不重复计时。验证通过才能建立新设计/冻结sources+manifest+binary+原保护，启用GPU资格。
+
+然后新seed2900000/2900100 AB/BA每臂8192/4096跨进程，两臂CUDA8/CPU250%/6GiB/原温控/内存/时间预算、模型/Adam/PPO/RNG/8worker/非计时精确+错feature/运行时身份恢复拒绝提交不变，几何≥1.05且每对更快/无降载才合格；仅合格串行完整上下文合成完成/扩展/故障恢复。不要提前合main/更改模板/启动2M质量训练。若无GPU保留进度，不CPU训练/转其他主机。
+
+本次15:01小时续办首工具15:03:47、新轮实际执行证据已记，后台防休眠/驻留正常、桌面proxy空；非accepted即执行，不声称OS重启/整夜已测。所有开发/工作副本/续办留lightbook，额度不足保存等每小时检查，用户暂停取消即停。先读真实PID/summary，避免重启现有已完成有限任务。
+
 ### 2026-11-06T15:14:06+08:00 最新接手点：完整vectorized静态未过门，停止NumPy微调
 
 隔离/home/wyh/projects/tetris-vectorized-feature-validation，codex/vectorized-candidate-features/a2efe9d，显式bitboard_vectorized/compact，训练来源28；133项差分/保护测试通过，推理20同main/准确27归档43cc26f。正常清行批量压缩+整数列重建、底板直接统计，异常参考回退保留语义。新静态27状态30对中位1.3788209354/min1.3518462454<预声明1.8，38输入未改、资格false。**不合入/不重计时/不放宽，不启动该版GPU、真实错feature恢复或完整上下文扩展验收，均未测。** main27/row masks/pipe/原30M及GPU8模板保持。
