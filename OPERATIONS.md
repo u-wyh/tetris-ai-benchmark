@@ -1327,3 +1327,13 @@
 - 2026-11-06T10:30:40+08:00：row masks完整上下文合成GPU8完成/扩展/故障恢复10:29:52 passed（1项/4 deselected，82.41秒），父MainPID0/Resultsuccess，49冻结输入仍同。采用前归档main旧26至/home/wyh/projects/tetris-runtime-8c1b411，26文件SHA与actor上下文metadata精确同；即将合入隔离9144a36/e3c4da5/2ace0c1，旧模型不重标身份。
 
 - 2026-11-06T10:33:59+08:00：行位图搜索已采用：bc18167/5ddd8ec/b41dc69合入，main27训练SHA与实测隔离全部同，推理20同冻结bitboard基线；旧main26/旧隔离27已准确归档，旧checkpoint身份保持。模板ppo30m_guarded_bitboard显式bitboard_compact，GPU8/PPO配方/250%/原保护保持，未启动2M或替换质量模型。GPU吞吐+9.44%，完整上下文合成扩展恢复通过；两服务均MainPID0success、当前无重任务。后续单次worker CPU剖析定位环境内耗时，勿复跑本有限验证。证据：runs/autonomous_row_masks_20261106/integration_audit.json。
+
+- 2026-11-06T10:36:12+08:00：按计划搜索未有worker级剖析，新增只读脚本profile_worker_steps.py，原上下文4096 CUDA8、8worker step/reset process CPU/cProfile；历史rollout SHA及原policy/Adam/PPO不变为门槛。冻结57输入、主27来源不动，180秒命令/600秒队列、250%/6GiB/原温控；无质量候选/优化器更新。证据runs/autonomous_worker_profile_20261106/design.json。
+
+- 2026-11-06T10:36:14+08:00：资源保护：启动受保护任务 tetris-guard-324459-1793932574787404402，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_worker_profile_20261106/guard。
+
+- 2026-11-06T10:37:10+08:00：资源保护：tetris-guard-324459-1793932574787404402 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_worker_profile_20261106/guard。
+
+- 2026-11-06T10:37:10+08:00：资源保护：当前行位图CUDA8 worker CPU剖析完成，历史rollout SHA同、原模型/Adam/PPO未更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_worker_profile_20261106/summary.json。
+
+- 2026-11-06T10:40:15+08:00：真实8worker CPU剖析10:37:10 passed/completed，各512step/共4096、1reset；历史rollout SHA同、原policy/Adam/PPO0更新，57输入未变。含大cProfile process_time开销的CPU和110.7084秒，搜索53.8496/特征50.4645，不能当墙钟或吞吐。CPU68.375℃/GPU52.0℃，全250%。下一隔离合并列统计/Python整数范围校验，不改推理20；尚无新收益。证据reports/experiments/worker_cpu_profile_20261106.md。
