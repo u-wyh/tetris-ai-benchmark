@@ -1363,3 +1363,27 @@
 - 2026-11-06T11:03:41+08:00：资源保护：冻结模型有界随机策略配对诊断完成；逐seed缓存/固定动作RNG/模型与Adam未更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_stochastic_alignment_20261106/summary.json。
 
 - 2026-11-06T11:13:31+08:00：冻结随机评测11:03:40 passed/父11:03:41 completed，原/actor8K平均1677.375/1447.75、存活比.863104553、均5/8cap，熵近似同；未观察随机提升，旧greedy只重用存活下界，无跨cap比分数。34输入未变、0模型/Adam/PPO更新，16局逐seed保存。温控11:02:56 CPU82.5℃触发150→100%，11:03:29冷却66.375℃恢复150%，GPU49℃，未达硬阈值。下一只读critic校准并持久固定样本，避免盲目重跑已停止GAE混杂路线。证据reports/experiments/stochastic_alignment_20261106.md。
+
+- 2026-11-06T11:19:23+08:00：本次小时续办新轮01a1aed9-7fac-7003-8ff3-3c32b4545d0f实际11:14:12开始/首工具11:14:31；原10:58消息已消费、queue空，桌面proxy0/后台与keeper正常、goalactive。非仅accepted，不声称额度恢复或重启验收。新增critic固定buffer持久化/校准脚本，先受保护边界/哈希测试，再一次CUDA8采样、不更新模型。证据runs/autonomous_development_20261105/hourly_critic_execution_20261106.json。
+
+- 2026-11-06T11:19:25+08:00：资源保护：启动受保护任务 tetris-guard-333156-1793935165332272196，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_calibration_20261106/unit_guard。
+
+- 2026-11-06T11:19:27+08:00：资源保护：tetris-guard-333156-1793935165332272196 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_calibration_20261106/unit_guard。
+
+- 2026-11-06T14:01:35+08:00：实时账户允许正常使用，恢复原目标的旧usageLimited状态，保留目标、预算和用量；未消耗额度重置券。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-06T14:01:35+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-06T14:02:20+08:00：critic持久样本6项受保护测试通过（终止/末值/奖励损坏拒绝、回读及拒绝覆盖、常偏差与方差区分）；未发现同等可复用buffer，旧BC解释方差仅其他模型训练标量。预声明一次原上下文4096 CUDA8/27来源、历史rollout精确同、原policy/Adam/PPO0更新；保存完整buffer/终止孔洞标记/末bootstrap并精确GAE回建，180秒命令/600秒队列/250%/6GiB/原温控。证据runs/autonomous_critic_calibration_20261106/design.json。
+
+- 2026-11-06T14:02:23+08:00：资源保护：启动受保护任务 tetris-guard-359766-1793944943091000264，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_calibration_20261106/guard。
+
+- 2026-11-06T14:02:37+08:00：资源保护：tetris-guard-359766-1793944943091000264 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_calibration_20261106/guard。
+
+- 2026-11-06T14:02:37+08:00：资源保护：CUDA8固定critic样本保存/回读/GAE重建及校准统计完成，原模型0更新，无质量推广。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_calibration_20261106/summary.json。
+
+- 2026-11-06T14:03:35+08:00：资源保护：启动受保护任务 tetris-guard-360058-1793945015744873235，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_calibration_20261106/tail_guard。
+
+- 2026-11-06T14:03:37+08:00：资源保护：tetris-guard-360058-1793945015744873235 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_calibration_20261106/tail_guard。
+
+- 2026-11-06T14:05:10+08:00：critic只读样本14:02:35 passed/父14:02:37 completed，4096 CUDA8历史指纹同、原模型/Adam/PPO0更新、52输入未改；2.2MiB完整buffer持久化/回读及SB3 GAE精确重建。残差RMSE7.22448、均值bias仅1.5403% MSE；复用数据尾部分解14:03:36发现单worker97.4008% SSE/唯一死亡前32步88.1861%，不能直接推断梯度因果。CPU65.125℃/GPU41℃/内存3670.1MiB，全250%无降载。6项保护测试过；未新训练/推广，下一先查梯度归属证据再离线分解、不重采样。证据reports/experiments/critic_calibration_20261106.md。

@@ -6,6 +6,16 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T14:05:10+08:00 最新接手点：critic样本已持久化，误差集中在一次失败尾部
+
+runs/autonomous_critic_calibration_20261106已完成：14:02:35 calibration passed/14:02:37父与guard completed，4096 CUDA8原上下文/历史rollout SHA精确同、原policy/Adam/PPO0更新、52输入未改。rollout.npz 2.2MiB含完整buffer/episode_starts/末bootstrap/逐step终止孔洞标记，逐数组回读与已安装SB3 GAE重建精确；6项保护测试通过。不要重采样同窗口，后续复用dataset.json/rollout.npz。
+
+残差mean-.896633/std7.168626/RMSE7.224482、EV.482116，均值偏差平方仅1.5403% MSE；唯一终止worker4/step237，worker4占97.4008% SSE，终止及前31步32条占88.1861%，top41占92.6619%。数据只一个相关窗口/1死0截断、GAE有bootstrap，分组探索性且重叠；不能证明critic梯度相同比例或PPO退化因果。不据此自动全局bias修正/预热/robust loss或新GAE/LR网格。报告critic_calibration_20261106.md。
+
+下一先搜索已有梯度审计的样本归属证据；若缺失，使用已保存4096数据做有界只读critic梯度分解（失败尾部与其余样本的贡献/夹角、全局裁剪影响），固定新诊断协议/输入，先验证分组梯度合成与原损失全梯度一致。**不再收集本窗口，不作优化器更新/质量推广**；数据SSE不等于梯度占比。GPU8采样要求仍保持；离线梯度计算无env推进，CUDA/250%/6GiB/原温控，180秒命令/600秒队列。先证据再选真正学习改进，避免重复失败配方。
+
+硬件：CPU65.125℃/GPU41℃/内存3670.1MiB，全250%无降载；尾部分析CPU100%/2GiB/同温控遥测。当前这些有限任务都已终态，勿重启。main27/推理20、row masks与原30M冻结保持。新小时消息已于11:14:12新turn01a1aed9-7fac-7003-8ff3-3c32b4545d0f/11:14:31首工具实际执行，queue空；证据hourly_critic_execution_20261106.json，非仅accepted。不声称整夜/OS重启验收。所有执行留在lightbook，无CPU训练/其他主机fallback；额度/暂停规则保持。
+
 ### 2026-11-06T11:13:31+08:00 最新接手点：随机诊断完成，下一查critic校准并保存复用样本
 
 随机策略配对11:03:40 passed/父11:03:41 completed、MainPID0success，16局/固定开发seed100000–100007、动作RNG2400000+i/cap2000。原平均1677.375、actor8K1447.75，ratio.863104553，均5/8cap；均值熵.572485/.572004近似同。无描述性随机提升，不支持本样本中随机改善/greedy退化取舍；不做因果/显著性推断，不扩seed/cap。10项观测RNG/动作/缓存断点测试通过，34输入未改、模型/Adam/PPO0更新，旧greedy只复用存活下界。报告stochastic_alignment_20261106.md。
