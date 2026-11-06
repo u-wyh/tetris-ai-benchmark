@@ -6,6 +6,16 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T10:26:46+08:00 当前：行位图真实GPU对照执行中
+
+原生goal新轮01a1aea8-ceaf-79b0-a3f5-2d1be57355fd开始2026-11-06T10:21:00+08:00，10:21:10真实工具与后续提交/后台GPU为实证，不是新小时accepted。旧9144a36的27文件运行代码已归档tetris-runtime-9144a36，与旧GPU metadata SHA全同。
+
+隔离e3c4da5行位图碰撞/visited，233项通过（43680逐格碰撞+3136负y/墙位姿），27状态30组静态ABBA中位1.376835685/最小1.342313352，39输入完成时未改。微基准旧controller已复制support_at_micro保留；随后2ace0c1增加可选上游性能门，7项测试通过，不合格自动skipped、无GPU启动，缺失/模糊拒绝。
+
+当前`tetris-row-masks-benchmark.service`执行新seed2100000/2100100 AB/BA各8192，49输入冻结在runs/autonomous_row_masks_20261106/gpu_design.json；全模型/Adam/PPO/RNG/8worker/非计时全等、错backend拒绝/提交不变，几何≥1.05且每对更快/250%无降载才合格。`tetris-row-masks-extension.service`等待benchmark/全部guard释放，**只有gpu_summary合格才**执行完整上下文完成/扩展/故障恢复（240秒命令/1800秒总预算）；不再对负性能结果启动多余验收。
+
+先看两个真实PID/summary/guard，避免重复；源27冻结期间勿改child数值/支持文件，main仍26/推理20旧bitboard。两者合格才归档main26并合入9144a36/e3c4da5/2ace0c1，核对27训练SHA/20推理SHA后启用于新实验；原旧断点不改身份。不合格保留证据止损。lightbook/GPU8/CPU250%/6GiB/原温控和额度/暂停规则保持，无fallback。
+
 ### 2026-11-06 10:20 最新接手点：阶段剖析完成，下一隔离行位图碰撞
 
 `runs/autonomous_training_stages_20261106/training_profile.json`10:17:05 passed、控制器10:17:08 completed。真实CUDA8原上下文4096采样指纹与历史审计完全同，PPO无剖析/剖析80步两副本policy/Adam/更新数精确同，原模型0更新、无checkpoint；55输入未改，资源见resource_audit。main仍26/推理20旧bitboard。

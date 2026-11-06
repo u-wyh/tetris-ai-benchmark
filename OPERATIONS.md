@@ -1317,3 +1317,7 @@
 - 2026-11-06T10:17:08+08:00：资源保护：实际CUDA8采样/通信等待/策略/PPO阶段剖析完成；历史rollout hash及两副本更新精确一致，原模型未更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_training_stages_20261106/summary.json。
 
 - 2026-11-06T10:20:19+08:00：实际CUDA8阶段剖析10:17:05 passed/父10:17:08 completed：4096采样6.00647秒、PPO.72780秒，历史rollout SHA同、无剖析/剖析80步副本policy/Adam/PPO同，原模型0更新、55输入未变。step_wait3.52975含worker计算/传输，mask RPC仅.22692秒；不把等待当纯通信或profiling当吞吐。CPU67.125℃/GPU47.0℃、全250%；main26/推理20不改。下一隔离行位图碰撞、新seed/新来源验收。证据reports/experiments/training_stages_profile_20261106.md。
+
+- 2026-11-06T10:21:38+08:00：改动前将旧隔离9144a36完整运行代码归档至/home/wyh/projects/tetris-runtime-9144a36，27文件SHA与旧GPU metadata逐项精确一致，venv/runs仅本机链接；旧实验只能用其准确运行代码恢复，不修改缓存身份。下一隔离row masks新SHA/新目录，main26/推理20保持。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_compact_search_20261106/runtime_archive.json。
+
+- 2026-11-06T10:26:46+08:00：本原生goal轮01a1aea8-ceaf-79b0-a3f5-2d1be57355fd开始2026-11-06T10:21:00+08:00/首工具10:21:10，实际推进隔离row masks。233项/43680逐格+3136边界通过，静态中位1.376835685/最小1.342313352；支持条件接力7项通过。新GPU8 AB/BA两seed各8192已后台执行，49输入冻结、只有合格才自动扩展恢复验收。main26/推理20保持，旧27归档SHA相同。证据runs/autonomous_development_20261105/native_goal_row_masks_execution_20261106.json、runs/autonomous_row_masks_20261106/gpu_design.json。
