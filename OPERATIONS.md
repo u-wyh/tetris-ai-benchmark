@@ -1301,3 +1301,9 @@
 - 2026-11-06T10:06:35+08:00：修复后真实无桌面小时续办已执行：09:57:45唯一pending消息于10:02:18队列清空，匹配提示新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7开始2026-11-06T10:02:08+08:00；保留日志最早工具2026-11-06T02:02:18.509Z，本次工具祖先13827→1、桌面proxy查询为0。keeper订阅/四项服务/定时器/linger/防休眠正常。只读回执初次提取遗漏custom_tool_call类型主动断言拒绝，修正后保存证据；不将投递当执行、不推断整夜/重启/物理电源。证据：runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json。
 
 - 2026-11-06T10:10:21+08:00：隔离compact搜索已启动真实GPU8两seed AB/BA性能/完整恢复对照，服务tetris-compact-search-benchmark MainPID317537、27训练/20推理身份、47输入冻结。静态222项/27状态证据已核查；顺序tetris-compact-search-extension等前服务/guard释放再跑完整上下文扩展故障恢复。main数值未改，无质量候选推广，维持GPU8/250%/6GiB/原温控，先查实际summary勿重复。证据runs/autonomous_compact_search_20261106/gpu_design.json、runs/autonomous_compact_search_extension_20261106/design.json。
+
+- 2026-11-06T10:11:24+08:00：纠正10:10观察：两首次transient任务缺Node PATH，benchmark原服务10:09:55失败/extension随后失败，均未提交训练事务；36项preflight通过。已归档partial并仅给新retry01服务补标准PATH，同47冻结设计/数值来源/门槛保持，extension独立_retry01目录串行等待。证据runs/autonomous_compact_search_20261106/gpu_guards/r0_official_task_01/command.log。
+
+- 2026-11-06T10:12:21+08:00：隔离compact实现已提交9144a36（main仍26），36项新增环境/后端preflight通过，retry01实际完成旧bitboard8192、开始compact臂；报告compact_search_20261106.md记录失败和静态证据限制。等待正式GPU/扩展summary，不将局部耗时当最终收益。
+
+- 2026-11-06T10:14:49+08:00：compact GPU8对照10:13:24一致性passed但性能门槛失败：1.01780538/1.02433193、几何1.02106344<1.05，全模型/Adam/PPO/RNG/8worker/非计时全等、错误backend拒绝/提交不变，47输入未改。benchmark-retry01成功/MainPID0；extension-retry01因无采用资格10:13:45主动中断，guard10:13:46 interrupted、MainPID0，保留现场不称扩展通过。main仍26/推理20旧bitboard，9144a36仅隔离保留，无推广/重复计时。资源峰CPU72.5℃/GPU51.0℃/内存3584.3MiB。证据：runs/autonomous_compact_search_20261106/resource_and_decision_audit.json。

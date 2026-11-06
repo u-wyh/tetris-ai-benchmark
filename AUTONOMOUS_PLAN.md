@@ -6,11 +6,19 @@
 
 2026-11-06 10:07实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06 10:14 最新终态：compact仅+2.1%，不采用
+
+`runs/autonomous_compact_search_20261106/gpu_summary.json`10:13:24 passed一致性/eligiblefalse；GPU8两seed AB/BA每臂8192，1.01780538/1.02433193、几何1.02106344，低于预声明5%。policy/Adam/PPO/全部RNG/8worker/非计时精确、错误backend恢复拒绝且提交文件不变；47输入未改。retry01benchmark已MainPID0成功。
+
+合成extension10:13:29开始后因采用门槛失败于10:13:45主动停止、guard10:13:46 interrupted/服务MainPID0；不声称完整上下文扩展通过，不重复启动。首次Node PATH失败、partial和全部guard保留。实现仅在隔离分支9144a36，main26/推理20/旧bitboard保持；报告compact_search_20261106.md。不复跑计时去凑门槛。
+
+下一先对当前main旧bitboard做实际rollout/主进程IPC等待/策略推理/PPO阶段的有界剖析，复制上下文/原模型零更新、不保存质量候选；确认主要耗时后再选优化。静态搜索占比不是整体训练占比，暂不继续堆叠搜索/packed-buffer或失败学习配方。所有lightbook/GPU8/CPU250%/6GiB/原保护/额度与暂停规则保持。
+
 ### 2026-11-06 10:10 当前：compact搜索隔离GPU对照执行中
 
 真实小时无桌面新轮验收已完成（上方回执），非accepted空转。隔离`/home/wyh/projects/tetris-search-compact-validation`已实现显式bitboard_compact；main26/推理20未改。222项差分/边界通过，负y/墙3136位姿；27状态30组静态ABBA中位1.07133、最小1.04883。静态单独design创建类型错误如实记入micro_audit，不当端到端结论。
 
-`tetris-compact-search-benchmark.service`真实PID317537，自10:09:41运行预声明2seed2000000/2000100 AB/BA各8192、4096跨进程。47输入冻结在`runs/autonomous_compact_search_20261106/gpu_design.json`，全状态/非计时精确、几何≥1.05且每对更快/全250%无降载为采用门槛。新目标8192，不额外训练/推广。`tetris-compact-search-extension.service`等待前服务和所有guard释放，随后运行compact完整上下文完成→扩展→故障恢复；最多240秒命令/1800秒总队列，同47冻结输入。不要修改冻结源码，不重复启动。先查两summary、实际PID和guard，再决定是否采用；不达门槛保留隔离证据、main继续旧后端。
+首次两transient服务因遗漏Node PATH而初始化失败（未提交训练事务），已保留失败并修正服务PATH。当前`tetris-compact-search-benchmark-retry01.service`执行相同预声明2seed2000000/2000100 AB/BA各8192、4096跨进程。47输入冻结在`runs/autonomous_compact_search_20261106/gpu_design.json`，全状态/非计时精确、几何≥1.05且每对更快/全250%无降载为采用门槛。新目标8192，不额外训练/推广。`tetris-compact-search-extension-retry01.service`（新目录runs/autonomous_compact_search_extension_20261106_retry01）等待retry01前服务和所有guard释放，随后运行compact完整上下文完成→扩展→故障恢复；最多240秒命令/1800秒总队列，同47冻结输入。不要修改冻结源码，不重复启动。先查两summary、实际PID和guard，再决定是否采用；不达门槛保留隔离证据、main继续旧后端。
 
 ### 2026-11-06 最新接手点：新候选已拒绝，转入有证据的搜索优化
 
