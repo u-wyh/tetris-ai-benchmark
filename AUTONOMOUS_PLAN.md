@@ -6,6 +6,16 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T11:13:31+08:00 最新接手点：随机诊断完成，下一查critic校准并保存复用样本
+
+随机策略配对11:03:40 passed/父11:03:41 completed、MainPID0success，16局/固定开发seed100000–100007、动作RNG2400000+i/cap2000。原平均1677.375、actor8K1447.75，ratio.863104553，均5/8cap；均值熵.572485/.572004近似同。无描述性随机提升，不支持本样本中随机改善/greedy退化取舍；不做因果/显著性推断，不扩seed/cap。10项观测RNG/动作/缓存断点测试通过，34输入未改、模型/Adam/PPO0更新，旧greedy只复用存活下界。报告stochastic_alignment_20261106.md。
+
+温控实际触发：CPU峰82.5℃，11:02:56 CPU150→100%，11:03:29 CPU66.375℃冷却恢复150%；GPU峰49℃，组内存790.9MiB，无硬阈值停止/保护放宽。评测非CPU训练fallback，不拿其耗时当性能数据。所有本轮计算结束，main27/推理20及row masks保持，fused仍不采用。
+
+下一先搜索已有critic残差/固定rollout持久数据；旧4096梯度审计仅显示value梯度主导，不能证明失校准。若无同等数据，**一次**原完整上下文4096 CUDA8只读样本，历史rollout SHA精确同、原policy/Adam/PPO0更新，保存可复用完整buffer（含episode_starts、末值/dones、逐step终止/孔洞标记）+配置/来源/运行库/哈希，并回读验证；未来分析复用它，不反复采样。180秒命令/600秒队列、8env/250%/6GiB/原温控，GPU不可用停止。
+
+新诊断只做returns-values校准：残差mean/std/RMSE、解释方差、mean_bias²/MSE、分worker及终止组，注明样本/截断局限。先确认系统偏差是否有证据，再决定critic预校准等新研究，不凭梯度范数直接新训练。旧gamma.999/GAE.98/100000混杂路线已有失败/停止，不自动重跑它或盲改GAE/LR/扩2M。原30M继续冻结，无质量模型替换；额度/暂停与lightbook限定保持。
+
 ### 2026-11-06T10:51:27+08:00 最新终态：fused+4.91%未达门槛，自动跳过依赖计算
 
 worker profile已完成，隔离fused实现da4586b/142项/静态+67.9%通过；真实GPU8 AB/BA两seed各8192于10:47:17一致性passed但eligiblefalse：1.04936231/1.04887455、几何1.049118398<1.05。全policy/Adam/PPO/RNG/8worker/非计时精确、错feature恢复拒绝/提交不变，51输入未变。无重跑/四舍五入凑门槛。

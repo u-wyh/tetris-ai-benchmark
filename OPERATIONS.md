@@ -1343,3 +1343,23 @@
 - 2026-11-06T10:46:32+08:00：主副本接手点更新：worker只读样本完成；隔离da4586b fused特征142项通过、静态中位1.679165042/最小1.606928375，51冻结输入GPU8新两seed AB/BA/恢复对照实际执行中，conditional extension只合格才启动。main27/推理20未改。协议继承计数说明误27已单独勘误，实际冻结/metadata28逐项确认，不动冻结协议或训练身份。
 
 - 2026-11-06T10:51:27+08:00：fused GPU8对照10:47:17完整状态passed但性能不合格：1.04936231/1.04887455、几何1.049118398<1.05，未四舍五入/重计时。51输入未改、错feature恢复拒绝/提交不变；CPU71.875℃/GPU53.0℃，全250%。10:47:20 conditional extension自动skipped、validation_startedfalse/无guard/子计算，未测完整上下文恢复。main27/推理20保持row masks，不合入fused/不扩2M；下一先查冻结模型stochastic诊断避免重复失败训练。证据reports/experiments/fused_features_20261106.md。
+
+- 2026-11-06T10:58:35+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-06T11:00:52+08:00：资源保护：启动受保护任务 tetris-guard-329650-1793934052658045332，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_stochastic_alignment_20261106/unit_guard。
+
+- 2026-11-06T11:00:56+08:00：资源保护：tetris-guard-329650-1793934052658045332 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_stochastic_alignment_20261106/unit_guard。
+
+- 2026-11-06T11:02:19+08:00：随机策略诊断10项受保护测试通过（真实策略观测不改动作/RNG、缓存拒绝改RNG/模式、断点只补缺失seed）。预声明冻结原30M/actor8K、seed100000–100007、动作RNG2400000+i、cap2000、各8局、2worker CPU150%/6GiB/原温控/GPU遥测，750秒命令/900秒总预算，34输入冻结。只重用旧greedy存活下界不比分数跨cap，0训练/不推广；全cap或无明确证据不自动扩预算。证据runs/autonomous_stochastic_alignment_20261106/design.json。
+
+- 2026-11-06T11:02:21+08:00：资源保护：启动受保护任务 tetris-guard-329938-1793934141965523916，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_stochastic_alignment_20261106/guard。
+
+- 2026-11-06T11:02:56+08:00：资源保护：tetris-guard-329938-1793934141965523916 自动调整CPU配额150%→100%，CPU82.5°C/GPU49.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_stochastic_alignment_20261106/guard。
+
+- 2026-11-06T11:03:29+08:00：资源保护：tetris-guard-329938-1793934141965523916 自动调整CPU配额100%→150%，CPU66.375°C/GPU43.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_stochastic_alignment_20261106/guard。
+
+- 2026-11-06T11:03:41+08:00：资源保护：tetris-guard-329938-1793934141965523916 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_stochastic_alignment_20261106/guard。
+
+- 2026-11-06T11:03:41+08:00：资源保护：冻结模型有界随机策略配对诊断完成；逐seed缓存/固定动作RNG/模型与Adam未更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_stochastic_alignment_20261106/summary.json。
+
+- 2026-11-06T11:13:31+08:00：冻结随机评测11:03:40 passed/父11:03:41 completed，原/actor8K平均1677.375/1447.75、存活比.863104553、均5/8cap，熵近似同；未观察随机提升，旧greedy只重用存活下界，无跨cap比分数。34输入未变、0模型/Adam/PPO更新，16局逐seed保存。温控11:02:56 CPU82.5℃触发150→100%，11:03:29冷却66.375℃恢复150%，GPU49℃，未达硬阈值。下一只读critic校准并持久固定样本，避免盲目重跑已停止GAE混杂路线。证据reports/experiments/stochastic_alignment_20261106.md。
