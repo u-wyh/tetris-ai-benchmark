@@ -1321,3 +1321,9 @@
 - 2026-11-06T10:21:38+08:00：改动前将旧隔离9144a36完整运行代码归档至/home/wyh/projects/tetris-runtime-9144a36，27文件SHA与旧GPU metadata逐项精确一致，venv/runs仅本机链接；旧实验只能用其准确运行代码恢复，不修改缓存身份。下一隔离row masks新SHA/新目录，main26/推理20保持。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_compact_search_20261106/runtime_archive.json。
 
 - 2026-11-06T10:26:46+08:00：本原生goal轮01a1aea8-ceaf-79b0-a3f5-2d1be57355fd开始2026-11-06T10:21:00+08:00/首工具10:21:10，实际推进隔离row masks。233项/43680逐格+3136边界通过，静态中位1.376835685/最小1.342313352；支持条件接力7项通过。新GPU8 AB/BA两seed各8192已后台执行，49输入冻结、只有合格才自动扩展恢复验收。main26/推理20保持，旧27归档SHA相同。证据runs/autonomous_development_20261105/native_goal_row_masks_execution_20261106.json、runs/autonomous_row_masks_20261106/gpu_design.json。
+
+- 2026-11-06T10:29:19+08:00：row masks GPU8 AB/BA于10:28:19 passed/eligibletrue、父10:28:22 completed：1.07863069/1.11040324、几何1.094401668≥1.05；全policy/Adam/PPO/RNG/8worker/非计时精确，错误backend拒绝/提交字节不变，49输入完成时未改。CPU75.25℃/GPU53.0℃/内存3584.4MiB，全250%。条件接力10:28:27已自动启动完整上下文扩展/故障恢复，尚未合入main26；等待真实summary。证据reports/experiments/row_masks_search_20261106.md。
+
+- 2026-11-06T10:30:40+08:00：row masks完整上下文合成GPU8完成/扩展/故障恢复10:29:52 passed（1项/4 deselected，82.41秒），父MainPID0/Resultsuccess，49冻结输入仍同。采用前归档main旧26至/home/wyh/projects/tetris-runtime-8c1b411，26文件SHA与actor上下文metadata精确同；即将合入隔离9144a36/e3c4da5/2ace0c1，旧模型不重标身份。
+
+- 2026-11-06T10:33:59+08:00：行位图搜索已采用：bc18167/5ddd8ec/b41dc69合入，main27训练SHA与实测隔离全部同，推理20同冻结bitboard基线；旧main26/旧隔离27已准确归档，旧checkpoint身份保持。模板ppo30m_guarded_bitboard显式bitboard_compact，GPU8/PPO配方/250%/原保护保持，未启动2M或替换质量模型。GPU吞吐+9.44%，完整上下文合成扩展恢复通过；两服务均MainPID0success、当前无重任务。后续单次worker CPU剖析定位环境内耗时，勿复跑本有限验证。证据：runs/autonomous_row_masks_20261106/integration_audit.json。

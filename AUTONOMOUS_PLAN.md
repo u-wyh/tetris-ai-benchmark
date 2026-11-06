@@ -6,6 +6,16 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T10:33:59+08:00 最新接手点：行位图+9.44%已采用，当前无重任务
+
+GPU8两新seed AB/BA各8192、4096跨进程：1.07863069/1.11040324、几何1.094401668，通过≥1.05及每对更快门槛，全部policy/Adam/PPO/RNG/8worker/非计时精确、错误backend恢复拒绝且提交文件不变，49输入完成时未改。条件接力10:29:52完整上下文**合成**完成/扩展/故障恢复1项通过（82.41秒）；两父服务MainPID0/Resultsuccess，勿重启有限基准。
+
+已归档旧main26至tetris-runtime-8c1b411，26 SHA同原actor上下文metadata；旧隔离27至tetris-runtime-9144a36。合入bc18167/5ddd8ec/b41dc69，新main27 SHA与实测child全部相同，推理20仍同原冻结bitboard长基线；旧断点不改身份，原PPO30M保留、无质量推广。完整证据reports/experiments/row_masks_search_20261106.md、runs/autonomous_row_masks_20261106/integration_audit.json。
+
+configs/ppo30m_guarded_bitboard.json显式candidate_search_backend=bitboard_compact（formal默认/旧bitboard保留）；模板PPO配方与GPU8不变，不自动启动2M。训练/验证CPU最高75.25/71.25℃、GPU53/51℃，全250%不降载，6GiB/原温控/预算未放宽。
+
+下一先搜索已有worker级剖析，若无则在当前已采用row masks上单次受保护4096样本只读CUDA8采样，分worker CPU剖析环境step/search/features，历史rollout SHA仍须同、原模型0更新、不存质量候选，180秒命令/600秒队列。主进程step_wait含worker计算与传输，不能凭等待3.5秒就认定IPC占用；需worker数据后再选后续优化或训练研究，避免重复静态/GPU基准去追数字或盲扩失败PPO配方。全部执行在lightbook，GPU/主机不可用保留进度，无fallback；额度/暂停规则保持。
+
 ### 2026-11-06T10:26:46+08:00 当前：行位图真实GPU对照执行中
 
 原生goal新轮01a1aea8-ceaf-79b0-a3f5-2d1be57355fd开始2026-11-06T10:21:00+08:00，10:21:10真实工具与后续提交/后台GPU为实证，不是新小时accepted。旧9144a36的27文件运行代码已归档tetris-runtime-9144a36，与旧GPU metadata SHA全同。

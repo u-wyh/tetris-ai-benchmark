@@ -34,5 +34,6 @@
     "beta": 0.3
   },
   "initial_optimizer": "restore_state",
-  "candidate_feature_backend": "bitboard"
+  "candidate_feature_backend": "bitboard",
+  "candidate_search_backend": "bitboard_compact"
 }
