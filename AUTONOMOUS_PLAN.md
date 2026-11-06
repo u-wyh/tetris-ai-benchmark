@@ -6,6 +6,16 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T14:13:13+08:00 最新接手点：失败尾部梯度证实；下一查独立校准数据
+
+runs/autonomous_critic_tail_gradients_20261106于14:09:37 passed/父guard14:09:38 completed、MainPID0success。复用原4096 NPZ，0env step/0采样/0optimizer update、原policy/Adam/PPO计数不变，60输入未改；seed2500000新16批排列保存，**非历史minibatch顺序**。5项保护测试通过；两组均用原整批分母，合成最大相对误差2.5532e-7。report critic_tail_gradients_20261106.md。
+
+终止前32条对整体critic梯度方向投影比.872639、范数比.886377，top41投影.904402/范数比.912802，说明本窗口尾部误差也显著影响梯度。原global clip中位.013386；只在数学上扣掉两组critic贡献后分别.041600/.050292，actor/entropy仍完整；未执行删样本训练。范数比不等于SSE比例/因果或Adam更新，单次失败仍不足以作独立泛化结论。不要继续重复同窗口审计、自动删失败样本/robust loss/单独裁剪/新PPO网格。
+
+下一先搜索已有**独立原策略数据与critic-only预校准**工作，避免重复。若无，先预声明新的有界冻结原30M数据收集：开发seed2600000–2600007、动作Torch RNG2700000、8env每个2048步（4个4096 buffer）、原max_pieces10000/PPO配方；seed前4供后续拟合、后4供验证，按worker分开，固定16384总步，不按死亡数补样或挑seed。该数据不同于原上下文历史窗口，不能要求/声称相同rollout SHA。**只收集并持久保存每段完整buffer/末bootstrap/终止孔洞标记、逐数组hash与GAE回读，原policy/Adam/PPO更新数不变；采样计数按16384推进，不作训练或质量推广**。命令180秒/队列600秒、CUDA8/250%/6GiB/原温控与暂停额度规则。无CUDA停止，无其他主机/CPU训练fallback。需验证fresh env seed不被SB3.load/set_random_seed覆盖；验证/拟合分组无共享seed，不把相关episode当独立样本。没有独立终止或证据不足也如实报告，不自动扩预算。
+
+之后才依据独立数据设计副本上的critic拟合可行性（原actor冻结、未承诺新训练配方），不要仅凭训练集误差下降推广。main27/推理20/原30M/row masks保持；现有限计算均结束，不重启。CPU57℃/GPU38℃/内存613.5MiB，全250%无降载。无人值守本条新turn01a1af76-88c5-7572-b050-0389f03ebf7a于14:05:43开始/首工具14:05:52，14:01唯一小时排队消息已消费/queue空、桌面proxy0，真实执行非仅accepted，见hourly_gradient_tail_execution_20261106.json。
+
 ### 2026-11-06T14:05:10+08:00 最新接手点：critic样本已持久化，误差集中在一次失败尾部
 
 runs/autonomous_critic_calibration_20261106已完成：14:02:35 calibration passed/14:02:37父与guard completed，4096 CUDA8原上下文/历史rollout SHA精确同、原policy/Adam/PPO0更新、52输入未改。rollout.npz 2.2MiB含完整buffer/episode_starts/末bootstrap/逐step终止孔洞标记，逐数组回读与已安装SB3 GAE重建精确；6项保护测试通过。不要重采样同窗口，后续复用dataset.json/rollout.npz。

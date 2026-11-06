@@ -1387,3 +1387,19 @@
 - 2026-11-06T14:03:37+08:00：资源保护：tetris-guard-360058-1793945015744873235 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_calibration_20261106/tail_guard。
 
 - 2026-11-06T14:05:10+08:00：critic只读样本14:02:35 passed/父14:02:37 completed，4096 CUDA8历史指纹同、原模型/Adam/PPO0更新、52输入未改；2.2MiB完整buffer持久化/回读及SB3 GAE精确重建。残差RMSE7.22448、均值bias仅1.5403% MSE；复用数据尾部分解14:03:36发现单worker97.4008% SSE/唯一死亡前32步88.1861%，不能直接推断梯度因果。CPU65.125℃/GPU41℃/内存3670.1MiB，全250%无降载。6项保护测试过；未新训练/推广，下一先查梯度归属证据再离线分解、不重采样。证据reports/experiments/critic_calibration_20261106.md。
+
+- 2026-11-06T14:08:41+08:00：本次小时消息新轮01a1af76-88c5-7572-b050-0389f03ebf7a实际14:05:43开始/首工具14:05:52，14:01排队消息已消费、queue空、后台/keeper/四项驻留与防休眠正常、桌面proxy0。新增持久buffer的critic尾部只读梯度归属，先测试分母/互补梯度合成/终止边界；不重采样、不启训练。证据runs/autonomous_development_20261105/hourly_gradient_tail_execution_20261106.json。
+
+- 2026-11-06T14:08:43+08:00：资源保护：启动受保护任务 tetris-guard-361016-1793945323329022860，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_tail_gradients_20261106/unit_guard。
+
+- 2026-11-06T14:08:45+08:00：资源保护：tetris-guard-361016-1793945323329022860 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_tail_gradients_20261106/unit_guard。
+
+- 2026-11-06T14:09:31+08:00：5项受保护梯度分组测试通过，原批次分母/互补合成/相反梯度/终止窗口不跨episode与稳定tie排序验证。预声明离线CUDA只读4096数据，seed2500000新16批排列（非历史顺序），终止前32步及top1%两独立分解、完整/组梯度合成与裁剪反事实，0环境推进/0优化器更新。冻结60输入，180秒命令/600秒队列、250%/6GiB/原温控，不重采样/不推广。证据runs/autonomous_critic_tail_gradients_20261106/design.json。
+
+- 2026-11-06T14:09:34+08:00：资源保护：启动受保护任务 tetris-guard-361197-1793945374119731076，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_tail_gradients_20261106/guard。
+
+- 2026-11-06T14:09:38+08:00：资源保护：tetris-guard-361197-1793945374119731076 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_tail_gradients_20261106/guard。
+
+- 2026-11-06T14:09:38+08:00：资源保护：持久样本critic尾部梯度分解完成，互补梯度合成通过，0采样/0优化器更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_tail_gradients_20261106/summary.json。
+
+- 2026-11-06T14:13:13+08:00：复用持久4096数据的critic梯度归属14:09:37 passed/父14:09:38 completed；0采样/0优化器更新、原policy/Adam/PPO计数不变、60输入未改。终止前32条整体方向投影比.872639，top41 .904402，互补梯度合成误差≤2.5532e-7；clip反事实未执行训练，不作因果/质量宣称。5项测试过，CPU57℃/GPU38℃/内存613.5MiB，全250%无降载。下一先查独立数据，必要时预声明不同seed固定16384只读采样/持久化，不重复本窗口/不自动扩预算。证据reports/experiments/critic_tail_gradients_20261106.md。
