@@ -6,6 +6,16 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T14:32:45+08:00 最新接手点：critic副本保留能力失败，停止该路线
+
+runs/autonomous_critic_fit_20261106于14:27:15诊断passed、eligible_for_ppo_path_study=false，父guard14:27:17 completed/MainPID0success。固定旧critic Adam/lr3e-4/.5MSE/.5clip/256×5epoch，副本critic160次更新；原policy/Adam/PPO计数未变、副本actor及其Adam逐项未变，0env step/0采样。不要泛称所有优化器0更新；5项保护测试通过、72输入未改。报告critic_fit_feasibility_20261106.md。
+
+8k拟合RMSE7.14921→1.78474；8k独立验证7.84156→7.23073（ratio.922104，通过.95），终止前32步64条86.32438→78.43099（.908561，通过1），**其余8128条1.81602→2.06369（1.136381>1.05，失败）**。不因平均改善而推广、不调门槛，不追加LR/epoch/loss/权重插值或新样本挽救本路线。critic_diagnostic.pt只诊断，不存普通模型、不启动相关PPO路径或长局扩训；固定GAE目标非MC/质量证据。
+
+本次有限工作已终态；CPU57℃/GPU38℃/内存537.8MiB，全250%无降载，原温控/6GiB/额度/暂停规则保持。main27/推理20、row masks、原30M及模板保持；全部lightbook，GPU不可用无CPU/其他主机训练fallback。原生goal轮01a1af86-f670-7130-ba4c-bf51405ee5ec首工具14:23:51，见native_goal_critic_fit_execution_20261106.json，非新小时消息消费。
+
+下一转回有证据的效率开发：先搜索既有IPC/共享观测传输与增量候选特征工作，避免重复。现有父进程step_wait/posix.read包含worker计算等待，不能直接认定IPC瓶颈；若没有纯通信数据，可复用已保存真实观测做有界实际8进程无环境计算的通信/序列化测量，先固定协议与字节/往返范围，CUDA遥测/250%/6GiB/原温控，**不再采样同窗口或跑训练**。该测量不代表完整训练吞吐，确认足够潜力才隔离实现显式新transport；原pipe默认/数值身份保持。若无潜力，保留证据换方向，不盲建复杂共享内存。旧fused几何1.049118<1.05仍不采用/不重复计时；只有新的实质算法变化才可另立新来源/新seed GPU AB/BA验收。后续先查真实PID/summary，勿重启任何有限任务。
+
 ### 2026-11-06T14:23:26+08:00 最新接手点：独立16384样本与跨进程恢复完成，下一仅副本critic拟合可行性
 
 runs/autonomous_independent_critic_data_20261106于14:19:48数据passed/14:19:49重启passed/父guard14:19:50 completed、MainPID0success。固定seed2600000–7/动作2700000，CUDA8每worker2048/4×4096，原30M policy/Adam/PPO更新数未变（采样计数30003200→30019584）。前4worker拟合、后4验证，各8192/2次终止0截断，实际episode_seed无重叠。各段完整buffer/末bootstrap/终止孔洞/episode标记持久化，回读/逐数组hash/SB3 GAE精确重建；**不重复采样这些数据**。报告independent_critic_data_20261106.md。

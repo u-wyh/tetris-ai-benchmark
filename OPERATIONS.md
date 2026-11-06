@@ -1419,3 +1419,19 @@
 - 2026-11-06T14:19:51+08:00：资源保护：独立冻结策略数据4段持久提交完成，实际跨进程恢复worker/RNG/观测/mask通过，0优化器更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_independent_critic_data_20261106/summary.json。
 
 - 2026-11-06T14:23:26+08:00：独立冻结策略16384 CUDA8样本14:19:48 passed，4段buffer及GAE回建/哈希精确；真实363063→363174于8192后恢复并继续，14:19:49重启验收passed/父guard14:19:50 completed。两组各8192/2死0截断、实际episode种子无重叠；原policy/Adam/PPO更新数不变，无质量训练。55输入未改，CPU75.25℃/GPU53℃/内存3717.0MiB，全250%无降载，2项真实种子/恢复重放测试过。下一只设计单次副本critic拟合固定160更新/独立最终验证，不重复采样/不自动调参/推广。证据reports/experiments/independent_critic_data_20261106.md。
+
+- 2026-11-06T14:26:23+08:00：原生goal轮实际首工具14:23:51执行，轻薄本后台健康/无重任务；新增独立worker数据的仅副本critic拟合，先检查actor参数/非空Adam历史冻结及全部验证门。固定160次副本critic更新、原policy/Adam/PPO计数不变、0采样；未启动PPO质量训练。证据runs/autonomous_development_20261105/native_goal_critic_fit_execution_20261106.json。
+
+- 2026-11-06T14:26:25+08:00：资源保护：启动受保护任务 tetris-guard-364483-1793946385340510213，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_fit_20261106/unit_guard。
+
+- 2026-11-06T14:26:29+08:00：资源保护：tetris-guard-364483-1793946385340510213 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_fit_20261106/unit_guard。
+
+- 2026-11-06T14:27:10+08:00：5项受保护critic-only测试通过（已有actor Adam非空且留旧梯度仍冻结、实际critic更新、全部验证门/无终止拒绝）。预声明固定160次副本critic拟合：旧critic Adam/lr3e-4、.5MSE/.5clip、batch256/5epoch/seed2800000，8k拟合/8k验证、最终一次验证，不选epoch或重复采样。可行性门overall≤.95、终止前32步≤1、其余≤1.05；仅诊断权重，不存完整模型/推广。冻结72输入，180秒命令/600秒队列、CUDA/250%/6GiB/原温控，原模型/actor/其Adam/PPO计数不变。证据runs/autonomous_critic_fit_20261106/design.json。
+
+- 2026-11-06T14:27:13+08:00：资源保护：启动受保护任务 tetris-guard-364629-1793946433217559315，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_fit_20261106/guard。
+
+- 2026-11-06T14:27:17+08:00：资源保护：tetris-guard-364629-1793946433217559315 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_fit_20261106/guard。
+
+- 2026-11-06T14:27:17+08:00：资源保护：副本critic固定160次拟合完成，原模型/actor及其Adam不变，最终独立worker可行性门已记录，不代表质量推广。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_critic_fit_20261106/summary.json。
+
+- 2026-11-06T14:32:45+08:00：critic副本固定160更新14:27:15诊断passed但可行性失败、父guard14:27:17 completed。验证overall/终止窗口RMSE比.922104/.908561通过，其他8128条1.136381>1.05失败，停止预拟合路线/不推广诊断权重/不启动相关PPO/不追加调参。源模型/Adam/PPO及副本actor/其Adam不变、0采样，72输入未改，5项保护测试过。CPU57℃/GPU38℃/内存537.8MiB，全250%无降载；下一先查既有IPC/增量特征工作，必要时复用观测量纯通信而非新训练。证据reports/experiments/critic_fit_feasibility_20261106.md。
