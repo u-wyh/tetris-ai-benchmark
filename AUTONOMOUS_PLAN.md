@@ -4,6 +4,10 @@
 
 ## 用户最新首要任务：轻薄本无人值守
 
+### 最新验收进行中：跨轮、桌面通信暂停30秒
+
+09:07:12本轮已实际执行，queue已空，但没有queue/start启动记录且桌面仍连接，不能算修复的无桌面验收。独立目录`runs/unattended_queue_dispatch_20261106/boundary_probe/`正在准备专用下一轮：本轮结束后，proxy暂停30秒，观察器发现idle即调用既有小时服务消费原排队验收消息，finally及ExecStopPost恢复。下一轮首个工具应在仍暂停时运行`probe_unattended_desktop.py observe --run-dir <该绝对目录>`，若已恢复则如实记录；必须核对dispatch_observation、turn_id和实际AI工具，未过不启动新训练。原短时测试仅证明轮内工具，不覆盖本次跨轮路径。
+
 ### 2026-11-06 09:05 最新接手点：优先验收已修复的排队唤醒
 
 - 发现实际缺口：02:27实时普通额度恢复并投递后，原消息一直pending至08:57。原生goal active、backend healthy和queue成功都不能证明空闲/卸载线程会自行消费消息。修复前不能声称整夜持续开发。

@@ -1161,3 +1161,5 @@
 - 2026-11-06T09:05:17+08:00：无人值守队列修复保护回归41项通过，已开启start_queued_turns，由既有每分钟轻检查投递器在idle/notLoaded时消费原排队消息；无新聊天/桌面/主机或CPU fallback，启动前查普通额度，失败/不足等待3600秒。当前轮active不打断，尚待退出本轮后的真实queue/start→新工具证据。纠正08:57:55回执：当前轮08:56:59早于08:57:45消息，且该ID仍在queue/list，不能声称此条投递已被消费。证据：runs/unattended_queue_dispatch_20261106/deployment.json；runs/autonomous_development_20261105/unattended_hourly_processing_reconciliation_20261106.json。
 
 - 2026-11-06T09:06:39+08:00：归档已完成诊断与早期评测：00:07:53原上下文梯度16批通过，0优化器步，policy/Adam/更新数不变；00:23:45既存8192检查点7/8触顶，100003=17033，得分比0.9673989069未过门槛，无追加计算或推广。当前优先queue/start真实自动执行验收，其后再考虑克隆Adam更新归因，未把梯度大小当棋力结论。证据：reports/experiments/ppo_gradient_attribution_20261106.md。
+
+- 2026-11-06T09:08:39+08:00：本次09:07:12新轮实际调用工具、queue已空，但queued_start_last_attempt不存在且桌面连接在场，不能将其归因新queue/start修复。准备独立30秒跨轮边界验收，暂停proxy通信且finally/ExecStopPost恢复，既有本机小时服务消费专用已排队验收消息；不重复训练或原旧短时测试，不声称物理断电/重启。证据：runs/unattended_queue_dispatch_20261106/boundary_probe/。
