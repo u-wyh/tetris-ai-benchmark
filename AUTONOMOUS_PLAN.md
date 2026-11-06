@@ -6,6 +6,18 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T15:14:06+08:00 最新接手点：完整vectorized静态未过门，停止NumPy微调
+
+隔离/home/wyh/projects/tetris-vectorized-feature-validation，codex/vectorized-candidate-features/a2efe9d，显式bitboard_vectorized/compact，训练来源28；133项差分/保护测试通过，推理20同main/准确27归档43cc26f。正常清行批量压缩+整数列重建、底板直接统计，异常参考回退保留语义。新静态27状态30对中位1.3788209354/min1.3518462454<预声明1.8，38输入未改、资格false。**不合入/不重计时/不放宽，不启动该版GPU、真实错feature恢复或完整上下文扩展验收，均未测。** main27/row masks/pipe/原30M及GPU8模板保持。
+
+测试CPU60.625℃/GPU36℃/300.26MiB、静态41.75℃/37℃/11.16MiB，全100%/2GiB及原温控；均终态，不重启。没有环境推进/模型更新。报告vectorized_features_20261106.md。本次15:01小时消息新轮01a1afab-8872-7cb3-8449-3c075c6a9290实际首工具15:03:47执行，唯一待办/相同提示/queue清空序列归因，不能把历史submission和clientId说成相同。15:09:55无人值守health正常、proxy空、goal active；OS重启/整夜未测。见hourly_vectorized_execution_20261106.json。
+
+下一**停止纯Python/NumPy这一组微调**，先查既有C/原生完整候选特征工作。如无，从main另建lightbook隔离原型，不修补旧拒绝实现。只做完整整数C内核+ctypes显式加载，不先接训练配置；已有cc可用，不安装包。编译也走保护，记录编译器路径/版本/flags、C源SHA、二进制SHA和ABI，加载缺失/不匹配必须拒绝。保证元数据/cells打包、负action别名、重复/异常/溢出语义，所有索引/位移前先范围验证；清行/已有满行/visiblefalse/负y与16特征缩放逐格参考精确。异常可参考回退，不让正常清行回退掩盖实现。
+
+先独立整数/逐格差分、矩阵与异常、轨迹快照；预声明同27状态30对相对当前bitboard中位≥1.8且每对>1，冻结来源/编译身份，单次静态门。未通过保留止损，不反复调版计时；通过才考虑显式训练backend和严格编译运行时身份，不能只凭C源SHA忽略二进制/编译器差异，也不应让默认旧backend依赖.so/编译器。之后新seed2900000/2900100 AB/BA8192/跨4096、两臂同新来源/身份、CUDA8/CPU250%/6GiB/原温控，模型/Adam/PPO/RNG/8worker/非计时精确+错feature拒绝提交不变、几何≥1.05且每对更快/无降载，只有合格再串行完整上下文扩展/故障恢复。未授权降低任一门或重标旧断点，无质量训练/2M启动。
+
+所有开发/工作副本/续办留lightbook；GPU或主机不可用保留进度，不转CPU训练/其他主机。额度/暂停规则保持，先核对实际PID/summary避免重复。本条只是后续计划，C原型尚未开发/验证。
+
 ### 2026-11-06T15:03:23+08:00 最新接手点：batch特征静态未过门，剖析发现回退与小数组开销
 
 隔离/home/wyh/projects/tetris-batch-feature-validation，codex/batched-candidate-features/1524460，bitboard_batched/来源28，131项差分保护过；推理20与main/归档43cc26f逐项同，main准确27归档复用未重复创建。新静态27状态30对中位1.1109091353/min1.0433057156<预声明1.8，38输入未改、资格false。**不合入/不重复计时/不放宽，不启动GPU/真实错误feature恢复/完整上下文扩展验收，均未测**。main27/原bitboard+row masks/pipe/原30M保持。

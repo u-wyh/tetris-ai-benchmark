@@ -1471,3 +1471,11 @@
 - 2026-11-06T15:01:55+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
 
 - 2026-11-06T15:03:23+08:00：隔离batch1524460/来源28，131项差分保护过，静态1.110909/min1.043306未过1.8，资格false，不合入/不启动GPU恢复/不重计时。补充静态cProfile发现参考总回退360次/.35037累计CPU秒，统计1080次/.28450秒（含剖析开销，回退并未分支计数；前条“清行回退360次”应以总回退为准），剖析41/静态38输入未改，推理20同main/归档。测试CPU60℃、静态41.5℃/GPU37℃，原保护保持。下一另隔离研究完整向量化清行和直接底板统计，尚无收益结论。证据reports/experiments/batched_features_20261106.md。
+
+- 2026-11-06T15:04:31+08:00：本次15:01小时消息新轮实际首工具15:03:47执行、queue空、后台/keeper/驻留防休眠正常、桌面proxy0；非仅accepted。复用准确27归档43cc26f/main/新副本SHA同，新增lightbook隔离worktree /home/wyh/projects/tetris-vectorized-feature-validation，研究完整向量化清行/直接底板统计；不改旧batch/delta/fused。证据runs/autonomous_development_20261105/hourly_vectorized_execution_20261106.json。
+
+- 2026-11-06T15:05:33+08:00：隔离新增bitboard_vectorized/来源28，visible限定批量满行压缩+整数列重建、底板直接holes/max统计；异常输入参考回退但正常清行不回退。先保护验证独立逐格128种行压缩、无参考回退断言、原矩阵/边界/异常与轨迹快照，未开始计时/GPU/main采用。证据/home/wyh/projects/tetris-vectorized-feature-validation/tests/test_vectorized_candidate_features.py。
+
+- 2026-11-06T15:06:30+08:00：完整vectorized133项差分保护过（独立行压缩/列重建与正常清行无回退、整数统计边界、完整矩阵/异常/轨迹快照）。预声明新静态27状态30对相对bitboard中位≥1.8且每对更快才进入GPU；冻结38输入/实际来源28，CPU100%/2GiB/原温控，90秒命令/300秒队列，无模型更新/主采用。证据runs/autonomous_vectorized_features_20261106/micro/design.json。
+
+- 2026-11-06T15:14:06+08:00：完整向量化清行隔离a2efe9d/来源28，133项差分保护通过；新静态27状态30对中位1.378821/min1.351846未过1.8，38输入未改、资格false。不合入main/不放宽或重计时，不启动GPU/真实错误feature恢复/扩展验收；推理20同main/归档。测试CPU60.625℃、静态41.75℃/GPU37℃，100%/2GiB原保护。小时消息实际首工具15:03:47、新轮和queue证据已补开发结果；15:09:55后台健康/proxy空。下一仅新隔离原生整数内核可行性，不继续NumPy微调，尚未开发。证据reports/experiments/vectorized_features_20261106.md。
