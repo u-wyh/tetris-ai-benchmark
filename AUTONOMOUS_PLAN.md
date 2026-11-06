@@ -6,6 +6,24 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T20:51:46+08:00 最新接手：自然上下文快检已实现/校准，已有4k局部通过；下一完整GPU质量评测
+
+**本次实际执行**：原生目标续轮01a1b0d1-0367-7121-8b7b-b43525a3d727，首工具20:24:19。不是新小时投递消费；20:44:55后台healthy/goal active，20:46:45 queue_empty。native_goal_context_regression_execution_20261106.json及completion_audit.json记录真实结果；无人值守既有验收保持，不重做短暂停，不声称OS重启/未来额度已验收。
+
+**已完成，禁止重跑**：新增scripts/policy_contexts.py、evaluate_policy_contexts.py、calibrate_policy_contexts.py与5项定向测试，全部通过。固定此前8个完整状态/512本地步自然greedy，无强制首动作；错误ZIP/suite/context/cache身份在pickle/数值输出前拒绝；每256轮原子保存全8worker/active views/RNG/trace，恢复不重采前缀。旧主31/推理20/冻结helper未改，模型policy/Adam/源计数/RNG不变。suite是同episode的8个相关历史状态，只作诊断，不是全局质量门。
+
+runs/autonomous_context_regression_20261106两模型校准passed：原30M真实30003200/36625、4096新步/512 GPU批次、8个512 horizon删失；拒绝8k真实8192/36635、2154新步/462批次、8个原死亡。共6250新环境步/974 GPU批次/0optimizer。431093→431170及431249→431305各真实重载、首段SHA不变；自然动作/逐步旧A/D信息/完整末state精确，8k pre-view/mask/features亦精确。只验收正常进程退出重载，不扩大断电恢复声明。
+
+只读原task000001 manifest与ZIP确认已有4k checkpoint SHA9a11ce79e7ef32c8a2dfa88a713422503cd6635082ef9d4b244eaa854dc65b3d、2669203字节、真实计数4096/36630，不改写为全局累计步。runs/autonomous_context_probe_4k_20261106新快检4096步/512 GPU批次、8×512删失/0死亡/0optimizer。故**本suite**退化发生在现有4k与8k之间；不能外推4k整局通过。原actor probe及quality candidate记录未找到此ZIP完整20k评测。report reports/experiments/context_regression_20261106.md保存边界、命令与证据。
+
+校准guard/controller20:37:04完成，216冻结输入/43.124秒/all250%6GiB，采样CPU73.75℃/GPU52℃/3482.64MiB；4k20:40:28完成，219输入/16.409秒/all250%6GiB，采样CPU67.125℃/GPU43℃/3190.13MiB。无降载，所有有限计算终态；**不要因空闲重启旧计算**。目标持续active。
+
+**下一实际工作（未开始）**：先读取旧完整质量门的精确协议和阈值，搜索已有可复用GPU评测，不降低门槛。对已有4k及匹配原30M做同GPU8/开发seed100000..100007/每局20000上限的完整自然评测，不重训旧配方。此前原baseline和8k完整quality是CPU评测；8k自身GPU捕获终点已与其CPU完全相同，但不可据此外推4k/原模型GPU也必同。可复用冻结capture_own_policy_trajectories.py的完整可恢复GPU8捕获：分别新建两根design，将实际控环境模型设candidate、另一模型仅shadow，冻结两ZIP真实计数、原历史训练来源及当前评测31/20来源；两根互换角色，不能复用/修改旧capture design或缓存身份。先确认helper无硬编码旧模型身份。若已有更合适评测优先复用，不为快检另起训练。
+
+每个模型最多8×20000=160000唯一新步，共最多320000；每有限阶段至多20新chunk/5120全局round，GPU8/250%6GiB/原温控、command300秒/wall600秒。阶段间先检查真实进程/已提交manifest，只算未提交后缀；保留全状态/actions可恢复证据。新phase controller目录冻结原design/已有prefix receipt，新缓存不覆盖旧任务。审计每chunk rows.npz只物化一次，复用已修复audit_own_policy_capture.py；不要重现旧重复解压阻塞。完整开发结果通过也不等于独立seed或模型推广；不因局部8cap自动开2M。旧4k训练runtime为8c1b411的26文件来源，不能重标成主31或绕过resume来源检查。
+
+所有执行、副本、每小时续办留lightbook；无主机/GPU保留进度，无CPU训练或其他主机fallback。原温控/内存/时间预算、额度不足每小时检查不绕限/不改账户，用户暂停取消即停。此无限目标不标complete。更早“下一”段均为历史，已完成项不重复。
+
 ### 2026-11-06T20:23:35+08:00 最新接手：前8点全部恢复/四臂已完；下一开发自然greedy快速上下文回归工具，停止扩大回溯
 
 **本次小时已实际执行**：20:05:45 submission01a1b0c0-2627-7ed1-96a8-4054ccf5de08→20:06:36新轮01a1b0c0-ee07-7a11-8c90-6b795f47fddd，clientId=01a1b0c0-2627-7aa2-9356-7a1908f38ce6与原queue匹配/queue空；rollout首exec20:06:48.037/call_54fd43ac6fdc4a5ba65a22409a0d745e。hourly_prior_divergences_execution_20261106.json已记录真实开始、4096步恢复和13712步干预完成；不是accepted，也不外推未来额度。20:19:05后台healthy/goalactive/4驻留与续办单元正常/睡眠masked/linger yes/proxy空，20:20:15queue_empty。

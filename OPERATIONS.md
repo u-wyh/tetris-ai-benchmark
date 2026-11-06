@@ -1747,3 +1747,29 @@
 - 2026-11-06T20:17:02+08:00：资源保护：100005前8分歧全部GPU8四臂512步局部对照/源死亡重现/实际跨进程首组复用验证完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_prior_factorials_20261106/summary.json。
 
 - 2026-11-06T20:21:15+08:00：更早8点四臂全部完成，427516先group0 3885步、427624复用其原文件仅算groups1/2/3 9827步，共13712新环境步，两个冻结模型各2044 GPU批次/0optimizer；源D逐步精确重现全部462/351/311/290/244/202/160/134死亡，model/完整Adam/源计数/采样RNG全组未变、首组SHA不变。A全部8到512 horizon，B除6809外7到512，C除6783外7到512，D全按原时刻死亡；这些是同一episode内相关点，不是8独立seed，不代表整体质量通过。512窗口内首步影响依赖续走模型，不能把候选首动作直接做普适坏标签。factorial20:16:58/restartpassed/guard20:17:01/controller20:17:02 completed，192输入未改/49.044秒/all250%6GiB/CPU75.25℃/GPU51℃/3468.84MiB。静态138输入/2测试、4096步上下文重放164输入均通过、无降载。下一停止回溯和重复已结束分支，开发并校准这8点自然greedy的快速上下文回归工具（不强制首步、不作为整体质量门）；原8k2/8质量失败/无训练或推广保持。证据reports/experiments/prior_factorials_20261106.md及completion_audit.json。
+
+- 2026-11-06T20:32:02+08:00：原生目标续轮01a1b0d1-0367-7121-8b7b-b43525a3d727首工具20:24:19，前轮3647e2b有实质进展。本轮新增自然greedy上下文快检，固定8上下文/512本地步、无强制首动作，每256轮完整worker/active view/RNG和实际trace原子提交，错ZIP/suite/context/cache身份在数值输出前拒绝，模型参数/Adam/源计数/RNG只读；先100%2GiB/120秒原温控定向检查（含少量真实worker模拟），尚未跑两模型GPU校准/新训练或推广。证据runs/autonomous_context_regression_20261106/unit/design.json及native_goal_context_regression_execution_20261106.json。
+
+- 2026-11-06T20:32:05+08:00：资源保护：启动受保护任务 tetris-guard-430344-1793968325216953431，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_regression_20261106/unit/guard。
+
+- 2026-11-06T20:32:13+08:00：资源保护：tetris-guard-430344-1793968325216953431 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_regression_20261106/unit/guard。
+
+- 2026-11-06T20:32:13+08:00：资源保护：自然greedy上下文快检首动作/原episode前缀/真实停槽恢复与输入缓存身份先验定向校验完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_regression_20261106/unit/summary.json。
+
+- 2026-11-06T20:36:18+08:00：自然上下文快检5项检查通过（真实forkserver自然首步/已有prefix/真死亡停槽恢复，错ZIP/suite/context或新有效ZIP+旧cache在pickle/数值输出前拒绝且前缀不改）。现冻结suite8点/512本地步/max_pieces20000，两checkpoint原30M与拒绝8k各独立自然greedy，不强制任何首动作，最多4096步/模型共8192；每模型真实进程先256轮提交后退出，再新进程续至完成，核对首段SHA不变。校准比旧prior四臂A/D逐步action/outcome及完整末worker，8k再比原source pre-view/mask/features；若不同保留失败范围，不改动作/精度/分组凑区分率。模型policy/完整Adam/源计数及RNG不变；GPU8/原250%6GiB/温控/300秒命令600秒wall，216冻结输入，0optimizer/诊断only/不代替全局质量或推广。证据runs/autonomous_context_regression_20261106/design.json。
+
+- 2026-11-06T20:36:21+08:00：资源保护：启动受保护任务 tetris-guard-431078-1793968581129023391，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_regression_20261106/guard。
+
+- 2026-11-06T20:37:04+08:00：资源保护：tetris-guard-431078-1793968581129023391 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_regression_20261106/guard。
+
+- 2026-11-06T20:37:04+08:00：资源保护：自然greedy上下文快检两checkpoint校准/真实逐段恢复/自然首步与旧轨迹及完整末态交叉校验完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_regression_20261106/summary.json。
+
+- 2026-11-06T20:40:09+08:00：自然快检GPU校准已passed，原30M自然8/8到512（4096步/512 GPU批次），拒绝8k自然8/8死亡（2154步/462 GPU批次），合6250步/974批次/0optimizer，4真实进程两次恢复首段SHA不变；逐行旧A/D信息与完整末state精确，8k pre-view/mask/features亦精确。现只读已有task000001 ZIP/manifest确认SHA9a11ce79e7ef32c8a2dfa88a713422503cd6635082ef9d4b244eaa854dc65b3d、真实计数4096/36630，冻结原训练来源不重标。新诊断job自然同8上下文/512步，最多4096新环境步，0optimizer/不重训旧配方，GPU8/250%6GiB/原温控/180秒命令420秒wall；结果仅是这些相关历史状态的快检，失败也不能推出该checkpoint自然整局一定失败。证据runs/autonomous_context_probe_4k_20261106/design.json。
+
+- 2026-11-06T20:40:11+08:00：资源保护：启动受保护任务 tetris-guard-431948-1793968811942550448，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_probe_4k_20261106/guard。
+
+- 2026-11-06T20:40:28+08:00：资源保护：tetris-guard-431948-1793968811942550448 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_probe_4k_20261106/guard。
+
+- 2026-11-06T20:40:28+08:00：资源保护：已有4096 checkpoint自然greedy上下文诊断完成，未重复训练或作全局质量结论。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_probe_4k_20261106/summary.json。
+
+- 2026-11-06T20:48:42+08:00：可恢复自然上下文快检实现/5测试/两模型校准全部完成，未强制首动作。原30M 4096步/512批次/8×512 cap，拒绝8k 2154步/462批次/8死亡，合6250新环境步/974 GPU批次；431093→431170及431249→431305真实重载，首段SHA未改，旧A/D逐步信息/完整末state精确，8k原source pre-view/mask/features精确，policy/Adam/计数/RNG未变。校准guard/controller20:37:04完成、216输入未改/43.124秒/all250%6GiB/CPU73.75℃/GPU52℃/3482.64MiB。已有4k ZIP 9a11ce…/真实计数4096/36630新快检4096步/512批次/8×512 cap/0死亡、0optimizer，431962完成，guard/controller20:40:28/219输入未改/16.409秒/all250%6GiB/CPU67.125℃/GPU43℃/3190.13MiB。原actor probe和quality candidate记录未找到同ZIP完整20k评测，不能把局部全cap外推整局通过；下一读取未降低质量门并做匹配GPU8原30M/4k完整开发评测，不重复训练原配方或扩大回溯。所有有限服务终态；原目标active、lightbook驻留/每小时/温控不变。证据reports/experiments/context_regression_20261106.md、completion_audit.json及native_goal_context_regression_execution_20261106.json。
