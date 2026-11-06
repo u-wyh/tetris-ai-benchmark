@@ -6,6 +6,24 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T21:16:28+08:00 最新接手：原30M/已有4k匹配GPU8整局均完成，4k质量失败；停止旧配方，下一原30M KL锚定离线对照
+
+**本轮有实际进展，不是等待/状态复述**：原生goal续轮01a1b0eb-73e0-7a02-9f41-c364176c009c首工具20:53:11.172，新增scripts/compare_gpu_quality.py与9项防设备/数值来源/模型计数和旁观角色混用测试，均passed；实际完成两模型完整GPU8评测并审计，不能重算。前轮d696451快检亦为真实进展。
+
+**已完成，禁止重跑**：runs/autonomous_gpu_quality_4k_20261106/的baseline/candidate两根各4有限阶段，seed100000..7/max20000/自然greedy/no reset/最高float32/TF32false。原30M eb859b…计数30003200/36625为实际控环境，4k只旁观；另一根交换角色，已有4k 9a11ce…真实4096/36630控环境。原**160000步/8cap/0死亡**；4k**149797步/7cap/1真实死亡（100006在9797）**。每根20000控环境GPU批次+20000旁观批次，合**309797新环境步/80000 GPU forward批次/0optimizer**。10实际进程，两根各80提交（含初始），所有分段恢复复用前缀SHA不变、policy/完整Adam/源计数/采样RNG不变；两个trajectory_audit均passed。冻结历史训练来源，主31/推理20未改且只标本评测运行来源，不把4k源计数写成30007296。
+
+quality_comparison.json：均存活比**0.93623125**、均正式分比**0.9069937767931345**、死亡1>0、最差seed比**0.48985**，原四门（≥.99/≥.99/死亡不增/逐seed≥.9）均失败。原GPU终点与外部SHA核验旧CPU基线的pieces/score/death/cap全部精确，未重放旧CPU全轨迹。之前4k在8个相关历史状态均512cap，仅是局部诊断，已被本轮自身seed100006反例确认不能替代整局门。8k旧6cap/2死亡结果保持。**不推广4k/8k、不扩训、不做其额外8seed资格确认、不再扩大旧context回溯。**
+
+8 GPU guard共803.134秒/all250%6GiB/原温控、采样最高CPU74℃GPU51℃/3515.32MiB；394样本371hold+23increase（后者被既有250%最大配额截住，实际配额全部250），无降载。最终审计21:11:09 guard/controller完成，579输入未改/6.171秒/100%2GiB；unit9 passed/1.06秒。检查本协议service和guard均无运行实例，**不要因空闲重启完成任务**。证据reports/experiments/gpu_quality_4k_20261106.md、根completion_audit.json、quality_comparison.json及两trajectory_audit/restart_receipt，各阶段guard/result和summary均保留。
+
+**无人值守**：21:10:13本机healthy/goal active/4单元enabled active/睡眠masked/linger yes/proxy空，后台13827→1。21:05:59小时submission01a1b0f7-4d16-71e0-b863-b958661cb953、client01a1b0f7-4d15-7d23-84ba-fd85c6e338c6于21:12仍pending/thread_busy，**未声称它已执行**；本轮是native目标续轮，真实工具时间/结果记native_goal_gpu_quality_4k_execution_20261106.json。下一轮若消费该小时必须匹配新turn/首工具，不拿accepted当执行。既有无桌面小时验收保持，不重做短暂停，不扩大OS重启/断电或未来额度声明。
+
+**下一实际开发（未开始）**：停止旧LR/GAE/critic预拟合/actor一阶清零配方的盲重训。优先核对**已有training/kl_maskable_ppo.py**和历史KL/BC试验，原策略锚定实现已经存在；本次失败4k/8k是普通MaskablePPO、无kl_reference。先确认是否已有“**冻结原30M本身为reference**、同原policy/Adam上下文”的相同对照，不能将历史BC reference的503808步失败改称本方案已测，也不能重复实现KL类。
+
+如无同等对照，预声明一次受保护的离线克隆更新对照：复用runs/autonomous_critic_calibration_20261106/rollout.npz（已有4096条含obs_candidate/state/actions/masks/returns/advantages/log_probs/values，SHA124e0495b682d249942bc535a2b21667e2ad72b6a74934eb95f84bd9050ef3c1，先核对dataset.json逐数组/源身份），**不采新环境或重跑rollout**。参考scripts/audit_ppo_update_path.py和已有actor_momentum副本隔离做法，同冻结30M/完整Adam/源计数，固定新预声明排列、同数据/5epoch最多80step每副本，两个case仅差KL原30M anchor（现有默认beta .02，不扫beta）。控制使用已有低LR3e-5/actor zero_first_moment以便只改锚定目标，原policy/Adam/RNG必须不变，明确累计**克隆实际优化器更新最多160**，不能称总0更新。先验收beta0等价/参考无梯度与optimizer隔离/非法mask及数据身份拒绝，分析KL梯度与PPO/critic的相对量、完整更新后原策略KL/greedy分歧，不仅看初始零KL。诊断指标不是棋力门；若锚定无实际作用或退化，记录失败不调beta凑通过，不直接启动新训练。
+
+**来源保护**：training/initialization.py明确拒绝initial_context与kl_reference组合，严禁为了新方向绕过它。上项先做离线副本；生产集成若有证据必须显式设计新的来源/初始化语义并严格验收完整policy/Adam/PPO/RNG/8worker恢复，旧26来源不冒充主31，不能直接加载4k当主31断点或追加2M。当前主31/20及模板保持。所有执行、副本和每小时留lightbook，GPU不可用保留，无CPU训练/他机fallback；250%/原温控/内存时间预算不变，额度不足等小时不绕限改账户，用户暂停取消即停。无限目标active不标complete。
+
 ### 2026-11-06T20:51:46+08:00 最新接手：自然上下文快检已实现/校准，已有4k局部通过；下一完整GPU质量评测
 
 **本次实际执行**：原生目标续轮01a1b0d1-0367-7121-8b7b-b43525a3d727，首工具20:24:19。不是新小时投递消费；20:44:55后台healthy/goal active，20:46:45 queue_empty。native_goal_context_regression_execution_20261106.json及completion_audit.json记录真实结果；无人值守既有验收保持，不重做短暂停，不声称OS重启/未来额度已验收。

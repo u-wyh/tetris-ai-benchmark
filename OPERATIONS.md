@@ -1773,3 +1773,75 @@
 - 2026-11-06T20:40:28+08:00：资源保护：已有4096 checkpoint自然greedy上下文诊断完成，未重复训练或作全局质量结论。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_context_probe_4k_20261106/summary.json。
 
 - 2026-11-06T20:48:42+08:00：可恢复自然上下文快检实现/5测试/两模型校准全部完成，未强制首动作。原30M 4096步/512批次/8×512 cap，拒绝8k 2154步/462批次/8死亡，合6250新环境步/974 GPU批次；431093→431170及431249→431305真实重载，首段SHA未改，旧A/D逐步信息/完整末state精确，8k原source pre-view/mask/features精确，policy/Adam/计数/RNG未变。校准guard/controller20:37:04完成、216输入未改/43.124秒/all250%6GiB/CPU73.75℃/GPU52℃/3482.64MiB。已有4k ZIP 9a11ce…/真实计数4096/36630新快检4096步/512批次/8×512 cap/0死亡、0optimizer，431962完成，guard/controller20:40:28/219输入未改/16.409秒/all250%6GiB/CPU67.125℃/GPU43℃/3190.13MiB。原actor probe和quality candidate记录未找到同ZIP完整20k评测，不能把局部全cap外推整局通过；下一读取未降低质量门并做匹配GPU8原30M/4k完整开发评测，不重复训练原配方或扩大回溯。所有有限服务终态；原目标active、lightbook驻留/每小时/温控不变。证据reports/experiments/context_regression_20261106.md、completion_audit.json及native_goal_context_regression_execution_20261106.json。
+
+- 2026-11-06T20:55:01+08:00：原生目标续轮01a1b0eb-73e0-7a02-9f41-c364176c009c首工具20:53:11.172，上一轮d696451为实际进展。核验lightbook machine-id/后台13827→1/4单元驻留healthy/queue空，无活动计算；新预声明原30M与已有4k匹配GPU8完整开发评测，同8seed100000..7/max20000，原门槛99%均值/死亡不增/逐seed90%不降。两新根互换实际控环境candidate和仅旁观shadow，无重训/0optimizer/不推广；总最多320000唯一步，每阶段至多20chunk/5120轮/40960步，原250%6GiB温控/300秒命令600秒wall，全状态与actions断点保存。现先启动baseline首阶段真实进程恢复；冻结旧来源和ZIP不重标训练计数。证据runs/autonomous_gpu_quality_4k_20261106/protocol.json及native_goal_gpu_quality_4k_execution_20261106.json。
+
+- 2026-11-06T20:55:03+08:00：资源保护：启动受保护任务 tetris-guard-434669-1793969703573551804，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/baseline/guard。
+
+- 2026-11-06T20:56:53+08:00：资源保护：tetris-guard-434669-1793969703573551804 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/baseline/guard。
+
+- 2026-11-06T20:56:54+08:00：资源保护：baseline完整GPU8评测首阶段及真实跨进程恢复完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/baseline/summary.json。
+
+- 2026-11-06T20:57:10+08:00：原30M匹配GPU评测首阶段完成40960新环境步/每模型5120 GPU批次/0optimizer，434687→434785真实恢复，首段SHA未变，8局尚活跃；guard20:56:53 completed/controller20:56:54 passed，基线还未整局完成。检查真实MainPID0后启动4k候选首阶段，未并行重复既有计算；其后依次推进两根未提交后缀。证据runs/autonomous_gpu_quality_4k_20261106/baseline/restart_receipt.json。
+
+- 2026-11-06T20:57:12+08:00：资源保护：启动受保护任务 tetris-guard-435343-1793969832387791445，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/candidate/guard。
+
+- 2026-11-06T20:59:03+08:00：资源保护：启动受保护任务 tetris-guard-435946-1793969943461108426，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/unit/guard。
+
+- 2026-11-06T20:59:04+08:00：资源保护：tetris-guard-435343-1793969832387791445 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/candidate/guard。
+
+- 2026-11-06T20:59:05+08:00：资源保护：candidate完整GPU8评测首阶段及真实跨进程恢复完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/candidate/summary.json。
+
+- 2026-11-06T20:59:05+08:00：资源保护：tetris-guard-435946-1793969943461108426 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/unit/guard。
+
+- 2026-11-06T20:59:06+08:00：资源保护：匹配GPU8完整质量比较的跨设备/数值来源/原始计数与旁观角色防混用检查完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/unit/summary.json。
+
+- 2026-11-06T20:59:30+08:00：4k候选首阶段40960新环境步/5120轮/每模型5120 GPU批次完成，435356→435417真实恢复首段SHA未变、8局仍活跃；guard20:59:04/controller20:59:05。GPU配对协议9项防混用检查已过（原GPU8同协议接受，跨设备/环境数/推理来源/数值runtime/native产物/优化器与错旁观计数拒绝），unit controller20:59:06。检查两service MainPID0/Resultsuccess后仅启动baseline第2阶段，从5120轮前缀续算；未重复首阶段。证据root candidate/restart_receipt.json、unit/summary.json、baseline/phase_02/design.json。
+
+- 2026-11-06T20:59:33+08:00：资源保护：启动受保护任务 tetris-guard-436043-1793969973143077333，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/baseline/phase_02/guard。
+
+- 2026-11-06T21:01:15+08:00：资源保护：tetris-guard-436043-1793969973143077333 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/baseline/phase_02/guard。
+
+- 2026-11-06T21:01:15+08:00：资源保护：baseline完整GPU8评测第2有限阶段完成，复用已提交前缀，无优化器更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/baseline/phase_02/summary.json。
+
+- 2026-11-06T21:02:21+08:00：资源保护：启动受保护任务 tetris-guard-436809-1793970141596991478，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/candidate/phase_02/guard。
+
+- 2026-11-06T21:04:03+08:00：资源保护：tetris-guard-436809-1793970141596991478 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/candidate/phase_02/guard。
+
+- 2026-11-06T21:04:03+08:00：资源保护：candidate完整GPU8评测第2有限阶段完成，复用已提交前缀，无优化器更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/candidate/phase_02/summary.json。
+
+- 2026-11-06T21:04:03+08:00：资源保护：启动受保护任务 tetris-guard-437363-1793970243962066296，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/baseline/phase_03/guard。
+
+- 2026-11-06T21:05:47+08:00：资源保护：tetris-guard-437363-1793970243962066296 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/baseline/phase_03/guard。
+
+- 2026-11-06T21:05:48+08:00：资源保护：baseline完整GPU8评测第3有限阶段完成，复用已提交前缀，无优化器更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/baseline/phase_03/summary.json。
+
+- 2026-11-06T21:05:49+08:00：资源保护：启动受保护任务 tetris-guard-437911-1793970349108995174，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/candidate/phase_03/guard。
+
+- 2026-11-06T21:05:59+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-06T21:07:22+08:00：资源保护：tetris-guard-437911-1793970349108995174 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/candidate/phase_03/guard。
+
+- 2026-11-06T21:07:23+08:00：资源保护：candidate完整GPU8评测第3有限阶段完成，复用已提交前缀，无优化器更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/candidate/phase_03/summary.json。
+
+- 2026-11-06T21:07:24+08:00：资源保护：启动受保护任务 tetris-guard-438457-1793970444344447165，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/baseline/phase_04/guard。
+
+- 2026-11-06T21:08:58+08:00：资源保护：tetris-guard-438457-1793970444344447165 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/baseline/phase_04/guard。
+
+- 2026-11-06T21:08:58+08:00：资源保护：baseline完整GPU8评测第4有限阶段完成，复用已提交前缀，无优化器更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/baseline/phase_04/summary.json。
+
+- 2026-11-06T21:08:59+08:00：资源保护：启动受保护任务 tetris-guard-438958-1793970539626179292，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/candidate/phase_04/guard。
+
+- 2026-11-06T21:10:25+08:00：资源保护：tetris-guard-438958-1793970539626179292 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/candidate/phase_04/guard。
+
+- 2026-11-06T21:10:26+08:00：资源保护：candidate完整GPU8评测第4有限阶段完成，复用已提交前缀，无优化器更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/candidate/phase_04/summary.json。
+
+- 2026-11-06T21:11:00+08:00：两匹配GPU8完整评测均终态，原30M160000步/8×20000 cap，已有4k149797步/1局提前停止/7cap；两方各20000实际控环境GPU批次，另一模型只旁观，各0optimizer。全部4阶段前缀续算未重采，检查最后service MainPID0/Resultsuccess；现冻结全部chunk manifest/state/trace和实际进程receipt，启动100%2GiB/120秒原温控只读审计并按原门槛比较，未提前宣称质量通过。证据runs/autonomous_gpu_quality_4k_20261106/audit/design.json。
+
+- 2026-11-06T21:11:03+08:00：资源保护：启动受保护任务 tetris-guard-439526-1793970663091794432，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/audit/guard。
+
+- 2026-11-06T21:11:09+08:00：资源保护：tetris-guard-439526-1793970663091794432 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/audit/guard。
+
+- 2026-11-06T21:11:09+08:00：资源保护：原30M与已有4k两完整GPU8轨迹独立审计及原始质量门比较完成，无新模拟/优化器更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_quality_4k_20261106/audit/summary.json。
+
+- 2026-11-06T21:14:22+08:00：匹配原30M/已有4k完整GPU8质量评测及579输入独立审计完成。原160000步/8cap，4k149797步/7cap/1真实死亡（100006/9797），均存活比0.93623125/均分比0.9069937767931345/最差seed0.48985/死亡1>0，四门均失败，无扩训/推广/额外seed资格验证。合309797新环境步/80000实际GPU forward批次/0optimizer，10真实进程/两根各80提交，恢复前缀SHA不变、完整worker/trace/模型Adam/计数/RNG审计passed。原GPU与旧SHA核验CPU基线8seed的pieces/score/死亡/cap终点相同，不声称全trace同。8 GPU阶段guard803.134秒/全250%6GiB/采样CPU74℃GPU51℃内存3515.32MiB/无降载；unit9检查过，最终audit guard/controller21:11:09/6.171秒/100%2GiB。快检4k8cap不代表整局通过；拒绝再跑旧配方或扩回溯。原目标active、21:10:13无人值守healthy/proxy空；21:05:59小时消息仍pending，未冒称消费。证据reports/experiments/gpu_quality_4k_20261106.md、completion_audit.json、quality_comparison.json及native_goal_gpu_quality_4k_execution_20261106.json。
