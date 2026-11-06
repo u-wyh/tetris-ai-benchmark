@@ -1307,3 +1307,13 @@
 - 2026-11-06T10:12:21+08:00：隔离compact实现已提交9144a36（main仍26），36项新增环境/后端preflight通过，retry01实际完成旧bitboard8192、开始compact臂；报告compact_search_20261106.md记录失败和静态证据限制。等待正式GPU/扩展summary，不将局部耗时当最终收益。
 
 - 2026-11-06T10:14:49+08:00：compact GPU8对照10:13:24一致性passed但性能门槛失败：1.01780538/1.02433193、几何1.02106344<1.05，全模型/Adam/PPO/RNG/8worker/非计时全等、错误backend拒绝/提交不变，47输入未改。benchmark-retry01成功/MainPID0；extension-retry01因无采用资格10:13:45主动中断，guard10:13:46 interrupted、MainPID0，保留现场不称扩展通过。main仍26/推理20旧bitboard，9144a36仅隔离保留，无推广/重复计时。资源峰CPU72.5℃/GPU51.0℃/内存3584.3MiB。证据：runs/autonomous_compact_search_20261106/resource_and_decision_audit.json。
+
+- 2026-11-06T10:16:49+08:00：新增scripts/profile_training_stages.py并预声明只读原上下文4096 CUDA8阶段剖析，历史rollout SHA应精确同；实际PPO.train无剖析/剖析两独立80步副本全状态同，原模型/Adam/PPO0更新，不存训练候选。冻结55输入、main26，CPU250%/6GiB/原温控，180秒命令/600秒总预算。证据runs/autonomous_training_stages_20261106/design.json。
+
+- 2026-11-06T10:16:51+08:00：资源保护：启动受保护任务 tetris-guard-319828-1793931411547743122，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_training_stages_20261106/guard。
+
+- 2026-11-06T10:17:07+08:00：资源保护：tetris-guard-319828-1793931411547743122 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_training_stages_20261106/guard。
+
+- 2026-11-06T10:17:08+08:00：资源保护：实际CUDA8采样/通信等待/策略/PPO阶段剖析完成；历史rollout hash及两副本更新精确一致，原模型未更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_training_stages_20261106/summary.json。
+
+- 2026-11-06T10:20:19+08:00：实际CUDA8阶段剖析10:17:05 passed/父10:17:08 completed：4096采样6.00647秒、PPO.72780秒，历史rollout SHA同、无剖析/剖析80步副本policy/Adam/PPO同，原模型0更新、55输入未变。step_wait3.52975含worker计算/传输，mask RPC仅.22692秒；不把等待当纯通信或profiling当吞吐。CPU67.125℃/GPU47.0℃、全250%；main26/推理20不改。下一隔离行位图碰撞、新seed/新来源验收。证据reports/experiments/training_stages_profile_20261106.md。

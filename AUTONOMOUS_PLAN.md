@@ -4,7 +4,15 @@
 
 ## 用户最新首要任务：轻薄本无人值守
 
-2026-11-06 10:07实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
+2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
+
+### 2026-11-06 10:20 最新接手点：阶段剖析完成，下一隔离行位图碰撞
+
+`runs/autonomous_training_stages_20261106/training_profile.json`10:17:05 passed、控制器10:17:08 completed。真实CUDA8原上下文4096采样指纹与历史审计完全同，PPO无剖析/剖析80步两副本policy/Adam/更新数精确同，原模型0更新、无checkpoint；55输入未改，资源见resource_audit。main仍26/推理20旧bitboard。
+
+采样剖析6.00647秒、PPO.72780秒；step_wait累计3.52975含worker计算/传输等待，不能当纯IPC；mask RPC仅.22692秒约总剖析阶段3.4%，不优先单独缓存它/packed buffer。cProfile含开销/只主进程/累计嵌套，不是吞吐或棋力证据。报告training_stages_profile_20261106.md。
+
+下一本机隔离`/home/wyh/projects/tetris-search-compact-validation`尝试每rotation/y预计算允许x位图，替代逐位置collision/LRU。改动前归档旧9144a36的准确27文件运行代码（GPU旧metadata SHA核对），新实验独立目录/来源身份，不能改旧断点/重复被拒绝compact计时。保留formal默认/旧bitboard/main26/推理20；边界、负y/旋转kick/path全等→静态ABBA充分→预声明新GPU8 AB/BA seed2100000/2100100各8192、4096跨进程，两对更快且几何≥1.05/250%无降载，全状态+完整上下文恢复同才采用。不通过保留证据止损。暂停/额度/硬件规则保持，无其他主机或CPU fallback。
 
 ### 2026-11-06 10:14 最新终态：compact仅+2.1%，不采用
 
