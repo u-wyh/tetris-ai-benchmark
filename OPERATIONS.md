@@ -1231,3 +1231,39 @@
 - 2026-11-06T09:33:45+08:00：资源保护：tetris-guard-309527-1793928820883128783 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_context_20261106_unit。
 
 - 2026-11-06T09:39:33+08:00：将已诊断转换作为显式initial_context.actor_momentum_after_restore=zero_first_moment实现，默认preserve；记录初始化转换，配置/metadata/resume原有完整spec比较固定该选项。生产实现与诊断函数状态精确同，57项保护回归通过；新增optimizer_transition纳入26来源。增加独立手工参考/跨进程恢复及合成扩展故障恢复的待执行门槛，暂不新棋力筛选。证据：reports/experiments/actor_momentum_20261106.md。
+
+- 2026-11-06T09:39:34+08:00：启动冻结46输入/26数值来源的真实CUDA8完整上下文转换验收：原Task7325独立手工actor exp_avg清零/低LR直续，与新bitboard搜索事务4096/8192跨进程恢复逐项policy/Adam/PPO/RNG/8worker比较。新事务目标8192完成后才允许质量筛选，原文件不改；共享250%/原温控及内存/900秒预算。证据：runs/autonomous_actor_context_probe_20261106/design.json。
+
+- 2026-11-06T09:39:46+08:00：资源保护：启动受保护任务 tetris-guard-310601-1793929186310776306，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_context_probe_20261106/guards/direct。
+
+- 2026-11-06T09:40:08+08:00：配置持久串行接力合成GPU8验收，等待原上下文探针释放计算后，只运行新增zero_first_moment参数项；完成→扩展12288→故意任务2中断→恢复，与连续控制policy/Adam/PPO/RNG/8worker精确比较，另检查错误动量preset恢复拒绝及已提交文件字节不变。原26来源冻结，1200秒等待/240秒命令及250%/6GiB/原温控，非实际模型质量扩训。证据：runs/autonomous_actor_context_extension_20261106/design.json。
+
+- 2026-11-06T09:40:15+08:00：资源保护：tetris-guard-310601-1793929186310776306 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_context_probe_20261106/guards/direct。
+
+- 2026-11-06T09:40:16+08:00：资源保护：启动受保护任务 tetris-guard-310851-1793929216707379027，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_context_probe_20261106/guards/rebased_task_01。
+
+- 2026-11-06T09:40:32+08:00：资源保护：tetris-guard-310851-1793929216707379027 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_context_probe_20261106/guards/rebased_task_01。
+
+- 2026-11-06T09:40:33+08:00：资源保护：启动受保护任务 tetris-guard-310971-1793929233711829419，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_context_probe_20261106/guards/rebased_task_02。
+
+- 2026-11-06T09:40:49+08:00：资源保护：tetris-guard-310971-1793929233711829419 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_context_probe_20261106/guards/rebased_task_02。
+
+- 2026-11-06T09:40:51+08:00：资源保护：启动受保护任务 tetris-guard-311096-1793929251209301646，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_context_probe_20261106/guards/verify。
+
+- 2026-11-06T09:40:54+08:00：资源保护：tetris-guard-311096-1793929251209301646 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_context_probe_20261106/guards/verify。
+
+- 2026-11-06T09:40:54+08:00：资源保护：完整上下文直接续接与新步数位图恢复探针通过；未使用最终测试或发布模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_context_probe_20261106/probe_summary.json。
+
+- 2026-11-06T09:40:56+08:00：资源保护：启动受保护任务 tetris-guard-311117-1793929256302923127，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_context_extension_20261106/guard。
+
+- 2026-11-06T09:41:00+08:00：预声明actor动量转换8192步候选的后续8×20000质量筛选配置，复用推理20身份一致的冻结基线原JSON，门槛均存活/得分≥0.99、失败不多于基线、单seed≥0.9；只在原上下文与扩展/故障恢复两验收通过后启动。尚未评测，若通过仍需extra8，不自动续训/推广。证据：runs/autonomous_actor_quality_8k_20261106/design.json。
+
+- 2026-11-06T09:42:25+08:00：资源保护：tetris-guard-311117-1793929256302923127 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_context_extension_20261106/guard。
+
+- 2026-11-06T09:42:26+08:00：资源保护：actor动量转换的完整上下文完成/扩展/中断恢复GPU8合成验收通过；错误动量preset拒绝且已提交文件不变。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_context_extension_20261106/summary.json。
+
+- 2026-11-06T09:43:20+08:00：资源保护：启动受保护任务 tetris-guard-311912-1793929400164679446，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_quality_8k_20261106/unit_guard。
+
+- 2026-11-06T09:43:22+08:00：资源保护：tetris-guard-311912-1793929400164679446 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_quality_8k_20261106/unit_guard。
+
+- 2026-11-06T09:45:34+08:00：原上下文CUDA8转换/8192恢复验收已通过，合成扩展故障恢复09:42:26 passed（1 passed/3 deselected，87.03秒），两父服务均MainPID0/Resultsuccess；错误动量preset恢复被拒绝且config/metadata/state字节不变。质量控制器补充全局STOP/禁用/本机固定检查，5项保护回归通过；准备仅评测已完成8K候选，不重训/扩步数。

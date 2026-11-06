@@ -7,11 +7,27 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'scripts'))
 from compare_development_evaluations import compare
-from run_longer_development_screen import extension_eligible, run
+from run_longer_development_screen import extension_eligible, global_control_allowed, run
 
 
 GATE = dict(mean_pieces_ratio_at_least=0.99, mean_observed_score_ratio_at_least=0.99,
             no_seed_survival_ratio_below=0.9)
+
+
+def test_global_stop_disable_or_wrong_machine_prevents_quality_work(tmp_path):
+    path=tmp_path/'control.json'
+    control=dict(enabled=True,thread_id='target',execution_host='remote-ssh-discovered:lightbook',
+                 execution_machine_id=Path('/etc/machine-id').read_text().strip())
+    protocol=dict(thread_id='target',control=str(path))
+    path.write_text(json.dumps(control))
+    assert global_control_allowed(protocol)
+    (tmp_path/'STOP').touch()
+    assert not global_control_allowed(protocol)
+    (tmp_path/'STOP').unlink()
+    control['enabled']=False;path.write_text(json.dumps(control))
+    assert not global_control_allowed(protocol)
+    control.update(enabled=True,execution_machine_id='wrong-machine');path.write_text(json.dumps(control))
+    assert not global_control_allowed(protocol)
 
 
 def fixture():

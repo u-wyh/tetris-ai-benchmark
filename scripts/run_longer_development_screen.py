@@ -16,6 +16,13 @@ from resource_guard import ROOT, now, operation, write_json
 from evaluation_identity import validate_evaluator, feature_backend
 
 
+def global_control_allowed(protocol):
+    if not protocol.get('control'):
+        return True
+    from keep_codex_thread import permitted
+    return permitted(Path(protocol['control']), protocol['thread_id'])
+
+
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -62,7 +69,8 @@ def run(folder):
         nonlocal child
         verify_sources()
         status, _ = inspect_goal(Path.home()/'.codex', protocol['thread_id'])
-        if status not in ('active', 'usageLimited', 'usage_limited') or (folder/'STOP').exists():
+        if (status not in ('active', 'usageLimited', 'usage_limited') or (folder/'STOP').exists()
+                or not global_control_allowed(protocol)):
             raise RuntimeError('Goal stopped or STOP file set')
         remaining = int(deadline-time.monotonic())
         if remaining < 30:
@@ -83,7 +91,8 @@ def run(folder):
             child = subprocess.Popen(args, cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
             while child.poll() is None:
                 status, _ = inspect_goal(Path.home()/'.codex', protocol['thread_id'])
-                if status not in ('active', 'usageLimited', 'usage_limited') or (folder/'STOP').exists():
+                if (status not in ('active', 'usageLimited', 'usage_limited') or (folder/'STOP').exists()
+                        or not global_control_allowed(protocol)):
                     raise RuntimeError('Goal stopped or STOP file set')
                 time.sleep(3)
         if not (output/'result.json').exists():

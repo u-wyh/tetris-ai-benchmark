@@ -4,6 +4,14 @@
 
 ## 用户最新首要任务：轻薄本无人值守
 
+### 2026-11-06 09:41 当前：actor转换已显式实现，恢复验收后才筛选
+
+3d8ed0f的160步actor一阶隔离达到原定诊断门槛，报告`reports/experiments/actor_momentum_20261106.md`。现44306c5实现显式initial_context.actor_momentum_after_restore=zero_first_moment，默认preserve，新optimizer_transition.py纳入26数值来源；旧25完整代码归档本机tetris-runtime-3d8ed0f，SHA一致，旧断点不静默迁移。57项保护测试通过，生产转换与诊断状态精确同。
+
+`runs/autonomous_actor_context_probe_20261106/`09:40:53 passed，父服务09:40:54 completed/MainPID0success：原Task7325手工清零actor exp_avg/低LR直续与新bitboard搜索事务4096/8192跨进程恢复，policy/Adam/PPO/RNG/8worker完全同，原文件未改，初始化保留18个Adam step586000和12个actor明确转换。新训练run目标8192已完成，尚无棋力结论。
+
+当前仍在执行`tetris-actor-context-extension.service`（PID310832），目录`runs/autonomous_actor_context_extension_20261106/`，串行合成完成→扩展→故意中断→恢复，与连续控制全状态比较，并拒绝错误动量preset且提交文件不变。先查真实MainPID/summary/command.log，不重启。它实际passed后，才使用预声明`runs/autonomous_actor_quality_8k_20261106/design.json`创建匹配8×20000的protocol并启动现有development-pair实例；基线原JSON复用，候选为probe/training/committed/task_000002/model.zip，26训练/20推理身份准确记录。若通过仍需extra8，无自动质量推广或扩2M；若失败不复跑该候选。当前quality未启动。
+
 ### 2026-11-06 09:27 接手点：顺序PPO诊断完成，下一项actor一阶动量隔离
 
 `runs/autonomous_ppo_update_path_20261106/`09:25:53 passed，控制器09:25:56 completed/MainPID0success，勿重跑。9项保护测试及实际CUDA8原4096 rollout/16批标量摘要同，追踪与无追踪80步policy/Adam/更新数精确同，原模型0步，49输入未变。原LR无门槛80步probe最终KL0.00551154，峰值0.0183125在第15步；targetKL.003第6批触发，仅5步，但终KL0.00868135更远，不能视为质量改善；低LR两组80步未触发，终KL0.00116270。64探针是训练态，非棋力证据或全局硬界。CPU最高71.875/GPU52，采样全250%。报告`reports/experiments/ppo_update_path_20261106.md`。
