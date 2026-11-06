@@ -1337,3 +1337,7 @@
 - 2026-11-06T10:37:10+08:00：资源保护：当前行位图CUDA8 worker CPU剖析完成，历史rollout SHA同、原模型/Adam/PPO未更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_worker_profile_20261106/summary.json。
 
 - 2026-11-06T10:40:15+08:00：真实8worker CPU剖析10:37:10 passed/completed，各512step/共4096、1reset；历史rollout SHA同、原policy/Adam/PPO0更新，57输入未变。含大cProfile process_time开销的CPU和110.7084秒，搜索53.8496/特征50.4645，不能当墙钟或吞吐。CPU68.375℃/GPU52.0℃，全250%。下一隔离合并列统计/Python整数范围校验，不改推理20；尚无新收益。证据reports/experiments/worker_cpu_profile_20261106.md。
+
+- 2026-11-06T10:40:33+08:00：在lightbook创建隔离worktree /home/wyh/projects/tetris-feature-fusion-validation，分支codex/fused-candidate-features/基点0447e37；主27与既有row masks验证副本保持。新特征只先差分/静态配对，后端/恢复身份及GPU验证另预声明，不自动采用。
+
+- 2026-11-06T10:46:32+08:00：主副本接手点更新：worker只读样本完成；隔离da4586b fused特征142项通过、静态中位1.679165042/最小1.606928375，51冻结输入GPU8新两seed AB/BA/恢复对照实际执行中，conditional extension只合格才启动。main27/推理20未改。协议继承计数说明误27已单独勘误，实际冻结/metadata28逐项确认，不动冻结协议或训练身份。

@@ -6,6 +6,18 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T10:46:32+08:00 当前：worker剖析完成，fused特征GPU对照执行中
+
+worker CPU剖析10:37:10 completed/真实8worker各512step/1reset，历史rollout SHA同、原模型0更新、57输入未改。process_time cProfile开销大，CPU和110.7084秒非墙钟；搜索53.8496/特征50.4645为主要工作。报告worker_cpu_profile_20261106.md，勿复跑该只读样本。
+
+本机新隔离`/home/wyh/projects/tetris-feature-fusion-validation`（codex/fused-candidate-features，da4586b）合并列统计与Python整数范围校验。显式candidate_feature_backend=bitboard_fused、要求compact搜索；训练28来源，推理20保持。142项特征/边界/轨迹/快照通过；27状态30组静态特征ABBA中位1.679165042/最小1.606928375，40输入未改。
+
+`tetris-fused-features-benchmark.service`在新目录runs/autonomous_fused_features_20261106执行seed2300000/2300100 AB/BA各8192/跨4096进程；两臂同compact搜索/28来源，只有特征实现不同。51输入冻结、模型/Adam/PPO/RNG/8worker/非计时全等、错误feature preset恢复拒绝/提交字节不变、几何≥1.05且两对更快/全250%无降载才合格。`tetris-fused-features-extension.service`只有GPU eligibletrue才串行跑bitboard_fused完整上下文合成完成/扩展/故障恢复；源冻结期间不要修改child数值/支持文件，不重复启动。
+
+新GPU协议继承的说明字段training_source_files误为27，实际TRAINING_SOURCE_FILES/冻结源码SHA/已生成metadata均28；该说明字段不参与执行。为保留冻结原文已写source_count_erratum.json，不能把它当源身份迁移，不重复训练。后续新设计显式设计数。
+
+main仍27与既有row masks模板；两GPU/恢复验收全通过后才归档main27、合入da4586b并比对main28/推理20；未合格保留证据止损。lightbook/GPU8/CPU250%/6GiB/原温控/时间预算、额度及暂停规则保持。所有既有失败PPO/KL配方仍不复跑或自动扩2M，原30M冻结。
+
 ### 2026-11-06T10:33:59+08:00 最新接手点：行位图+9.44%已采用，当前无重任务
 
 GPU8两新seed AB/BA各8192、4096跨进程：1.07863069/1.11040324、几何1.094401668，通过≥1.05及每对更快门槛，全部policy/Adam/PPO/RNG/8worker/非计时精确、错误backend恢复拒绝且提交文件不变，49输入完成时未改。条件接力10:29:52完整上下文**合成**完成/扩展/故障恢复1项通过（82.41秒）；两父服务MainPID0/Resultsuccess，勿重启有限基准。
