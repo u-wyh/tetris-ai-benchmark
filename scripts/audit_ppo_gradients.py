@@ -46,7 +46,7 @@ def gradient_summary(pg, entropy, value, actor_mask, ent_coef, vf_coef, max_grad
         global_to_actor_only_clip_multiplier_ratio=clip / actor_clip)
 
 
-def run(folder, batch_observer=None):
+def run(folder, batch_observer=None, rollout_observer=None):
     from importlib.metadata import version
     import numpy as np
     import torch
@@ -99,6 +99,8 @@ def run(folder, batch_observer=None):
         rollout_digest = digest.hexdigest()
         rows = []
         model.policy.set_training_mode(True)
+        if rollout_observer is not None:
+            rollout_observer(model)
         for index, data in enumerate(buffer.get(model.batch_size)):
             actions = data.actions.long().flatten()
             values, log_prob, entropy = model.policy.evaluate_actions(data.observations, actions,

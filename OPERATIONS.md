@@ -1193,3 +1193,9 @@
 - 2026-11-06T09:19:42+08:00：资源保护：同原4096 rollout/16批克隆Adam单步归因完成；原policy/Adam/PPO更新数不变，副本独立重置。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_adam_update_audit_20261106/summary.json。
 
 - 2026-11-06T09:21:35+08:00：克隆Adam诊断09:19:39 passed、父控制器09:19:42 completed/MainPID0success；同原rollout SHA与16批标量摘要完全一致，64副本独立单步，原policy/Adam/更新数未改。置零当前梯度仍有原actor步长中位98.94%、方向cos0.9904；独立裁剪/清空Adam步长约2.45/2.42倍且KL更大，不直接采纳。只限原参数首步，不归因为长期退化。CPU73.125/GPU52/内存3289.36MiB，采样全250%，46输入未改。证据：reports/experiments/adam_update_attribution_20261106.md。
+
+- 2026-11-06T09:24:34+08:00：资源保护：启动受保护任务 tetris-guard-306986-1793928274608077407，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_ppo_update_path_20261106_unit。
+
+- 2026-11-06T09:24:38+08:00：资源保护：tetris-guard-306986-1793928274608077407 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_ppo_update_path_20261106_unit。
+
+- 2026-11-06T09:25:24+08:00：连续PPO更新诊断已编码，9项保护测试通过，覆盖副本参数/Adam独立、RNG隔离、buffer顺序及异常恢复。采用实际MaskablePPO.train，4种LR/targetKL+无追踪对照；probe选取不消耗首次训练置换，源rollout前观察后仍需与旧16批标量摘要逐项相同。143f6a4梯度脚本按旧SHA归档，原25训练/20推理来源不改，尚未运行质量训练。
