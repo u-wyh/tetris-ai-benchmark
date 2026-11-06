@@ -1,0 +1,19 @@
+[Unit]
+Description=Keep the authorized lightbook Codex thread independent of desktop
+Wants=tetris-codex-backend.service
+After=tetris-codex-backend.service
+
+[Service]
+Type=simple
+WorkingDirectory=/home/wyh/projects/tetris-ai-benchmark
+ExecStart=/home/wyh/projects/tetris-ai-benchmark/.venv/bin/python /home/wyh/projects/tetris-ai-benchmark/scripts/keep_codex_thread.py --control /home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/control.json
+Restart=on-failure
+RestartSec=60
+TimeoutStopSec=10
+CPUQuota=10%
+MemoryMax=128M
+Slice=tetris-compute.slice
+Environment=OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1
+
+[Install]
+WantedBy=default.target

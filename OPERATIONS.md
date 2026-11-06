@@ -1169,3 +1169,11 @@
 - 2026-11-06T09:09:55+08:00：跨轮验收实测通过：proxy通信09:09:15暂停后，新轮01a1ae67-36dd-75b0-a27c-34f3f97015d9于2026-11-06T09:09:22+08:00开始，首个AI工具09:09:26 observe成功，proxy294825=T且工具祖先13827→1；专用提示匹配、queue清空、goal active。此轮由原生队列在边界自行消费，未调用显式queue/start，不据此声称卸载线程恢复路径已实测；代理待原定30秒自动恢复。证据：runs/unattended_queue_dispatch_20261106/boundary_probe/execution_receipt.json、observation.json。
 
 - 2026-11-06T09:10:41+08:00：跨轮验收代理09:09:46自动恢复Ssl，两一次性服务MainPID0/Resultsuccess，原后台PID/start不变，实际GPU可用/共享250%/6GiB/swap0。原生队列已自行接续，不补造未发生的queue/start/idle观察；跨轮无桌面通信范围通过，卸载恢复/断电/重启范围保留。更新计划与回执，下一项继续克隆Adam步长诊断。证据：runs/unattended_queue_dispatch_20261106/boundary_probe/。
+
+- 2026-11-06T09:14:26+08:00：资源保护：启动受保护任务 tetris-guard-302572-1793927666552049897，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/unattended_queue_dispatch_20261106/thread_keeper_test_guard。
+
+- 2026-11-06T09:14:28+08:00：资源保护：tetris-guard-302572-1793927666552049897 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/unattended_queue_dispatch_20261106/thread_keeper_test_guard。
+
+- 2026-11-06T09:15:01+08:00：用户指出开机后才工作，核验轻薄本自11-05 12:07:55未重启，desktop proxy于11-06 08:56:21重连，02:27队列到08:57延迟属实；不能把短时暂停验收推广为整夜正常。补充独立本机线程订阅常驻服务，53项保护回归通过。按既有明确授权，一次性恢复本次状态询问中断导致的paused（先查普通额度允许），保留目标/预算/用量；守护服务不会自动恢复未来用户暂停。证据：runs/unattended_queue_dispatch_20261106/status_question_goal_receipt.json、thread_keeper_test_guard/。
+
+- 2026-11-06T09:16:22+08:00：本机线程订阅服务已enable/active，PID302731→user-manager2625，连续30秒subscribed心跳与Unix连接已核验，原后台13827不重启；watchdog现在核验四项enabled/active，linger与防休眠保持。53项保护回归通过，整夜离线/重启尚未实测，未启动新训练或Adam诊断。证据：runs/unattended_queue_dispatch_20261106/thread_keeper_deployment.json。

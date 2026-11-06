@@ -15,7 +15,7 @@ import subprocess
 from codex_local_rpc import LocalRPC
 from development_allowed import allowed
 
-REQUIRED_UNITS = ('tetris-codex-backend.service', 'tetris-development-hourly.timer',
+REQUIRED_UNITS = ('tetris-codex-backend.service', 'tetris-codex-thread.service', 'tetris-development-hourly.timer',
                   'tetris-unattended-watchdog.timer')
 
 

@@ -4,6 +4,12 @@
 
 ## 用户最新首要任务：轻薄本无人值守
 
+### 2026-11-06 09:15 修复：本地常驻线程订阅
+
+用户再次指出开机后才工作。核验轻薄本OS从11-05 12:07:55未重启，桌面proxy于11-06 08:56:21重连；凌晨02:27–08:57排队延迟属实，不能声称此前完整设置好，也未记录当时线程notLoaded状态，不能补造确切根因。现添加并启用`tetris-codex-thread.service`，本机user-manager2625管理PID302731，保持官方thread/resume订阅和30秒本地心跳，避免依赖桌面订阅驻留。服务不改goal、不读额度、不启新轮；暂停/STOP/错误主机或副本拒绝，连接故障60秒重连。原小时queue/start继续负责缺失线程恢复/排队启动。
+
+53项保护回归通过；09:15:02、09:15:32真实subscribed心跳、Unix连接已建立；watchdog将该服务列为required，现四项服务/timer enabled/active、linger和防休眠通过。证据`runs/unattended_queue_dispatch_20261106/thread_keeper_deployment.json`。本次状态询问中断造成paused，依据用户早先“状态询问不取消授权”指示并查实时普通额度后，一次性恢复active；keeper从不自动改未来用户暂停。此前09:09跨轮无桌面通信新AI工具实测仍有效，但最新修复后整夜离线及OS重启尚未观测，不要重复短时验收冒充。此轮只处理用户无人值守质疑，未启动新训练/Adam诊断；后续按原授权继续有成效开发。
+
 ### 最新验收结果：09:09跨轮无桌面通信实际执行通过
 
 09:09:15暂停桌面代理后，专用新轮`01a1ae67-36dd-75b0-a27c-34f3f97015d9`于09:09:22开始，首个AI工具09:09:26 observe成功，proxy294825=T、工具祖先13827→1，专用提示匹配且queue清空。09:09:46自动恢复Ssl，两一次性服务均MainPID0/Resultsuccess。证据`runs/unattended_queue_dispatch_20261106/boundary_probe/execution_receipt.json`和`observation.json`。

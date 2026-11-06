@@ -19,3 +19,7 @@
 09:09:15–09:09:46暂停所有桌面代理通信；新轮01a1ae67-36dd-75b0-a27c-34f3f97015d9于09:09:22启动，09:09:26首个AI工具observe成功，proxy294825=T且工具来自原生后台13827→1。原生队列自行接续，未发生显式queue/start；观察器未捕获短暂idle，无dispatch_observation文件，不能补造该文件或称卸载线程恢复已实测。09:09:46finally自动恢复，ExecStopPost也正常，两服务成功退出，代理Ssl。
 
 这补齐了真正跨轮、无桌面通信的新AI工具执行；未测物理断电/重启。证据boundary_probe/execution_receipt.json及observation.json。后续继续开发，不重复同验收。
+
+## 09:15 补齐独立线程驻留
+
+轻薄本未在今晨重启；proxy于08:56:21重连。02:27–08:57未持续执行属实；当时没有记录线程runtime状态，不能把相关性写成已证明的notLoaded根因。补充tetris-codex-thread.service保持官方原线程订阅，避免只依赖桌面订阅防卸载。PID302731的父进程是本机user-manager2625；30秒连续心跳及Unix连接已核实，enabled/active，watchdog要求此服务也正常。53项保护回归通过。它不启动AI轮次、不改goal或额度；未来明确暂停仍停止，故障60秒后重新连接。最新修复后整夜离线/重启未实测，后续由真实运行继续核验。
