@@ -1177,3 +1177,9 @@
 - 2026-11-06T09:15:01+08:00：用户指出开机后才工作，核验轻薄本自11-05 12:07:55未重启，desktop proxy于11-06 08:56:21重连，02:27队列到08:57延迟属实；不能把短时暂停验收推广为整夜正常。补充独立本机线程订阅常驻服务，53项保护回归通过。按既有明确授权，一次性恢复本次状态询问中断导致的paused（先查普通额度允许），保留目标/预算/用量；守护服务不会自动恢复未来用户暂停。证据：runs/unattended_queue_dispatch_20261106/status_question_goal_receipt.json、thread_keeper_test_guard/。
 
 - 2026-11-06T09:16:22+08:00：本机线程订阅服务已enable/active，PID302731→user-manager2625，连续30秒subscribed心跳与Unix连接已核验，原后台13827不重启；watchdog现在核验四项enabled/active，linger与防休眠保持。53项保护回归通过，整夜离线/重启尚未实测，未启动新训练或Adam诊断。证据：runs/unattended_queue_dispatch_20261106/thread_keeper_deployment.json。
+
+- 2026-11-06T09:18:25+08:00：上一轮为实质进展（本地线程订阅服务上线/53回归/真实心跳）。本轮确认同PID订阅有效、无重型guard占用、CUDA可用，开始独立克隆Adam诊断：同原4096 rollout/固定16批，每批4种反事实单步均重置原参数/Adam，原模型0更新。已归档e99d4a3旧诊断源码，不重标原43输入；新可选observer不改25训练/20推理身份。先保护单元验证，再冻结并运行。
+
+- 2026-11-06T09:18:25+08:00：资源保护：启动受保护任务 tetris-guard-304488-1793927905694730885，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_adam_update_audit_20261106_unit。
+
+- 2026-11-06T09:18:29+08:00：资源保护：tetris-guard-304488-1793927905694730885 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_adam_update_audit_20261106_unit。

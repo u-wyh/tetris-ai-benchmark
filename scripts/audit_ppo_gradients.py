@@ -46,7 +46,7 @@ def gradient_summary(pg, entropy, value, actor_mask, ent_coef, vf_coef, max_grad
         global_to_actor_only_clip_multiplier_ratio=clip / actor_clip)
 
 
-def run(folder):
+def run(folder, batch_observer=None):
     from importlib.metadata import version
     import numpy as np
     import torch
@@ -118,6 +118,8 @@ def run(folder):
             row = gradient_summary(*gradients, actor_mask, model.ent_coef, model.vf_coef, model.max_grad_norm)
             row.update(batch=index, policy_loss=float(policy_loss.item()), value_loss=float(value_loss.item()),
                        entropy=float(-entropy_loss.item()), max_ratio_deviation=float((ratio-1).abs().max().item()))
+            if batch_observer is not None:
+                batch_observer(model, data, gradients, actor_mask, index)
             rows.append(row)
             with (folder/'audit_batches.jsonl').open('a') as stream:
                 stream.write(json.dumps(row)+'\n')
