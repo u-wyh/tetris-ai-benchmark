@@ -1297,3 +1297,7 @@
 - 2026-11-06T10:01:18+08:00：保护测量完成：保存candidate观测uint8，[8,1840,16]；4096密集矩阵115MiB，SB3按space dtype存储，不按float32夸大为460MiB，暂无packed-buffer收益证据。更新静态剖析支持当前bitboard搜索，16状态×30构建CPU2.14578秒，搜索_branch累计1.43313秒约66.8%。下一隔离优化visited/重复碰撞查询，需差分/边界+实际GPU8配对吞吐/恢复全状态证据；不再堆叠失败学习配方。证据：reports/experiments/bitboard_construction_profile_20261106.md。
 
 - 2026-11-06T10:02:02+08:00：已在lightbook创建隔离worktree /home/wyh/projects/tetris-search-compact-validation、分支codex/compact-bitboard-search，起点a7665d4，venv/runs仅链接本机主副本。当前未修改其数值代码、未启动新GPU基准，main仍26来源；下一按已声明parity→静态ABBA→实际GPU8门槛开发，不重新启动已拒绝actor候选。
+
+- 2026-11-06T10:06:35+08:00：修复后真实无桌面小时续办已执行：09:57:45唯一pending消息于10:02:18队列清空，匹配提示新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7开始2026-11-06T10:02:08+08:00；保留日志最早工具2026-11-06T02:02:18.509Z，本次工具祖先13827→1、桌面proxy查询为0。keeper订阅/四项服务/定时器/linger/防休眠正常。只读回执初次提取遗漏custom_tool_call类型主动断言拒绝，修正后保存证据；不将投递当执行、不推断整夜/重启/物理电源。证据：runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json。
+
+- 2026-11-06T10:10:21+08:00：隔离compact搜索已启动真实GPU8两seed AB/BA性能/完整恢复对照，服务tetris-compact-search-benchmark MainPID317537、27训练/20推理身份、47输入冻结。静态222项/27状态证据已核查；顺序tetris-compact-search-extension等前服务/guard释放再跑完整上下文扩展故障恢复。main数值未改，无质量候选推广，维持GPU8/250%/6GiB/原温控，先查实际summary勿重复。证据runs/autonomous_compact_search_20261106/gpu_design.json、runs/autonomous_compact_search_extension_20261106/design.json。

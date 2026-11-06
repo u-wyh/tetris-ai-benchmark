@@ -4,6 +4,14 @@
 
 ## 用户最新首要任务：轻薄本无人值守
 
+2026-11-06 10:07实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
+
+### 2026-11-06 10:10 当前：compact搜索隔离GPU对照执行中
+
+真实小时无桌面新轮验收已完成（上方回执），非accepted空转。隔离`/home/wyh/projects/tetris-search-compact-validation`已实现显式bitboard_compact；main26/推理20未改。222项差分/边界通过，负y/墙3136位姿；27状态30组静态ABBA中位1.07133、最小1.04883。静态单独design创建类型错误如实记入micro_audit，不当端到端结论。
+
+`tetris-compact-search-benchmark.service`真实PID317537，自10:09:41运行预声明2seed2000000/2000100 AB/BA各8192、4096跨进程。47输入冻结在`runs/autonomous_compact_search_20261106/gpu_design.json`，全状态/非计时精确、几何≥1.05且每对更快/全250%无降载为采用门槛。新目标8192，不额外训练/推广。`tetris-compact-search-extension.service`等待前服务和所有guard释放，随后运行compact完整上下文完成→扩展→故障恢复；最多240秒命令/1800秒总队列，同47冻结输入。不要修改冻结源码，不重复启动。先查两summary、实际PID和guard，再决定是否采用；不达门槛保留隔离证据、main继续旧后端。
+
 ### 2026-11-06 最新接手点：新候选已拒绝，转入有证据的搜索优化
 
 actor质量评测09:51:23 completed/eligiblefalse，MainPID0/Resultsuccess；6/8触顶，100002=17994、100005=6942，均存活比.90585、得分比.8658487295。47输入完成时未改；原30M保留，extra8/追加训练未启动，不再配置该候选接力或复跑。报告actor_momentum_20261106.md已追加终态。
