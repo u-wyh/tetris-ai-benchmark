@@ -6,6 +6,22 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T16:38:01+08:00 最新接手：15对首步干预完成，原策略常补回；下一隔离续走策略C/D
+
+新增scripts/rank_branch_helpers.py、run_rank_branches.py及5项定向测试，不改主训练31/推理20/C产物。全部15上下文×2首步（强制保存action、实际清4/0），后面**均原30M eb859b… CUDA greedy**，256步含首步。固定每4对/8槽批次与顺序，尾3对inactive停住，死亡/TimeLimit/horizon不reset。每pair原子提交、partial group必须全原组重算核验已提交pair而不覆盖，防止恢复改变float32 batch；最高matmul精度/TF32false。
+
+结果rank_branches/branch_summary16:32:19 passed、restart16:32:20 passed、guard/controller16:32:23 completed；30臂全256 horizon删失、0死亡/0TimeLimit。候选首步清行较低4对/同10/高1，总−7行、四行事件−1、环境reward约−14；首步合计−60行在原策略续走下常补回，不足以归因整个8k退化，不能把无观察死亡当长期生存等价。选15处失去四行状态/原随机轨迹/时序相关，非总体质量样本。
+
+进程388410完成首4对（2048环境步/255 GPU预测批次），388487复用其文件再11对（5632/765），首批SHA未改。实际总7680模拟环境步/1020 GPU预测批次/0optimizer；逐组policy/完整Adam/PPO计数30003200/36625和CPU/CUDA采样RNG不变。86冻结输入未改、32.812秒、全250%/6GiB无降载，CPU72.75℃/GPU49℃/3431.32MiB。5项检查过（100%/2GiB/CPU37.875℃）。报告rank_first_action_branches_20261106.md。所有有限任务已终态，不重跑A/B、prefix、排序或几何。
+
+下一执行**同15状态×2首步、换续走策略C/D**，用于分离首步与持续策略变化：现有A/B=原首步/候选首步后原30M续走；新C/D=同原首步/候选首步后**冻结拒绝8k actor016b6b…**续走。固定同256含首步、不延长、不挑context，8环境同4对顺序/active处理/最高float32/TF32false/原250%6GiB温控/有限300秒命令600秒wall；计划新最多7680步，首步仍强制4/0。此为新预声明因子对照，不是补跑旧有限基准/超参网格。无需重采样prefix或改模型。
+
+可直接复用已通过runner且**不改现有冻结script/helper**：新独立runs/autonomous_rank_branches_candidate_continuation_20261106，复制协议但design.model改autonomous_action_ranks_20261106/design.json models.candidate精确path/SHA，其他context/source/runtime/native/horizon/group协议一致。runner pair.reference/candidate标签指首步动作，不是续走模型；新设计/报告明确“续走8k”，避免误读。5测试已覆盖同代码，无需因仅模型配置变更重复全组测试；预检新model/inference来源与源计数8192/36635，GPU不可用拒绝。
+
+新增小型对照verifier/定向测试，固定模型/上下文SHA、group_keys、horizon、source31/inference20/runtime/compiled identity一致，A/B旧输出整组冻结不改。逐case持固定首步比较A vs C、B vs D（可复用compare_pair的共同窗口逻辑）；分别报告共同步数reward/lines/fours、观察到早死和horizon/timeLimit删失，不拿不同生存长度总分直接比。模型policy/Adam/PPO和采样RNG不变；新C/D也真实跨进程首组复用。输出四臂逐pair及汇总，只说明该选择状态和有限horizon下的续走策略影响，不推广或开质量训练。若C/D无死亡也不得据结果拉长本协议horizon；保留局限后再基于新证据设计下一步。
+
+本原生goal续轮首工具16:19:47真实执行，native_goal_rank_branches_execution_20261106.json；前轮cf052ac有实质进展，非本轮小时新消息消费。后台/驻留/每小时/防休眠/goal active保持。所有开发/副本/续办留lightbook，GPU或主机不可用保留无CPU训练/其他机器fallback；额度不足保存等小时，暂停取消即停。guarded模板2M未启动。
+
 ### 2026-11-06T16:19:17+08:00 最新接手：15上下文完整恢复/8环境重放已完成，下一实际执行有限分支
 
 新增scripts/restore_rank_contexts.py及4项定向测试，准确31训练来源及固定native产物保持；只读hash核验原worker快照，不重标旧27来源训练metadata。全部15个delta_cleared=-4上下文已保存至runs/autonomous_rank_contexts_20261106/contexts/<key>/state.pkl+manifest.json；contexts_summary.json列target（chunk/worker/global/local step/reference/candidate action）及identity。载入可复用restore_rank_contexts.load_context(directory, expected_identity)，必须先冻结manifest/state并核对identity、SHA；pickle仅自己的已验证本机文件。
