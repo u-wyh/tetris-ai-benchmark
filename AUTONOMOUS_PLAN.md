@@ -4,6 +4,12 @@
 
 ## 用户最新首要任务：轻薄本无人值守
 
+### 2026-11-06 09:27 接手点：顺序PPO诊断完成，下一项actor一阶动量隔离
+
+`runs/autonomous_ppo_update_path_20261106/`09:25:53 passed，控制器09:25:56 completed/MainPID0success，勿重跑。9项保护测试及实际CUDA8原4096 rollout/16批标量摘要同，追踪与无追踪80步policy/Adam/更新数精确同，原模型0步，49输入未变。原LR无门槛80步probe最终KL0.00551154，峰值0.0183125在第15步；targetKL.003第6批触发，仅5步，但终KL0.00868135更远，不能视为质量改善；低LR两组80步未触发，终KL0.00116270。64探针是训练态，非棋力证据或全局硬界。CPU最高71.875/GPU52，采样全250%。报告`reports/experiments/ppo_update_path_20261106.md`。
+
+下一独立有界诊断：只清零actor Adam exp_avg，保留exp_avg_sq、step、group参数和所有critic状态；在两种LR各做完整80步副本对照，与已完成原轨迹同输入/RNG/probe，观察早期峰值与最终偏移。先保护单元验证只改actor一阶状态，然后GPU8/CPU250%/6GiB/原温控，240秒命令/600秒队列，原模型0步，不保存普通检查点/不宣称棋力提升。若有支持再显式加入完整上下文初始化转换及恢复身份，并做有界质量筛选；不重复原失败配方、不直接扩2M。
+
 ### 2026-11-06 09:20 已完成：克隆Adam归因，下一步顺序PPO更新诊断
 
 本轮原生goal自动接续`01a1ae6d-dcbd-7af2-b835-8bfdf57ad874`实际开发并提交143f6a4，常驻302731始终subscribed；非投递/状态空转。新独立run `runs/autonomous_adam_update_audit_20261106/`09:19:39 passed，父服务09:19:42 completed、MainPID0/Resultsuccess，勿重跑。6项保护单元测试、CUDA8同原4096 rollout/16批全部标量摘要一致、64副本独立步、原模型/Adam/PPO数未变、46输入前后相同；CPU最高73.125/GPU52，全程250%。
