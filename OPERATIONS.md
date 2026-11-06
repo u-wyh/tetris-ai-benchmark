@@ -1295,3 +1295,5 @@
 - 2026-11-06T09:59:09+08:00：资源保护：tetris-guard-315451-1793930345873505948 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_bitboard_construction_profile_20261106/guard。
 
 - 2026-11-06T10:01:18+08:00：保护测量完成：保存candidate观测uint8，[8,1840,16]；4096密集矩阵115MiB，SB3按space dtype存储，不按float32夸大为460MiB，暂无packed-buffer收益证据。更新静态剖析支持当前bitboard搜索，16状态×30构建CPU2.14578秒，搜索_branch累计1.43313秒约66.8%。下一隔离优化visited/重复碰撞查询，需差分/边界+实际GPU8配对吞吐/恢复全状态证据；不再堆叠失败学习配方。证据：reports/experiments/bitboard_construction_profile_20261106.md。
+
+- 2026-11-06T10:02:02+08:00：已在lightbook创建隔离worktree /home/wyh/projects/tetris-search-compact-validation、分支codex/compact-bitboard-search，起点a7665d4，venv/runs仅链接本机主副本。当前未修改其数值代码、未启动新GPU基准，main仍26来源；下一按已声明parity→静态ABBA→实际GPU8门槛开发，不重新启动已拒绝actor候选。
