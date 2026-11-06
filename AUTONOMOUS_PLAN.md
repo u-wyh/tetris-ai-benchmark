@@ -6,6 +6,24 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T20:23:35+08:00 最新接手：前8点全部恢复/四臂已完；下一开发自然greedy快速上下文回归工具，停止扩大回溯
+
+**本次小时已实际执行**：20:05:45 submission01a1b0c0-2627-7ed1-96a8-4054ccf5de08→20:06:36新轮01a1b0c0-ee07-7a11-8c90-6b795f47fddd，clientId=01a1b0c0-2627-7aa2-9356-7a1908f38ce6与原queue匹配/queue空；rollout首exec20:06:48.037/call_54fd43ac6fdc4a5ba65a22409a0d745e。hourly_prior_divergences_execution_20261106.json已记录真实开始、4096步恢复和13712步干预完成；不是accepted，也不外推未来额度。20:19:05后台healthy/goalactive/4驻留与续办单元正常/睡眠masked/linger yes/proxy空，20:20:15queue_empty。
+
+**已完成，禁止重跑**：runs/autonomous_prior_divergences_20261106静态2测试/选择passed，从168个合格历史分歧取6921前最近8个6481/6592/6632/6653/6699/6741/6783/6809，全纳入无特征结果过滤。含当前到原6942死亡的动作数462/351/311/290/244/202/160/134。6592 candidate清0/shadow清4，其余均0/0。runs/autonomous_prior_contexts_20261106完整恢复8点，426754重放26的2048步/首4点→426805复用该receipt/context SHA只算27的2048/后4点，4096实际环境步/512轮/0forward/optimizer，逐步obs/mask/两方feature/reward/info及片段末全8worker/Core/bag/RNG/active views精确。原捕获/2点恢复/旧15点/刚结束2点四臂不重跑。
+
+runs/autonomous_prior_factorials_20261106全部4固定组/8点四臂完成，horizon512为本轮新协议固定值，非延长旧协议。427516算group0 3885步→427624保持首组原文件SHA、复用0只算1/2/3的9827步，**13712新环境步/原与8k各2044 GPU批次/0optimizer**。每个D逐步重现原source死亡（上述462..134），所有group policy/完整Adam/源计数原30003200/36625、8k8192/36635和CPU/CUDA采样RNG不变。A=shadow首步→原，B=candidate首步→原，C=shadow首步→8k，D=candidate首步→8k：A全部8到512；B除6809外7到512，6809死134；C除6783外7到512，6783死160；D全原死亡。即时holes/aggregate/height相同也不能判等价，动作影响依赖续走模型，不能拿局部结果造“普适坏动作”标签。8点同一episode相关，**不是8独立seed改善**；512均删失不是长寿，旧8k整体2/8质量失败/无推广/不扩2M不变。
+
+factorial summary20:16:58/restart passed/guard20:17:01/controller20:17:02 completed，192冻结输入未改/49.044秒/all250%6GiB/采样CPU75.25℃/GPU51℃/3468.84MiB/无降载。静态138输入/4.115秒/100%2GiB、恢复164输入/20.630秒/250%6GiB均过。复用已5测试冻结mixed helper/source loader/group cache，新wrapper实际跨进程多组复用已验收。新代码select_prior_divergences.py、recover_prior_contexts.py、run_prior_factorials.py与选择2测试。report prior_factorials_20261106.md、各root completion/restart/contexts_summary和group trace/state是证据。全部有限服务终态，不能因空闲重启旧计算。
+
+**下一实际开发（尚未实现/校准）**：停止继续向前回溯，构建可复用、可恢复的**自然greedy快速上下文回归评测**CLI（建议scripts/evaluate_policy_contexts.py，保持主31/推理20及旧冻结文件不改）。suite固定本次8个完整context、按step时间序排列、每个一局最多512步、max_pieces20000，GPU8/原250%6GiB/温控/有限时间，最多4096模拟步/模型。每个checkpoint从这些完整状态自然greedy起步，**不强制任何首动作，不当全局质量门，不自动推广或训练**。这能对已知失败状态作便宜快检，动作改变但后续可修复的新模型应由完整续走结果判断，不靠首动作身份拒绝。
+
+先冻结suite/context manifest/state SHA、当前数值/compiled/runtime、checkpoint SHA、CUDA最高float32/TF32false/active槽固定序。checkpoint load(env=None)后clone状态，无seed42重置；死/TimeLimit/horizon停住。每256全局round原子提交完整8worker/active views/RNG+实际actions/摘要和结果，恢复不重采已提交prefix；所有pickle先外部hash/identity校验，policy/Adam/源计数和父CPU/CUDA采样RNG不变。代码可组合CaptureNativeEnv/capture_restore/capture_step或BranchControls及既有缓存helper，不修改旧实现。先定向自然首步/停槽/错误suite或ZIP身份/真实跨进程恢复测试，再资源保护下校准，避免测试仅镜像实现。
+
+校准两个冻结模型：原30M（路径/ZIP SHA/counts见capture design.models.shadow）与拒绝8k（models.candidate，8192/36635）。独立每模型从同suite8状态跑自然greedy，最多4096步；预期原模型8个512、8k原源死亡8个，但这是**待检假设**，新8槽单模型批次与旧4槽/混合不同，必须保留首步/完整路径/终点差异，不能强制动作、改精度/分组/窗口凑分离率。8k可逐步对比原source D traces（run_own_death_factorial.source_traces已冻函数可复用），原可比四个prior group的A trace/末state（先hash）。实际首段提交→退出→新进程恢复验证SHA不变，输出诊断报告而非全局accept/reject。若校准未重现，记录原因/范围，不冒称快检已可替代旧门。模型ZIP旧训练来源不能重标成当前31；当前31/20只是本评测运行来源。
+
+若校准成功，优先检查已有actor_context_probe任务1/4096 checkpoint是否存在并读真实元数据，再用新快检定位退化何时出现，**不重复训练原4k/8k配方或猜计数**。快检通过仍需原完整开发与独立seed验证，禁止只用这8相关失败样本宣称修好/调参过拟合。所有执行/副本/续办留lightbook，GPU/主机不可用保留无CPU训练/他机fallback；额度不足等小时不绕限/改账户，用户暂停取消即停。持续目标active不标complete。
+
 ### 2026-11-06T20:05:46+08:00 最新接手：两自身状态四臂已完成，1处局部死亡受首步影响/另1处两步收敛；下一静态回溯100005更早8个分歧
 
 **已完成，禁止重跑**：runs/autonomous_own_death_factorial_20261106，5项定向检查通过（mixed-policy active路由/首步强制/停槽/源D action/pre-view/reward失败封闭并记实际工作/整组缓存身份与不可覆盖）。进程423929正式**944新环境步、原30M和8k各255 GPU批次/0optimizer**；固定8槽100002:A/B/C/D+100005:A/B/C/D，horizon256含首步。D逐步匹配原pre-observation/mask/action/features/outcome，精确重现**172/22**动作死亡，模型policy/完整Adam/计数原30003200/36625、8k8192/36635及CPU+CUDA全局采样RNG不变。factorial_summary/group/完成receipt已保存，旧捕获/恢复/15对分支与主31/推理20/compiled产物未改。

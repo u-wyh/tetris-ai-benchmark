@@ -1719,3 +1719,31 @@
 - 2026-11-06T20:04:10+08:00：两自身死亡状态四臂完成，实际944新环境步/原与8k各255 GPU批次/0optimizer，进程423929；D逐步pre-view/mask/action/features/reward/终止/总分pieces/几何精确重现172/22死亡。100002 A/C均256 horizon删失、B/D172死亡且全trace/完整末态相同；持同续走模型换首动作改变该局部窗口内死亡，不能推广长期或隔离hold。100005四臂均22死亡，额外预声明12保存动作重放证明第2步后四臂完整worker/Core/bag/RNG和views全部相同、第3步仍同，末state也全同；其最后分歧是这组续走下的两步收敛，下一须看更早分歧，不能重复该状态。GPU guard19:56:58/controller19:56:59完成，169输入未改/10.289秒/all250%6GiB/采样CPU62.625℃/GPU41℃/3173.12MiB，模型policy/完整Adam/源计数和CPU+CUDA全局采样RNG不变。5定向测试通过；convergence独立保护成功、176输入未改/250%6GiB/12步0forward。旧质量失败/无推广/不扩2M保持；主31/推理20/旧捕获恢复分支未改。证据runs/autonomous_own_death_factorial_20261106/completion_audit.json及reports/experiments/own_death_factorial_20261106.md。
 
 - 2026-11-06T20:05:45+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-06T20:08:29+08:00：20:05:45小时投递01a1b0c0-2627-7ed1-96a8-4054ccf5de08已被20:06:36新轮01a1b0c0-ee07-7a11-8c90-6b795f47fddd消费，userMessage.clientId与原queue同为01a1b0c0-2627-7aa2-9356-7a1908f38ce6，queue空；rollout首真实exec=2026-11-06T12:06:48.037Z/call_54fd43ac6fdc4a5ba65a22409a0d745e。lightbook machine-id匹配，4后台驻留/防休眠单元和原goal健康；仅证明本条实际执行，不外推未来额度。前轮699a15d已完成，下一只读100005在6921前最近8分歧，不重跑旧结果。证据hourly_prior_divergences_execution_20261106.json。
+
+- 2026-11-06T20:09:02+08:00：预声明只读seed100005在step6921之前最近8次actual candidate!=shadow，保持全部8点按时间顺序、不按hold/清行/期待结果筛选；复用旧最后分歧producer的已验证目标schema，不改冻结源码。先100%/2GiB/120秒命令300秒wall原温控执行2项选择/边界/计数/顺序校验与全链hash验证静态提取，0环境/forward/optimizer。证据runs/autonomous_prior_divergences_20261106/design.json。
+
+- 2026-11-06T20:09:05+08:00：资源保护：启动受保护任务 tetris-guard-426189-1793966944984550715，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_prior_divergences_20261106/guard。
+
+- 2026-11-06T20:09:09+08:00：资源保护：tetris-guard-426189-1793966944984550715 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_prior_divergences_20261106/guard。
+
+- 2026-11-06T20:09:09+08:00：资源保护：100005在已收敛点6921前最近8分歧静态提取与计数/边界/时间顺序校验完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_prior_divergences_20261106/summary.json。
+
+- 2026-11-06T20:12:06+08:00：最近8前分歧静态选择passed/2项测试过；168个符合此前时间条件的分歧中取最近8，step6481/6592/6632/6653/6699/6741/6783/6809，含当前至原死亡距离462/351/311/290/244/202/160/134，全部在source chunk26/27。现预声明复用已冻结恢复函数，8worker从25/26快照重放原保存动作各256轮，逐步观测mask/两方feature/reward/info与末完整8worker/RNG/active views精确才提交全部8上下文。实际双进程先26/4点，再复用其receipt/context仅算27/另4点，最多512轮/4096环境步，0policy forward/新动作采样/optimizer；CUDA不可用拒绝，250%/6GiB/原温控/180秒命令420秒wall，164冻结输入。尚未运行新干预或训练。证据runs/autonomous_prior_contexts_20261106/design.json。
+
+- 2026-11-06T20:12:09+08:00：资源保护：启动受保护任务 tetris-guard-426740-1793967129318885862，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_prior_contexts_20261106/guard。
+
+- 2026-11-06T20:12:29+08:00：资源保护：tetris-guard-426740-1793967129318885862 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_prior_contexts_20261106/guard。
+
+- 2026-11-06T20:12:30+08:00：资源保护：100005更早8分歧完整上下文/原8worker片段末状态与跨进程首4点复用验证完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_prior_contexts_20261106/summary.json。
+
+- 2026-11-06T20:16:10+08:00：8前分歧完整恢复成功，进程426754重放26的2048步提交首4点，426805保留其SHA复用26仅算27的2048步提交后4点；共4096环境步/512轮/0forward/optimizer，原片段末全8worker/Core/RNG/active views精确。现按已知最大462至死亡距离，预声明新8点四臂窗口512含首步（不扩已结束旧2点/15点），4固定时间顺序组各2case×4臂=8env、最多16384新环境步。A/B续原，C/D续8k，首步shadow/candidate分别按原features清行断言（step6592是4/0），D每点都须逐步重现原保存死亡，失败保留scope。复用上轮已5项校验的冻结mixed helper/source loader/atomic group缓存，新wrapper真实双进程先group0再复用算1/2/3，所有8点纳入、同一episode相关不可当8个seed。CUDA最高float32/TF32false、policy/Adam/计数/RNG不变，原250%6GiB/温控/300秒命令600秒wall、192冻结输入，0optimizer/无推广或训练。证据runs/autonomous_prior_factorials_20261106/design.json。
+
+- 2026-11-06T20:16:12+08:00：资源保护：启动受保护任务 tetris-guard-427500-1793967372793044264，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_prior_factorials_20261106/guard。
+
+- 2026-11-06T20:17:01+08:00：资源保护：tetris-guard-427500-1793967372793044264 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_prior_factorials_20261106/guard。
+
+- 2026-11-06T20:17:02+08:00：资源保护：100005前8分歧全部GPU8四臂512步局部对照/源死亡重现/实际跨进程首组复用验证完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_prior_factorials_20261106/summary.json。
+
+- 2026-11-06T20:21:15+08:00：更早8点四臂全部完成，427516先group0 3885步、427624复用其原文件仅算groups1/2/3 9827步，共13712新环境步，两个冻结模型各2044 GPU批次/0optimizer；源D逐步精确重现全部462/351/311/290/244/202/160/134死亡，model/完整Adam/源计数/采样RNG全组未变、首组SHA不变。A全部8到512 horizon，B除6809外7到512，C除6783外7到512，D全按原时刻死亡；这些是同一episode内相关点，不是8独立seed，不代表整体质量通过。512窗口内首步影响依赖续走模型，不能把候选首动作直接做普适坏标签。factorial20:16:58/restartpassed/guard20:17:01/controller20:17:02 completed，192输入未改/49.044秒/all250%6GiB/CPU75.25℃/GPU51℃/3468.84MiB。静态138输入/2测试、4096步上下文重放164输入均通过、无降载。下一停止回溯和重复已结束分支，开发并校准这8点自然greedy的快速上下文回归工具（不强制首步、不作为整体质量门）；原8k2/8质量失败/无训练或推广保持。证据reports/experiments/prior_factorials_20261106.md及completion_audit.json。
