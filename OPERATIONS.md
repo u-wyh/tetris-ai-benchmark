@@ -1275,3 +1275,23 @@
 - 2026-11-06T09:45:38+08:00：资源保护：启动受保护任务 tetris-guard-312330-1793929538484275787，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额150%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_quality_8k_20261106/guards/candidate_00。
 
 - 2026-11-06T09:47:13+08:00：本轮完成显式转换实现及两套恢复实证并已实际进入预声明质量筛选，服务PID312326仍活跃；已更新计划、状态与报告，原26/推理20及47支持输入冻结。探针CPU81/GPU55、合成CPU73.5/GPU51，均保护内；当前结果未出，不将参数扰动减小/恢复通过当棋力改善。后续查原服务与逐seed缓存，避免重复。证据：reports/experiments/actor_momentum_20261106.md。
+
+- 2026-11-06T09:51:21+08:00：资源保护：tetris-guard-312330-1793929538484275787 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_quality_8k_20261106/guards/candidate_00。
+
+- 2026-11-06T09:51:23+08:00：资源保护：更长局开发评测完成，扩展门槛通过=False；未替换正式模型。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_quality_8k_20261106/summary.json。
+
+- 2026-11-06T09:54:36+08:00：actor一阶动量转换8K候选长局评测09:51:23 completed/eligiblefalse，服务MainPID0success；6/8触顶、100002=17994/100005=6942，均存活比0.90585、得分比0.8658487295。47输入未改；无extra8/续训/推广，原模型保留。原计划条件接力因门槛失败不再配置，后续不复跑此候选。下一开发调查dense Candidate rollout存储/数据搬运的内存成本，要求行为全状态等价后才考虑采用。证据：runs/autonomous_actor_quality_8k_20261106/summary.json。
+
+- 2026-11-06T09:54:37+08:00：资源保护：启动受保护任务 tetris-guard-314598-1793930077955220623，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rollout_storage_profile_20261106/guard。
+
+- 2026-11-06T09:54:40+08:00：资源保护：tetris-guard-314598-1793930077955220623 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rollout_storage_profile_20261106/guard。
+
+- 2026-11-06T09:57:45+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-06T09:59:05+08:00：资源保护：启动受保护任务 tetris-guard-315451-1793930345873505948，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_bitboard_construction_profile_20261106/guard。
+
+- 2026-11-06T09:59:08+08:00：资源保护：提交worker静态状态的bitboard落点/位图特征函数剖析完成，未训练或改变模型。证据：runs/autonomous_bitboard_construction_profile_20261106/profile.json。
+
+- 2026-11-06T09:59:09+08:00：资源保护：tetris-guard-315451-1793930345873505948 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_bitboard_construction_profile_20261106/guard。
+
+- 2026-11-06T10:01:18+08:00：保护测量完成：保存candidate观测uint8，[8,1840,16]；4096密集矩阵115MiB，SB3按space dtype存储，不按float32夸大为460MiB，暂无packed-buffer收益证据。更新静态剖析支持当前bitboard搜索，16状态×30构建CPU2.14578秒，搜索_branch累计1.43313秒约66.8%。下一隔离优化visited/重复碰撞查询，需差分/边界+实际GPU8配对吞吐/恢复全状态证据；不再堆叠失败学习配方。证据：reports/experiments/bitboard_construction_profile_20261106.md。

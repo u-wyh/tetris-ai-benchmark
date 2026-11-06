@@ -25,6 +25,7 @@ def main():
     parser.add_argument('--snapshot', type=Path, action='append', required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--repeats', type=int, default=30)
+    parser.add_argument('--search-backend', choices=['formal','bitboard'], default='formal')
     args = parser.parse_args()
     if args.repeats < 1:
         parser.error('repeats must be positive')
@@ -36,7 +37,10 @@ def main():
 
     from training.evaluation.fast_candidate_features import candidate_features
     from training.evaluation.feature_backend import inference_source_identity, evaluation_runtime_identity
-    from training.tetris_core.legal_placements import get_legal_placements
+    if args.search_backend == 'bitboard':
+        from training.evaluation.fast_legal import get_legal_placements
+    else:
+        from training.tetris_core.legal_placements import get_legal_placements
     from resource_guard import now, operation, write_json
 
     sources = inference_source_identity(resumable=True)
@@ -91,7 +95,8 @@ def main():
                          primitive_calls=primitive, calls=calls,
                          self_seconds=own, cumulative_seconds=cumulative))
     result = dict(at=now(), scope='Static committed public-state construction with cProfile overhead; excludes environment transitions, IPC, policy and PPO',
-        candidate_feature_backend='bitboard', repeats=args.repeats, states=len(cores),
+        candidate_feature_backend='bitboard', candidate_search_backend=args.search_backend,
+        repeats=args.repeats, states=len(cores),
         construction_calls=args.repeats * len(cores), profiled_wall_seconds=wall,
         profiled_process_cpu_seconds=cpu, peak_rss_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
         input_snapshot_sha256=snapshots, source_sha256=sources,
@@ -104,7 +109,7 @@ def main():
         interpretation='Use to select a performance hypothesis; no adoption or end-to-end speedup established')
     args.output.parent.mkdir(parents=True, exist_ok=True)
     write_json(args.output, result)
-    operation('提交worker静态状态的正式落点/位图特征函数剖析完成，未训练或改变模型', args.output)
+    operation('提交worker静态状态的'+args.search_backend+'落点/位图特征函数剖析完成，未训练或改变模型', args.output)
     print(json.dumps({key: result[key] for key in ['states', 'construction_calls', 'profiled_process_cpu_seconds']}))
 
 

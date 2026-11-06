@@ -4,6 +4,14 @@
 
 ## 用户最新首要任务：轻薄本无人值守
 
+### 2026-11-06 10:00 最新接手点：新候选已拒绝，转入有证据的搜索优化
+
+actor质量评测09:51:23 completed/eligiblefalse，MainPID0/Resultsuccess；6/8触顶，100002=17994、100005=6942，均存活比.90585、得分比.8658487295。47输入完成时未改；原30M保留，extra8/追加训练未启动，不再配置该候选接力或复跑。报告actor_momentum_20261106.md已追加终态。
+
+当前无重型计算。新保护测量确认uint8密集candidate单轮115MiB，暂不做packed-buffer重写；对当前bitboard搜索重新剖析16状态480构建，_branch累计约66.8%。见`reports/experiments/bitboard_construction_profile_20261106.md`。下一在本机隔离worktree `tetris-search-compact-validation`/分支`codex/compact-bitboard-search`优化visited状态表/已访问邻居重复collision。当前main26数值/推理20保持，隔离新增显式bitboard_compact搜索配置（保留formal默认/旧bitboard），不修改推理20。
+
+先确保placements/action/path/features/mask全等、覆盖负y/边界和原/新快照；静态ABBA有收益才进入GPU8。预声明两组新seed2000000/2000100，AB/BA各8192、跨4096进程恢复；policy/Adam/PPO/RNG/8worker/非计时指标精确同，吞吐几何≥1.05且每对更快、全程250%无温控降载才采纳。所有重型计算resource_guard、6GiB/原温控/时间预算、仅lightbook，无fallback；旧26先保持main或归档，不能改旧断点/缓存身份。完成旧质量后才可编辑其被冻结支持。后台302731常驻仍按实际心跳核验，最新小时消息排队不等于已被处理。
+
 ### 2026-11-06 09:46 最新接手点：actor转换恢复全部通过，8K质量筛选实际运行
 
 原上下文探针09:40:53 passed/服务09:40:54 success，合成扩展/故障恢复09:42:26 passed（1项/3 deselected，87.03秒），均MainPID0，勿重跑。26来源/57保护回归，错误动量preset恢复拒绝且提交文件不变；详见报告`reports/experiments/actor_momentum_20261106.md`。初始化只清零actor exp_avg，保持二阶矩/step/critic；旧25代码归档tetris-runtime-3d8ed0f，新source不重标旧缓存。
