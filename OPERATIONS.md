@@ -1209,3 +1209,9 @@
 - 2026-11-06T09:25:56+08:00：资源保护：原4096 rollout实际PPO.train副本顺序更新/KL门槛诊断完成；追踪与无追踪最终状态精确相同，原模型未更新。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_ppo_update_path_20261106/summary.json。
 
 - 2026-11-06T09:27:37+08:00：真实PPO顺序副本诊断09:25:53 passed、父服务09:25:56完成。追踪/无追踪80步policy/Adam/PPO数精确同，原模型0步、同rollout/16批标量摘要。原LR无门槛80步probe KL终0.00551154/峰0.0183125；targetKL.003第6批触发、仅5步，终KL0.00868135，未证明改善；低LR两组80步未触发、终KL0.00116270。probe为64训练态，非棋力验证/全局硬界。CPU71.875/GPU52/内存3553.89MiB，全250%，49输入未变；暂不采纳门槛。证据：reports/experiments/ppo_update_path_20261106.md。
+
+- 2026-11-06T09:29:18+08:00：资源保护：启动受保护任务 tetris-guard-308561-1793928558749479342，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_momentum_20261106_unit。
+
+- 2026-11-06T09:29:22+08:00：资源保护：tetris-guard-308561-1793928558749479342 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_actor_momentum_20261106_unit。
+
+- 2026-11-06T09:30:09+08:00：上一轮为实质进展（682f88e实际PPO/KL诊断完成并归档），本轮核验常驻订阅/无活动guard后新增仅actor Adam exp_avg清零副本诊断。7项保护测试通过，含AMSGrad第二矩/step/group/critic及权重不变、不完整后部状态拒绝且无部分修改、非有限状态/非Adam拒绝。当前25训练/20推理及旧49输入未改；准备原/低LR各80步，与已完成原轨迹同rollout/probe/RNG。
