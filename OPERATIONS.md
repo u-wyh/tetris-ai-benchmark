@@ -1525,3 +1525,23 @@
 - 2026-11-06T15:50:03+08:00：资源保护：固定双模型同状态动作排序诊断和真实跨进程前两段复用完成；无新采样/训练/模型推广。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_action_ranks_20261106/summary.json。
 
 - 2026-11-06T15:54:10+08:00：同状态16384 CUDA排序诊断通过/15:50:03父guard completed，进程380837→380878实际复用1/2并算3/4、提交SHA未改；57输入未改，0env/0optimizer，加载后各段policy/Adam/PPO/CPU与CUDA RNG不变。431 greedy翻转(2.6306%)、KL均.00359022，全部原margin<1；翻转cleared均−.146172但几何别名/特征依赖未排除，不作退化因果/质量结论。CPU61.375℃/GPU39℃/1129.33MiB/all250%，原保护保持。main31/推理20未改；下一只保存行几何描述审计，不重采样/重跑/开启网格。证据reports/experiments/policy_action_ranks_20261106.md。
+
+- 2026-11-06T15:58:26+08:00：本原生goal续轮已读计划/真实PID/后台，无重任务；开始保存431动作翻转的后续静态几何描述，发现encoded x/y是占格包围盒左上角，必须减shape min而非直接加矩阵坐标。新增解码/动作元数据校验及aggregate=holes+底板占用+visiblecells−10×cleared独立守恒；先正式落点差分/负y/旋转/hold/坏元数据测试，100%/2GiB原温控，无模型forward/采样/训练。证据runs/autonomous_rank_geometry_20261106/unit/design.json。
+
+- 2026-11-06T15:58:28+08:00：资源保护：启动受保护任务 tetris-guard-382411-1793951908337297290，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rank_geometry_20261106/unit/guard。
+
+- 2026-11-06T15:58:30+08:00：资源保护：tetris-guard-382411-1793951908337297290 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rank_geometry_20261106/unit/guard。
+
+- 2026-11-06T15:58:31+08:00：资源保护：动作特征包围盒坐标还原与正式落点/底板占格守恒定向测试完成，未跑模型或训练。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rank_geometry_20261106/unit/summary.json。
+
+- 2026-11-06T15:59:48+08:00：几何91项测试过（正式各piece/hold/边界落点与负y/移动shape bounds/坏坐标、独立底板守恒）。预声明后续描述静态431行审计：同/异visible/full cells、hold、piece分别及联合计数，cleared少/同/多与整数总量、visible计数/holes/aggregate约束逐行核对原保存底板占用；不把相同占格称轨迹等价。冻结41输入，90秒/100%/2GiB原温控遥测；0forward/0env/0optimizer。原生goal续轮首工具15:54:38已记录，非小时投递消费。证据runs/autonomous_rank_geometry_20261106/design.json。
+
+- 2026-11-06T15:59:50+08:00：资源保护：启动受保护任务 tetris-guard-382649-1793951990445346235，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rank_geometry_20261106/guard。
+
+- 2026-11-06T15:59:52+08:00：资源保护：tetris-guard-382649-1793951990445346235 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rank_geometry_20261106/guard。
+
+- 2026-11-06T15:59:53+08:00：资源保护：431动作变化的占格/hold/piece及清行整数分布、独立底板占格守恒静态审计完成，无模型或环境推进。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_rank_geometry_20261106/summary.json。
+
+- 2026-11-06T16:03:05+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-06T16:04:40+08:00：431动作几何描述passed/guard15:59:53 completed、41输入未改；421占格不同/10同占格但换hold，无同占格+hold+piece别名；clear少23/多6/同402，净−63，其中15处4→0。底板占格独立守恒逐行精确，aggregate净+634=holes+4−10×(−63)，不能叠加成独立质量证据。91测试过/0forward/0env/0optimizer，原100%/2GiB保护，主31/推理20不变。确认初始/段末全worker快照存在，下一先hash核验+重放保存动作恢复15上下文，再固定有限分支；未开始分支或训练。证据reports/experiments/action_rank_geometry_20261106.md。

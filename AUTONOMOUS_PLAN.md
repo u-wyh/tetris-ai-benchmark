@@ -6,6 +6,24 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T16:04:40+08:00 最新接手：431动作几何/守恒核查完成，下一恢复15个失去四行的上下文
+
+scripts/analyze_action_rank_geometry.py及91测试，后续描述静态分析15:59:50 passed/guard15:59:53 completed。421处visible cells不同，10处同visible/full cells但hold不同；同visible+piece+hold为0，不能把431当编号旋转别名。联合227处hold/piece/占格均换，2处同piece但换hold/占格，192同hold/piece但换占格，10同piece/占格换hold。
+
+清行candidate−reference分布 -4:15、-3:2、-2:2、-1:4、0:402、+1:4、+3:1、+4:1；23更少/6更多，合计−63。15处原清4候选清0，尚未实际执行分支，不能称长期少63或致死。对应保存底板前200格独立占用数逐行精确验证aggregate=holes+baseblocks+visible−10cleared；净aggregate+634=holes+4−10×(−63)+visible0，两个指标非独立证据。encoded x/y是占格bbox左上角，必须CELLS减min后平移；不是matrix原点。报告action_rank_geometry_20261106.md。
+
+全程100%/2GiB/原温控及GPU遥测，无模型forward/0env/0optimizer，41输入冻结未改，main训练31与adoption审计逐项同、推理20/C产物不变。全部有限计算终态，不重跑排序或几何分析。原8k/critic/随机评测负结果保持，无PPO/奖励/超参网格和2M启动。
+
+**下一先恢复/验证15上下文，再有限分支反事实**：已确认runs/autonomous_independent_critic_data_20261106/initial/state.pkl和chunk_0001..4/state.pkl存在，并各有checkpoint.json含state_sha256/8worker digests。只反序列化自己hash核验过的本机快照，见collect_independent_critic_data.py save_checkpoint/restore_checkpoint，不重标原training_source27，不用trainer恢复来绕过旧源身份。只是把worker状态装入新独立诊断env（当前准确31，数值曾对照相同）。原策略快照max10000、reward default，初始8seed2600000..7；snapshot包含core/bag/gameplay RNG、episode_count/seed、piece计数和numpy/action RNG。
+
+先从geometry ledger中**固定全部15个delta_cleared=-4**，不挑选最坏/最好。使用每段之前的最近initial或chunk-end快照，重放该段保存actions到目标before-step；单段至多512×8，全部最多16384个prefix环境步。逐步核对原NPZ obs_state/obs_candidate/action_masks、step done/truncated/episode_seed等，snapshot边界及目标动作合法、feature清行4/0和几何都必须精确；缓存每个目标完整worker状态+SHA/观测/mask/来源和row身份，故障恢复复用已提交prefix上下文。**此阶段会推进模拟环境，必须计environment_steps，不再称0env；未采样新动作/没有训练数据更新。** 先搜索既有replay工具避免重复，并写定向重放/reset/错误snapshot/缓存身份测试，保护性GPU可用检查在任何执行前，不能GPU不可用时转纯CPU跑新工作。
+
+验证prefix恢复后，再预声明15上下文×两臂，第一动作分别固定保存reference/candidate action，之后都由同一冻结原30M CUDA greedy策略续走，建议固定总horizon256（含首步）、最多7680分支环境步/不按结果延长。用8环境分批装4对state，共用同一原始bag/RNG快照，但hold改变后队列差异是动作效果的一部分。终止/达到horizon的槽位应停住，不通过SubprocVecEnv自动reset引入新episode；不足8的尾批/已死槽需显式inactive，记录active步计数。可用诊断专用env_method step_active而不改训练核心；model batch只读active观测，首步必须强制保存动作，不能因为GPU batch舍入改成重算的greedy。
+
+逐对记录累计原reward/lines/pieces/死亡/截断与终端board，完整state和RNG都需来自同一克隆before-step；counterfactual只是“首动作在原策略续走下的局部影响”，不是8k策略整体质量因果/推广。模型policy/Adam/PPO计数不变、greedy不消耗sampling RNG，结果逐上下文原子提交可恢复；先定向测试。GPU8/CPU250%/6GiB/原温控/有限时间与用户暂停/额度规则保持，主机/GPU不可用保存无其他机或CPU训练fallback。prefix和branch可分阶段但不能以仅静态计划代替实际执行。
+
+本原生goal续轮首工具15:54:38真实执行，native_goal_rank_geometry_execution_20261106.json；不是新小时消息消费。后台health/goal active/桌面proxy空，开发/副本/每小时留lightbook。前轮0507508有实质进展。
+
 ### 2026-11-06T15:54:10+08:00 最新接手：同状态排序16384完成，431动作变化；下一排除几何别名
 
 main训练31与采用前adoption_audit逐项SHA同，推理20/C产物/原30M保持。新增scripts/audit_policy_action_ranks.py及10项定向测试，仅复用独立4段16384保存观测/8worker，对原30M eb859b…和拒绝8k actor016b6b…同状态CUDA forward，batch256。实际greedy为float32分布mode；KL用合法float32 logits→float64重归一化，无floor，非法不参与；不是单状态CPU评测或训练。
