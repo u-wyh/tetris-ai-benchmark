@@ -1507,3 +1507,21 @@
 - 2026-11-06T15:36:04+08:00：资源保护：tetris-guard-378388-1793950562337128861 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_native_features_20261106/adoption_guard。
 
 - 2026-11-06T15:39:06+08:00：main采用后保护加载15:36:04 completed，31来源及固定编译身份同testedchild，实际reset矩阵/mask精确，未重复GPU/恢复试验。已保存训练6.397%吞吐提升及完整上下文恢复报告、原失败SIGBUS夹具范围；不称质量提升/不启动2M。下一复用独立16384保存观测做同状态动作排序/greedy分歧离线诊断，尚未开始，不重复采样或旧网格。证据reports/experiments/native_features_training_20261106.md。
+
+- 2026-11-06T15:46:38+08:00：原生goal续轮实际执行，已查无重任务/后台健康；新增只复用独立16384保存观测的同状态动作排序诊断，未推进环境/模型。先验证合法KL/float32真实mode并列/边界终止距离/缓存身份与部分提交/实际policy和RNG保护；120秒命令/CPU100%/2GiB/原温控。数值训练31与推理20保持，尚未跑诊断。证据runs/autonomous_action_ranks_20261106/unit/design.json。
+
+- 2026-11-06T15:46:41+08:00：资源保护：启动受保护任务 tetris-guard-380291-1793951201216051234，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_action_ranks_20261106/unit/guard。
+
+- 2026-11-06T15:46:45+08:00：资源保护：tetris-guard-380291-1793951201216051234 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_action_ranks_20261106/unit/guard。
+
+- 2026-11-06T15:46:46+08:00：资源保护：同状态动作排序诊断的数值/缓存/实际mode与RNG保护测试完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_action_ranks_20261106/unit/summary.json。
+
+- 2026-11-06T15:49:50+08:00：同状态排序10项定向测试过；预声明固定原30M和拒绝8k两个模型、复用4段16384观测/8worker，batch256纯CUDA forward/真实mode+float64合法KL，margin固定[0,.0001,.001,.01,.1,1,inf]、终止前32/其他含截断组。真实双进程先提交段1/2、再复用并算3/4，逐段保存/身份不匹配拒绝，模型/Adam/PPO/CPU和CUDA RNG逐段不变；0env/0优化器步。冻结57输入、300秒命令/600秒队列/250%/6GiB原温控；仅描述不作轨迹因果/质量推广。证据runs/autonomous_action_ranks_20261106/design.json。
+
+- 2026-11-06T15:49:53+08:00：资源保护：启动受保护任务 tetris-guard-380826-1793951393249751273，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_action_ranks_20261106/guard。
+
+- 2026-11-06T15:50:03+08:00：资源保护：tetris-guard-380826-1793951393249751273 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_action_ranks_20261106/guard。
+
+- 2026-11-06T15:50:03+08:00：资源保护：固定双模型同状态动作排序诊断和真实跨进程前两段复用完成；无新采样/训练/模型推广。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_action_ranks_20261106/summary.json。
+
+- 2026-11-06T15:54:10+08:00：同状态16384 CUDA排序诊断通过/15:50:03父guard completed，进程380837→380878实际复用1/2并算3/4、提交SHA未改；57输入未改，0env/0optimizer，加载后各段policy/Adam/PPO/CPU与CUDA RNG不变。431 greedy翻转(2.6306%)、KL均.00359022，全部原margin<1；翻转cleared均−.146172但几何别名/特征依赖未排除，不作退化因果/质量结论。CPU61.375℃/GPU39℃/1129.33MiB/all250%，原保护保持。main31/推理20未改；下一只保存行几何描述审计，不重采样/重跑/开启网格。证据reports/experiments/policy_action_ranks_20261106.md。

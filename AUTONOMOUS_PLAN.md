@@ -6,6 +6,20 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-06T15:54:10+08:00 最新接手：同状态排序16384完成，431动作变化；下一排除几何别名
+
+main训练31与采用前adoption_audit逐项SHA同，推理20/C产物/原30M保持。新增scripts/audit_policy_action_ranks.py及10项定向测试，仅复用独立4段16384保存观测/8worker，对原30M eb859b…和拒绝8k actor016b6b…同状态CUDA forward，batch256。实际greedy为float32分布mode；KL用合法float32 logits→float64重归一化，无floor，非法不参与；不是单状态CPU评测或训练。
+
+15:50:01 rank_summary passed、15:50:02 restart passed/父guard15:50:03 completed。进程380837提交1/2后380878真实复用其NPZ/manifest并算3/4，前两段SHA未改。模型加载后各段policy/完整Adam/PPO计数/CPU及CUDA RNG未改，0env/0optimizer；原计数30003200/36625，候选相对8192/36635，不误加源offset。57冻结输入未改，诊断250%/6GiB/10.223秒、CPU61.375℃/GPU39℃/1129.33MiB，无降载。单测10pass，100%/2GiB/CPU54.75℃。全部有限任务终态，不重启/不重复采样。
+
+结果431/16384 greedy ID变化=2.6306%，KL均.00359022/max.22382055，mode/logit-argmax差0。预声明margin各区：[.0001,.001)3/4、[.001,.01)23/40、[.01,.1)204/493、[.1,1)201/4000、[1,inf)0/11847，[0,.0001)无。全部翻转在<1，<.1共有230/537。8worker44–59/2048，非单worker。参考4次终止前32步9/128，对其余（含末端截断未知）422/16256，只描述不做时序独立/因果或质量结论。翻转行候选−原cleared均−.146172、aggregate+1.470998、holes+.009281、hold−.206497，特征相关不能叠加成独立证据。报告policy_action_ranks_20261106.md。
+
+下一**先排除动作别名/统计依赖**，不启动PPO、奖励变更或旧critic/LR/GAE/KL网格。先搜索既有几何动作等价工具；复用runs/autonomous_action_ranks_20261106/rows_0001..4中的reference/candidate_features及action，不需再跑模型或环境。从FEATURE_NAMES对应piece_type/hold/rotation/x/y_plus_3和training/tetris_core/pieces.py的CELLS恢复occupied coordinates，先用正式legal_placements occupiedCells独立差分校验（含负y/O/S/Z/I旋转别名）。比较visible cells、piece、hold应分别报告；即使相同也不能声称完整行为等价，因为path/drop score及未来hold/queue可能不同。只描述“相同占格”等已证明范围。
+
+预声明一次后续静态分析：431变化中分开计数同/异占格、同/异hold/piece，cleared更少/相同/更多分布及整数总量，核对aggregate-height差与cleared/holes的可证关系（处理visiblecell数不同/顶出）；把两组对应保存rows身份/来源固定。CPU100%/2GiB原温控/GPU遥测即可（无CPU训练/无GPU forward）；先定向几何/行对齐测试，结果明确标后续描述，不能调整原诊断模型/分区/输出或重新采样。不足以判因果时再设计有界分支轨迹，先检查可复用snapshot，不凭经验选新超参。
+
+原生goal续轮01a1afcc-79a2-7843-a70e-76a291c1422f首工具15:39:52实际执行，非新小时投递；native_goal_action_ranks_execution_20261106.json。前轮3d168a2是实质进展。本轮后台health/goal active/桌面proxy空，开发/副本/每小时续办始终lightbook；GPU不可用保存无训练/其他机器fallback，额度不足保留等下一小时，用户暂停取消即停。原guarded模板2M未启动。
+
 ### 2026-11-06T15:39:06+08:00 最新接手：C特征训练/恢复已通过并采用main31，下一离线动作排序诊断
 
 原型d229934/集成66f3266，lightbook隔离/home/wyh/projects/tetris-native-feature-validation保留。main准确31训练来源SHA逐项同测试隔离（包括C/wrapper/runtime/extend），推理20同main/隔离/旧27归档43cc26f；旧27断点用归档，新31 checkpoint可用保留的66f3266隔离恢复，不重标任何旧来源。guarded模板显式bitboard_native/compact+固定本机artifact manifest，GPU8/250%/6GiB/原温控保持；**原模板2M只是配置，未启动，不启动质量训练。** C/wrapper/二进制仍与静态6.935倍同源。
