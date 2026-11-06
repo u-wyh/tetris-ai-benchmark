@@ -1,11 +1,41 @@
-"""Opt-in training BFS using bounded visited tables and identical paths."""
-
-from functools import lru_cache
+"""Opt-in training BFS using row bitmaps and identical observable paths."""
 
 from training.tetris_core.actions import encode_action
 from training.tetris_core.pieces import CELLS, I_KICKS, JLSTZ_KICKS, ROTATIONS, make_piece
 
-from training.evaluation.fast_legal import BOUNDS, SHAPES, _branch as reference_branch
+from training.evaluation.fast_legal import BOUNDS, _branch as reference_branch
+
+
+ORIGIN_BITS = {}
+for _kind in "IJLOSTZ":
+    ORIGIN_BITS[_kind] = tuple(
+        ((1 << (10 - BOUNDS[_kind, r][1] + BOUNDS[_kind, r][0])) - 1)
+        << (3 - BOUNDS[_kind, r][0]) for r in range(4))
+
+
+def free_rows(kind, board_rows):
+    """Bit x+3 is set iff the piece at that origin does not collide.
+
+    Rows index y+9. The final row is a y=20 sentinel for Down checks.
+    This collision table does not apply the separate BFS top>=-6 bound.
+    """
+    result = []
+    for rotation in range(4):
+        cells = CELLS[kind, rotation]
+        allowed = ORIGIN_BITS[kind][rotation]
+        high_y = BOUNDS[kind, rotation][3]
+        rows = []
+        for y in range(-9, 21):
+            blocked = 0
+            if y + high_y >= 20:
+                rows.append(0)
+                continue
+            for dx, dy in cells:
+                if y + dy >= 0:
+                    blocked |= board_rows[y + dy] << (3 - dx)
+            rows.append(allowed & ~blocked)
+        result.append(rows)
+    return result
 
 
 def _branch(observation, hold, board_rows):
@@ -16,18 +46,21 @@ def _branch(observation, hold, board_rows):
     kind = piece["type"]
     shapes = [CELLS[kind, r] for r in range(4)]
     bounds = [BOUNDS[kind, r] for r in range(4)]
-    row_shapes = [SHAPES[kind, r] for r in range(4)]
+    rotation = ROTATIONS.index(piece["rotation"])
+    # Keep the exact reference behavior for unusual initial poses.
+    if not (-3 <= piece["x"] <= 9 and -9 <= piece["y"] <= 19):
+        return reference_branch(observation, hold, board_rows)
+    free = free_rows(kind, board_rows)
 
-    @lru_cache(maxsize=None)
     def collides(rotation, x, y):
-        low_x, high_x, _, high_y = bounds[rotation]
-        if x + low_x < 0 or x + high_x >= 10 or y + high_y >= 20:
+        if x < -3 or x > 9 or y > 19:
             return True
-        for dy, bits in row_shapes[rotation]:
-            row = y + dy
-            if row >= 0 and board_rows[row] & (bits << x if x >= 0 else bits >> -x):
-                return True
-        return False
+        bit = 1 << (x + 3)
+        # A kick can first succeed above the table, then fail the BFS top
+        # bound. Preserve that first-success choice instead of trying a later kick.
+        if y < -9:
+            return not (ORIGIN_BITS[kind][rotation] & bit)
+        return not (free[rotation][y + 9] & bit)
 
     def rotate(rotation, x, y):
         target = (rotation + 1) % 4
@@ -40,21 +73,18 @@ def _branch(observation, hold, board_rows):
                 return nx, ny, target
         return None
 
-    rotation = ROTATIONS.index(piece["rotation"])
     if collides(rotation, piece["x"], piece["y"]):
         return []
-    # Valid descendants have x in[-3,9], y in[-9,19]. Preserve the
-    # reference's unusual initial poses outside that range via its exact BFS.
-    if not (-3 <= piece["x"] <= 9 and -9 <= piece["y"] <= 19):
-        return reference_branch(observation, hold, board_rows)
     nodes = [(piece["x"], piece["y"], rotation, -1, None)]
-    visited = [bytearray(512) for _ in range(4)]
-    visited[rotation][(piece["y"] + 9) * 16 + piece["x"] + 3] = 1
+    visited = [[0] * 30 for _ in range(4)]
+    visited[rotation][piece["y"] + 9] = 1 << (piece["x"] + 3)
     by_cells = {}
     head = 0
     while head < len(nodes):
         x, y, rotation, _, _ = nodes[head]
-        if collides(rotation, x, y + 1):
+        row = y + 9
+        bit = 1 << (x + 3)
+        if not (free[rotation][row + 1] & bit):
             min_x, _, min_y, _ = bounds[rotation]
             final_x, final_y = x + min_x, y + min_y
             if 0 <= final_x < 10 and -3 <= final_y <= 19:
@@ -79,31 +109,31 @@ def _branch(observation, hold, board_rows):
                         "occupiedCells": [{"x": cx, "y": cy} for cx, cy in cells],
                         "path": steps,
                     }
-        slot = (y + 9) * 16 + x + 3
         seen = visited[rotation]
+        available = free[rotation][row] & ~seen[row]
         top = y + bounds[rotation][2]
-        # Neighbor order is part of the observable shortest-path contract.
-        if x > -3 and -6 <= top <= 19 and not seen[slot - 1]:
-            if not collides(rotation, x - 1, y):
-                seen[slot - 1] = 1
+        # Neighbor order determines the exact public shortest path.
+        if -6 <= top <= 19:
+            left, right = bit >> 1, bit << 1
+            if available & left:
+                seen[row] |= left
                 nodes.append((x - 1, y, rotation, head, "Left"))
-        if x < 9 and -6 <= top <= 19 and not seen[slot + 1]:
-            if not collides(rotation, x + 1, y):
-                seen[slot + 1] = 1
+            if available & right:
+                seen[row] |= right
                 nodes.append((x + 1, y, rotation, head, "Right"))
         rotated = rotate(rotation, x, y)
         if rotated is not None:
             nx, ny, nr = rotated
             top = ny + bounds[nr][2]
             if -6 <= top <= 19:
-                target_slot = (ny + 9) * 16 + nx + 3
-                if not visited[nr][target_slot]:
-                    visited[nr][target_slot] = 1
+                target_row, target_bit = ny + 9, 1 << (nx + 3)
+                if not (visited[nr][target_row] & target_bit):
+                    visited[nr][target_row] |= target_bit
                     nodes.append((nx, ny, nr, head, "RotateCW"))
-        if y < 19 and -6 <= y + 1 + bounds[rotation][2] <= 19 and not seen[slot + 16]:
-            if not collides(rotation, x, y + 1):
-                seen[slot + 16] = 1
-                nodes.append((x, y + 1, rotation, head, "Down"))
+        if (-6 <= y + 1 + bounds[rotation][2] <= 19
+                and free[rotation][row + 1] & bit and not (seen[row + 1] & bit)):
+            seen[row + 1] |= bit
+            nodes.append((x, y + 1, rotation, head, "Down"))
         head += 1
     return sorted(by_cells.values(), key=lambda placement: placement["actionId"])
 

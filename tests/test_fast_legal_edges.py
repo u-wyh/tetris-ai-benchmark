@@ -136,3 +136,24 @@ def test_compact_visited_negative_y_boundaries(kind, rotation):
             core.current.update(x=x, y=y)
             public = core.get_public_observation()
             assert compact_placements(public) == reference_placements(public)
+
+
+@pytest.mark.parametrize("kind", "IJLOSTZ")
+def test_row_collision_bits_match_cell_geometry(kind):
+    from training.compact_legal import free_rows
+    from training.tetris_core.pieces import collides
+    for pattern in range(4):
+        core = TetrisCore(42)
+        if pattern:
+            for y in range(20):
+                for x in range(10):
+                    if ((x * 3 + y * 7) % (pattern * 3 + 2)) < pattern:
+                        core.board[y][x] = "Z"
+        rows = tuple(sum(1 << x for x, cell in enumerate(row) if cell)
+                     for row in core.board)
+        free = free_rows(kind, rows)
+        for rotation in range(4):
+            for y in range(-9, 21):
+                for x in range(-3, 10):
+                    assert bool(free[rotation][y + 9] & (1 << (x + 3))) == (
+                        not collides(core.board, kind, rotation, x, y))
