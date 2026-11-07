@@ -2015,3 +2015,31 @@
 - 2026-11-07T11:20:18+08:00：资源保护：历史PPO TopK反事实5000窗口证据/公开观测重建与条件选择/哈希/去重/删失审计完成，0环境forwardoptimizer。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_topk_evidence_20261107/audit/summary.json。
 
 - 2026-11-07T11:27:06+08:00：TopK偏好证据审计完成：19检查/1.14秒、2238输入/195.28MiB前后SHA未改；120已核SHA快照公开重建合法237/1840×16/mask，核原541个1000与349个5000分支条件延长，232去重5000比较，无重复冲突；全有益200/104状态/19seed（与旧strong5000精确）、有害1、未支持31；TopK177/101/19有益+1有害，BC26/26/14有益，同来源重叠12不能相加。均为条件选中相关案例，325旧跨窗口数不是独立标签。suite模型SHA匹配现存ZIP，但全部分支缺独立model_sha/旧runtime未pin/无原tensor，不伪造来源或训练资格；仅导出公开输入/离线偏好metadata，eligible_for_training=false。0环境/0forward/0optimizer/不加载模型，不CPU训练。正式guard11:20:17/controller18/4.152秒/100%2GiB，2采样CPU58.5℃GPU37℃312.07MiB；unit2.09秒48输入/单采样不称真峰。旧原30M/4k/8k不动、不重复旧验收。证据reports/experiments/topk_preference_evidence_20261107.md与runs/autonomous_topk_evidence_20261107/completion_audit及audit artifacts/guard。
+
+### 2026-11-07T11:33:14+08:00 小时续办实际消费与无人值守核验
+- 11:13:05 queue submission01a1b3fe-d669-7891-a91d-b057c101fa86，client01a1b3fe-d669-7fa2-8cc5-e5cd3a365b03匹配新turn01a1b40d-c0b1-7e10-bae9-dff6b27f9c9d（11:29:22）；首工具11:29:30.691+08/call_96e4318f2b5f4d229d963405c32c0e09，非仅accepted。四unit enabled/active、linger yes、sleep targets masked，health11:31:35 healthy/goal active/proxy[]；未重启或重复启动训练。证据runs/autonomous_development_20261105/hourly_head_geometry_execution_20261107.json。下一冻结末层排序方向诊断，保持lightbook/CUDA8/CPU250%及原保护；不作新训练。
+
+- 2026-11-07T11:36:54+08:00：资源保护：启动受保护任务 tetris-guard-589574-1794022614523727834，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_direction_20261107/unit/guard。
+
+- 2026-11-07T11:36:56+08:00：资源保护：tetris-guard-589574-1794022614523727834 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_direction_20261107/unit/guard。
+
+- 2026-11-07T11:36:57+08:00：资源保护：冻结末层方向解析、episode等权、交叉边界及公开数据来源/schema定向测试通过；无模型/环境/优化器。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_direction_20261107/unit/summary.json。
+
+- 2026-11-07T11:37:46+08:00：资源保护：启动受保护任务 tetris-guard-589753-1794022666188695456，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_direction_20261107/audit/guard。
+
+- 2026-11-07T11:37:52+08:00：资源保护：tetris-guard-589753-1794022666188695456 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_direction_20261107/audit/guard。
+
+- 2026-11-07T11:37:53+08:00：资源保护：CUDA8冻结末层方向几何诊断完成；0环境/0优化器，来源/保持边界与模型不变证据已保留；不授予训练资格。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_direction_20261107/audit/summary.json。
+
+- 2026-11-07T11:39:24+08:00：资源保护：启动受保护任务 tetris-guard-590056-1794022763984453689，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_direction_20261107/frontier/guard。
+
+- 2026-11-07T11:39:26+08:00：资源保护：tetris-guard-590056-1794022763984453689 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_direction_20261107/frontier/guard。
+
+- 2026-11-07T11:39:26+08:00：资源保护：冻结标量几何的全部train定义交叉边界与等episode损失导数分析完成；没有追加forward/环境/参数步。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_direction_20261107/frontier/summary.json。
+
+### 2026-11-07T11:44:15+08:00 冻结CUDA末层方向及全解析权衡完成（progress）
+- 新增audit_head_direction.py、summarize_head_frontier.py及25项定向测试；unit guard11:36:56/controller57 passed，25passed/0.23秒/100%2GiB，未load模型。正式guard11:37:46，进程589763 receipt11:37:50 completed/controller53 passed，6.152秒/CPU250%6GiB/swap0/原温控等保护；479输入45.873MiB（controller480）SHA前后未改，31/20源与参照一致。
+- 冻结原30M真实30003200/36625；94GPU前向、0新环境/0优化器/0候选权重更新，完整policy/Adam/计数/加载后RNG不变。120危险GPU mode全匹配旧CPU base；632正常公开输入/原GPU teacher动作全匹配；rawscore重建max4.516e-6<1e-4。三采样最高CPU67.375℃GPU37℃cgroup899.148MiB，均hold；不是连续真峰。
+- 固定177 TopK有益偏好，16trainseed146对/3valseed31对；seed等权g范数.98515755，train/val偏好损失方向导数-.9705354/-.88159994。首正常train交叉.0906787（val.0906004），首有益train交叉.1401469，首val.8275321；原正常train交叉前0/177修复。仅该方向/采样集，不排除其他方向，不改原棋力门槛。旧branch模型/runtime缺口仍在，eligible_for_training=false。
+- 复用封存标量计算453个train定义边界（无新forward）；frontier guard/controller11:39:26 passed/2.077秒/100%2GiB。首train偏好交叉右侧仅1/146修复而正常train1/316、val2/316先变；pair超过base非全局Top1、动作变非已证明棋力损失。
+- 证据runs/autonomous_head_direction_20261107/{completion_audit.json,audit,unit,frontier}、reports/experiments/head_direction_geometry_20261107.md及本小时receipt。后续先查重/审计旧snapshot可恢复性，再设计有界8分支GPU成对标签复核；不重跑旧4k/8k反事实、不启动新PPO。
