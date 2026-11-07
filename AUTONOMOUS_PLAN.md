@@ -6,6 +6,18 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-07T15:30:39+08:00 最新接手：约束矩阵满秩且尺度差异明显；下一补当前GPU偏好validation
+
+**本轮progress，已封闭勿重跑**：小时15:15:55 submission01a1b4dd-4bee-7de0-a1d7-1a2415387678已由新turn01a1b4e5-719e-7071-bc10-d616661dfc7f消费，client01a1b4dd-4bed-7010-8f6c-2cffb7bbb853；首工具15:25:06.217+08/call_4a7a06895d4a4d88b9f492a76115c80f、RPCqueue空。后台13827→1、health15:23:55 healthy/四unit enabled active/linger yes/sleep masked/proxy空/goalactive。不是只accepted，不扩大OS重启或未来额度保证。d25c8d7缓存80forward和单次LP超时仍封闭，不重跑。
+
+**新完成** scripts/audit_head_matrix.py及7纯代数测试/.11秒；root runs/autonomous_head_matrix_20261107。旧640公开h上0模型load/forward/env/策略optimizer/LP；validation不影响训练谱或pair界。train正常14769×64，machine rank64和固定1e-8相对rank64，奇异值509.9469..2.68178e-5、二范数condition19015253.76，列L2范数3.4208e-5..204.8001。normal行maxabs最小.140802/零行及≤1e-12行0。1936896个h元素中1159923个abs≥1−1e-6。train/val最小原margin.0732953/.00698769，负margin/≤1e-3/tie或float64 mode不匹配均0。4pair原margin−6.14398/−.554756/−3.37743/−.496015，必要L1下界max4.23407347；投影残差1e-15量级符合全列秩。不是可行解、无解/超时原因或棋力证明；保持全部logit差分与保持Top1不等式须区别。无新系数，eligible_for_training=false。
+
+unit62930715:27:30 passed、audit629420receipt15:27:59/controller15:28:00 passed，两guard2.08/2.086秒、100%2GiB/swap0原温控/主机目标STOP，单采样最高CPU38.375/41.125℃GPU34/36℃，可能早于torch/数组加载，不是真峰/完整内存。9/20项输入完成后SHA相符。completion_audit、report head_matrix_structure_20261107.md和hourly_head_matrix_execution_20261107.json持久化。
+
+**下一实际开发（未开始，先查重）**：当前GPU仅4train pair，补充整个episode隔离的GPU validation标签供新方案评价。复用旧Top-K固定val992011/992016/992027：先从旧beneficial中按(step,state_id,action)各取最早1，再从余项按(seed,step,state_id,action)取最早1，共4case/3episode；不足如实报告不补换seed。先封存具体case/来源/本次协议，再任何GPU结果；这些旧CPU已探索，不称独立最终棋力确认，validation不得回流训练。保留旧177来源限制，不换成训练许可。
+
+复用既有paired GPU事务/原30M SHA、8环境=4对base/alt/配对完整RNG恢复，先源输入完整probe，无需重做已完成512 oracle。固定5000新步/branch、≤40000唯一env步/job、0策略优化器；原256round可恢复phase/每phase≤2chunks120command600wall、250%6GiB/温控/主机STOP及aggregate slice。新job/新日志不覆盖已完成4train pipeline，沿用原compare/右删失/未知不当负例，不延长窗口或筛失败替换。GPU/host/额度不足保留原每小时等，无CPU/跨机/账户付费fallback。此后按标签证据预先设计有独立保持检查的新学习方案，不重试封闭LP/旧方向/PPO网格或推广。持续goal active。
+
 ### 2026-11-07T15:24:25+08:00 最新接手：80forward公开缓存及21测试完成；单次联合LP超时，禁止重复求解
 
 **本轮progress，已封闭勿重跑**：12:17小时turn01a1b439完成缓存/测试后额度中断；旧lp12:32:48在strict authorization拒绝，真实LP0。15:15:55原小时普通额度恢复，当前native turn01a1b4dd-4bc2-79f0-b96e-4ea40e50a1bc首工具15:16:23.680/call_32dd7446e3ab4d37b37d4e5bcb510c6f，复用缓存后完成剩余1真实LP。新queued submission01a1b4dd-4bee-7de0-a1d7-1a2415387678未声称已消费。间断不是持续开发，没有人工改goal/账户/付费；health15:18:45 healthy、四unit enabled active/linger yes/sleep masked/proxy[]、实际backend13827→1。无OS重启或未来额度保证。

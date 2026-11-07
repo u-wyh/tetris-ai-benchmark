@@ -2237,3 +2237,25 @@
 ### 2026-11-07T15:24:25+08:00 联合LP有界结束，真实结果unresolved已封存
 - source628048，15:21:25实际开始/15:22:25结果/15:22:27 controller passed，unit inactive success/MainPID0；固定14773行(14769normal＋4pair)/64维L1，Highs kTimeLimit、217iterations、1warning，实际LP1，无delta/系数应用/模型更新。超时不是不可行或成功，不延长或重选solver/目标/margin重试。此前80CUDA缓存及21测试复用，本轮0forward/env/optimizer。
 - completion_audit核验五阶段冻结输入全相符、源ZIP与原venv包版本不变；31次LP采样最高CPU80.5℃/GPU49℃/505.793MiB，全部hold，250%6GiB/swap0/原温控及120command600wall。报告head_joint_constraints_20261107.md、计划更新为下一固定缓存数值结构审计，无LP重跑/训练推广。
+
+### 2026-11-07T15:25:47+08:00 小时消息消费且实际执行，继续固定缓存数值结构审计
+- submission01a1b4dd-4bee-7de0-a1d7-1a2415387678于15:15:55排队，当前turn01a1b4e5-719e-7071-bc10-d616661dfc7f消费client01a1b4dd-4bed-7010-8f6c-2cffb7bbb853，最早工具2026-11-07T07:25:06.217Z/call_4a7a06895d4a4d88b9f492a76115c80f；RPC queue空，不仅accepted。backend13827→1、health15:23:55 healthy/四unit enabled active/linger yes/sleep masked/proxy空、goal active，本机machine-id固定，无live guard。原d25c8d7缓存80forward/21测试和单次LP超时封闭，不重复。证据hourly_head_matrix_execution_20261107.json。
+
+### 2026-11-07T15:27:18+08:00 固定缓存结构审计实现和事前定义
+- 新audit_head_matrix只读取原公开h，0模型load/forward/env/optimizer/LP。固定quantile[0,.01,.1,.5,.9,.99,1]、near-zero行maxabs≤1e-12、SVD machine rank=max(m,n)eps*smax，另1e-8相对秩仅描述；投影用train machine-rank row space，不用validation选参数。正常margin、特征尺度/Tanh饱和、4pair原margin和必要L1下界rhs/row∞范数；零行且rhs>0仅对该固定LP为矛盾，不把线性张成或秩称锥可行性、超时原因或棋力。先7项纯代数测试，再单次有界数据审计，不重求解LP。证据runs/autonomous_head_matrix_20261107/unit/design.json及冻结脚本。
+
+- 2026-11-07T15:27:27+08:00：资源保护：启动受保护任务 tetris-guard-629296-1794036447924810803，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_matrix_20261107/unit/guard。
+
+- 2026-11-07T15:27:30+08:00：资源保护：tetris-guard-629296-1794036447924810803 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_matrix_20261107/unit/guard。
+
+- 2026-11-07T15:27:30+08:00：资源保护：固定缓存数值谱、零行必要条件和validation隔离7定向测试通过；0模型/环境/LP。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_matrix_20261107/unit/summary.json。
+
+- 2026-11-07T15:27:57+08:00：资源保护：启动受保护任务 tetris-guard-629411-1794036477744794777，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_matrix_20261107/audit/guard。
+
+- 2026-11-07T15:27:59+08:00：资源保护：tetris-guard-629411-1794036477744794777 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_matrix_20261107/audit/guard。
+
+- 2026-11-07T15:28:00+08:00：资源保护：冻结公开特征数值结构审计完成；0新forward/环境/策略优化器/LP，非可行性或棋力结论。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_matrix_20261107/audit/summary.json。
+
+### 2026-11-07T15:30:39+08:00 固定缓存审计完成，下一转向GPU验证集
+- audit source62942015:27:59 completed/controller15:28:00 passed，train normal14769×64 rank64，condition19015253.76，零/近零行0，train/val原margin最小.0732953/.00698769且mode不匹配0。4pair必要L1界max4.23407347、投影残差1e-15；尺度差异不能证明超时原因或约束不可行，无系数/LP重求解。7测试通过，实际0模型/forward/env/策略优化器/LP，9/20冻结输入SHA均相符。两guard100%2GiB/原温控/2.08和2.086秒、单采样hold；不可据启动时样本声称完整内存或真峰。
+- completion_audit及head_matrix_structure_20261107.md、计划记录下一按预定旧val三seed选择4case，复用8分支GPU协议补当前验证标签；尚未启动该job，不重复既有训练/4train分支或LP。
