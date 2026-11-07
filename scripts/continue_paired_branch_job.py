@@ -1,6 +1,7 @@
 """Finite serial phase driver; every compute phase retains its own live GPU guard."""
 import argparse
 import json
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -22,8 +23,23 @@ def unit_state(unit):
     return state
 
 
+def phase_configuration(design):
+    first, last = design.get('first_phase', 3), design.get('last_phase', 11)
+    if type(first) is not int or type(last) is not int:
+        raise ValueError('Invalid finite phase range')
+    maximum = design.get('max_phases', last-first+1)
+    prefix, suffix = design.get('unit_prefix', 'tetris-paired-r2'), design.get('unit_suffix', '20261107')
+    if (type(maximum) is not int or
+            not 1 <= first <= last <= 11 or not 1 <= last-first+1 == maximum <= 10 or
+            type(prefix) is not str or not re.fullmatch(r'tetris-[a-z0-9-]+', prefix) or
+            type(suffix) is not str or not re.fullmatch(r'[0-9]{8}', suffix)):
+        raise ValueError('Invalid finite phase range or independent unit namespace')
+    return range(first, last+1), prefix, suffix
+
+
 def run(folder):
     design=json.loads((folder/'pipeline_design.json').read_text());job=Path(design['job'])
+    ordinals, unit_prefix, unit_suffix = phase_configuration(design)
     jd=json.loads((job/'design.json').read_text());active_unit=None;completed=[];observation_errors=[]
     if (folder/'pipeline_result.json').exists():raise FileExistsError('Finite driver already terminal; inspect its result')
     def check():
@@ -34,12 +50,12 @@ def run(folder):
         check()
         if stored_boundary(job)!=design['expected_start']:
             raise ValueError('Finite driver start differs; inspect actual progress rather than relaunch')
-        for ordinal in range(3,12):
+        for ordinal in ordinals:
             check();attempt=folder.parent/f'phase_{ordinal:02d}'
             if attempt.exists():raise FileExistsError('Phase directory exists; do not duplicate or restart automatically')
             subprocess.run([str(ROOT/'.venv/bin/python'),str(ROOT/'scripts/prepare_paired_branch_phase.py'),
                 '--job-folder',str(job),'--attempt-dir',str(attempt),'--max-chunks','2'],check=True,timeout=30)
-            active_unit=f'tetris-paired-r2-phase{ordinal:02d}-20261107.service'
+            active_unit=f'{unit_prefix}-phase{ordinal:02d}-{unit_suffix}.service'
             subprocess.run(['systemd-run','--user','--unit='+active_unit,
                 '--property=CPUQuota=50%','--property=MemoryMax=1G','--property=MemorySwapMax=0',
                 '--property=Slice=tetris-compute.slice','--property=KillMode=mixed',
@@ -75,7 +91,7 @@ def run(folder):
         terminal=bool(completed and receipt['terminal'])
         durable_json(folder/'pipeline_result.json',dict(at=now(),status='completed' if terminal else 'preserved_phase_budget',
             terminal=terminal,completed_phases=completed,end=stored_boundary(job),observation_errors=observation_errors,
-            optimizer_steps=0,scope='At most9 serial explicit phases,2chunks each. Source receipts are actual work; driver performs no policy computation.'))
+            optimizer_steps=0,scope=f'At most{len(ordinals)} serial explicit phases,2chunks each. Source receipts are actual work; driver performs no policy computation.'))
     except BaseException as exc:
         durable_json(folder/'pipeline_result.json',dict(at=now(),status='stopped',error=repr(exc),
             completed_phases=completed,observation_errors=observation_errors,live_unit_at_stop=active_unit,

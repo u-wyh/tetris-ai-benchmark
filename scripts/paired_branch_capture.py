@@ -15,25 +15,41 @@ from audit_topk_preference_evidence import sealed_bytes, public_hash
 
 VERSION = 'paired-original30m-gpu8-v1'
 SEEDS = [992000, 992004, 992006, 992008]
+VALIDATION_SEEDS = [992011, 992016, 992027]
 
 
-def selected_cases(preferences):
+def selected_cases(preferences, split='train'):
+    if split not in ('train', 'validation'):
+        raise ValueError('Unknown predetermined case split')
     chosen = []
-    for seed in SEEDS:
-        pool = [p for p in preferences['preferences'] if p['seed'] == seed and
+    seeds = SEEDS if split == 'train' else VALIDATION_SEEDS
+    eligible = [p for p in preferences['preferences'] if p['seed'] in seeds and
                 p['label'] == 'beneficial' and any(s.startswith('ppo_top') for s in p['sources'])]
+    for seed in seeds:
+        pool = [p for p in eligible if p['seed'] == seed]
         if not pool:
-            raise ValueError('Missing predetermined training seed')
+            raise ValueError('Missing predetermined '+split+' seed')
         pair = min(pool, key=lambda p: (p['step'], p['state_id'], p['action']))
-        chosen.append({k: pair[k] for k in ('state_id', 'seed', 'step', 'action', 'baseline_action',
-                                           'public_hash', 'snapshot_sha256')})
-    return chosen
+        chosen.append(pair)
+    if split == 'validation':
+        remaining = [p for p in eligible if p not in chosen]
+        if not remaining:
+            raise ValueError('Missing fourth predetermined validation case')
+        chosen.append(min(remaining, key=lambda p: (p['seed'], p['step'], p['state_id'], p['action'])))
+    return [{k: p[k] for k in ('state_id', 'seed', 'step', 'action', 'baseline_action',
+                               'public_hash', 'snapshot_sha256')} for p in chosen]
 
 
 def specs(cases):
-    return [dict(case=case, branch_id=f"s{case['seed']}_{role}", first_action=case[action],
+    repeated = len({case['seed'] for case in cases}) != len(cases)
+    def prefix(case):
+        return (f"s{case['seed']}_p{case['step']}_a{case['action']}" if repeated else f"s{case['seed']}")
+    result = [dict(case=case, branch_id=f"{prefix(case)}_{role}", first_action=case[action],
                  role=role, horizon=5000)
             for case in cases for role, action in [('base', 'baseline_action'), ('alternative', 'action')]]
+    if len({row['branch_id'] for row in result}) != len(result):
+        raise ValueError('Duplicate paired case identity')
+    return result
 
 
 def load_start(case, design):
@@ -154,7 +170,7 @@ def prepare(folder):
         if sha(path) != expected:
             raise ValueError('Frozen paired source/input changed: '+path)
     preferences = json.loads(sealed_bytes(Path(design['preferences']), design['frozen_files']))
-    if selected_cases(preferences) != design['cases']:
+    if selected_cases(preferences, design.get('case_split', 'train')) != design['cases']:
         raise ValueError('Fixed pre-GPU pair selection differs')
     if (training_source_identity() != design['training_sources'] or
             inference_source_identity(resumable=True) != design['inference_sources'] or

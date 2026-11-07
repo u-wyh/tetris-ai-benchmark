@@ -6,6 +6,32 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-07T15:45:57+08:00 最新接手：4个GPU validation均强有益，下一单次有验证集的末层偏好试验
+
+**本轮progress，已封闭勿重跑**：native turn01a1b4eb-4404-7953-b98c-997a1ff2e8b8首工具15:31:28.454/call_cd50de3dfd9c4cb19d211c24d0835f58，非新hourly消费。root runs/autonomous_paired_validation_20261107，driver631238自动串行10phase，真实terminal completed/5000round/21chunks，unit inactive success/MainPID0。源码改前3文件归档before_validation_changes；旧job用at-finish证据，不能将改后SHA冒充旧执行路径。已修复重复seed case的独立step/action/role ID，train旧IDs/选择兼容；finite driver1..10/专属namespace，原默认3..11兼容。11测试/1.15秒，无unit模型/env。
+
+probe63106315:36:15完整8worker/core/NumPy/action RNG/公开mask成对恢复通过，0模型/forward/env/opt。新val case(95,992011,1398,613→107)/(99,992016,51350,1169→84)/(106,992027,4217,272→134)/(84,992011,2498,1169→336)，按此前三seed每seed最早＋余项最早固定，无失败替换。4case/3episode，不能当4独立局或独立最终棋力；不回流训练。
+
+生产唯一26900env/5000GPU forward/10原model load/0策略优化器，4base2000/2000/2000/900真死，4alt5000右删失，原preference规则4/4strong beneficial。共同得分比1.01527865/1.00793045/1.01269455/1.03992153，四消比1.01554404/.98969072/1.01025641/1.04651163；不改阈值，观测生存增益3000/3000/3000/4100非窗口外预测。新8branch显式原30M SHA/实际30003200/36625，每phase完整policy/Adam/加载和恢复后RNG不变。source632577窗口审计15:40:36/controller39 passed，21链/worker/public inputs/完整rows/10receipt通过；8旧outcome已记录字段也相等，仍不补历史branch/runtime/完整tensor证明。eligible_for_training=false，不自动PPO/推广。
+
+13guard completed/全采样hold，最高CPU71℃GPU51℃/3202.363MiB（采样最大非真峰）；GPU250%6GiB/swap0、原温控/六核/aggregate/最低可用/GPU与主机/goal STOP、120command600wall，unit/window100%2GiB。91job/96driver/171window及递增phase SHA完成后相符，31训练/20推理源/原ZIP不变。completion_audit、report paired_gpu_validation_20261107.md、native_goal_paired_validation_execution_20261107.json保存。原train/oracle、80forward、LP、matrix都已封闭。
+
+**下一实际开发（未开始，先查重）**：按report末节先做限定数据准入与单次head preference协议，不将eligible_for_training=false直接当许可。仅4当前GPU train pair，val4/3episode严格只验证；不消费旧177为真值。新val初态h仅原模型CUDA batch8一次，原640缓存复用不重提。训练仅64维d、bias及余网络冻结，GPU fresh Adam lr.01/betas.9,.999/eps1e-8、固定256更新、GPU float64解析，最终float32 head。batch8=4train pair＋4normal train(seed100000..3,chunk=t%79)；softplus pairT1＋原cachedrawscore softmax前向KL β1＋.01||d||²，d0；目标有限精度范围明确。源ZIP/Adam/实际PPO30003200/36625保持，head256步另记，不伪造PPO计数。val pair按seed内mean再3seed等权，val正常316只终点评价，不选择epoch/阈值参数/早停。
+
+先定向测试loss/梯度/wholeepisode隔离/参数范围/fresh optimizer/计数和源状态保护，再真实≤120command600wall的GPU试验，250%6GiB/原保护。事前fullpolicy预算至多82forward(原val1＋新train/val2＋新normal79)，另256head batch8 forward，0新env。rawscore重建≤1e-4；更新后需真实完整GPU mode验证，缓存仿射预测不冒充实际模式。固定终点如train/val各≥1 good全局Top1且val episode-equal pairloss下降，才准备后续完整匹配棋力评测；失败如实停止本试验，不重扫LR/β/epoch或重试LP。normal变化/KL全报，不把变化视棋力失败，不增设normal Top1全等门槛。候选仅评测，不能直接PPO resume/推广；原≥.99pieces/.99score、死亡不增、minseed≥.9质量门槛保持。所有授权/host/GPU不可用或额度不足则保存等原每小时机制，不CPU/跨机/账户付费fallback。持续goal active。
+
+### 2026-11-07T15:38:29+08:00 当前实际运行：GPU validation后台driver，禁止重复启动
+
+前轮dc0dc4a为progress。本原生turn01a1b4eb-4404-7953-b98c-997a1ff2e8b8首工具15:31:28.454+08/call_cd50de3dfd9c4cb19d211c24d0835f58，非新hourly消费。原80forward缓存、单次LP超时、matrix审计、4train5000窗口均封闭。
+
+新root runs/autonomous_paired_validation_20261107；按上一节预定规则选择val case95/992011/1398/613→107，99/992016/51350/1169→84，106/992027/4217/272→134，84/992011/2498/1169→336，4case/3episode；case_split=validation，不能回流训练，旧CPU标签已探索非独立最终棋力。protocol.json在GPU前固定。已修复same-seed多个case的branch ID seed+step+action+role碰撞，旧4unique-seed训练ID/默认selector兼容；driver允许有界1..10阶段/独立unit前缀，旧默认3..11兼容。三份改动前源码在before_validation_changes归档；原已结束job按at-finish证据解释，不再把改后路径SHA冒充旧源码。
+
+11测试1.15秒通过，probe63106315:36:15完整8worker/core/NumPy/action RNG与公开mask成对恢复通过，0模型/forward/env/optimizer。当前controller unit **tetris-paired-validation-driver-20261107.service**，实查MainPID=631238、ActiveState=active、Result=success，有限1800秒；后台串行最多10phase，每phase≤2×256round/4096env，120command600wall、250%6GiB/swap0/原温控/aggregate slice/host目标STOP。当前已完成5phase，最后实际边界{"manifest_sha256": "319e77b0504eb603ce2b26072e446f1055ad02915d8cea91ab08bc0832b143be", "chunks": 11, "round": 2560, "environment_steps": 17140}；后续以真实systemctl和source receipt为准，不能仅凭pipeline状态文件重启。
+
+**本轮断点**：先查同一driver真实unit及pipeline/pipeline_result.json；仍live则等待同unit，不重复launch。若terminal completed，准备新的window/window_design.json，把91job inputs/job design、全部chunk manifest/state/rows及所有实际phase receipt与现行auditor外部SHA冻结，再用原100%2GiB数据profile/保护运行scripts/audit_paired_branch_window.py，完整链/worker/RNG/轨迹/原30M逐branch身份/旧已记录outcome比较及原preference规则/右删失。若driver因额度/STOP失败，先查live phase/cache/最后commit，保留实际部分和未知工作，不盲重试现有attempt或旧driver；只允许新显式边界请求，保持总40000/5000上限，不重做512oracle或延长窗口/筛失败。GPU/host不可用不CPU/跨机fallback。
+
+完成后汇总独立唯一工作(0策略优化器)、所有guard温控采样及SHA不变，报告4validation标签/3局相关性和与4train来源区别，更新plan/operations/回执并提交仅相关代码。持续goal active，未启动新PPO/候选训练或推广。
+
 ### 2026-11-07T15:30:39+08:00 最新接手：约束矩阵满秩且尺度差异明显；下一补当前GPU偏好validation
 
 **本轮progress，已封闭勿重跑**：小时15:15:55 submission01a1b4dd-4bee-7de0-a1d7-1a2415387678已由新turn01a1b4e5-719e-7071-bc10-d616661dfc7f消费，client01a1b4dd-4bed-7010-8f6c-2cffb7bbb853；首工具15:25:06.217+08/call_4a7a06895d4a4d88b9f492a76115c80f、RPCqueue空。后台13827→1、health15:23:55 healthy/四unit enabled active/linger yes/sleep masked/proxy空/goalactive。不是只accepted，不扩大OS重启或未来额度保证。d25c8d7缓存80forward和单次LP超时仍封闭，不重跑。

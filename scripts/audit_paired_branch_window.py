@@ -126,7 +126,10 @@ def run(folder):
             all_terminal=True,per_branch_model_identity_explicit=True,
             historical_recorded_outcome_comparison=historical,
             branches_sha256=sha(folder/'branches.json'),eligible_for_training=False,
-            scope='Four predetermined training seeds from previously selected positive CPU cases. New matched-state current CUDA branch evidence, dependent/conditional exploratory sample; not historical runtime reproduction, unbiased frequency or held-out quality.'))
+            case_split=jd.get('case_split','train'),
+            scope=('Four predetermined '+jd.get('case_split','train')+' cases from previously selected positive CPU outcomes. '
+                'Current CUDA matched-state labels; correlated within episode and conditionally selected. '
+                'Validation labels must not enter training. Not historical runtime reproduction, unbiased frequency or independent final quality.')))
     finally:lock.close()
 
 
