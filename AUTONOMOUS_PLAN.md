@@ -6,6 +6,30 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-07T12:16:01+08:00 最新接手：4对当前GPU强有益已复核；下一冻结表示＋单次末层约束可行性
+
+**本轮progress，已封闭勿重跑**：原生turn01a1b41c-7ae8-7a12-b391-1bc0067e41be首工具11:45:37.535+08/call_e1f142527cee45e58480ca11e1e23df2；非新hourly消费。native_goal_paired_branch_execution_20261107.json记录真实开始/完成。前轮ec5f162的94forward均值方向/453事件已封闭。本轮追加完整8分支GPU恢复、跨进程精确/复用和5000窗口；后台driver594893自行串行9阶段，12:06:15终止inactive/success，不仅投递accepted。goal active、health12:07:45 healthy/四unit enabled active/linger yes/sleep masked/proxy[]，接手无live guard；不宣称未来额度或OS重启验收。
+
+根runs/autonomous_paired_branch_20261107，**有效数值实验r2/**，报告paired_gpu_preference_20261107.md。v1 unit16passed，probe source592786被旧schema断言拒绝：0模型/forward/env/优化器/0chunk，旧空capture/oracle STOP封闭不再启动。四源全core/NumPy/action RNG俱全，只缺旧b382 get_state未存的reward_profile；已查旧placement-reward-v1公式等于当前default，封存r2/legacy_tetris_env_b382.py。仅原版本/零shaping/只缺此字段时显式加default metadata，任何RNG缺失仍拒绝。R2 19测试/1.16秒通过，8真实native worker probe593284于11:56:09/12 passed，0模型/计算、成对完整状态及公开输入等；原31训练源/20推理源与unique-seed正式接口未改。
+
+固定4trainseed各取177旧TopK有益中(step,state_id,action)升序首对，**没有按GPU结果替换**：992000 state90 step24434 base249 alt1047；992004 state91 step79538 base110 alt40；992006 state92 step40709 base616 alt63；992008 state93 step84013 base1555 alt152。8分支独立branch_id，配对完整Core/私有bag/RNG/NumPy/action RNG/计数相同，仅首动作不同，此后共同冻结原30M GPU greedy。所有初始cap100000不变，补的仅default metadata。5000新步/分支，全job≤40000唯一步，每phase≤2×256round/4096新步、120command600wall；死/窗口停止不auto-reset，所有完整worker/view摘要入chunk。
+
+真实593628 256round2048步→593894恢复到512/4096，对照594155连续512/4096：0/256/512完整worker/Core/所有RNG/views/全部trace arrays精确，restart12:01:44 passed；oracle随后STOP封闭。重复phase02 source594621 12:02:14明确reused，0新模型/forward/env/optimizer，原receipt和job文件集合/字节完全不变。不得重复计算oracle或旧prefix。
+
+**完整结果**：driver串行phase03..11全部completed，生产21chunk/5000round/**28000env/5000GPU forward**，11源进程；4base均2000真死、4alternative均5000右删失。含唯一oracle的正式本轮合计**32096env/5512GPU forward/12原模型load/0策略优化器**（恢复比较8192是子集，不重复相加）；另v1/r2单测合计4compact环境逻辑步，无CPU策略训练。原模型ZIP eb859b…真实30003200/36625，各阶段完整policy/Adam/加载和安装后的采样RNG不变；68核心冻结输入SHA前后未改。
+
+window12:09:21/controller23 passed：161封存输入，消费全部trace并核对branch/seed/连续活槽/首动作/后续natural字段/完整snapshot计数终点/模型SHA/源实际工作量/公开输入。原compare **4/4强有益**；共同2000步score ratios1.0093172503/1.0116454233/1.0156715238/1.0115582734，four ratios1.005102/1.021164/1.010638/1.015707；观测生存多3000。8新分支都有当前模型SHA、记录的得分/四消/步数/终止还与旧CPU分支全等。旧无完整动作/obs及逐branch模型/runtime身份，不能据此补造历史证明。只补这4对当前GPU标签，**其余173对未复核；train-only/旧条件选择/episode相关，非独立确认，eligible_for_training=false**、无新模型和原质量门槛/4k8k失败结论保持。
+
+18个R2 guard均completed、采样hold，正式250%6GiB/swap0/六核/原温控/STOP/goal严格active/实际kernel/guardian/watchdog证明；采样最高CPU70.125℃GPU50℃单guard3201.742MiB（非连续真峰）。其他数据/测试100%2GiB。窗口设计准备一次str/Path错误在design生成前终止，初controller无guard/无模型计算，修正后新controller只读审计成功，未重复GPU。已完成driver原源在变更前冻结全验，归档pipeline/driver_executed.py+at_finish_frozen_audit；随后当前源修复瞬时systemctl观测失败重查同unit，单项集成测试1.19秒通过，非真实pipeline曾发生；当前相关测试20项，v1旧16不加。completion_audit/resource_summary及各guard/controller含详细证据，窗口/恢复/复用均已封闭。
+
+**下一实际开发（未开始，先查重）**：四个可靠当前GPU正例说明有可纠正动作，上轮单一均值方向先改normal不证明任何末层方向无解。先检查本机已安装数值LP求解器/本地API，不升级依赖或破坏既存runtime。做一次**最后Linear64→1的线性约束可行性诊断**，只用本轮4个新GPU强有益pair；不直接把全177旧标签提升为当前真值，不继续LR/KL/GAE网格。
+
+先新增可复用的封存公开表示缓存：由capture/chunk0的8个配对公开state（4个case各复制2、顺序和branch开始相同）单批8＋原baseline chunk0..78的632正常state79批8，共**最多80次CUDA forward、0新环境/0策略优化器/0模型权重更新**；不能重跑94forward旧诊断。完整hash-before-pickle/源模型计数/Adam/RNG/ZIP不变，各normal公开输入及actual概率mode匹配原teacher，4pair起始mode匹配base。hook缓存所有合法动作的末层h、原score/动作索引、w0/bias和公开输入摘要，score双精度重建max≤1e-4，成对重复公开输入/h差异完整报告。模型仅CUDA、8批/原保护/120command600wall，不装环境、不reset/step，无CPU/其他主机fallback。把h/delta数组与metadata外部SHA封存后供纯数值CPU分析，避免后续再次forward；数值分析不是CPU策略训练。
+
+固定normal训练seed100000..3、validation100004..7，各316正常state；四新pair均train，不拿validation选目标。**只做一次联合LP**：bias固定、64维末层位移d，最小L1位移；对全部train正常合法竞争动作要求(w0+d)·(h_ref-h_a)≥min(原margin,1e-3)，对4good/base要求(w0+d)·(h_good-h_base)≥1e-3。事前margin1e-3、残差验证≤1e-7，原score精度误差/初始tie须披露；LP时间上限60秒、外层120command600wall/原硬件保护。用本机已有求解器固定一种方法，不重扫margin/目标、逐pair重试或validation挑最优；若求解器不可用或超时，保留缓存/明确范围，不冒充infeasible或转CPU模型fallback。
+
+LP是数值求解1次（如产生d应明确它是未应用的新head系数拟合），**PPO/Adam优化器0、源权重不改、不给普通model.zip或训练资格**。若可行，核对全部约束残差、64维位移、4pair顺序、4case所有legal动作的预测全局Top1（pair超过base≠全局Top1）、train/val normal所有预测动作变更/有限精度；若不可行只限制这4pair+这些normal+此固定表示/约束，不推整个模型不可学。只按train拟合，validation全量报告不重选参数；不是实际新GPU策略或棋力保证。新候选应用/独立保持和质量协议需另行事前设计，原质量门槛不能变，继续以证据选下一步。保持lightbook、CPU≤250%/6GiB/swap0/原温控和目标STOP，GPU/主机不可用保留，额度不足等原每小时续办。
+
 ### 2026-11-07T11:44:15+08:00 最新接手：冻结末层方向先改变正常动作；下一GPU成对偏好复核协议
 
 **本轮progress，禁止重跑**：小时11:13:05 queued submission01a1b3fe-d669-7891-a91d-b057c101fa86已由新turn01a1b40d-c0b1-7e10-bae9-dff6b27f9c9d（11:29:22）消费，RPC client01a1b3fe-d669-7fa2-8cc5-e5cd3a365b03；最早工具11:29:30.691+08/call_96e4318f2b5f4d229d963405c32c0e09。同轮压缩有重复turn_context，已查最早工具。hourly_head_geometry_execution_20261107.json记录开始/完成，不仅accepted。后台13827→1、四unit enabled/active、linger yes、sleep masked、proxy[]、control enabled无STOP/goal active；无重启验收或未来额度保证。
