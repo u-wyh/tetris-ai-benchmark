@@ -6,6 +6,24 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-07T10:44:28+08:00 最新接手：只读评测状态与终态判定已验收；下一强制有限phase预算的计算启动器
+
+**前轮分类progress**：03f14d1新增通用GPU8入口/26检查/8192实际环境步与精确跨进程恢复；没有重跑。本轮为原生持续目标轮01a1b3dc-05a3-7d70-9052-ed82be097124，首工具10:35:11.490+08/call_95ad890243fc4e31ab1b8090aeb4bc2a，非新hourly投递。native_goal_gpu_status_execution_20261107.json记录开始和实际结果。10:35:05后台healthy/keeper active/proxy空/四单元enabled active/linger yes/睡眠masked，本轮无live guard时才开始，无需重做短暂停桌面试验。目标保持active。
+
+**已完成，禁止重做**：新scripts/inspect_gpu_evaluation.py只读状态fresh/resumable_partial/terminal_verified/invalid/blocked（CLI有效状态0、invalid2、blocked3），明确completed/can_resume、实际已提交unique步/轮、active lanes/last SHA/pending/阶段预算，退出0和controller passed均不是完整评测。复用未改capture_gpu_evaluation.prepare、read_chain/validate_snapshot，完整源/model/native/runtime/schema/全部链和SHA先于pickle；额外初始reset/8seed、每提交policy/Adam/计数/采样RNG审计。临时symlink视图运行preflight与原完整终态auditor（summary只对auditor可见，无compute调用/协议猴补），旧job不写。共享已有只读锁，不创建锁；live writer或输入集合/SHA/lock inode变化返回blocked。
+
+完整终态须全8槽停止、准确8endpoint/summary身份与轮/步、保护收据passed，且原完整trace/selectedfeature-outcome/worker/core/采样RNG/process实际工作量审计通过；缺summary时全停仍partial，只建议补摘要/0新步。design phase_round_limit/phase_environment_step_limit缺省20000/160000，达到阶段预算的活槽partial can_resume=false，不准因可恢复缓存追加已结束功能作业。工具只报告缓存/预算，不调度、不宣称CUDA readiness。**原runner裸CLI仍由调用方遵守阶段预算，尚未自动强制phase边界；此限制是下一开发目标。**
+
+21项定向检查/1.73秒通过，合成terminal一致fixture通过实际冻结完整auditor；模型/runtime/native preflight为mock，非真实新GPU终态。新verify_gpu_evaluation_status.py真实CLI**579361/579366**只读原ordered_gpu_eval的oracle/parallel，各3提交/512轮4096历史步/8活槽，即使controller passed也正确partial/completed=false/phase_budget_reached=true/can_resume=false，所有原文件集合/SHA未变。**本轮0新环境/0GPU forward/0optimizer**，没有兼容新协议的真实完整终态job，不为状态工具新开整局或迁移旧cache来凑验收。原policy/Adam/实际30003200/36625和4096/36630保持，4k/8k失败、1.877派发加速结论不动。
+
+unit guard10:40:11/controller10:40:12 completed、4.112秒/64冻结输入，CLI guard/controller10:41:39 completed、4.119秒/93输入；均100%2GiB/swap0/原温控与GPU遥测，正式GPU训练评测上限仍250%6GiB。CLI仅2采样CPU57.5℃GPU37℃573.63MiB，unit2采样49.375℃/35℃/298.68MiB，均hold，不能称连续真峰。证据reports/experiments/gpu_evaluation_status_20261107.md、runs/autonomous_gpu_status_20261107/completion_audit及run/inspection_receipt、unit/run各guard/controller。旧frozen runner/helper/主31/推理20/模板与两512轮功能job未改。
+
+**下一实际开发（尚未开始，先查重）**：新增独立有限phase启动器，调用只读状态工具并**真正约束**capture_gpu_evaluation的--max-chunks，不修改已冻结runner/helper或旧design/cache。只有有效fresh或有活槽且can_resume的partial才允许计算；terminal_verified、invalid、blocked、已满阶段预算直接保留/拒绝，不把退出0当整局完成。全停缺summary只允许0环境的finalize路径，不能补造缺失process工作量。按remaining round与environment预算给每256轮chunk算保守上界（最多当前活槽数×轮数；槽可死而不会重置），只启动能完整容纳的chunk，剩余不足1个chunk时明确budget_limited，不向上取整突破。全局20000末段仅32轮应准确处理。源31/20与capture数值协议不变；新的launcher/inspector源码及控制器命令/请求phase预算冻结在新guard设计里，不迁移旧缓存身份。实际CUDA计算必须有既有resource_guard的真实受保护执行证据、lightbook pin/目标/STOP/250%6GiB/温控/内存/时间预算与GPU可用检查，无裸跑/CPU或他机fallback。如何识别真实guard应先读现有launch/watchdog证据与cgroup，不自己发明只靠env标记的保护。
+
+先针对false passed/预算恰好与不足/死槽上界/全停缺summary/活writer/错误GPU或guard/重复运行做无env的定向单测，mock child验证绝不启动非法计算。可在当前两个真实已满512轮缓存上做**真实拒绝续写**CLI验收并核对SHA，预期0新环境/0forward/0optimizer，不新开整局评测或失败4k/8k训练。只有未来有明确支持的新学习方案或新授权评测任务才用此launcher算新的GPU片段；本开发不自动为测试而扩充训练。之后根据实际研究瓶颈选择推进模型，避免无证据重复LR/GAE/beta/actor变体或已做因果诊断。
+
+所有执行/工作副本/小时留lightbook，GPU不可用保留进度；用户暂停取消即停；额度不足等每小时，不绕过/改账户付费。持续目标仍active，不因本轮功能完成标整个目标complete。
+
 ### 2026-11-07T10:34:31+08:00 最新接手：通用有序GPU8评测已通过真实断点恢复；小时消息已真实消费
 
 **本条hourly确实执行**：10:12:55 submission01a1b3c7-c846-7e13-80e9-70ffe9780b5f/client01a1b3c7-c845-7ba1-a28d-2b765eedf430由新turn01a1b3cf-a4b3-7ba0-b8c3-31d608a3aa11消费，首工具10:21:41.867/call_d419daf984ab40e1acced8fd12946894、queue空。hourly_ordered_gpu_execution_20261107.json已从started写为实质开发/验收完成；不是只投递accepted。先前未消费范围已由本条新证据覆盖，未来额度/整夜/OS重启范围不扩大。目标继续active，未暂停/取消。
