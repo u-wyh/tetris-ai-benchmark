@@ -1865,3 +1865,41 @@
 - 2026-11-06T21:25:25+08:00：资源保护：原30M KL锚定固定缓存副本更新对照完成，原模型未变，无新环境采样。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_original_kl_20261106/run/summary.json。
 
 - 2026-11-06T21:31:53+08:00：原30M KL固定缓存离线对照完成，9检查passed；GPU进程442238正式两副本各80更新/共160、原模型0更新/新环境0，另unit10次合成CPU optimizer单列。β.02相对β0最终原策略KL比0.9845402983/峰值比0.9878623253，均未过预声明<.95门；greedy两边1.0仅64训练态，不作质量结论，无后续训练或beta调整。最终锚定actor梯度占PG约0.414%，critic梯度0；source/teacher policy完整Adam、计数30003200/36625和全局RNG未改，逐数组/GAE身份过。run guard21:25:24/controller21:25:25完成，64冻结输入未改/8.179秒/250%6GiB/采样CPU58.5℃GPU42℃1359.18MiB/无降载，主31/推理20与初始化保护保持。小时投递真实执行结果已记hourly_original_kl_execution_20261106.json。下一研究GPU完整评测逐lane同步dispatch的可证加速，不重做旧训练IPC或失败PPO配方。证据reports/experiments/original_kl_offline_20261106.md、kl_audit.json与completion_audit.json。
+
+- 2026-11-06T21:40:07+08:00：原生目标续轮01a1b111-6105-7352-96bc-ef4df50f2474首工具21:34:41.228，上轮0bf0e0a实际开发且KL诊断失败保存，不重跑。检查lightbook/GPU/后台13827→1/proxy空/health healthy/queue空，无遗留计算。新增独立并发seed派发worker/round与GPU完整捕获ABBA协议，旧冻结helper/主31/推理20不改；固定原GPU基线初始full8状态，原30M控制、4k旁观，A/B/B/A每512轮共最多16384新步/0optimizer，完全同批次/精度、逐行原trace/概率与完整末state/RNG精确才有效；几何提速≥1.05且两pair方向一致支持后续集成。计时含两模型GPU/环境/全状态/256轮原子提交与fsync，不含启动/恢复/预热/事后比对。先100%2GiB/120秒10项定向检查，预计10真实小型环境步、无GPU采样或优化器更新，额外预算≤512；正式另250%6GiB/原温控/180秒命令600秒wall。证据runs/autonomous_parallel_capture_20261106/design.json及native_goal_parallel_capture_execution_20261106.json。
+
+- 2026-11-06T21:40:10+08:00：资源保护：启动受保护任务 tetris-guard-444880-1793972410257151896，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_parallel_capture_20261106/unit/guard。
+
+- 2026-11-06T21:40:18+08:00：资源保护：tetris-guard-444880-1793972410257151896 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_parallel_capture_20261106/unit/guard。
+
+- 2026-11-06T21:40:18+08:00：资源保护：并发capture错seed/动作映射先验拒绝、真实死亡/封顶停槽及新进程恢复检查完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_parallel_capture_20261106/unit/summary.json。
+
+- 2026-11-06T21:41:07+08:00：并发capture的10项定向检查passed/5.71秒，包含2真实worker跨新进程恢复、真实封顶停槽和lock-out死亡、错误seed映射在推进前拒绝。现冻结unit成功receipt与原design，正式运行固定GPU8 A/B/B/A 4×512轮完整round+提交计时，源原30M/4k ZIP只读、最大16384新环境步/0optimizer；精确原trace及完整末态、双pair方向与几何≥1.05是先验门，不因结果更改预算或重复计时。证据runs/autonomous_parallel_capture_20261106/run/design.json。
+
+- 2026-11-06T21:41:09+08:00：资源保护：启动受保护任务 tetris-guard-445111-1793972469735383488，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_parallel_capture_20261106/run/guard。
+
+- 2026-11-06T21:41:46+08:00：资源保护：tetris-guard-445111-1793972469735383488 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_parallel_capture_20261106/run/guard。
+
+- 2026-11-06T21:41:46+08:00：资源保护：串行/并发GPU8完整捕获ABBA对照及逐步原轨迹/完整状态精确校验完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_parallel_capture_20261106/run/summary.json。
+
+- 2026-11-06T21:46:36+08:00：GPU完整capture ABBA性能门通过，配对1.802596677/1.955122448、几何1.877311170；四臂共16384步/4096主+旁GPU forward另8预热，逐数组自然动作/probs/pre-view/mask/features/outcome与原512轮trace和完整worker/RNG/计数精确，0optimizer。未宣称PPO训练提速。新显式dispatch_version入口复用冻结serial runner的事务/恢复，只在独立进程临时绑定并发worker/step并finally还原，旧job/design/helper不改。现先5项新入口拒绝旧source/cache/坏状态与异常清理检查，100%2GiB；通过后另预声明两个真实GPU8进程各256轮/2048步，共4096步/0optimizer，首段SHA不变、各chunk全状态与已校准B1完全同才验收供后续评测，原180秒命令600秒wall/250%6GiB温控保持；不把此恢复根追加到20k。证据benchmark.json及runs/autonomous_parallel_capture_recovery_20261106/design.json。
+
+- 2026-11-06T21:46:38+08:00：资源保护：启动受保护任务 tetris-guard-446126-1793972798892402648，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_parallel_capture_recovery_20261106/unit/guard。
+
+- 2026-11-06T21:46:40+08:00：资源保护：tetris-guard-446126-1793972798892402648 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_parallel_capture_recovery_20261106/unit/guard。
+
+- 2026-11-06T21:46:41+08:00：资源保护：并发入口拒绝旧serial迁移/新模型旧缓存/坏快照与错worker seed，异常后模块绑定还原检查完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_parallel_capture_recovery_20261106/unit/summary.json。
+
+- 2026-11-07T10:12:55+08:00：实时账户允许正常使用，恢复原目标的旧usageLimited状态，保留目标、预算和用量；未消耗额度重置券。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-07T10:12:55+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-07T10:14:08+08:00：额度间断后原生目标新轮01a1b3c7-c7fa-7223-8240-4b935624c203已实际执行，首exec10:13:12.226/call_328297c5108d4e7caba04c9b7e7e4da5。hourly记录10:11:45仍usage_limited、10:12:55官方ordinary_usage_allowed=true恢复原目标；同期新submission01a1b3c7-c846-7e13-80e9-70ffe9780b5f仍pending，不冒称消费。昨晚ABBA与5项入口测试已完成，unit guard21:46:40/controller21:46:41、5passed/1.18秒；GPU恢复从未启动。今核验lightbook/原machine-id/GPU、无运行guard、源码与既有冻结input全未改、无恢复chunks/receipt，按原4096步预算启动两个真实GPU8进程恢复验收，原250%6GiB温控/180秒命令600秒wall不改。不重跑ABBA或已过测试；后台额度等待不等于整夜开发。证据native_goal_parallel_capture_execution_20261106.json及recovery/run/design.json。
+
+- 2026-11-07T10:14:11+08:00：资源保护：启动受保护任务 tetris-guard-574275-1794017651106822375，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_parallel_capture_recovery_20261106/run/guard。
+
+- 2026-11-07T10:14:31+08:00：资源保护：tetris-guard-574275-1794017651106822375 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_parallel_capture_recovery_20261106/run/guard。
+
+- 2026-11-07T10:14:31+08:00：资源保护：新显式并发capture入口真实分段提交/新进程恢复与已校准全部轨迹和状态精确验收完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_parallel_capture_recovery_20261106/run/summary.json。
+
+- 2026-11-07T10:18:43+08:00：并发GPU8捕获/评测入口验收完成。Nov6 ABBA四臂16384新步，配对1.802596677/1.955122448、几何1.877311170（含两模型GPU/环境/摘要/完整状态/256轮提交压缩fsync，非PPO训练加速）；全trace/概率/完整worker/Core/bag/RNG/active views与原记录精确。Nov7恢复574285→574341各2048步、合4096，复用首段SHA不变，三个提交与校准B1全state/trace精确；原policy/Adam/计数/采样RNG未动，15检查通过、unit另10环境步。正式共20480新环境步/5128GPU forward/0optimizer。恢复guard/controller10:14:31/20.601秒，86输入未改/250%6GiB，采样CPU66.5℃GPU45℃3501.40MiB；ABBA最高CPU75.375℃GPU52℃，无降载。新显式dispatch入口供后续固定8seed GPU评测，旧frozen helper/job/主31/推理20不改，不追加恢复根到20k。额度中断/恢复与新hourly仍pending范围已如实记录。证据reports/experiments/parallel_capture_20261107.md、benchmark/completion_audit、recovery/restart_receipt和native_goal_parallel_capture_execution_20261106.json。

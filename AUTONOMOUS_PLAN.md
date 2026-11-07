@@ -6,6 +6,26 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-07T10:20:28+08:00 最新接手：并发GPU评测1.877×及真实进程恢复已验收；下一通用任意8开发seed的GPU可恢复评测入口
+
+**最近两轮均有实际进展**：Nov6原生轮01a1b111-6105-7352-96bc-ef4df50f2474首工具21:34:41.228，完成并发派发ABBA和两组共15检查；额度受限时保存未提交代码/报告断点，未启动恢复。Nov7 hourly10:11:45仍usage_limited、10:12:55官方ordinary_usage_allowed=true自动恢复原目标；新原生轮01a1b3c7-c7fa-7223-8240-4b935624c203首工具10:13:12.226/call_328297c5108d4e7caba04c9b7e7e4da5，核对真实终态/源码未变/没有恢复chunk后只执行剩余恢复验收。**等待额度的夜间不是持续开发**。native_goal_parallel_capture_execution_20261106.json记录两轮及间断。
+
+**已完成，禁止重跑**：新增scripts/parallel_capture.py、benchmark_parallel_capture.py、capture_parallel_trajectories.py、verify_parallel_capture_restart.py，两组10+5项测试。GPU8并发seed→action派发，SubprocVecEnv先发全部active worker再按固定lane顺序接收；两模型forward、batch形状、自然概率mode、精度和全部row字段不变，dead/cap槽不reset。要求唯一episode_seed，不适用于旧8个同seed历史context。新入口显式dispatch_version=unique-seed-parallel-v1，整个新design SHA进入旧事务缓存身份；拒绝旧serial job迁移/换模型旧cache/坏snapshot/错worker seed，异常后finally还原临时模块绑定。复用旧冻结capture runner/原子提交/恢复，旧helper/job/design/缓存、主31/推理20和训练模板未改。
+
+runs/autonomous_parallel_capture_20261106固定ABBA四臂，各原30M控制/4k旁观、8seed100000..7/真实max20000/512轮4096新步。A1=9.302912830s、B1=5.160839886s、B2=4.874012577s、A2=9.529291401s，配对1.802596677/1.955122448，**几何1.877311170≥先验1.05且两pair均快**。每段自然action/prob/margin/obs-mask摘要/selected features/outcome及完整末worker/Core/bag/游戏与reset/action RNG、父RNG/active views/源计数全与原基线冻结前512轮精确。计时含两GPU模型+环境/摘要/全状态导出/256轮提交压缩fsync与审计，排除启动/恢复/初始提交/预热/事后比对；**不是PPO训练提速或整局棋力改善**。
+
+runs/autonomous_parallel_capture_recovery_20261106真实**574285→574341**各256轮2048步，第二进程复用初始+首段、首段所有文件SHA未变，3个chunk全trace/state/RNG/views与B1精确；15测试包含真实死亡/封顶/停槽和新进程，旧身份/坏checksum在pickle前拒绝、错worker seed在GPU/锁前拒绝。正式ABBA16384+恢复4096=**20480新环境步/5128 GPU forward（含8次预热）/0optimizer**，另单测10个小型环境步/0optimizer。源policy/完整Adam/原计数30003200/36625、旁观4096/36630及采样RNG不变，旧训练来源不重标当前31。
+
+Nov6 benchmark guard/controller21:41:46、36.766秒/71输入未改/250%6GiB、采样CPU75.375℃GPU52℃3233.46MiB；Nov7恢复guard/controller10:14:31、20.601秒/86输入未改/250%6GiB、采样CPU66.5℃GPU45℃3501.40MiB，均hold无降载。新entry检查5passed/1.18秒、routing10passed/5.71秒，两组100%2GiB；entry仅1采样不能当真实内存峰。全部有限service终态。证据reports/experiments/parallel_capture_20261107.md、benchmark/completion_audit、recovery/restart_receipt及各guard/controller。**恢复根512轮验收已完，禁止把它追加为另一20k质量评测。** 后续新固定8seed评测用新显式入口和新job/guard设计，旧完成根不续写。
+
+**无人值守当前范围**：10:14:27healthy/goalactive/后台13827→1/proxy空/四单元enabled active/linger yes/睡眠masked。Nov7 10:12:55新hourly submission01a1b3c7-c846-7e13-80e9-70ffe9780b5f、client01a1b3c7-c845-7ba1-a28d-2b765eedf430于10:16仍pending/thread_busy，本轮是原生恢复，未声称新投递已消费。下一轮如消费须匹配新turn/client/实际首工具。正常跨进程恢复已验收，OS重启/任意断电范围未扩大；额度后续不保证，受限保存等待每小时检查，不绕过限制/改账户或用重置券。
+
+**下一实际开发（尚未开始）**：解决已确认限制：新入口复用旧capture runner，仍硬编码100000..100007/max20000，无法做不同8开发seed的GPU独立复核。开发新的**显式通用GPU8可恢复评测runner**（建议capture_gpu_evaluation.py），支持用户design中任意不同8个uint32 seed、保持max20000/两冻结模型控制+旁观/无autoreset/parallel dispatch。不要为此修改已冻结旧runner/helper，也不能通过猴补其协议校验来绕过固定seed身份。可复用CaptureControls、parallel step、save_commit/read_chain、source/runtime guard与完整worker/RNG恢复；新的入口/源码、任意seed顺序和schema/dispatch版本须进入新缓存身份。加载两checkpoint(env=None)后显式逐lane reset到设计seed，不能被ZIP seed42覆盖；make_vector_env可用安全占位base_seed=0后显式reset，支持不连续/无序/接近uint32上界，而非假定range(first,first+8)。死/TimeLimit槽不重置，局部phase结束保留活槽状态与实际计数。每256轮完整原子提交，严格实际步数/源policy Adam/PPO计数/RNG审计。
+
+先定向验证任意/无序8seed路由、near-uint32边界、不允许重复/越界、错ZIP/suite/source/cache在pickle或推进前拒绝、停止槽和真实新进程恢复。冻结单个有限功能协议后，可用开发seed **[100015,100008,100014,100009,100013,100010,100012,100011]** 的原30M控制/已有4k旁观做512轮**串行oracle vs 新通用入口真实256→新进程256**，合最多8192新环境步/0optimizer（若提前死亡按真实实际计，不强制4096），全trace/完整worker/RNG、首段SHA精确才过。它是新seed入口功能/恢复检查，**不是4k额外8资格评测或独立未触碰确认集**，不跑20k、不复测1.877速度、不提高训练量凑进度。GPU8/250%6GiB/原温控/有限180秒命令600秒wall和额外单测≤512步保持，先查已有进程/缓存避免重复。通用身份通过后可复用audit_own_policy_capture.py的完整终态审计（它已按design seeds做检查），如输出schema需扩展应另写新包装，旧冻结结果不改。
+
+新目标不依赖失败4k/8k/KL候选推广；原30M继续冻结，后续学习目标仍需新证据及完整来源/恢复/质量门，不再盲扫旧LR/GAE/beta/actor转换/critic预拟合。所有执行/副本/每小时留lightbook，GPU或主机不可用保存，无CPU训练/他机fallback。原250%/温控/内存时间预算，用户暂停取消即停，持续目标active不标complete。
+
 ### 2026-11-06T21:33:44+08:00 最新接手：本次小时已真实执行；原30M KL离线副本对照未过支持门，下一验证完整GPU评测的并发worker派发
 
 **本次小时真实执行**：21:05:59 submission01a1b0f7-4d16-71e0-b863-b958661cb953→新轮01a1b101-81c6-7311-be4e-18e4e4194f2f，userMessage.clientId精确01a1b0f7-4d15-7d23-84ba-fd85c6e338c6，首工具21:17:18.206/call_ff2f3064c30a43eb9f786fb013d0288a；queue空，13827→1/proxy空/4单元enabled active/linger yes/睡眠masked/目标active，真实receipt hourly_original_kl_execution_20261106.json，不能只拿accepted当执行。前轮1d707af为实质开发/完整评测，禁止重跑。
