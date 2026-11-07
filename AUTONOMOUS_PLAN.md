@@ -6,6 +6,18 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-07T15:24:25+08:00 最新接手：80forward公开缓存及21测试完成；单次联合LP超时，禁止重复求解
+
+**本轮progress，已封闭勿重跑**：12:17小时turn01a1b439完成缓存/测试后额度中断；旧lp12:32:48在strict authorization拒绝，真实LP0。15:15:55原小时普通额度恢复，当前native turn01a1b4dd-4bc2-79f0-b96e-4ea40e50a1bc首工具15:16:23.680/call_32dd7446e3ab4d37b37d4e5bcb510c6f，复用缓存后完成剩余1真实LP。新queued submission01a1b4dd-4bee-7de0-a1d7-1a2415387678未声称已消费。间断不是持续开发，没有人工改goal/账户/付费；health15:18:45 healthy、四unit enabled active/linger yes/sleep masked/proxy[]、实际backend13827→1。无OS重启或未来额度保证。
+
+**缓存** runs/autonomous_head_constraints_20261107/cache：640公开状态（8配对初态＋632正常）、30264合法动作h64，80CUDA8 forward/1原30M load/0env/0policy optimizer；实际30003200/36625完整policy/Adam/加载后RNG与ZIP不变。全部mode匹配teacher，4重复pair h/score差0，重建max4.269137640733334e-6<1e-4。normal train100000..3/validation100004..7各316state4episode，同局相关非独立质量。metadata SHA e10cdf221a4da15783cdb3b5e8a488f654e7292da840008771361f0a742ed72c，npz SHA2a992048409c2691a67af4a6d2fcc125054f0ef5cb4c9088cb0cb46c7963d411。321输入/31训练20推理源SHA相符。14缓存测试+.17秒及7LP测试/.12秒（3tiny合成LP）通过，不重测。
+
+**正式LP已封闭**：本机缺solver，真实求解前记录采用官方highspy1.15.1隔离wheel到runs，不pip install/改变模型venv；官方SHA/15文件及import来源验证，原包版本最终精确相同。旧单次协议不改：316train正常14769合法竞争行＋4当前GPU强有益pair，minL1 d64/128nonnegative，margin1e-3，simplex1thread60sec/primaldual1e-9、小系数1e-12/独立残差≤1e-7，validation不拟合。lp_resumed/source628048，15:21:25开始/15:22:25结果/controller27 passed、unit inactive success。**kTimeLimit/217 iterations/unresolved/1warning**；1真实LP、无delta/系数应用/新模型/预测保持或棋力结论。不得说不可行、通过或推广；controller passed仅正常结束。eligible_for_training=false。不延长预算/换solver或目标margin/逐pair重试。
+
+五guard（含旧quota拒绝）全采样hold；缓存CPU66.75/GPU37℃/897.074MiB，LP31采样最高CPU80.5/GPU49℃/505.793MiB，非连续真峰。正式250%6GiB/swap0/原温控、六核/聚合slice/120command600wall；数据测试100%2GiB。completion_audit核验全部冻结SHA/终态/原模型依赖。证据上述root及report head_joint_constraints_20261107.md、跨轮hourly_head_constraints_execution/native_goal_head_constraints_resume回执。原83abf27成对5000及ec5f162方向94forward也已封闭。
+
+**下一实际开发（未开始，先查重）**：只用封存640公开缓存做有界数值结构审计：正常竞争margin分布、近零行/特征尺度、训练约束矩阵SVD数值秩与条件、4pair方向在正常竞争张成空间投影/残差。先固定定义和容差，validation全量报告不选参数；0模型load/GPU forward/env/策略优化器/LP求解，不构造候选，不把秩/投影等同可行性或棋力证明。分析是否数值尺度/表示约束值得另事前设计新学习协议；不重跑已用完的单次LP或盲扫LR/KL/GAE。仍lightbook/GPU可用性要求、CPU≤250%/原内存温控时间预算/STOP；额度受限保存等原每小时机制，不改账户付费或CPU/跨机fallback，持续goal active。
+
 ### 2026-11-07T12:16:01+08:00 最新接手：4对当前GPU强有益已复核；下一冻结表示＋单次末层约束可行性
 
 **本轮progress，已封闭勿重跑**：原生turn01a1b41c-7ae8-7a12-b391-1bc0067e41be首工具11:45:37.535+08/call_e1f142527cee45e58480ca11e1e23df2；非新hourly消费。native_goal_paired_branch_execution_20261107.json记录真实开始/完成。前轮ec5f162的94forward均值方向/453事件已封闭。本轮追加完整8分支GPU恢复、跨进程精确/复用和5000窗口；后台driver594893自行串行9阶段，12:06:15终止inactive/success，不仅投递accepted。goal active、health12:07:45 healthy/四unit enabled active/linger yes/sleep masked/proxy[]，接手无live guard；不宣称未来额度或OS重启验收。

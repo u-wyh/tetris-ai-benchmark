@@ -2185,3 +2185,55 @@
 - 完整window source记录审计12:09:21 passed/controller23，161外部输入；原compare四对均强有益，共同2000得分比1.009317/1.011645/1.015672/1.011558、四消比均≥1，观测生存多3000。8条新分支显式当前模型SHA；已记录的步数/得分/四消/终止与旧CPU分支也全等。不能补旧历史branch身份/完整tensor或动作轨迹，不能推其余173标签、独立质量或整体棋力提升，eligible_for_training=false保持。
 - completed driver源码先校验全部冻结输入并归档pipeline/driver_executed.py及at_finish_frozen_audit，再修订当前源码：瞬时systemctl观测失败只重查同unit，不误停/重启；1项模拟超时集成测试通过，不冒充真实pipeline曾遇到此故障。
 - 证据runs/autonomous_paired_branch_20261107/{completion_audit.json,r2}、native_goal_paired_branch_execution_20261107.json、reports/experiments/paired_gpu_preference_20261107.md。下一仅这4对新GPU标签＋原632正常公开状态的末层约束可行性/表示封存；不沿旧失败g训练，不新增PPO或推广。
+
+### 2026-11-07T12:18:25+08:00 小时消息真实消费，继续末层公开表示及约束诊断
+- accepted12:14:05 submission01a1b436-af53-7763-9385-b74a4161e43a，当前RPC user client01a1b436-af53-70d2-81b7-524b0fe58ffc，新turn01a1b439-dd7b-7c82-9c49-ad8e1ddade20，首工具12:17:53.284+08/call_be05833e77b547f881bc23a1c95bcd99；queue RPC空。backend13827→1、keeper/四unit enabled active、linger yes、sleep masked、proxy[]、goal active，lightbook固定machine-id，无live guard。前83abf27为progress，配对5000/恢复oracle已封闭不重跑；本机venv未装SciPy，继续查已有求解器并先封存80forward公开表示，不改原模型runtime。证据hourly_head_constraints_execution_20261107.json。
+
+- 2026-11-07T12:23:45+08:00：资源保护：启动受保护任务 tetris-guard-599053-1794025425104955357，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_constraints_20261107/unit/guard。
+
+- 2026-11-07T12:23:47+08:00：资源保护：tetris-guard-599053-1794025425104955357 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_constraints_20261107/unit/guard。
+
+- 2026-11-07T12:23:47+08:00：资源保护：公开末层表示缓存schema、外部SHA先读、合法mask及整个episode训练/验证隔离测试通过；0模型/环境。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_constraints_20261107/unit/summary.json。
+
+### 2026-11-07T12:24:41+08:00 本机LP求解器缺失，准备隔离且固定SHA的数值工件
+- 本机venv/系统Python均无SciPy/highspy/cvxpy/ortools/pulp，系统无highs/glpsol/lp_solve/对应共享库。依据HiGHS官方文档，改用官方PyPI highspy1.15.1 wheel，校验官方sha256后仅解包到实验solver/artifact；原模型venv包名/版本列表前后精确相等，无pip install/依赖升级/账户变更，所有执行仍lightbook。该实现调整发生在任何真实LP求解之前，固定simplex/单线程/60秒/1e-9可行性，原单次L1目标/1e-3 margin/训练验证隔离不变。证据solver/solver_artifact.json，尚未读取真实表示或求解。
+
+- 2026-11-07T12:27:09+08:00：资源保护：启动受保护任务 tetris-guard-599673-1794025629535732096，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_constraints_20261107/cache/guard。
+
+- 2026-11-07T12:27:15+08:00：资源保护：tetris-guard-599673-1794025629535732096 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_constraints_20261107/cache/guard。
+
+- 2026-11-07T12:27:16+08:00：资源保护：原30M最后评分层640公开状态表示封存完成；80CUDA8前向/0新环境/0策略优化器，完整原状态不变。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_constraints_20261107/cache/summary.json。
+
+- 2026-11-07T12:31:20+08:00：资源保护：启动受保护任务 tetris-guard-600411-1794025880075490621，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_constraints_20261107/lp_unit/guard。
+
+- 2026-11-07T12:31:22+08:00：资源保护：tetris-guard-600411-1794025880075490621 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_constraints_20261107/lp_unit/guard。
+
+- 2026-11-07T12:31:22+08:00：资源保护：隔离HiGHS单次L1求解、不可行/超时区别、validation隔离与pair非全局Top1定向测试通过；无策略训练。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_constraints_20261107/lp_unit/summary.json。
+
+### 2026-11-07T12:32:43+08:00 公开表示封存完成，事前固定单次联合LP
+- source599703 cache12:27:14 completed/controller16 passed，80CUDA8 forward/640公开状态/30264合法动作h64、0环境/优化器/1原模型load，完整policy/Adam/真实30003200/36625/加载后RNG及321controller输入SHA未变；四对重复h/rawscore差0，重建max4.269137640733334e-6<1e-4。原14schema/episode测试.17秒通过，已持久化后续无需再forward。
+- 隔离官方Highs1.15.1当前数值API测试7passed/.12秒（3个tiny合成LP），模型venv无改变。正式单次simplex/1线程/60秒，64维d用128非负split变量最小L1、所有316train正常合法竞争margin≥min原margin/1e-3及4新GPU good/base≥1e-3；316validation不参与拟合。1e-9 primal/dual、1e-12 small matrix、残差≤1e-7；不重选目标/阈值/逐pair重试，系数仅JSON不应用/PPO0。正式profile250%6GiB/原温控、120command600wall；准备输入前尚未读取真实结果。证据cache、lp_unit、lp/lp_design.json。
+
+- 2026-11-07T12:32:45+08:00：资源保护：启动受保护任务 tetris-guard-600679-1794025965918575612，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_constraints_20261107/lp/guard。
+
+- 2026-11-07T12:32:48+08:00：资源保护：tetris-guard-600679-1794025965918575612 结束：command_failed:exit-code，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_constraints_20261107/lp/guard。
+
+- 2026-11-07T12:32:48+08:00：资源保护：隔离上下文验证停止并保留进度：RuntimeError('Staged runtime verification failed')。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_constraints_20261107/lp。
+
+- 2026-11-07T15:15:55+08:00：实时账户允许正常使用，恢复原目标的旧usageLimited状态，保留目标、预算和用量；未消耗额度重置券。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-07T15:15:55+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+### 2026-11-07T15:21:14+08:00 额度中断后原生实际恢复，复用公开表示
+- 前hourly turn01a1b439-dd7b-7c82-9c49-ad8e1ddade20发生额度失败；12:32:48原lp guard在require_authorization拒绝，execution/result不存在，实际LP0。80CUDA缓存与21测试保留，不重跑。15:15:55既有小时流程ordinary_usage_allowed恢复原goal active；当前native turn01a1b4dd-4bc2-79f0-b96e-4ea40e50a1bc首工具15:16:23.680/call_32dd7446e3ab4d37b37d4e5bcb510c6f。新submission仍pending不冒充消费；间断期间没有持续开发。
+- health15:18:45 healthy、四unit enabled active/linger yes/sleep masked/proxy空；本机固定machine-id、control enabled无STOP、无live guard，未重启后台。旧33冻结输入全部SHA相符，在lp_resumed事前固定同一约束/solver/60秒，原250%6GiB/温控预算；未改变账户/付费或绕过额度。证据native_goal_head_constraints_resume_20261107.json、lp/guard/command.log、lp_resumed设计。
+
+- 2026-11-07T15:21:24+08:00：资源保护：启动受保护任务 tetris-guard-628038-1794036084302175939，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_constraints_20261107/lp_resumed/guard。
+
+- 2026-11-07T15:22:27+08:00：资源保护：tetris-guard-628038-1794036084302175939 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_constraints_20261107/lp_resumed/guard。
+
+- 2026-11-07T15:22:27+08:00：资源保护：固定单次末层L1联合约束数值诊断完成；系数未应用，0模型load/forward/环境/策略优化器，状态与残差见结果。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_constraints_20261107/lp_resumed/summary.json。
+
+### 2026-11-07T15:24:25+08:00 联合LP有界结束，真实结果unresolved已封存
+- source628048，15:21:25实际开始/15:22:25结果/15:22:27 controller passed，unit inactive success/MainPID0；固定14773行(14769normal＋4pair)/64维L1，Highs kTimeLimit、217iterations、1warning，实际LP1，无delta/系数应用/模型更新。超时不是不可行或成功，不延长或重选solver/目标/margin重试。此前80CUDA缓存及21测试复用，本轮0forward/env/optimizer。
+- completion_audit核验五阶段冻结输入全相符、源ZIP与原venv包版本不变；31次LP采样最高CPU80.5℃/GPU49℃/505.793MiB，全部hold，250%6GiB/swap0/原温控及120command600wall。报告head_joint_constraints_20261107.md、计划更新为下一固定缓存数值结构审计，无LP重跑/训练推广。
