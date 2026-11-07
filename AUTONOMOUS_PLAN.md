@@ -6,6 +6,24 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-07T11:10:59+08:00 最新接手：有限phase真实CUDA2048步/完整精确/复用与满额拒绝全部通过；下一回到Top-K反事实学习数据
+
+**前轮分类progress**：6bffb78完成有限phase入口/46检查/live guard probe和真实预算拒绝，本轮不重做。新原生轮01a1b3f5-1d9c-7ee1-a415-04bee1f10331首工具11:02:35.573+08/call_9ab89abfec8a4a32b990dd8c6bd917d0，native_goal_bounded_positive_execution_20261107.json记录真实开始和结果；非新hourly投递。接手无live guard/keeper active/GPU37℃与healthy四单元/proxy空，根不存在才创建。目标active。
+
+**正向实际CUDA已通过，禁止再跑**：runs/autonomous_bounded_gpu_phase_acceptance_20261107新sealed job/事前protocol、原30M控制/4k旁观、无序原8seed/max20000/chunk256，仅phase256轮/2048步。请求20段经真实phase CLI/guardian与内核保护**夹成1段**，源进程**583634**算256轮/**2048新环境步/512GPU forward/0optimizer**，额外边界检查2次含原锁内。旧runner/helper/主31推理20/模板不改、旧512根不追加。
+
+新增scripts/verify_bounded_gpu_phase.py核验source进程与真实watchdog child_pid、policy/完整Adam/实际原30003200/36625和旁观4096/36630冻结；新chunk0/1全部row/action/prob/margin/obs-mask/selectedfeatures/outcome、完整worker/Core/bag/游戏/reset/action RNG、父采样RNG/active views/计数，与旧oracle冻结前256轮精确，双方identity分别验证不迁移。额外guardian/授权/资源查询没有扰动数值或采样RNG。**583886**重复attempt只复用原收据、源PID/收据SHA/全job文件集合SHA未变，无新增；receipt的2048是原attempt累计不得重复计。新满额attempt **583891** preserved/chunks0，无新started/process/chunk。状态仍partial/can_resume=false/phase预算满/completed=false，**本256轮功能作业已结束，不延长到20k**。
+
+计算guard/controller11:05:12 completed、10.273秒/77输入/250%6GiB/swap0/原温控/主机/目标/STOP/内存/180秒command600秒wall；5采样CPU63.75℃GPU42℃3220.98MiB/始终250 hold。只读verify guard/controller11:06:06 completed、6.153秒/94输入/100%2GiB；3采样CPU63℃GPU43℃575.88MiB/hold；均非连续真峰。所有有限service终态。**eligible_for_future_bounded_phase_launch=true**，有真实计算/精确结果/拒绝复用证据；不是棋力/训练速度/4k资格或普通checkpoint推广，原4k/8k失败与旧1.877评测加速结论保持。报告reports/experiments/bounded_gpu_positive_20261107.md、根completion_audit/compute/verify acceptance/budget_refusal证据齐，未额外重跑单测矩阵。
+
+**下一实际开发（未开始，先查重，回到学习瓶颈）**：先审计一个与已失败BC纠错/PPO微调不同、已有证据支持的数据方向，0新环境/0forward/0optimizer，不继续叠加基础设施。已定向读历史reports/experiments/ppo30m_death_counterfactual_analysis.md：120状态、541个1000分支/349个5000分支；强纠错预设原分支真死、替代多≥250且≥1.5倍、共同得分≥95%、原四消≥3时保留≥90%。报告强纠错比较中PPO Top-K来源325、BC52（来源有重叠且跨窗口，**不是325个独立标签**）；19/19独立死亡seed发现有限候选局部纠错。候选/续控/窗口局限不外推整体收益。另读local_correction_failure_diagnosis：旧BC标签训练18/验证3，80次可记忆但24次KL梯度强度与C冲突、验证漂移，不能继续盲扫LR/KL；V2新增22总训练37/验证6、仍是BC action。定向搜索train_local_correction/local_correction_data/v2_materialize使用bc_action，未找到Top-K正例作为训练专家。候选features包含piece/hold/rotation/x/y，故不要无依据假设候选同特征不可区分或重做架构。
+
+先检查runs/ppo30m_death_analysis真实protocol/counterfactual_summary/状态与分支文件及已有训练数据，核实Top-K数据是否已被其他pipeline消费，避免重复。开发**只读、有外部文件SHA封存的反事实偏好数据证据审计**：核验真实模型SHA/版本/公开observation+mask/action来源/分支完整性，不凭markdown或汇总布尔值训练；旧源与当前eb859b…/31/20兼容性如不能证明，单列限制，不重标历史来源/迁移缓存。不得读未核SHA的pickle或用隐藏Bag/RNG做在线特征。
+
+本次仅固定**5000窗口**审计，按(episode/公开state hash/action/horizon)去重，Top-K与BC来源重叠不相加，重新用原先strong规则核实可用正例，区分真死亡/右截断/不确定/明确有害而非把未达门的都当负例；报告独立seed/状态/动作/同局相关性、重复窗口及泄漏风险、公开输入和合法mask形状/版本与来源一致性。原19局是已探索/条件选中的案例，不能冒充独立确认集或无偏效应估计，也不能只据数量开始训练。优先复用原纯统计规则函数和保存JSON/公开观测，不为审计重放或补采环境。定向fixture验证去重、双来源、跨窗口、边界阈值、右截断与源hash拒绝即可；100%2GiB、GPU遥测/原温控/主机/目标/STOP/120秒命令300秒wall，最多0环境/0forward/0optimizer。此审计若证明确有独立、可追溯Top-K偏好数据，再事前设计按episode隔离且冻结正常保持集的有限ranking学习可行性；若不支持，保留负结果，不自动训练或新增长局，更不推广失败4k/8k。
+
+轻薄本工作副本/后端/小时仍本机；CUDA或主机不可用保留，无CPU训练/他机fallback；额度不足保存等每小时、不改账户付费/绕过限制；用户暂停取消即停。目标继续active。
+
 ### 2026-11-07T11:02:07+08:00 最新接手：有限phase启动器/真实保护与满预算拒绝已验；下一新sealed job仅256轮正向CUDA集成
 
 **前轮分类progress**：789abf3完成只读状态/21测试和两个真实CLI缓存检查，不重跑。本轮原生持续轮01a1b3e4-d974-7e73-8a13-282ce743ca04，实际首工具10:44:48.822+08/call_76753b9cbfa9497088a42893c94996e1；native_goal_gpu_phase_execution_20261107.json记录实际结果，非新hourly投递。先查无live guard、keeper active才开始；持续目标active，未标complete。

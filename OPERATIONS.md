@@ -1977,3 +1977,21 @@
 - 2026-11-07T10:59:07+08:00：资源保护：阶段启动器r2两个真实满预算job拒绝和重复receipt复用/SHA不变，0环境forwardoptimizer。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_phase_20261107/refusal_r2/summary.json。
 
 - 2026-11-07T11:00:39+08:00：有限GPU8 phase启动器r2完成：46检查/1.32秒，原read_chain/check_inputs原样校验后增加边界/保守256轮预算条件，锁内再核对防race、finally还原；attempt幂等、旧cache不迁移、全停缺摘要须真实process工作量、未核实失败计算记unknown/null不造0。真实live探针582268（guardian582238/watchdog582264/匹配tetris-compute cgroup/CPU2.5/6GiB/swap0/affinity[4,6,8,10,12,14]/120秒/CUDA）通过；真实旧oracle582540→582545/parallel582565→582570全拒绝扩展20chunk、二次复用receipt，无新started/process/chunk且全部原输入SHA未变。本轮r1/r2共0环境/0GPU forward/0optimizer，未加载模型；原31/20及冻结capture/helper不改。r2 unit2.099秒/70输入/100%2GiB，probe2.089秒/88输入/250%6GiB，refusal8.178秒/107输入/100%2GiB，采样最高CPU65℃GPU42℃，probe/unit仅单采样不称真峰。正向capture钩子实际CUDA尚未验，下一只做新sealed256轮≤2048步正向集成，不追加旧512功能job或推广。证据reports/experiments/bounded_gpu_phase_20261107.md、runs/autonomous_gpu_phase_20261107/completion_audit.json与r2三组guard/controller/receipts。
+
+- 2026-11-07T11:03:02.360622+08:00：原生持续目标轮01a1b3f5-1d9c-7ee1-a415-04bee1f10331实际首工具2026-11-07T03:02:35.573Z/call_9ab89abfec8a4a32b990dd8c6bd917d0；前轮6bffb78为progress。当前无live guard/keeper active/后台healthy与4单元ready/proxy空，GPU37℃可用，新正向根不存在。开始预声明新sealed bounded phase实际CUDA8正向验收，最多256轮2048环境步/0optimizer，20chunk请求应夹为1，完整state/trace与旧oracle前256轮冻结比对；原旧512功能job不延长，重复attempt只历史receipt复用、新attempt满额拒绝。证据runs/autonomous_development_20261105/native_goal_bounded_positive_execution_20261107.json。
+
+- 2026-11-07T11:04:59.829174+08:00：已冻结新bounded positive protocol/job/request/controller：原30M控制/4k旁观、无序原8seed、真实max20000/chunk256，新job仅phase256/2048；request20段/fresh断点，源码和原oracle chunk0/1外部SHA封存。实际CUDA8将由原250%6GiB温控/内存/时间180秒command600秒wall guard直接运行phase CLI；原512根不续写。后置只读完整trace/state对照和复用/拒绝另保护执行。证据/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_bounded_gpu_phase_acceptance_20261107/protocol.json。
+
+- 2026-11-07T11:05:02+08:00：资源保护：启动受保护任务 tetris-guard-583619-1794020702046660699，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_bounded_gpu_phase_acceptance_20261107/compute/guard。
+
+- 2026-11-07T11:05:12+08:00：资源保护：tetris-guard-583619-1794020702046660699 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_bounded_gpu_phase_acceptance_20261107/compute/guard。
+
+- 2026-11-07T11:05:12+08:00：资源保护：新sealed有限GPU8 phase实际CUDA控制/旁观256轮计算完成，20段请求限制为1段；后续另做只读oracle/幂等/满额拒绝验证。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_bounded_gpu_phase_acceptance_20261107/compute/summary.json。
+
+- 2026-11-07T11:05:59+08:00：资源保护：启动受保护任务 tetris-guard-583872-1794020759859782090，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_bounded_gpu_phase_acceptance_20261107/verify/guard。
+
+- 2026-11-07T11:06:06+08:00：资源保护：tetris-guard-583872-1794020759859782090 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_bounded_gpu_phase_acceptance_20261107/verify/guard。
+
+- 2026-11-07T11:06:06+08:00：资源保护：有限phase正向CUDA生产路径完整oracle前缀/worker/RNG/views精确、真实重复attempt复用与新满预算attempt拒绝完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_bounded_gpu_phase_acceptance_20261107/verify/summary.json。
+
+- 2026-11-07T11:09:48+08:00：新sealed有限phase实际CUDA8正向验收通过：583634请求20段真实夹1段，256轮2048新步/512GPU forward/0optimizer，原锁内外额外边界校验2次。新chunk0/1全部trace/prob/obs-mask/features/outcome与完整worker/Core/bag/父和worker RNG/active views与旧oracle冻结前256轮精确，双方identity不迁移；policy/Adam/实际原30003200/36625与旁观4096/36630不变。583886重复同attempt只复用原收据源PID/SHA，583891新满预算attempt拒绝，均0新增/全job文件集合SHA未变；旧512功能根未延长，新256验收根也结束不追加。compute guard/controller11:05:12 completed/10.273秒/77输入/250%6GiB，5采样最高CPU63.75℃GPU42℃3220.98MiB；只读verify11:06:06/6.153秒/94输入/100%2GiB/3采样最高CPU63℃GPU43℃575.88MiB，均hold无热降载。新增verify_bounded_gpu_phase实际集成脚本，无额外测试矩阵/训练/推广；eligible_for_future_bounded_phase_launch=true，不代表完整20k评测或质量提升。证据reports/experiments/bounded_gpu_positive_20261107.md与根completion_audit/verify acceptance/compute/budget_refusal receipts。
