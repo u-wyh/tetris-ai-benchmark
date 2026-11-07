@@ -6,6 +6,30 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-07T11:28:58+08:00 最新接手：Top-K偏好证据177有益/19seed及公开输入已审计；下一仅GPU冻结末层方向几何诊断
+
+**前轮分类progress**：c80ab10完成真实bounded CUDA2048步/全oracle精确/复用与满额拒绝，不重跑。本轮原生轮01a1b3fd-3c0d-7432-b319-8456c937cf79首工具11:11:29.081+08/call_53098648ff53444d97c20cd453dbe8fa；native_goal_topk_evidence_execution_20261107.json记录真实开始/结果，非新hourly消费。接手无live guard/keeper active；持续目标active。
+
+**新完成，禁止重跑审计**：scripts/audit_topk_preference_evidence.py及19测试/1.14秒，复用旧纯compare不改规则或旧数据/代码。runs/autonomous_topk_evidence_20261107冻结2238输入/195.28MiB，前后SHA未改；旧protocol PPO eb859b…/BC5f5613…与真实ZIP字节相同，120源snapshot先验证外部和旧meta SHA再pickle，episode/piece/cap/版本/源trace/公开hash均匹配。只读重建120×237 float32、120×1840×16 uint8、120×1840 bool公开输入，choices合法；没有step/模型load/forward/optimizer。输出audit/public_inputs.npz只三公开tensor+state_id，audit/preferences.json的seed/step/outcomes只供离线分组/标签，隐藏RNG只校验、不输出模型输入。
+
+原541个1000分支→有条件延长349个5000分支的任务集合精确；固定5000窗口232去重比较，无重复/公开上下文冲突。**全部有益200/104状态/19seed，有害1，未支持31；Top-K有益177/101状态/19seed、有害1/1/1、未支持28；BC有益26/26/14、未支持6；Top-K与BC共同有益12/12/8、共同未支持3**，来源重叠不能相加。同局状态相关，232不是统计独立样本；旧325跨窗口数不是325训练标签。所有长分支是1000窗口存活/得分门后择优，不能推正例发生率。强有益复用原(真死、+250/≥1.5×、共同得分≥.95、原四消≥3时≥.9)，有害为交换两分支后同强规则；未支持≠负例。
+
+**来源限制仍在**：全部541/349分支均缺model_sha256，suite声明与现存模型一致但非逐分支运行模型独立证明；旧runtime未pin、源commit b382a44b保留，不能重标31/20。没有原完整tensor，当前公开重建hash一致不冒充历史tensor逐位一致。eligible_for_training=false，不直接训练/推广。现有旧BC全actor纠错18/3和37/6标签不是此177 Top-K数据；定向搜索未发现Top-K偏好已消费或head_only/score_head[-1]/末层几何实验。candidate16含piece/hold/rot/x/y，不能无依据以特征别名为失败解释。
+
+unit guard11:18:56/controller57 completed/2.090秒/48输入/100%2GiB，单采样不称真峰；audit guard11:20:17/controller18 completed/4.152秒/2238输入/100%2GiB/2采样CPU58.5℃GPU37℃312.07MiB，均hold、原温控GPU遥测/内存/主机目标STOP/120秒command300秒wall。本轮0新环境/0GPU forward/0optimizer，不是CPU训练fallback。证据reports/experiments/topk_preference_evidence_20261107.md、根completion_audit与audit/evidence_audit/preferences/public_inputs、unit/audit guard/controller；原30M/4k/8k不动，原质量与性能结论保持。
+
+**下一实际开发（未开始，先查重）**：先做有来源限制说明的**冻结最后线性评分层的固定偏好梯度方向几何诊断**，不训练模型/不拟合候选，不继续旧LR/KL/GAE网格。新证据支持研究Top-K较近动作的排序是否有与正常动作保持兼容的方向；不能因正例多自动训练。CandidateScoringPolicy.score_head=[Linear128→64,Tanh,Linear64→1]，冻结所有参数后，取最后Linear的输入h与原权重w0/b；score差在固定h上对末层w严格仿射，bias抵消。前向hook提取h/原score，**只读参数/Adam/计数/RNG**，不计算新模型权重或保存普通checkpoint。解析对比原w0·h+b与实际float32 rawscore，预声明重建max误差≤1e-4；保留有限精度/tie限制，代数界不冒充实际GPU更新后的greedy保证。
+
+数据：封存本轮public_inputs/preferences的外部SHA，固定仅beneficial且sources有ppo_top的177对，源码/路径/metadata/公开mask一致。先按seed固定SHA256('topk-head-geometry-v1:'+str(seed))整数mod4==0为探索性validation、其余train（全19seed均已探索，不是独立确认）。固定温度1的pairwise softplus在原w0处解析下降方向g=各训练seed内mean(sigmoid(-原good-base margin)·(h_good-h_base))再对seed等权mean；若g0明确报告，不调阈值重试。只求这一固定方向的几何，**不执行参数步/optimizer**。harmful1和未支持不并成负标签，单列方向对其影响/来源局限。
+
+正常保持参照可复用runs/autonomous_gpu_quality_4k_20261106/baseline（已只读确认80 chunk、最终20000/160000）：固定chunk0..78的全部8活槽，共632公开状态，next chunk首轮row验证原greedy动作。外部manifest/全部文件SHA先于pickle，重建公开obs/mask须匹配snapshot.views摘要，模型actual natural概率mode须匹配保存原action；不要重放环境或改变原cache。可复用load_verified_chunk/observation_digest，不用controller passed替代源码/输入验证。保持normal每批原8lane顺序，前向后再分seed100000..3为train、100004..7为val；同局相关性明确报告。危险状态120个也固定batch8顺序，核对GPU当前mode与旧CPU ppo_action，若不同完整报告、不挑掉个例或宣称完全同源。
+
+对normal合法a与原a0，计算m=w0·(h_a0-h_a)、s=g·(h_a0-h_a)。s<0时m/(-s)给该固定方向的首个分数排序交叉；非正/近零margin保守标0或numerical_tie，不忽略。对good-vs-base，计算斜率与pairwise交叉时间，报告是否可能在首个正常交叉前修复顺序（只是good超过base，不等于全局Top1或棋力）。分别报告train/val、按seed及正常交叉时间分位数，允许∞，不虚构步长/选择最有利阈值；结论仅该方向和该采样集，失败不证明任何末层方向都不可行。旧分支模型/runtime缺口保持，故仍无直接训练资格；即使有兼容方向，也需新的事前训练/保持/独立质量协议。
+
+预算：正式CUDA-only/最高float32、TF32关闭、原250%6GiB/温控/内存/host/goal/STOP，有限120秒command600秒wall，batch8不创建env，**≤96次policy forward、0新环境/0optimizer**（120危险15batch+632正常79batch=94，禁止额外预热凑量）。全张量前向/解析几何在GPU，无CPU推理/训练fallback；小型纯代数unit可CPU，不构造CPU策略训练。优先定向测试head bias抵消/交叉边界/零斜率/tie/均衡seed权重/数据hash和来源拒绝，不重测旧矩阵。正式只加载冻结原PPO一次，policy/完整Adam/actual30003200/36625和采样RNG前后精确，不保存策略；数据导出为诊断而非候选。GPU/主机不可用保留进度。下一步先读必要原始格式/策略hook与既有normal source设计，避免凭记忆实现。
+
+轻薄本后端/副本/小时仍本机；额度不足保存等每小时、不绕过/改账户付费；用户暂停取消即停，持续目标active。
+
 ### 2026-11-07T11:10:59+08:00 最新接手：有限phase真实CUDA2048步/完整精确/复用与满额拒绝全部通过；下一回到Top-K反事实学习数据
 
 **前轮分类progress**：6bffb78完成有限phase入口/46检查/live guard probe和真实预算拒绝，本轮不重做。新原生轮01a1b3f5-1d9c-7ee1-a415-04bee1f10331首工具11:02:35.573+08/call_9ab89abfec8a4a32b990dd8c6bd917d0，native_goal_bounded_positive_execution_20261107.json记录真实开始和结果；非新hourly投递。接手无live guard/keeper active/GPU37℃与healthy四单元/proxy空，根不存在才创建。目标active。

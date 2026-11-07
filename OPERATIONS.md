@@ -1995,3 +1995,23 @@
 - 2026-11-07T11:06:06+08:00：资源保护：有限phase正向CUDA生产路径完整oracle前缀/worker/RNG/views精确、真实重复attempt复用与新满预算attempt拒绝完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_bounded_gpu_phase_acceptance_20261107/verify/summary.json。
 
 - 2026-11-07T11:09:48+08:00：新sealed有限phase实际CUDA8正向验收通过：583634请求20段真实夹1段，256轮2048新步/512GPU forward/0optimizer，原锁内外额外边界校验2次。新chunk0/1全部trace/prob/obs-mask/features/outcome与完整worker/Core/bag/父和worker RNG/active views与旧oracle冻结前256轮精确，双方identity不迁移；policy/Adam/实际原30003200/36625与旁观4096/36630不变。583886重复同attempt只复用原收据源PID/SHA，583891新满预算attempt拒绝，均0新增/全job文件集合SHA未变；旧512功能根未延长，新256验收根也结束不追加。compute guard/controller11:05:12 completed/10.273秒/77输入/250%6GiB，5采样最高CPU63.75℃GPU42℃3220.98MiB；只读verify11:06:06/6.153秒/94输入/100%2GiB/3采样最高CPU63℃GPU43℃575.88MiB，均hold无热降载。新增verify_bounded_gpu_phase实际集成脚本，无额外测试矩阵/训练/推广；eligible_for_future_bounded_phase_launch=true，不代表完整20k评测或质量提升。证据reports/experiments/bounded_gpu_positive_20261107.md与根completion_audit/verify acceptance/compute/budget_refusal receipts。
+
+- 2026-11-07T11:13:05+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-07T11:14:33.993078+08:00：原生持续轮01a1b3fd-3c0d-7432-b319-8456c937cf79实际首工具2026-11-07T03:11:29.081Z/call_53098648ff53444d97c20cd453dbe8fa，前轮c80ab10为progress；当前无live guard/keeper active。转向旧PPO Top-K偏好数据证据，历史protocol确认PPO SHA=当前eb859b…；raw5k样例缺model_sha256，5000任务由1000结果有条件择优最多2alt，不能直接把325跨窗口强纠错比较当独立标签。将封存外部SHA后只读审计/已核SHA本地快照公开重建，0环境/forward/optimizer，原100%2GiB/温控GPU遥测/主机目标STOP有限120秒300秒wall。证据runs/autonomous_development_20261105/native_goal_topk_evidence_execution_20261107.json。
+
+- 2026-11-07T11:18:54+08:00：资源保护：启动受保护任务 tetris-guard-586396-1794021534286999107，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_topk_evidence_20261107/unit/guard。
+
+- 2026-11-07T11:18:56+08:00：资源保护：tetris-guard-586396-1794021534286999107 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_topk_evidence_20261107/unit/guard。
+
+- 2026-11-07T11:18:57+08:00：资源保护：TopK反事实证据审计定向检查：原阈值/删失/条件扩展/去重/哈希先于pickle/公开输入重建，0环境forwardoptimizer。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_topk_evidence_20261107/unit/summary.json。
+
+- 2026-11-07T11:20:10.428757+08:00：19定向检查/1.14秒完成，真实TopK证据协议与2238冻结输入已封存；固定旧5000窗口及原compare阈值，校验1000条件扩展、模型ZIP/suite声明、源trace/120快照SHA先于pickle，公开feature+mask静态重建不落子。正式审计100%2GiB/原温控GPU遥测/120秒命令300秒wall，0环境/forward/optimizer。证据/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_topk_evidence_20261107/protocol.json。
+
+- 2026-11-07T11:20:13+08:00：资源保护：启动受保护任务 tetris-guard-586645-1794021613675993325，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_topk_evidence_20261107/audit/guard。
+
+- 2026-11-07T11:20:17+08:00：资源保护：tetris-guard-586645-1794021613675993325 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_topk_evidence_20261107/audit/guard。
+
+- 2026-11-07T11:20:18+08:00：资源保护：历史PPO TopK反事实5000窗口证据/公开观测重建与条件选择/哈希/去重/删失审计完成，0环境forwardoptimizer。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_topk_evidence_20261107/audit/summary.json。
+
+- 2026-11-07T11:27:06+08:00：TopK偏好证据审计完成：19检查/1.14秒、2238输入/195.28MiB前后SHA未改；120已核SHA快照公开重建合法237/1840×16/mask，核原541个1000与349个5000分支条件延长，232去重5000比较，无重复冲突；全有益200/104状态/19seed（与旧strong5000精确）、有害1、未支持31；TopK177/101/19有益+1有害，BC26/26/14有益，同来源重叠12不能相加。均为条件选中相关案例，325旧跨窗口数不是独立标签。suite模型SHA匹配现存ZIP，但全部分支缺独立model_sha/旧runtime未pin/无原tensor，不伪造来源或训练资格；仅导出公开输入/离线偏好metadata，eligible_for_training=false。0环境/0forward/0optimizer/不加载模型，不CPU训练。正式guard11:20:17/controller18/4.152秒/100%2GiB，2采样CPU58.5℃GPU37℃312.07MiB；unit2.09秒48输入/单采样不称真峰。旧原30M/4k/8k不动、不重复旧验收。证据reports/experiments/topk_preference_evidence_20261107.md与runs/autonomous_topk_evidence_20261107/completion_audit及audit artifacts/guard。
