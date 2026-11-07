@@ -6,6 +6,28 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-07T11:02:07+08:00 最新接手：有限phase启动器/真实保护与满预算拒绝已验；下一新sealed job仅256轮正向CUDA集成
+
+**前轮分类progress**：789abf3完成只读状态/21测试和两个真实CLI缓存检查，不重跑。本轮原生持续轮01a1b3e4-d974-7e73-8a13-282ce743ca04，实际首工具10:44:48.822+08/call_76753b9cbfa9497088a42893c94996e1；native_goal_gpu_phase_execution_20261107.json记录实际结果，非新hourly投递。先查无live guard、keeper active才开始；持续目标active，未标complete。
+
+**新完成，禁止重复**：scripts/run_gpu_evaluation_phase.py/gpu_phase_guard.py/verify_gpu_phase_refusal.py及两组测试。显式bounded-gpu8-phase-v1 attempt请求绑定job design SHA、expected_start(last SHA/count/round/actual_unique_steps)、max_chunks1–20、mode capture/guard_probe及controller/guard路径。实际新计算job必须同version并在design.frozen_files封存phase/guard/inspector源码，旧job/cache不补字段迁移。原入口/helper/主31/推理20/模板不改。按当前活槽数×每chunk轮数算不autoreset的保守最大步数，最多20段，有限round/step预算不够整256轮不凑；全局20000最后32轮正确；全停缺摘要仅0步finalize且原process计数必须完整，不补造。
+
+**已解决的race**：只做外层预算检查不够。新wrapper临时包装原模块read_chain/check_inputs，先完整原校验并原样返回，再加expected断点/预算拒绝；原run的prepare与持有原capture.lock后两次都检查，interloper先推进就拒绝陈旧请求，finally还原绑定，不改变数值协议/绕过身份。额外输入门检查主机/goal/STOP/当前保护，目标严格active，usageLimited/暂停均拒绝；恢复后创建新冻结attempt，不复用旧blocked作为当前ready。attempt锁+requestSHA/receipt幂等，started无完整receipt不盲重跑。可能计算开始后未核实process receipt时环境/forward量记null/unknown，不能把中断未提交计算造0。receipt或退出0不代表完整评测或棋力。
+
+**真实保护正向已验，但没有正向capture**：r2 probe进程582268/guardian582238/watchdog582264，真实tetris-compute.slice cgroup、cpu.max2.5核/memory.max6442450944/swap0、affinity[4,6,8,10,12,14]、120秒；核对live unit/MainPID祖先、guarded_process/resource_guard argv、fresh心跳、原profile/冻结request job source、控制启用/lightbook machine pin/goalactive/无STOP/CUDA可用。不是仅信配置/env。缺GPU/host/guard无CPU或他机fallback。probe不加载策略/不构造环境；不能声称真实8环境新运行。
+
+**r2 46测试/1.32秒通过**，含预算恰好/不足/死槽上界/末32轮、stale断点、真实文件锁内race、原校验不绕过/异常绑定恢复、guard/kernel/heartbeat/source/CUDA/暂停额度STOP host失败、幂等/活writer/中断未知工作。保护/compute单测用synthetic/mock，真实code正向CUDA capture仍未测。真实old oracle582540→582545、parallel582565→582570各两次CLI，均preserved/chunks0，二次reused_receipt；无新started/process/chunk，原全部输入SHA集合不变，申请20段仍不扩展原512轮job。**本轮r1/r2合计0新环境/0GPU forward/0optimizer**。r1曾45测试+guard/refusal通过，后修unknown记账而保留旧目录不伪称当前源码未改。
+
+r2 unit guard/controller10:56:50 completed/2.099秒/70输入/100%2GiB；probe guard10:57:23/controller24 completed/2.089秒/88输入/250%6GiB；refusal guard10:59:06/controller07 completed/8.178秒/107输入/100%2GiB。均hold；unit/probe单采样不能称真实峰，refusal4采样最高CPU65℃GPU42℃573.86MiB。证据reports/experiments/bounded_gpu_phase_20261107.md、runs/autonomous_gpu_phase_20261107/completion_audit与unit_r2/guard_probe_r2/refusal_r2各receipts和guard/controller，全部有限service已终态。原30M/4k policy Adam/计数不动，失败4k/8k不推广，1.877评测派发结论不变。
+
+**下一实际开发/验收（未开始，先查已有目录/进程）**：给真实计算路径做一次新job有限正向集成；不是再加一层状态工具。建议新根runs/autonomous_bounded_gpu_phase_acceptance_20261107，先冻结protocol后启动。新job沿用原30M控制/已有4k仅旁观、native当前31/20/runtime/最高精度、无序8seed [100015,100008,100014,100009,100013,100010,100012,100011]、max20000/chunk256，明确bounded_phase_version=bounded-gpu8-phase-v1，frozen_files含当前phase/guard/inspector新源码；phase_round_limit=256/phase_environment_step_limit=2048。不能补改原已完job或迁移cache。新attempt请求max_chunks=20、fresh expected_start(None/0/0/0)，必须被真实夹成1段。controller冻结request/job/design/source、原两模型/source/native/runtime和已有oracle chunk_0000/1外部manifest/文件SHA，原GPU8/250%6GiB/温控/内存/180秒command600秒wall及host/STOP/goal守护。
+
+只允许**≤2048新环境步/0optimizer**，正常预期256轮/2048步、两模型共512GPU forward；若提前死按真实量保留而非补算凑数。必须由actual phase CLI/真实guard直接计算（不是mock positive或仅probe），process计数/Adam/策略/RNG冻结、两次边界校验成立。控制器终态后，用纯只读比较脚本在100%2GiB守护下把新chunk0/1全部rows和完整worker/Core/bag/父与worker RNG/active views/计数与runs/autonomous_ordered_gpu_eval_20261107/oracle冻结前256轮精确比对（双方各自identity，不能改旧identity）；源采样RNG不能被额外守护查询改变。失败保留，不能改阈值重测原质量/速度矩阵翻案。
+
+随后重复同attempt，必须仅返回原receipt/reused=true、source进程PID/所有cache/process文件不变，没有第二次计算；其new_environment_steps字段是原attempt历史累计，不能当第二调用新增量。再新建第二attempt绑定此时真实边界，满256/2048阶段必须preserved/0新段，无新started/process/chunk，不必启动CUDA。完整20k评测仍未完成，不能把controller passed/phase_command_completed当terminal_verified或质量资格。此一次正向集成是新保护hook实际生产入口的必要验证，不是新候选训练/4k额外8资格/速度门，不追加旧512轮job。完成后回到实际学习/评测瓶颈选择，避免无证据继续堆状态工具或重复失败LR/GAE/beta/actor/critic变体。
+
+轻薄本工作副本/后端/每小时驻留保持；用户暂停取消即停，GPU/host不可用或额度不足保存等每小时，无CPU/其他主机fallback、不改账户/付费/绕过。持续目标保持active。
+
 ### 2026-11-07T10:44:28+08:00 最新接手：只读评测状态与终态判定已验收；下一强制有限phase预算的计算启动器
 
 **前轮分类progress**：03f14d1新增通用GPU8入口/26检查/8192实际环境步与精确跨进程恢复；没有重跑。本轮为原生持续目标轮01a1b3dc-05a3-7d70-9052-ed82be097124，首工具10:35:11.490+08/call_95ad890243fc4e31ab1b8090aeb4bc2a，非新hourly投递。native_goal_gpu_status_execution_20261107.json记录开始和实际结果。10:35:05后台healthy/keeper active/proxy空/四单元enabled active/linger yes/睡眠masked，本轮无live guard时才开始，无需重做短暂停桌面试验。目标保持active。

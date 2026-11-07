@@ -1935,3 +1935,45 @@
 - 2026-11-07T10:41:39+08:00：资源保护：通用GPU评测只读CLI验收：两个真实partial缓存准确区分controller passed和评测终态，有限阶段满额不允许续写，原输入SHA全未变。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_status_20261107/run/summary.json。
 
 - 2026-11-07T10:43:39+08:00：完成GPU8只读缓存状态工具inspect_gpu_evaluation及真实CLI verifier：21检查/1.73秒，合成terminal fixture通过原frozen完整trace审计（不冒充真实GPU终态）；真实CLI579361/579366核对前轮oracle/parallel各512轮4096历史步，准确判partial/阶段预算已满/can_resume=false，全部原文件集合SHA未变。临时视图复用prepare/终态auditor，原job不写、既存锁共享读/活writer与变化blocked，错摘要/坏cache/hash/seed/counter/audit拒绝。正式0新环境/0forward/0optimizer，原policy/Adam/计数不动，主31推理20/所有冻结runner不改。unit guard10:40:11/controller12/4.112秒/64输入，CLI guard/controller10:41:39/4.119秒/93输入，均100%2GiB原温控；CLI2采样最高CPU57.5℃GPU37℃573.63MiB，不当连续真峰。状态命令尚未接管计算入口phase限制，下一补有限phase启动器，不裸跑超预算。证据reports/experiments/gpu_evaluation_status_20261107.md、runs/autonomous_gpu_status_20261107/completion_audit.json和run/inspection_receipt.json，原生轮执行receipt已完成。
+
+- 2026-11-07T10:47:23.111857+08:00：持续目标新轮01a1b3e4-d974-7e73-8a13-282ce743ca04实际首工具2026-11-07T02:44:48.822Z/call_76753b9cbfa9497088a42893c94996e1；前轮789abf3为progress，当前无live guard、keeper active。开始有限GPU8 phase启动器：预算保守按活槽与256轮上界，在原runner持锁后的read_chain原校验后再核验同一边界/预算，避免外层检查到计算间race；仅添加拒绝条件，不改冻结文件/返回状态/数值协议。将核对真实cgroup/guarded_process/guardian heartbeat/原profile及lightbook与goal/STOP，不凭env标记。定向单测和真实满预算拒绝、无计算guard探针预定0环境/0forward/0optimizer。证据runs/autonomous_development_20261105/native_goal_gpu_phase_execution_20261107.json。
+
+- 2026-11-07T10:52:39+08:00：资源保护：启动受保护任务 tetris-guard-581287-1794019959717300764，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_phase_20261107/unit/guard。
+
+- 2026-11-07T10:52:41+08:00：资源保护：tetris-guard-581287-1794019959717300764 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_phase_20261107/unit/guard。
+
+- 2026-11-07T10:52:42+08:00：资源保护：有限GPU8阶段启动器预算/持锁边界/幂等/真实保护证据判定单测完成；全部合成，0环境/forward/optimizer。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_phase_20261107/unit/summary.json。
+
+- 2026-11-07T10:53:21+08:00：资源保护：启动受保护任务 tetris-guard-581453-1794020001378826862，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_phase_20261107/guard_probe/guard。
+
+- 2026-11-07T10:53:23+08:00：资源保护：tetris-guard-581453-1794020001378826862 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_phase_20261107/guard_probe/guard。
+
+- 2026-11-07T10:53:23+08:00：资源保护：有限GPU8启动器真实内核/guardian/heartbeat/250%6GiB保护正向探针完成，明确guard_probe无模型加载和计算。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_phase_20261107/guard_probe/summary.json。
+
+- 2026-11-07T10:54:55+08:00：资源保护：启动受保护任务 tetris-guard-581752-1794020095683344104，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_phase_20261107/refusal/guard。
+
+- 2026-11-07T10:55:03+08:00：资源保护：tetris-guard-581752-1794020095683344104 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_phase_20261107/refusal/guard。
+
+- 2026-11-07T10:55:04+08:00：资源保护：有限GPU8阶段真实CLI拒绝给既有512轮满预算job追加，重复attempt只复用receipt，原cacheSHA不变，0环境forwardoptimizer。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_phase_20261107/refusal/summary.json。
+
+- 2026-11-07T10:56:46.167321+08:00：阶段启动器r1：45检查/1.30秒、真实guard探针581483（guardian581453/watchdog581479/真实tetris-compute.slice、CPU2.5核、6GiB/swap0/affinity[4,6,8,10,12,14]/120秒/CUDA可用）通过；两个旧512轮job各两次CLI均preserved/复用receipt/SHA未改，正式0计算。随后发现失败路径默认0会误标可能未提交的实际工作，修改为started之后未知null、仅核实process receipt后记实际量，新增定向检查；启动新unit_r2、后续新探针/拒绝验收，保留r1原证据不伪称当前源码相同。证据runs/autonomous_gpu_phase_20261107/{unit,guard_probe,refusal}。
+
+- 2026-11-07T10:56:48+08:00：资源保护：启动受保护任务 tetris-guard-582127-1794020208401528306，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_phase_20261107/unit_r2/guard。
+
+- 2026-11-07T10:56:50+08:00：资源保护：tetris-guard-582127-1794020208401528306 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_phase_20261107/unit_r2/guard。
+
+- 2026-11-07T10:56:50+08:00：资源保护：有限GPU8阶段启动器46项定向检查（含中断未知计算量不伪造0）；0环境forwardoptimizer。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_phase_20261107/unit_r2/summary.json。
+
+- 2026-11-07T10:57:21+08:00：资源保护：启动受保护任务 tetris-guard-582238-1794020241685517708，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_phase_20261107/guard_probe_r2/guard。
+
+- 2026-11-07T10:57:23+08:00：资源保护：tetris-guard-582238-1794020241685517708 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_phase_20261107/guard_probe_r2/guard。
+
+- 2026-11-07T10:57:24+08:00：资源保护：有限GPU8 phase启动器r2实际内核/guardian/heartbeat原250%6GiB保护探针通过，0环境forwardoptimizer。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_phase_20261107/guard_probe_r2/summary.json。
+
+- 2026-11-07T10:58:58+08:00：资源保护：启动受保护任务 tetris-guard-582523-1794020338558422872，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_phase_20261107/refusal_r2/guard。
+
+- 2026-11-07T10:59:06+08:00：资源保护：tetris-guard-582523-1794020338558422872 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_phase_20261107/refusal_r2/guard。
+
+- 2026-11-07T10:59:07+08:00：资源保护：阶段启动器r2两个真实满预算job拒绝和重复receipt复用/SHA不变，0环境forwardoptimizer。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_gpu_phase_20261107/refusal_r2/summary.json。
+
+- 2026-11-07T11:00:39+08:00：有限GPU8 phase启动器r2完成：46检查/1.32秒，原read_chain/check_inputs原样校验后增加边界/保守256轮预算条件，锁内再核对防race、finally还原；attempt幂等、旧cache不迁移、全停缺摘要须真实process工作量、未核实失败计算记unknown/null不造0。真实live探针582268（guardian582238/watchdog582264/匹配tetris-compute cgroup/CPU2.5/6GiB/swap0/affinity[4,6,8,10,12,14]/120秒/CUDA）通过；真实旧oracle582540→582545/parallel582565→582570全拒绝扩展20chunk、二次复用receipt，无新started/process/chunk且全部原输入SHA未变。本轮r1/r2共0环境/0GPU forward/0optimizer，未加载模型；原31/20及冻结capture/helper不改。r2 unit2.099秒/70输入/100%2GiB，probe2.089秒/88输入/250%6GiB，refusal8.178秒/107输入/100%2GiB，采样最高CPU65℃GPU42℃，probe/unit仅单采样不称真峰。正向capture钩子实际CUDA尚未验，下一只做新sealed256轮≤2048步正向集成，不追加旧512功能job或推广。证据reports/experiments/bounded_gpu_phase_20261107.md、runs/autonomous_gpu_phase_20261107/completion_audit.json与r2三组guard/controller/receipts。
