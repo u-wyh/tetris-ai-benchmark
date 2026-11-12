@@ -365,6 +365,15 @@ def run(folder):
         raise ValueError('Only the registered4/8episode protocols are supported')
     objective = design.get('preference_objective', 'pair_softplus')
     reuse_extension = 'reuse_extension' in design
+    method = design.get('head_fit_method', 'adam256')
+    if method not in ('adam256', 'damped_newton_v1'):
+        raise ValueError('Unregistered head optimization method')
+    if method == 'damped_newton_v1':
+        from head_newton import NEWTON, fit_newton
+        if (design.get('newton') != NEWTON or blocks != 2 or not reuse_extension or
+                objective != 'all_legal_cross_entropy' or
+                str(ROOT/'scripts/head_newton.py') not in design['frozen_files']):
+            raise ValueError('Fixed bounded Newton comparison or sealed implementation differs')
     if (objective not in ('pair_softplus', 'all_legal_cross_entropy') or
             ((objective == 'all_legal_cross_entropy' or reuse_extension) and blocks != 2)):
         raise ValueError('Unregistered objective/coverage combination')
@@ -377,6 +386,7 @@ def run(folder):
         head_optimizer_steps=0, ppo_optimizer_steps=0, environment_steps=0, model_loads=0, guard_proof=proof)
     receipt['full_policy_forward_budget'] = (82 if blocks == 1 else 83)-int(reuse_extension)
     receipt['preference_objective'] = objective
+    receipt['head_fit_method'] = method
     durable_json(folder/'execution.json', receipt)
     try:
         if (training_source_identity() != design['training_sources'] or
@@ -444,7 +454,9 @@ def run(folder):
                     offsets=np.r_[0, np.cumsum([len(r['actions']) for r in val_before])].astype(np.int64),
                     original_weight=weight, original_bias=bias)
                 stream.flush();os.fsync(stream.fileno())
-        readiness = dict(at=now(), status='passed', allowed_scope='Exactly one fixed256-step head probe; validation never fitted',
+        readiness = dict(at=now(), status='passed', allowed_scope=(
+            'Exactly one bounded Newton solve of the fixed256-schedule objective; validation never fitted'
+            if method == 'damped_newton_v1' else 'Exactly one fixed256-step head probe; validation never fitted'),
             source_model_sha256=MODEL_SHA, source_ppo_counts=[30003200, 36625], train_cases=cases['train'], validation_cases=cases['validation'],
             train_episodes=4*blocks, validation_episodes=3, source_validation_modes_verified=True,
             validation_features_sha256=sha(design['reuse_validation']['arrays'] if blocks == 2 else folder/'validation_features.npz'),
@@ -470,6 +482,7 @@ def run(folder):
         def checkpoint(delta, optimizer, step):
             tmp = folder/'head_fit_checkpoint.pt.tmp'
             torch.save(dict(delta=delta.detach().cpu(), optimizer=optimizer.state_dict(), head_optimizer_steps=step,
+                head_fit_method=method,
                 source_model_sha256=MODEL_SHA, source_ppo_counts=[30003200, 36625], probe_design_sha256=sha(folder/'probe_design.json'),
                 eligible_for_ppo_resume=False), tmp)
             with tmp.open('rb') as stream:os.fsync(stream.fileno())
@@ -480,10 +493,24 @@ def run(folder):
             durable_json(folder/'progress.json', dict(at=now(), head_optimizer_steps=step,
                 checkpoint_sha256=sha(folder/'head_fit_checkpoint.pt'), source_ppo_counts=[30003200, 36625]))
             live_guard(folder, design)
-        delta, history = fit(arrays, metadata, receipt, check, checkpoint)
+        fitter = fit_newton if method == 'damped_newton_v1' else fit
+        delta, history = fitter(arrays, metadata, receipt, check, checkpoint)
+        if method == 'damped_newton_v1' and not receipt['head_fit_converged']:
+            check();unchanged(design['frozen_files'])
+            if not identical(before, (source.policy.state_dict(), source.policy.optimizer.state_dict(), global_rng_state(source), source._n_updates)):
+                raise ValueError('Original state changed during stopped optimization')
+            durable_json(folder/'probe_result.json', dict(at=now(), status='optimization_stopped',
+                head_fit_converged=False, reason=receipt['newton_status'], eligible_for_quality_evaluation=False,
+                quality_gate_passed=False, eligible_for_ppo_resume=False, source_state_unchanged=True,
+                source_ppo_counts=[30003200, 36625], head_fit_method=method, training_history=history,
+                checkpoint_sha256=sha(folder/'head_fit_checkpoint.pt'), work={k: v for k, v in receipt.items()
+                    if k.endswith(('_steps', '_forwards', '_passes', '_attempts')) or k == 'model_loads'},
+                scope='Finite Newton solve stopped before registered convergence; no candidate GPU endpoint or promotion.'))
+            receipt.update(at=now(), status='optimization_stopped', original_state_unchanged=True)
+            return
         candidate = apply_delta(source.policy, delta)
         changed = [name for name, value in candidate.state_dict().items() if not torch.equal(value, before[0][name])]
-        if changed != ['score_head.2.weight']:
+        if changed != ['score_head.2.weight'] and not (method == 'damped_newton_v1' and receipt['head_optimizer_steps'] == 0 and changed == []):
             raise ValueError('Candidate changed parameters outside the64-value final weight')
         candidate_weight = candidate.score_head[-1].weight.detach().cpu().numpy().reshape(-1).copy()
         train_views = [public_case(public, c['state_id']) for c in cases['train'] for _ in range(2)]
@@ -526,14 +553,18 @@ def run(folder):
             evaluation_model.save(folder/'evaluation_candidate.zip')
             durable_json(folder/'evaluation_candidate_identity.json', dict(at=now(), evaluation_only=True,
                 eligible_for_ppo_resume=False, source_model_sha256=MODEL_SHA, source_ppo_counts=[30003200, 36625],
-                head_optimizer_steps=256, model_sha256=sha(folder/'evaluation_candidate.zip'), quality_gate_passed=False))
+                head_optimizer_steps=receipt['head_optimizer_steps'], head_fit_method=method,
+                model_sha256=sha(folder/'evaluation_candidate.zip'), quality_gate_passed=False))
         with (folder/'coefficients.npz').open('xb') as stream:
             np.savez_compressed(stream, delta=delta, source_weight=weight, candidate_weight=candidate_weight, bias=bias)
             stream.flush();os.fsync(stream.fileno())
         check();unchanged(design['frozen_files'])
         if not identical(before, (source.policy.state_dict(), source.policy.optimizer.state_dict(), global_rng_state(source), source._n_updates)):
             raise ValueError('Original source policy/Adam/counts/RNG changed')
-        if (receipt['head_optimizer_steps'] != 256 or receipt['source_policy_forwards'] != 1-int(reuse_extension) or
+        fit_valid = (receipt['head_optimizer_steps'] == 256 if method == 'adam256' else
+                     receipt['head_fit_converged'] and 0 <= receipt['head_optimizer_steps'] <= 32 and
+                     receipt['newton_gradient_infinity'] <= 1e-6)
+        if (not fit_valid or receipt['source_policy_forwards'] != 1-int(reuse_extension) or
                 receipt['candidate_policy_forwards'] != 80+blocks or
                 receipt['full_policy_forward_attempts'] != receipt['full_policy_forward_budget']):
             raise ValueError('Actual finite work counts differ')
@@ -542,6 +573,9 @@ def run(folder):
             delta_l1=float(np.abs(delta).sum()), delta_l2=float(np.linalg.norm(delta)), source_ppo_counts=[30003200, 36625],
             max_score_reconstruction_error=max_error, training_history=history, train=train_report, validation=val_report,
             preference_objective=objective,
+            head_fit_method=method,
+            optimization={k: v for k, v in receipt.items() if k.startswith('newton_') or k in
+                ('head_fit_converged', 'head_full_objective_passes', 'head_hessian_passes', 'line_search_objective_passes')},
             normal=normal_report, all_normal_mode_changes=discrepancies, coefficients_sha256=sha(folder/'coefficients.npz'),
             checkpoint_sha256=sha(folder/'head_fit_checkpoint.pt'), work={k: receipt[k] for k in
                 ('source_policy_forwards', 'candidate_policy_forwards', 'head_training_forwards', 'head_optimizer_steps',
