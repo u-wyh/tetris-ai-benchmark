@@ -6,6 +6,16 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-12T16:10:32+08:00 最新接手：8episode固定覆盖对照已失败封闭，下一全局竞争目标诊断
+
+本小时queued submission01a1ceb2-8015-74a2-923c-8bc542a9fd6f真实被turn01a1cec3-9064-7fe2-a300-79f0447d0058消费，首工具15:58:17.804/call_2247838394934198be1add070c6734b6，RPCqueue空；health后台/四unit enabled active/linger/sleep masked/goalactive，当前proxy存在，不称本轮无桌面或OS重启。hourly_head8_execution_20261112.json持久化。旧job全终态，未重跑。
+
+新root runs/autonomous_head_coverage8_20261112，helper改前归档；19测试1.23秒通过，首次unit缺original_context在guard/测试前停止0计算，显式pytest的新unit_r2成功。fresh8episode256更新（old/new交替各128曝光），lr/loss/KL/L2与旧试验相同；复用旧640/val、新源1CUDA8，内存append8不覆写。source1830044于16:07:48完成/controller52终态inactive success。唯一83fullforward=source1+candidate82，另256headforward/256Adam，1load0env0PPO；源全policy/Adam/RNG/ZIP/PPO30003200/36625及31/20源不变，候选只末Linear64weight改变。
+
+train1/8 globalTop1(old4:0/new4:1)，3/8 pair领先base，其中2仍输第三动作；trainloss4.84016→.83647。val0/4全局Top1/0pair领先，3episode等权loss4.85733→1.52877；固定准入失败，无candidateZIP/完整棋力/推广，不延长/扫参/重跑。normaltrain96/316变、val104/316，KL.465948/.507369仅报告不是棋力证据。max重建3.894893e-6。正式8.235秒4采样最高CPU66.125GPU40.0℃/cgroup1044.391MiB，全hold非真峰；原250%6GiB/温控/STOP预算不变，frozen完成后全相符。report head_coverage8_20261112.md/completion_audit保存。
+
+**下一实际开发（先查重）**：按report末节先做有界全局竞争诊断，旧/新公开h与endpoint系数复用，对照已记录实际GPU mode，0模型load/forward/env/优化器。两次固定pair目标验证均0全局纠正，具体训练pair3ahead仅1全局，说明需要检查第三动作竞争，不能推断唯一原因。可事前设计一次替换pairsoftplus为全合法动作CE的有限协议，保持fresh d0/Adam/lr.01/256步/normalKLβ1/L2.01/8episode交替/val仅终点与旧准入门槛；不调参网格、不续失败checkpoint、不PPO推广。先padding/第三动作梯度/隔离测试与外部新8cache SHA验证；GPU/主机/额度不可用保留原小时续办，无CPU/跨机fallback。持续goal active。
+
 ### 2026-11-12T15:56:01+08:00 最新接手：新GPU train block1四例全强有益，下一8episode覆盖对照
 
 本轮progress：先封闭Nov7完成/额度中断的head试验，提交499b6cb；旧256步val0/4准入失败，不重跑/续调。Nov12普通额度恢复后当前native turn01a1ceb2-7ff5-7f43-b98b-23c61f7799a3首工具15:39:45.269+08/call_4c8a6ee694c04786b332c27392c0e6c3，queued请求初仍pending不称消费；backend13827→1、当前proxy存在，不称本轮无桌面或OS重启。额度间断未工作，不改账户付费。

@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 import numpy as np
 
-from freeze_head_representation import MODEL_SHA, load_cache, sha, unchanged, public_view
+from freeze_head_representation import MODEL_SHA, load_cache, sha, unchanged, public_view, validate_arrays
 from paired_branch_capture import selected_cases, specs
 from paired_branch_guard import require_authorization, process_args, argument
 from restore_rank_contexts import observation_digest
@@ -24,10 +24,16 @@ FIXED = dict(steps=256, learning_rate=.01, betas=[.9, .999], eps=1e-8,
 
 
 def batch_indices(metadata, step):
-    indices = [0, 2, 4, 6]+[8+(step % 79)*8+lane for lane in range(4)]
-    for i in indices:
+    pairs = metadata.get('training_pair_indices', [0, 2, 4, 6])
+    if pairs not in ([0, 2, 4, 6], [0, 2, 4, 6, 640, 642, 644, 646]):
+        raise ValueError('Unregistered training coverage schedule')
+    quartet = (step % 2)*4 if len(pairs) == 8 else 0
+    indices = pairs[quartet:quartet+4]+[8+(step % 79)*8+lane for lane in range(4)]
+    for row, i in enumerate(indices):
         state = metadata['states'][i]
-        if state['split'] != 'train' or (i >= 8 and state['seed'] not in range(100000, 100004)):
+        if (state['split'] != 'train' or
+                (row >= 4 and (state['kind'] != 'normal' or state['seed'] not in range(100000, 100004))) or
+                (row < 4 and (state['kind'] != 'pair' or state['seed'] in (992011, 992016, 992027)))):
             raise ValueError('Validation entered the training minibatch')
     return indices
 
@@ -142,15 +148,17 @@ def fit(arrays, metadata, receipt, check, checkpoint):
     return delta.detach().cpu().numpy(), history
 
 
-def current_cases(design, preferences, public, states):
+def current_cases(design, preferences, public, states, training_block=0):
     cases_by_split = {}
     for split in ('train', 'validation'):
         evidence = json.loads(Path(design[split+'_window']).read_text())
-        cases = selected_cases(preferences, split)
+        block = training_block if split == 'train' else 0
+        cases = selected_cases(preferences, split, block)
         probe = json.loads(Path(design[split+'_probe']).read_text())
         if (evidence['status'] != 'passed' or evidence['label_counts']['beneficial'] != 4 or
                 evidence['model']['sha256'] != MODEL_SHA or evidence['model']['counts'] != [30003200, 36625] or
                 evidence.get('case_split', 'train') != split or evidence['per_branch_model_identity_explicit'] is not True or
+                evidence.get('training_block', 0) != block or
                 evidence['optimizer_steps'] != 0 or [c['case'] for c in evidence['comparisons']] != cases or
                 probe['status'] != 'probe_passed' or probe['source_full_state_restored'] is not True or
                 probe['branch_ids'] != [s['branch_id'] for s in specs(cases)]):
@@ -174,7 +182,7 @@ def public_case(public, index):
 
 def observe(policy, views, receipt, role):
     import torch
-    if len(views) != 8 or receipt['full_policy_forward_attempts'] >= 82:
+    if len(views) != 8 or receipt['full_policy_forward_attempts'] >= receipt.get('full_policy_forward_budget', 82):
         raise ValueError('Finite CUDA8 full-policy budget exceeded')
     observations = {k: torch.as_tensor(np.stack([v['observation'][k] for v in views]), device='cuda')
                     for k in views[0]['observation']}
@@ -249,6 +257,63 @@ def raw_teacher_kl(before, after):
     return float(np.sum(np.exp(logq)*(logq-logp)))
 
 
+def append_training_block(arrays, metadata, cases, rows):
+    """Append eight sealed views in memory, retaining the complete old640 prefix."""
+    if (len(metadata['states']) != 640 or len(cases) != 4 or len(rows) != 8 or
+            [c['seed'] for c in cases] != [992010, 992012, 992014, 992015]):
+        raise ValueError('Fixed block1 whole-episode coverage differs')
+    appended = copy.deepcopy(metadata)
+    for pair, case in enumerate(cases):
+        left, right = rows[pair*2:pair*2+2];same_features(left, right)
+        if (not np.array_equal(left['raw_score'], right['raw_score']) or
+                left['mode'] != case['baseline_action'] or right['mode'] != case['baseline_action'] or
+                case['action'] not in left['actions']):
+            raise ValueError('New source duplicate, legal label or original GPU mode differs')
+        for role, row in zip(('base', 'alternative'), (left, right)):
+            appended['states'].append(dict(kind='pair', pair=4+pair, role=role, seed=case['seed'],
+                split='train', reference_action=case['baseline_action'], good_action=case['action'],
+                input_digest=copy.deepcopy(row['input_digest'])))
+    output = {k: v.copy() for k, v in arrays.items()}
+    for key in ('h', 'raw_score', 'actions'):
+        output[key] = np.concatenate([arrays[key]]+[r[key] for r in rows])
+    output['offsets'] = np.r_[arrays['offsets'], arrays['offsets'][-1]+np.cumsum([len(r['actions']) for r in rows])].astype(np.int64)
+    appended['training_pair_indices'] = [0, 2, 4, 6, 640, 642, 644, 646]
+    validate_arrays(output, appended)
+    if set(c['seed'] for c in cases) & {s['seed'] for s in metadata['states'] if s['split'] == 'validation'}:
+        raise ValueError('New preference episode overlaps validation')
+    return output, appended
+
+
+def reused_validation(design, cases, public, weight, bias):
+    """Verify external seals before reading old validation arrays; no new source forward."""
+    reuse = design['reuse_validation']
+    for key in ('readiness', 'arrays'):
+        if sha(reuse[key]) != reuse[key+'_sha256']:
+            raise ValueError('External validation seal differs')
+    ready = json.loads(Path(reuse['readiness']).read_text())
+    if (ready['status'] != 'passed' or ready['source_model_sha256'] != MODEL_SHA or
+            ready['source_ppo_counts'] != [30003200, 36625] or ready['validation_cases'] != cases or
+            ready['source_validation_modes_verified'] is not True or ready['validation_episodes'] != 3 or
+            ready['validation_features_sha256'] != reuse['arrays_sha256'] or
+            ready['inherited_eligible_for_training_flags_unchanged'] is not True):
+        raise ValueError('Reused validation provenance differs')
+    states = [dict(reference_action=c['baseline_action'], input_digest=observation_digest(**public_case(public, c['state_id'])))
+              for c in cases for _ in range(2)]
+    with np.load(reuse['arrays'], allow_pickle=False) as archive:
+        arrays = {k: archive[k] for k in archive.files}
+    validate_arrays(arrays, dict(states=states))
+    if not np.array_equal(weight, arrays['original_weight']) or not np.array_equal(bias, arrays['original_bias']):
+        raise ValueError('Reused validation source head differs')
+    rows = [cached_row(arrays, dict(states=states), i) for i in range(8)]
+    for i in range(0, 8, 2):
+        same_features(rows[i], rows[i+1])
+        if not np.array_equal(rows[i]['raw_score'], rows[i+1]['raw_score']):
+            raise ValueError('Reused validation duplicate scores differ')
+    for row in rows:
+        reconstruction(row, weight, bias)
+    return rows
+
+
 def run(folder):
     import torch
     from sb3_contrib import MaskablePPO
@@ -261,6 +326,9 @@ def run(folder):
     from resource_guard import now
     design = json.loads((folder/'probe_design.json').read_text())
     unchanged(design['frozen_files']);proof = live_guard(folder, design)
+    blocks = design.get('training_blocks', 1)
+    if type(blocks) is not int or blocks not in (1, 2):
+        raise ValueError('Only the registered4/8episode protocols are supported')
     if design['fixed'] != FIXED or not torch.cuda.is_available():
         raise RuntimeError('Fixed head protocol or available CUDA required')
     if (folder/'execution.json').exists():
@@ -268,6 +336,7 @@ def run(folder):
     receipt = dict(at=now(), pid=os.getpid(), status='started', full_policy_forward_attempts=0,
         source_policy_forwards=0, candidate_policy_forwards=0, head_training_forwards=0,
         head_optimizer_steps=0, ppo_optimizer_steps=0, environment_steps=0, model_loads=0, guard_proof=proof)
+    receipt['full_policy_forward_budget'] = 82 if blocks == 1 else 83
     durable_json(folder/'execution.json', receipt)
     try:
         if (training_source_identity() != design['training_sources'] or
@@ -278,6 +347,10 @@ def run(folder):
         public, states, _, _ = load_public(Path(design['public_folder']), design['frozen_files'])
         preferences = json.loads((Path(design['public_folder'])/'preferences.json').read_text())
         cases = current_cases(design, preferences, public, states)
+        extension = []
+        if blocks == 2:
+            extended_design = dict(design, train_window=design['extension_window'], train_probe=design['extension_probe'])
+            extension = current_cases(extended_design, preferences, public, states, training_block=1)['train']
         for i, case in enumerate(cases['train']):
             state = metadata['states'][i*2]
             if (state['seed'], state['reference_action'], state['good_action']) != (case['seed'], case['baseline_action'], case['action']):
@@ -297,7 +370,24 @@ def run(folder):
         if not np.array_equal(weight, arrays['original_weight']) or not np.array_equal(bias, arrays['original_bias']):
             raise ValueError('Frozen cache/source head differs')
         val_views = [public_case(public, c['state_id']) for c in cases['validation'] for _ in range(2)]
-        val_before = observe(source.policy, val_views, receipt, 'source')
+        if blocks == 2:
+            val_before = reused_validation(design, cases['validation'], public, weight, bias)
+            new_views = [public_case(public, c['state_id']) for c in extension for _ in range(2)]
+            require_authorization(design, folder)
+            new_rows = observe(source.policy, new_views, receipt, 'source')
+            for row in new_rows:reconstruction(row, weight, bias)
+            # Persist only the newly computed eight rows; never overwrite the old caches.
+            with (folder/'extension_features.npz').open('xb') as stream:
+                np.savez_compressed(stream, h=np.concatenate([r['h'] for r in new_rows]),
+                    raw_score=np.concatenate([r['raw_score'] for r in new_rows]),
+                    actions=np.concatenate([r['actions'] for r in new_rows]),
+                    offsets=np.r_[0, np.cumsum([len(r['actions']) for r in new_rows])].astype(np.int64),
+                    original_weight=weight, original_bias=bias)
+                stream.flush();os.fsync(stream.fileno())
+            arrays, metadata = append_training_block(arrays, metadata, extension, new_rows)
+            cases['train'] += extension
+        else:
+            val_before = observe(source.policy, val_views, receipt, 'source')
         max_error = 0.
         for pair, case in enumerate(cases['validation']):
             left, right = val_before[pair*2:pair*2+2];same_features(left, right)
@@ -305,21 +395,29 @@ def run(folder):
                 raise ValueError('Current validation source GPU mode differs')
         for row in val_before:
             max_error = max(max_error, reconstruction(row, weight, bias))
-        with (folder/'validation_features.npz').open('xb') as stream:
-            np.savez_compressed(stream, h=np.concatenate([r['h'] for r in val_before]),
-                raw_score=np.concatenate([r['raw_score'] for r in val_before]), actions=np.concatenate([r['actions'] for r in val_before]),
-                offsets=np.r_[0, np.cumsum([len(r['actions']) for r in val_before])].astype(np.int64),
-                original_weight=weight, original_bias=bias)
-            stream.flush();os.fsync(stream.fileno())
+        if blocks == 1:
+            with (folder/'validation_features.npz').open('xb') as stream:
+                np.savez_compressed(stream, h=np.concatenate([r['h'] for r in val_before]),
+                    raw_score=np.concatenate([r['raw_score'] for r in val_before]), actions=np.concatenate([r['actions'] for r in val_before]),
+                    offsets=np.r_[0, np.cumsum([len(r['actions']) for r in val_before])].astype(np.int64),
+                    original_weight=weight, original_bias=bias)
+                stream.flush();os.fsync(stream.fileno())
         readiness = dict(at=now(), status='passed', allowed_scope='Exactly one fixed256-step head probe; validation never fitted',
             source_model_sha256=MODEL_SHA, source_ppo_counts=[30003200, 36625], train_cases=cases['train'], validation_cases=cases['validation'],
-            train_episodes=4, validation_episodes=3, source_validation_modes_verified=True,
-            validation_features_sha256=sha(folder/'validation_features.npz'), source_reconstruction_max=max_error,
+            train_episodes=4*blocks, validation_episodes=3, source_validation_modes_verified=True,
+            validation_features_sha256=sha(design['reuse_validation']['arrays'] if blocks == 2 else folder/'validation_features.npz'),
+            source_reconstruction_max=max_error,
             inherited_eligible_for_training_flags_unchanged=False,
             scope='Prior artifacts retain eligible_for_training=false. This explicit bounded-probe readiness does not grant PPO resume or promotion.')
         # Record the unchanged legacy flags themselves, not an inverted approval claim.
         readiness['inherited_eligible_for_training_flags_unchanged'] = all(
             json.loads(Path(design[split+'_window']).read_text())['eligible_for_training'] is False for split in ('train', 'validation'))
+        if blocks == 2:
+            readiness['inherited_eligible_for_training_flags_unchanged'] &= json.loads(Path(design['extension_window']).read_text())['eligible_for_training'] is False
+            readiness['extension_features_sha256'] = sha(folder/'extension_features.npz')
+            readiness['training_pair_indices'] = metadata['training_pair_indices']
+            readiness['validation_source_forward_reused'] = True
+            readiness['source_reconstruction_max'] = max(max_error, *(reconstruction(r, weight, bias) for r in new_rows))
         if not readiness['inherited_eligible_for_training_flags_unchanged'] or metadata['eligible_for_training'] is not False:
             raise ValueError('Prior evidence eligibility scope unexpectedly changed')
         durable_json(folder/'readiness.json', readiness)
@@ -345,9 +443,11 @@ def run(folder):
             raise ValueError('Candidate changed parameters outside the64-value final weight')
         candidate_weight = candidate.score_head[-1].weight.detach().cpu().numpy().reshape(-1).copy()
         train_views = [public_case(public, c['state_id']) for c in cases['train'] for _ in range(2)]
-        check();train_after = observe(candidate, train_views, receipt, 'candidate')
+        train_after = []
+        for start in range(0, len(train_views), 8):
+            check();train_after += observe(candidate, train_views[start:start+8], receipt, 'candidate')
         check();val_after = observe(candidate, val_views, receipt, 'candidate')
-        train_before = [cached_row(arrays, metadata, i) for i in range(8)]
+        train_before = [cached_row(arrays, metadata, i) for i in list(range(8))+(list(range(640, 648)) if blocks == 2 else [])]
         train_report = pair_report(cases['train'], train_before, train_after)
         val_report = pair_report(cases['validation'], val_before, val_after)
         for old, new in zip(train_before+val_before, train_after+val_after):
@@ -389,7 +489,9 @@ def run(folder):
         check();unchanged(design['frozen_files'])
         if not identical(before, (source.policy.state_dict(), source.policy.optimizer.state_dict(), global_rng_state(source), source._n_updates)):
             raise ValueError('Original source policy/Adam/counts/RNG changed')
-        if receipt['head_optimizer_steps'] != 256 or receipt['source_policy_forwards'] != 1 or receipt['candidate_policy_forwards'] != 81:
+        if (receipt['head_optimizer_steps'] != 256 or receipt['source_policy_forwards'] != 1 or
+                receipt['candidate_policy_forwards'] != 80+blocks or
+                receipt['full_policy_forward_attempts'] != receipt['full_policy_forward_budget']):
             raise ValueError('Actual finite work counts differ')
         result = dict(at=now(), status='completed', eligible_for_quality_evaluation=bool(gate), quality_gate_passed=False,
             eligible_for_ppo_resume=False, source_state_unchanged=True, changed_candidate_parameters=changed,

@@ -68,6 +68,58 @@ def test_validation_tag_inside_training_slot_is_refused(tmp_path):
         probe.batch_indices(metadata, 0)
 
 
+def extended_fixture(tmp_path):
+    arrays, metadata = fixture(tmp_path)
+    cases = [dict(seed=seed, baseline_action=0, action=1) for seed in [992010, 992012, 992014, 992015]]
+    rows = [probe.cached_row(arrays, metadata, i) for i in range(8)]
+    return arrays, metadata, cases, rows
+
+
+def test_append_preserves_old_cache_and_gives_equal_training_exposure(tmp_path):
+    arrays, metadata, cases, rows = extended_fixture(tmp_path)
+    old = copy.deepcopy((arrays, metadata))
+    result, info = probe.append_training_block(arrays, metadata, cases, rows)
+    assert metadata == old[1] and 'training_pair_indices' not in metadata
+    for key, value in arrays.items():
+        assert np.array_equal(value, old[0][key])
+        assert np.array_equal(result[key][:len(value)], value)
+        assert not np.shares_memory(result[key], value)
+    selected = [probe.batch_indices(info, step) for step in range(256)]
+    assert selected[0][:4] == [0, 2, 4, 6] and selected[1][:4] == [640, 642, 644, 646]
+    assert all(sum(i in batch[:4] for batch in selected) == 128 for i in info['training_pair_indices'])
+    assert len({i for batch in selected for i in batch[4:]}) == 316
+    expected = probe.pack(result, info, selected[1], 'cpu')
+    for i, state in enumerate(info['states']):
+        if state['split'] == 'validation':
+            result['h'][result['offsets'][i]:result['offsets'][i+1]] = 999.
+    assert all(torch.equal(a, b) for a, b in zip(expected, probe.pack(result, info, selected[1], 'cpu')))
+
+
+@pytest.mark.parametrize('corruption', ['seed', 'mode', 'duplicate', 'preferred_masked'])
+def test_bad_extension_is_refused(tmp_path, corruption):
+    arrays, metadata, cases, rows = copy.deepcopy(extended_fixture(tmp_path))
+    if corruption == 'seed':cases[0]['seed'] = 992011
+    if corruption == 'mode':rows[0]['mode'] = 1
+    if corruption == 'duplicate':rows[1]['raw_score'][0] = 2.
+    if corruption == 'preferred_masked':cases[0]['action'] = 3
+    with pytest.raises(ValueError):probe.append_training_block(arrays, metadata, cases, rows)
+
+
+def test_reused_validation_checks_external_seal_before_loading(tmp_path, monkeypatch):
+    ready = tmp_path/'ready.json';archive = tmp_path/'v.npz'
+    ready.write_text('{}');archive.write_bytes(b'changed')
+    design = dict(reuse_validation=dict(readiness=str(ready), readiness_sha256=probe.sha(ready),
+                                       arrays=str(archive), arrays_sha256='old'))
+    monkeypatch.setattr(np, 'load', lambda *a, **k: pytest.fail('Unsealed validation archive opened'))
+    with pytest.raises(ValueError, match='seal'):probe.reused_validation(design, [], {}, None, None)
+
+
+def test_full_policy_budget_refuses_an_extra_forward_before_gpu_work():
+    for limit in (82, 83):
+        receipt = dict(full_policy_forward_budget=limit, full_policy_forward_attempts=limit)
+        with pytest.raises(ValueError, match='budget'):probe.observe(None, [None]*8, receipt, 'candidate')
+
+
 def test_validation_metrics_equal_episodes_instead_of_overweighting_two_cases():
     assert probe.episode_mean([0., 2., 10.], [992011, 992011, 992016]) == pytest.approx(5.5)
 

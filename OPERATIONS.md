@@ -2479,3 +2479,29 @@
 - 本轮唯一26900env/5000GPUforward/10原模型load/0策略优化器，4base2000/2000/900/2000真死、alt各5000右删失，原compare4强有益，不外推窗口外、不声明新策略质量。source1825626窗口15:50:52全21chain/worker/公开输入/动作终止/10receipt通过；driver1824118已终态，旧记录相等8/8不补旧身份。
 - 13guard全completed/hold，采样最高CPU70℃GPU50℃/3202.039MiB，原250%6GiB/swap0/温控及STOP预算，91/95/170输入SHA相符；17测试通过，源ZIP/policy/Adam/PPO30003200/36625/31训练20推理源及RNG不变。completion_audit/report/plan封闭，未重跑旧head。
 - 下一仅按事前8episode覆盖对照（保留旧loss/LR/256步、fresh d0、4pair交替old/new＋4normal），先准入/复用旧缓存与val/new源1forward及测试；尚未训练。val继续只验证，无参数网格，原棋力门槛与主机资源保护保持。
+
+### 2026-11-12T16:03:44+08:00 本条小时续办已消费并实际执行
+- turn01a1cec3-9064-7fe2-a300-79f0447d0058，首工具{'at': '2026-11-12T07:58:17.804Z', 'call_id': 'call_2247838394934198be1add070c6734b6', 'name': 'exec'}；15:39:25 queued请求已消费，RPCqueue空。后台已核验，当前proxy存在，不宣称本轮无桌面或OS重启测试；旧任务全部终态不重跑。下一按预定8episode覆盖对照开发，原主机/资源/额度保护保持。证据：runs/autonomous_development_20261105/hourly_head8_execution_20261112.json。
+
+- 2026-11-12T16:05:58+08:00：资源保护：隔离上下文验证停止并保留进度：KeyError('original_context')。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_coverage8_20261112/unit。
+
+- 2026-11-12T16:06:22+08:00：head8 unit controller因缺original_context在guard/测试/模型前停止，实际0测试/forward/env/optimizer；为纯pytest显式validation_command准备新unit_r2，旧attempt保留不复用。证据：runs/autonomous_head_coverage8_20261112/unit/status.json。
+
+- 2026-11-12T16:06:24+08:00：资源保护：启动受保护任务 tetris-guard-1829742-1794470784918164497，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_coverage8_20261112/unit_r2/guard。
+
+- 2026-11-12T16:06:27+08:00：资源保护：tetris-guard-1829742-1794470784918164497 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_coverage8_20261112/unit_r2/guard。
+
+- 2026-11-12T16:06:27+08:00：资源保护：8episode head覆盖/缓存追加/验证隔离与旧协议兼容定向测试完成；无模型forward或环境。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_coverage8_20261112/unit_r2/summary.json。
+
+### 2026-11-12T16:07:32+08:00 8episode覆盖对照事前封存
+- 19定向测试1.23秒通过，旧helper改前归档，旧cache640及val SHA固定；新源1＋candidate82=83fullforward，另256head更新/forward，0env/0PPO，train8episode各128曝光，val只终点。protocol/design已封存322输入，原保护与门槛不改。旧失败试验不续训，未进入完整棋力评测。证据：runs/autonomous_head_coverage8_20261112。
+
+- 2026-11-12T16:07:43+08:00：资源保护：启动受保护任务 tetris-guard-1830037-1794470863111670537，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_coverage8_20261112/probe/guard。
+
+- 2026-11-12T16:07:51+08:00：资源保护：tetris-guard-1830037-1794470863111670537 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_coverage8_20261112/probe/guard。
+
+- 2026-11-12T16:07:52+08:00：资源保护：单次8episode覆盖GPU head试验及固定终点GPU审计完成；准入与棋力另见结果。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_coverage8_20261112/probe/summary.json。
+
+### 2026-11-12T16:10:32+08:00 8episode覆盖对照完成，预定准入失败封闭
+- source1830044 16:07:48完成、controller52终态inactive success，256head更新/forward、83fullpolicyforward/1load/0env0PPO；源完整状态/RNG/ZIP不变。train1/8全局Top1、val0/4，loss改善但准入失败，无candidateZIP/棋力或推广，不续训调参。
+- 19测试通过；323正式冻结输入SHA相符；采样最高CPU66.125GPU40.0℃/1044.390625MiB，全hold非真峰，原250%6GiB/温控预算。证据：runs/autonomous_head_coverage8_20261112/completion_audit.json、reports/experiments/head_coverage8_20261112.md。下一只复用缓存全局竞争诊断，新协议须事前固定。
