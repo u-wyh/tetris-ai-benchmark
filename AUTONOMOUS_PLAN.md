@@ -6,6 +6,14 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-12T15:41:54+08:00 最新接手：Nov7单次head训练已失败封闭，Nov12普通额度恢复；下一GPU训练episode扩展
+
+前轮progress：source635732于Nov7 15:58:28完成256head更新/256head forward＋82fullpolicy forward/1model load，0env/0PPO optimizer；源policy/Adam/RNG/ZIP及30003200/36625不变，12测试通过。train2/4good全局Top1、val0/4，按episode等权loss2.8843→.4761/4.8573→1.3419，normal动作变78/316与89/316、KL.2951/.3660。预定gate失败，无evaluation_candidate.zip、无完整棋力评测或推广；不延长/调参/重跑。14/312冻结输入Nov12复核SHA一致，checkpoint真实freshAdam step256。正式8.198秒、4采样最高CPU64.75℃GPU38℃/1047.094MiB、全hold，原250%6GiB/温控/STOP预算。
+
+Nov7native turn01a1b4f9 API usageLimitExceeded在实验完成后中断报告/提交；Nov12 15:39:25既有hourly普通额度恢复goal active。当前native turn01a1ceb2-7ff5-7f43-b98b-23c61f7799a3，最早工具2026-11-12T07:39:45.269Z/call_4c8a6ee694c04786b332c27392c0e6c3；新submission01a1ceb2-8015-74a2-923c-8bc542a9fd6f仍pending，不冒充消费，额度间断不称持续开发。本机machine-id固定、后台13827→1、四unit enabled active/linger/sleep保护，当前proxy1760990存在，不称本轮无桌面/OS重启验收。GPU RTX3050可用31℃，无live guard。回执native_goal_head_resume_20261112.json及旧回执记录完成实验后中断，源结果根runs/autonomous_head_preference_20261107、report head_preference_probe_20261107.md。
+
+**下一实际开发（未开始，先查重）**：扩展训练episode覆盖而非直接调失败256步。固定旧TopK train切分中其余seed按数值升序首4[992010,992012,992014,992015]，每seed旧beneficial/ppo_top按(step,state_id,action)取最早1；先封存实际case/source/协议，再新GPU结果。val992011/016/027不回流；已作开发反馈非最终独立确认。旧label身份限制保留，不能直接把177作为当前真值。先修selector支持有界预定training block并测试旧train/val选择兼容，归档改前冻结代码；所有旧job均终态，不重跑。新8环境=4base/alt配对完整core/RNG、原30M greedy CUDA/5000branch40000job、256round/≤2chunks phase120command600wall、250%6GiB/swap0原温控及host/STOP/目标检查；先0计算probe，再有限串行生产/完整window审计，不重做512oracle/不替换失败/不延长窗口，0策略优化器。GPU/host/额度不可用保存等原每小时，不CPU/跨机/账户付费fallback。失败head checkpoint禁止继续调参或推广，完整原棋力门槛不改。持续goal active。
+
 ### 2026-11-07T15:45:57+08:00 最新接手：4个GPU validation均强有益，下一单次有验证集的末层偏好试验
 
 **本轮progress，已封闭勿重跑**：native turn01a1b4eb-4404-7953-b98c-997a1ff2e8b8首工具15:31:28.454/call_cd50de3dfd9c4cb19d211c24d0835f58，非新hourly消费。root runs/autonomous_paired_validation_20261107，driver631238自动串行10phase，真实terminal completed/5000round/21chunks，unit inactive success/MainPID0。源码改前3文件归档before_validation_changes；旧job用at-finish证据，不能将改后SHA冒充旧执行路径。已修复重复seed case的独立step/action/role ID，train旧IDs/选择兼容；finite driver1..10/专属namespace，原默认3..11兼容。11测试/1.15秒，无unit模型/env。

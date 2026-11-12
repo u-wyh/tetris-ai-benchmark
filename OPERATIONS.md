@@ -2356,3 +2356,31 @@
 - 全job26900唯一env/5000CUDA forward/10原模型load/0策略优化器；4case/3episode，base新步2000/2000/2000/900真死，alt各5000右删失，原规则4/4强有益，得分及四消比详报告，不回流训练/不称独立最终质量。8旧已记录outcome也相等，不能补历史模型/runtime/tensor身份。
 - 13guard全completed/hold，采样最高CPU71℃GPU51℃/3202.363MiB，正式250%6GiB/swap0/原温控/时间与主机目标保护；91job/96driver/171window冻结SHA完成后相符，原policy/Adam/30003200/36625与31训练20推理源、ZIP不变。window source63257715:40:36审计/controller39 passed；driver631238已终态，不重复。completion_audit、paired_gpu_validation_20261107.md及计划封存。
 - 下一预定单次64维GPU head preference试验：先限定准入/定向测试和val初态1forward封存，freshAdam.01/256更新、pair softplus＋normal teacherKL β1＋.01||d||²，wholeepisode验证不拟合，源PPO计数不变。尚未训练；固定终点实际GPU检查及原质量门槛不放宽，失败不扫参数/重试封闭LP。
+
+### 2026-11-07T15:56:14+08:00 单次head偏好试验实现与定向测试准备
+- 前a79defb已封闭4validation GPU5000窗口，当前无live guard；新增head_preference_probe按既定256GPU freshAdam/.01、4train pair＋4normal batch8、softplus＋KL β1＋.01||d||²，bias/其他网络不动，原PPO计数不改。val只终点/按3episode等权；源公开640缓存复用、新val仅1源forward，候选81完整forward预算，0新env/0PPO优化。
+- 入口核验活温控watchdog/心跳、实际kernelCPU≤250%/6GiB/swap0/六核及strict目标/主机授权；每64步持久化head optimizer检查点。旧eligible_for_training=false保留，限定readiness只允许该已预定单次probe，候选不自动PPO resume或推广。先运行纯代数/梯度/参数拷贝/当前GPU标签准入测试，不构造CPU策略训练。证据runs/autonomous_head_preference_20261107/unit/design.json。
+
+- 2026-11-07T15:56:24+08:00：资源保护：启动受保护任务 tetris-guard-635349-1794038184733248987，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_preference_20261107/unit/guard。
+
+- 2026-11-07T15:56:26+08:00：资源保护：tetris-guard-635349-1794038184733248987 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_preference_20261107/unit/guard。
+
+- 2026-11-07T15:56:27+08:00：资源保护：末层偏好loss梯度/掩码数值、整局隔离、当前GPU准入及拷贝参数范围测试完成；无策略训练/环境。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_preference_20261107/unit/summary.json。
+
+### 2026-11-07T15:58:12+08:00 12项定向测试通过，事前封存单次GPU head fit
+- 12passed/1.18秒、unit15:56:27 passed；0策略/优化器训练和环境，含精确梯度/稳定掩码/wholeepisode隔离/当前模型label准入/只改拷贝末层及CUDA缺失拒绝。native turn01a1b4f9-5790-7760-8e99-a8f74ede18f4首工具2026-11-07T07:46:49.933Z/call_23c117efdd2a40ac9067bddfcc077a67，前a79defb为progress，不声称新hourly消费。
+- probe_design与controller事前冻结312输入，包括原640缓存/240normal轨迹文件、新GPU train/val labels/probe和public输入、31训练20推理源与当前保护脚本。固定protocol未变，正式原250%6GiB/swap0温控/120command600wall/本机STOP，单次256 head steps，源PPO计数30003200/36625不变，尚未真实fit。证据runs/autonomous_head_preference_20261107/probe设计及native_goal_head_preference_execution_20261107.json。
+
+- 2026-11-07T15:58:22+08:00：资源保护：启动受保护任务 tetris-guard-635703-1794038302947377528，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_preference_20261107/probe/guard。
+
+- 2026-11-07T15:58:31+08:00：资源保护：tetris-guard-635703-1794038302947377528 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_preference_20261107/probe/guard。
+
+- 2026-11-07T15:58:31+08:00：资源保护：单次64维GPU head偏好试验及固定终点实际GPU验证完成；源PPO/Adam/计数不变，结果门槛另见probe_result。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_preference_20261107/probe/summary.json。
+
+- 2026-11-12T15:39:25+08:00：实时账户允许正常使用，恢复原目标的旧usageLimited状态，保留目标、预算和用量；未消耗额度重置券。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+- 2026-11-12T15:39:25+08:00：按用户授权每小时续办检查，已向原聊天排队发送继续开发请求。只确认投递，不代表额度已恢复或工作已完成。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_development_20261105/hourly.jsonl。
+
+### 2026-11-12T15:41:54+08:00 Nov12实际恢复，封闭已完成的Nov7 head试验
+- native turn01a1ceb2-7ff5-7f43-b98b-23c61f7799a3最早工具2026-11-12T07:39:45.269Z/call_4c8a6ee694c04786b332c27392c0e6c3；旧turn API usageLimitExceeded，实验15:58:28已完成/256head更新，报告提交被额度打断。15:39:25原hourly普通额度恢复goal active，新queued请求仍pending，未消费/间断持续开发不作虚假声称；后台13827→1，当前桌面proxy存在，GPU可用，无live guard，不重启后台或改账户付费。
+- Nov12复核14/312输入SHA，源结果train2/4/val0/4，事前gate失败，无候选ZIP或完整评测。检查点freshAdam真实step256、源PPO30003200/36625和policy/Adam/RNG/ZIP未变；12测试通过/正式4采样64.75℃CPU38℃GPU/1047.094MiB全hold。report head_preference_probe_20261107.md和plan/跨轮回执补齐，不重跑。下一预定4新train seed992010/012/014/015的GPU来源复核，不调失败head参数。
