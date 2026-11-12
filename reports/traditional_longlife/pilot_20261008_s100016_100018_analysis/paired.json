@@ -1,0 +1,451 @@
+{
+  "created_at": "2026-10-08T12:19:40.076314+00:00",
+  "seeds": [
+    100016,
+    100017,
+    100018
+  ],
+  "max_pieces": 10000,
+  "analysis_git_commit": "308bc90427d62bb9fde954072f79503101fb07e9",
+  "analysis_code_sha256": "948ee806227926c320c8d8fc3f7245a72f4e758d598df61b920b9a156ed893a0",
+  "config": {
+    "v1": {
+      "seeds": [
+        100016,
+        100017,
+        100018
+      ],
+      "max_pieces": 10000,
+      "strategy": "v1-adapter-1",
+      "weights": {
+        "cleared": 8.2,
+        "aggregate_height": -0.47,
+        "holes": -4.2,
+        "covered_holes": -0.16,
+        "bumpiness": -0.28,
+        "max_height": -0.18,
+        "wells": -0.08
+      },
+      "lookahead": 0.58,
+      "jitter": 0.002,
+      "hold": false,
+      "code_sha256": "728bbd0f631b2ce33e7b86e2704ab7cedd5ee77a884cbf3ff680347823dc1a6e",
+      "created_at": "2026-10-08T11:48:44.441082+00:00",
+      "python": "3.12.3",
+      "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39",
+      "git_commit": "b57e0fea560ed4abdc14c901516a32253a2add24",
+      "git_status": " M README.md\n?? ppo-viewer.log\n?? reports/traditional_longlife/\n?? training/ppo_viewer.html\n?? training/ppo_viewer.py\n",
+      "timing": "placement generation + mask + policy; excludes execution/I/O"
+    },
+    "hold": {
+      "seeds": [
+        100016,
+        100017,
+        100018
+      ],
+      "max_pieces": 10000,
+      "strategy": "v2-1",
+      "policy": {
+        "mode": "hold",
+        "beam_width": 8,
+        "lookahead": 0.58,
+        "weights": {
+          "cleared": 8.2,
+          "aggregate_height": -0.47,
+          "holes": -4.2,
+          "covered_holes": -0.16,
+          "bumpiness": -0.28,
+          "max_height": -0.18,
+          "wells": -0.08,
+          "row_transitions": -0.14,
+          "column_transitions": -0.22,
+          "top_risk": -0.9
+        },
+        "death_penalty": 1000000.0
+      },
+      "code_sha256": "6dc6c6d31fc3d02fdc3ee0bd369dbd07aac438b14f98bce2803da546c4a469f4",
+      "created_at": "2026-10-08T11:48:47.598624+00:00",
+      "python": "3.12.3",
+      "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39",
+      "git_commit": "b57e0fea560ed4abdc14c901516a32253a2add24",
+      "git_status": " M README.md\n?? ppo-viewer.log\n?? reports/traditional_longlife/\n?? training/ppo_viewer.html\n?? training/ppo_viewer.py\n",
+      "timing": "root legal BFS + policy simulation/features/future BFS/search; excludes Core.step and record I/O"
+    },
+    "beam": {
+      "seeds": [
+        100016,
+        100017,
+        100018
+      ],
+      "max_pieces": 10000,
+      "strategy": "v2-1",
+      "policy": {
+        "mode": "beam",
+        "beam_width": 8,
+        "lookahead": 0.58,
+        "weights": {
+          "cleared": 8.2,
+          "aggregate_height": -0.47,
+          "holes": -4.2,
+          "covered_holes": -0.16,
+          "bumpiness": -0.28,
+          "max_height": -0.18,
+          "wells": -0.08,
+          "row_transitions": -0.14,
+          "column_transitions": -0.22,
+          "top_risk": -0.9
+        },
+        "death_penalty": 1000000.0
+      },
+      "code_sha256": "6dc6c6d31fc3d02fdc3ee0bd369dbd07aac438b14f98bce2803da546c4a469f4",
+      "created_at": "2026-10-08T11:48:51.118637+00:00",
+      "python": "3.12.3",
+      "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39",
+      "git_commit": "b57e0fea560ed4abdc14c901516a32253a2add24",
+      "git_status": " M README.md\n?? ppo-viewer.log\n?? reports/traditional_longlife/\n?? training/ppo_viewer.html\n?? training/ppo_viewer.py\n",
+      "timing": "root legal BFS + policy simulation/features/future BFS/search; excludes Core.step and record I/O"
+    }
+  },
+  "modes": {
+    "v1": {
+      "restricted_mean_pieces": 10000,
+      "restricted_mean_bootstrap_95ci": [
+        10000.0,
+        10000.0
+      ],
+      "median_observed_pieces": 10000,
+      "p90_observed_pieces": 10000,
+      "game_over_rate": 0,
+      "truncation_rate": 1,
+      "mean_lines": 3998.3333333333335,
+      "lines_per_placed_piece": 0.3998333333333333,
+      "mean_official_score": 88088133.33333333,
+      "final_score_per_placed_piece": 8808.813333333334,
+      "mean_decision_ms": 56.5074733275,
+      "p95_decision_ms": 98.772376,
+      "total_wall_seconds": 1804.6968112729992,
+      "decisions_per_second": 17.696774269206948,
+      "end_to_end_pieces_per_second": 16.623290855619434
+    },
+    "hold": {
+      "restricted_mean_pieces": 10000,
+      "restricted_mean_bootstrap_95ci": [
+        10000.0,
+        10000.0
+      ],
+      "median_observed_pieces": 10000,
+      "p90_observed_pieces": 10000,
+      "game_over_rate": 0,
+      "truncation_rate": 1,
+      "mean_lines": 3999,
+      "lines_per_placed_piece": 0.3999,
+      "mean_official_score": 83805000,
+      "final_score_per_placed_piece": 8380.5,
+      "mean_decision_ms": 5.552171376533333,
+      "p95_decision_ms": 7.007979,
+      "total_wall_seconds": 263.61192404399844,
+      "decisions_per_second": 180.10971423298903,
+      "end_to_end_pieces_per_second": 113.80365326339644
+    },
+    "beam": {
+      "restricted_mean_pieces": 10000,
+      "restricted_mean_bootstrap_95ci": [
+        10000.0,
+        10000.0
+      ],
+      "median_observed_pieces": 10000,
+      "p90_observed_pieces": 10000,
+      "game_over_rate": 0,
+      "truncation_rate": 1,
+      "mean_lines": 3998.6666666666665,
+      "lines_per_placed_piece": 0.39986666666666665,
+      "mean_official_score": 83292266.66666667,
+      "final_score_per_placed_piece": 8329.226666666667,
+      "mean_decision_ms": 54.010107407,
+      "p95_decision_ms": 73.417037,
+      "total_wall_seconds": 1736.2060820370025,
+      "decisions_per_second": 18.515052978220787,
+      "end_to_end_pieces_per_second": 17.279054779489382
+    }
+  },
+  "pairs": {
+    "hold_minus_v1": {
+      "paired": [
+        {
+          "seed": 100016,
+          "equal_pieces": 10000,
+          "a_pieces": 10000,
+          "b_pieces": 10000,
+          "a_game_over": false,
+          "b_game_over": false,
+          "a_truncated": true,
+          "b_truncated": true,
+          "observed_pieces_difference": 0,
+          "a_score_at_equal_pieces": 88607200,
+          "b_score_at_equal_pieces": 83937700,
+          "score_difference_at_equal_pieces": -4669500,
+          "score_per_piece_difference_at_equal_pieces": -466.95
+        },
+        {
+          "seed": 100017,
+          "equal_pieces": 10000,
+          "a_pieces": 10000,
+          "b_pieces": 10000,
+          "a_game_over": false,
+          "b_game_over": false,
+          "a_truncated": true,
+          "b_truncated": true,
+          "observed_pieces_difference": 0,
+          "a_score_at_equal_pieces": 88377300,
+          "b_score_at_equal_pieces": 83895100,
+          "score_difference_at_equal_pieces": -4482200,
+          "score_per_piece_difference_at_equal_pieces": -448.22
+        },
+        {
+          "seed": 100018,
+          "equal_pieces": 10000,
+          "a_pieces": 10000,
+          "b_pieces": 10000,
+          "a_game_over": false,
+          "b_game_over": false,
+          "a_truncated": true,
+          "b_truncated": true,
+          "observed_pieces_difference": 0,
+          "a_score_at_equal_pieces": 87279900,
+          "b_score_at_equal_pieces": 83582200,
+          "score_difference_at_equal_pieces": -3697700,
+          "score_per_piece_difference_at_equal_pieces": -369.77
+        }
+      ],
+      "restricted_mean_difference": 0,
+      "restricted_mean_difference_bootstrap_95ci": [
+        0.0,
+        0.0
+      ],
+      "mean_equal_piece_score_per_piece_difference": -428.31333333333333,
+      "mean_equal_piece_score_per_piece_difference_bootstrap_95ci": [
+        -466.95,
+        -369.77
+      ],
+      "both_truncated": 3,
+      "a_over_b_truncated": 0,
+      "a_truncated_b_over": 0,
+      "observed_b_wins": 0,
+      "observed_a_wins": 0,
+      "observed_ties": 3
+    },
+    "beam_minus_v1": {
+      "paired": [
+        {
+          "seed": 100016,
+          "equal_pieces": 10000,
+          "a_pieces": 10000,
+          "b_pieces": 10000,
+          "a_game_over": false,
+          "b_game_over": false,
+          "a_truncated": true,
+          "b_truncated": true,
+          "observed_pieces_difference": 0,
+          "a_score_at_equal_pieces": 88607200,
+          "b_score_at_equal_pieces": 83425200,
+          "score_difference_at_equal_pieces": -5182000,
+          "score_per_piece_difference_at_equal_pieces": -518.2
+        },
+        {
+          "seed": 100017,
+          "equal_pieces": 10000,
+          "a_pieces": 10000,
+          "b_pieces": 10000,
+          "a_game_over": false,
+          "b_game_over": false,
+          "a_truncated": true,
+          "b_truncated": true,
+          "observed_pieces_difference": 0,
+          "a_score_at_equal_pieces": 88377300,
+          "b_score_at_equal_pieces": 83063600,
+          "score_difference_at_equal_pieces": -5313700,
+          "score_per_piece_difference_at_equal_pieces": -531.37
+        },
+        {
+          "seed": 100018,
+          "equal_pieces": 10000,
+          "a_pieces": 10000,
+          "b_pieces": 10000,
+          "a_game_over": false,
+          "b_game_over": false,
+          "a_truncated": true,
+          "b_truncated": true,
+          "observed_pieces_difference": 0,
+          "a_score_at_equal_pieces": 87279900,
+          "b_score_at_equal_pieces": 83388000,
+          "score_difference_at_equal_pieces": -3891900,
+          "score_per_piece_difference_at_equal_pieces": -389.19
+        }
+      ],
+      "restricted_mean_difference": 0,
+      "restricted_mean_difference_bootstrap_95ci": [
+        0.0,
+        0.0
+      ],
+      "mean_equal_piece_score_per_piece_difference": -479.5866666666667,
+      "mean_equal_piece_score_per_piece_difference_bootstrap_95ci": [
+        -531.37,
+        -389.19
+      ],
+      "both_truncated": 3,
+      "a_over_b_truncated": 0,
+      "a_truncated_b_over": 0,
+      "observed_b_wins": 0,
+      "observed_a_wins": 0,
+      "observed_ties": 3
+    },
+    "beam_minus_hold": {
+      "paired": [
+        {
+          "seed": 100016,
+          "equal_pieces": 10000,
+          "a_pieces": 10000,
+          "b_pieces": 10000,
+          "a_game_over": false,
+          "b_game_over": false,
+          "a_truncated": true,
+          "b_truncated": true,
+          "observed_pieces_difference": 0,
+          "a_score_at_equal_pieces": 83937700,
+          "b_score_at_equal_pieces": 83425200,
+          "score_difference_at_equal_pieces": -512500,
+          "score_per_piece_difference_at_equal_pieces": -51.25
+        },
+        {
+          "seed": 100017,
+          "equal_pieces": 10000,
+          "a_pieces": 10000,
+          "b_pieces": 10000,
+          "a_game_over": false,
+          "b_game_over": false,
+          "a_truncated": true,
+          "b_truncated": true,
+          "observed_pieces_difference": 0,
+          "a_score_at_equal_pieces": 83895100,
+          "b_score_at_equal_pieces": 83063600,
+          "score_difference_at_equal_pieces": -831500,
+          "score_per_piece_difference_at_equal_pieces": -83.15
+        },
+        {
+          "seed": 100018,
+          "equal_pieces": 10000,
+          "a_pieces": 10000,
+          "b_pieces": 10000,
+          "a_game_over": false,
+          "b_game_over": false,
+          "a_truncated": true,
+          "b_truncated": true,
+          "observed_pieces_difference": 0,
+          "a_score_at_equal_pieces": 83582200,
+          "b_score_at_equal_pieces": 83388000,
+          "score_difference_at_equal_pieces": -194200,
+          "score_per_piece_difference_at_equal_pieces": -19.42
+        }
+      ],
+      "restricted_mean_difference": 0,
+      "restricted_mean_difference_bootstrap_95ci": [
+        0.0,
+        0.0
+      ],
+      "mean_equal_piece_score_per_piece_difference": -51.27333333333333,
+      "mean_equal_piece_score_per_piece_difference_bootstrap_95ci": [
+        -83.15,
+        -19.42
+      ],
+      "both_truncated": 3,
+      "a_over_b_truncated": 0,
+      "a_truncated_b_over": 0,
+      "observed_b_wins": 0,
+      "observed_a_wins": 0,
+      "observed_ties": 3
+    }
+  },
+  "seeds_detail": [
+    {
+      "seed": 100016,
+      "v1": {
+        "pieces_survived": 10000,
+        "lines": 3998,
+        "score": 88607200,
+        "game_over": false,
+        "truncated": true,
+        "wall_seconds": 531.3104376359988
+      },
+      "hold": {
+        "pieces_survived": 10000,
+        "lines": 3999,
+        "score": 83937700,
+        "game_over": false,
+        "truncated": true,
+        "wall_seconds": 87.08126199199978
+      },
+      "beam": {
+        "pieces_survived": 10000,
+        "lines": 3998,
+        "score": 83425200,
+        "game_over": false,
+        "truncated": true,
+        "wall_seconds": 514.7386669500011
+      }
+    },
+    {
+      "seed": 100017,
+      "v1": {
+        "pieces_survived": 10000,
+        "lines": 3999,
+        "score": 88377300,
+        "game_over": false,
+        "truncated": true,
+        "wall_seconds": 630.7034537330001
+      },
+      "hold": {
+        "pieces_survived": 10000,
+        "lines": 3999,
+        "score": 83895100,
+        "game_over": false,
+        "truncated": true,
+        "wall_seconds": 87.90497782300008
+      },
+      "beam": {
+        "pieces_survived": 10000,
+        "lines": 3999,
+        "score": 83063600,
+        "game_over": false,
+        "truncated": true,
+        "wall_seconds": 598.2806302120007
+      }
+    },
+    {
+      "seed": 100018,
+      "v1": {
+        "pieces_survived": 10000,
+        "lines": 3998,
+        "score": 87279900,
+        "game_over": false,
+        "truncated": true,
+        "wall_seconds": 642.6829199040003
+      },
+      "hold": {
+        "pieces_survived": 10000,
+        "lines": 3999,
+        "score": 83582200,
+        "game_over": false,
+        "truncated": true,
+        "wall_seconds": 88.62568422899858
+      },
+      "beam": {
+        "pieces_survived": 10000,
+        "lines": 3999,
+        "score": 83388000,
+        "game_over": false,
+        "truncated": true,
+        "wall_seconds": 623.1867848750007
+      }
+    }
+  ]
+}

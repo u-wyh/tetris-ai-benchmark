@@ -1,0 +1,1664 @@
+{
+  "created_at": "2026-10-08T11:56:46.239137+00:00",
+  "reference": "reports/traditional_longlife/pilot_20261008_s100016_100018/hold/seed_100016.json",
+  "seed": 100016,
+  "sample_steps": [
+    0,
+    5,
+    20,
+    50,
+    100,
+    200,
+    400,
+    800,
+    1200,
+    1600,
+    2000,
+    3000,
+    4000,
+    6000,
+    8000
+  ],
+  "repeats": 3,
+  "python": "3.12.3",
+  "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39",
+  "git_commit": "b57e0fea560ed4abdc14c901516a32253a2add24",
+  "timing": "same public states, one root BFS per sample, no Action Mask, Core.step or I/O",
+  "summary": {
+    "states": 15,
+    "repetitions": 3,
+    "samples": 45,
+    "v1_mean_total_ms": 47.682600066666666,
+    "v1_median_total_ms": 42.907241,
+    "v1_mean_policy_ms": 44.18273582222222,
+    "hold_mean_total_ms": 6.4978860888888885,
+    "hold_median_total_ms": 6.426235,
+    "hold_mean_policy_ms": 2.9980218444444446,
+    "beam_mean_total_ms": 50.622917666666666,
+    "beam_median_total_ms": 49.366388,
+    "beam_mean_policy_ms": 47.12305342222222,
+    "mean_common_root_legal_ms": 3.4998642444444443
+  },
+  "samples": [
+    {
+      "step": 0,
+      "repetition": 0,
+      "root_legal_ms": 3.793444,
+      "policy_ms": {
+        "v1": 78.165607,
+        "hold": 4.058583,
+        "beam": 51.679458
+      },
+      "total_ms": {
+        "v1": 81.95905099999999,
+        "hold": 7.852027,
+        "beam": 55.472902
+      },
+      "action_ids": {
+        "v1": 113,
+        "hold": 1102,
+        "beam": 1102
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 3.067544,
+          "future_legal": 0.0,
+          "search_overhead": 0.9110580000000001,
+          "policy_total": 3.978602
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 20.646363,
+          "future_legal": 29.789143,
+          "search_overhead": 1.041360000000001,
+          "policy_total": 51.476866
+        }
+      }
+    },
+    {
+      "step": 0,
+      "repetition": 1,
+      "root_legal_ms": 3.766833,
+      "policy_ms": {
+        "v1": 77.903243,
+        "hold": 4.113265,
+        "beam": 51.206578
+      },
+      "total_ms": {
+        "v1": 81.67007600000001,
+        "hold": 7.880098,
+        "beam": 54.973411
+      },
+      "action_ids": {
+        "v1": 113,
+        "hold": 1102,
+        "beam": 1102
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 3.054215,
+          "future_legal": 0.0,
+          "search_overhead": 0.9835079999999996,
+          "policy_total": 4.037723
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 20.585929,
+          "future_legal": 29.334394,
+          "search_overhead": 1.0489890000000024,
+          "policy_total": 50.969312
+        }
+      }
+    },
+    {
+      "step": 0,
+      "repetition": 2,
+      "root_legal_ms": 3.782484,
+      "policy_ms": {
+        "v1": 77.69405,
+        "hold": 4.028356,
+        "beam": 51.027852
+      },
+      "total_ms": {
+        "v1": 81.476534,
+        "hold": 7.81084,
+        "beam": 54.81033600000001
+      },
+      "action_ids": {
+        "v1": 113,
+        "hold": 1102,
+        "beam": 1102
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 3.021792,
+          "future_legal": 0.0,
+          "search_overhead": 0.9326639999999999,
+          "policy_total": 3.954456
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 20.524549,
+          "future_legal": 29.239207,
+          "search_overhead": 1.022151000000001,
+          "policy_total": 50.785907
+        }
+      }
+    },
+    {
+      "step": 5,
+      "repetition": 0,
+      "root_legal_ms": 3.405735,
+      "policy_ms": {
+        "v1": 17.795336,
+        "hold": 2.56811,
+        "beam": 43.370091
+      },
+      "total_ms": {
+        "v1": 21.201071,
+        "hold": 5.973845,
+        "beam": 46.775826
+      },
+      "action_ids": {
+        "v1": 90,
+        "hold": 19,
+        "beam": 90
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 1.973659,
+          "future_legal": 0.0,
+          "search_overhead": 0.5426129999999998,
+          "policy_total": 2.516272
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 15.832483,
+          "future_legal": 26.625211,
+          "search_overhead": 0.738750999999997,
+          "policy_total": 43.196445
+        }
+      }
+    },
+    {
+      "step": 5,
+      "repetition": 1,
+      "root_legal_ms": 3.400104,
+      "policy_ms": {
+        "v1": 17.738279,
+        "hold": 2.50987,
+        "beam": 43.168212
+      },
+      "total_ms": {
+        "v1": 21.138382999999997,
+        "hold": 5.909974,
+        "beam": 46.568315999999996
+      },
+      "action_ids": {
+        "v1": 90,
+        "hold": 19,
+        "beam": 90
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 1.935847,
+          "future_legal": 0.0,
+          "search_overhead": 0.528678,
+          "policy_total": 2.464525
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 15.554045,
+          "future_legal": 26.677098,
+          "search_overhead": 0.7382139999999993,
+          "policy_total": 42.969357
+        }
+      }
+    },
+    {
+      "step": 5,
+      "repetition": 2,
+      "root_legal_ms": 3.449267,
+      "policy_ms": {
+        "v1": 17.859786,
+        "hold": 2.604357,
+        "beam": 43.637314
+      },
+      "total_ms": {
+        "v1": 21.309053,
+        "hold": 6.053623999999999,
+        "beam": 47.086581
+      },
+      "action_ids": {
+        "v1": 90,
+        "hold": 19,
+        "beam": 90
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.003777,
+          "future_legal": 0.0,
+          "search_overhead": 0.551158,
+          "policy_total": 2.554935
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 15.662896,
+          "future_legal": 27.042023,
+          "search_overhead": 0.7383699999999997,
+          "policy_total": 43.443289
+        }
+      }
+    },
+    {
+      "step": 20,
+      "repetition": 0,
+      "root_legal_ms": 3.58386,
+      "policy_ms": {
+        "v1": 66.863311,
+        "hold": 4.245464,
+        "beam": 50.779806
+      },
+      "total_ms": {
+        "v1": 70.447171,
+        "hold": 7.829324,
+        "beam": 54.363666
+      },
+      "action_ids": {
+        "v1": 90,
+        "hold": 90,
+        "beam": 90
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 3.162684,
+          "future_legal": 0.0,
+          "search_overhead": 0.9963869999999999,
+          "policy_total": 4.159071
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 21.539946,
+          "future_legal": 27.937379,
+          "search_overhead": 1.0906120000000001,
+          "policy_total": 50.567937
+        }
+      }
+    },
+    {
+      "step": 20,
+      "repetition": 1,
+      "root_legal_ms": 3.53121,
+      "policy_ms": {
+        "v1": 66.706597,
+        "hold": 4.124647,
+        "beam": 50.731866
+      },
+      "total_ms": {
+        "v1": 70.237807,
+        "hold": 7.655857000000001,
+        "beam": 54.263076
+      },
+      "action_ids": {
+        "v1": 90,
+        "hold": 90,
+        "beam": 90
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 3.09535,
+          "future_legal": 0.0,
+          "search_overhead": 0.9573119999999999,
+          "policy_total": 4.052662
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 21.298317,
+          "future_legal": 28.174736,
+          "search_overhead": 1.0636349999999979,
+          "policy_total": 50.536688
+        }
+      }
+    },
+    {
+      "step": 20,
+      "repetition": 2,
+      "root_legal_ms": 3.585433,
+      "policy_ms": {
+        "v1": 66.781939,
+        "hold": 4.116201,
+        "beam": 50.332014
+      },
+      "total_ms": {
+        "v1": 70.36737199999999,
+        "hold": 7.701634,
+        "beam": 53.917447
+      },
+      "action_ids": {
+        "v1": 90,
+        "hold": 90,
+        "beam": 90
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 3.077215,
+          "future_legal": 0.0,
+          "search_overhead": 0.9654180000000006,
+          "policy_total": 4.042633
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 21.146344,
+          "future_legal": 27.863251,
+          "search_overhead": 1.0513779999999961,
+          "policy_total": 50.060973
+        }
+      }
+    },
+    {
+      "step": 50,
+      "repetition": 0,
+      "root_legal_ms": 3.342566,
+      "policy_ms": {
+        "v1": 20.152789,
+        "hold": 1.497285,
+        "beam": 46.000407
+      },
+      "total_ms": {
+        "v1": 23.495355,
+        "hold": 4.839851,
+        "beam": 49.342973
+      },
+      "action_ids": {
+        "v1": 20,
+        "hold": 20,
+        "beam": 20
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 1.143245,
+          "future_legal": 0.0,
+          "search_overhead": 0.32627799999999985,
+          "policy_total": 1.469523
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 18.490376,
+          "future_legal": 26.778149,
+          "search_overhead": 0.5709899999999983,
+          "policy_total": 45.839515
+        }
+      }
+    },
+    {
+      "step": 50,
+      "repetition": 1,
+      "root_legal_ms": 3.338649,
+      "policy_ms": {
+        "v1": 20.147579,
+        "hold": 1.578008,
+        "beam": 46.027739
+      },
+      "total_ms": {
+        "v1": 23.486228,
+        "hold": 4.916657000000001,
+        "beam": 49.366388
+      },
+      "action_ids": {
+        "v1": 20,
+        "hold": 20,
+        "beam": 20
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 1.151249,
+          "future_legal": 0.0,
+          "search_overhead": 0.3990260000000001,
+          "policy_total": 1.550275
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 18.514935,
+          "future_legal": 26.708707,
+          "search_overhead": 0.6263419999999975,
+          "policy_total": 45.849984
+        }
+      }
+    },
+    {
+      "step": 50,
+      "repetition": 2,
+      "root_legal_ms": 3.320254,
+      "policy_ms": {
+        "v1": 20.152699,
+        "hold": 1.569692,
+        "beam": 50.458341
+      },
+      "total_ms": {
+        "v1": 23.472952999999997,
+        "hold": 4.889946,
+        "beam": 53.778594999999996
+      },
+      "action_ids": {
+        "v1": 20,
+        "hold": 20,
+        "beam": 20
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 1.144351,
+          "future_legal": 0.0,
+          "search_overhead": 0.3978790000000001,
+          "policy_total": 1.54223
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 18.987586,
+          "future_legal": 30.606506,
+          "search_overhead": 0.6647440000000024,
+          "policy_total": 50.258836
+        }
+      }
+    },
+    {
+      "step": 100,
+      "repetition": 0,
+      "root_legal_ms": 3.678898,
+      "policy_ms": {
+        "v1": 29.429204,
+        "hold": 2.12153,
+        "beam": 38.383012
+      },
+      "total_ms": {
+        "v1": 33.108101999999995,
+        "hold": 5.800428,
+        "beam": 42.06191
+      },
+      "action_ids": {
+        "v1": 113,
+        "hold": 113,
+        "beam": 113
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 1.595583,
+          "future_legal": 0.0,
+          "search_overhead": 0.488086,
+          "policy_total": 2.083669
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 11.002771,
+          "future_legal": 26.536907,
+          "search_overhead": 0.6219080000000012,
+          "policy_total": 38.161586
+        }
+      }
+    },
+    {
+      "step": 100,
+      "repetition": 1,
+      "root_legal_ms": 3.650024,
+      "policy_ms": {
+        "v1": 29.415888,
+        "hold": 2.11618,
+        "beam": 37.962491
+      },
+      "total_ms": {
+        "v1": 33.065912,
+        "hold": 5.766204,
+        "beam": 41.612515
+      },
+      "action_ids": {
+        "v1": 113,
+        "hold": 113,
+        "beam": 113
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 1.592072,
+          "future_legal": 0.0,
+          "search_overhead": 0.4893019999999999,
+          "policy_total": 2.081374
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 10.837988,
+          "future_legal": 26.422028,
+          "search_overhead": 0.5799250000000029,
+          "policy_total": 37.839941
+        }
+      }
+    },
+    {
+      "step": 100,
+      "repetition": 2,
+      "root_legal_ms": 3.609418,
+      "policy_ms": {
+        "v1": 28.759134,
+        "hold": 2.087045,
+        "beam": 37.93502
+      },
+      "total_ms": {
+        "v1": 32.368552,
+        "hold": 5.696463,
+        "beam": 41.544438
+      },
+      "action_ids": {
+        "v1": 113,
+        "hold": 113,
+        "beam": 113
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 1.559457,
+          "future_legal": 0.0,
+          "search_overhead": 0.49278200000000005,
+          "policy_total": 2.052239
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 10.827623,
+          "future_legal": 26.398235,
+          "search_overhead": 0.5886949999999942,
+          "policy_total": 37.814553
+        }
+      }
+    },
+    {
+      "step": 200,
+      "repetition": 0,
+      "root_legal_ms": 3.53048,
+      "policy_ms": {
+        "v1": 40.029889,
+        "hold": 3.215998,
+        "beam": 50.910832
+      },
+      "total_ms": {
+        "v1": 43.560368999999994,
+        "hold": 6.746478,
+        "beam": 54.441311999999996
+      },
+      "action_ids": {
+        "v1": 44,
+        "hold": 44,
+        "beam": 44
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.414829,
+          "future_legal": 0.0,
+          "search_overhead": 0.744402,
+          "policy_total": 3.159231
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 21.514975,
+          "future_legal": 28.183501,
+          "search_overhead": 0.9682570000000013,
+          "policy_total": 50.666733
+        }
+      }
+    },
+    {
+      "step": 200,
+      "repetition": 1,
+      "root_legal_ms": 3.605791,
+      "policy_ms": {
+        "v1": 39.722491,
+        "hold": 3.055467,
+        "beam": 50.134492
+      },
+      "total_ms": {
+        "v1": 43.328282,
+        "hold": 6.661258,
+        "beam": 53.740283000000005
+      },
+      "action_ids": {
+        "v1": 44,
+        "hold": 44,
+        "beam": 44
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.295981,
+          "future_legal": 0.0,
+          "search_overhead": 0.706455,
+          "policy_total": 3.002436
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 21.186099,
+          "future_legal": 27.736913,
+          "search_overhead": 0.9707780000000028,
+          "policy_total": 49.89379
+        }
+      }
+    },
+    {
+      "step": 200,
+      "repetition": 2,
+      "root_legal_ms": 3.54145,
+      "policy_ms": {
+        "v1": 40.03036,
+        "hold": 3.105681,
+        "beam": 50.598585
+      },
+      "total_ms": {
+        "v1": 43.57181,
+        "hold": 6.647131,
+        "beam": 54.140035
+      },
+      "action_ids": {
+        "v1": 44,
+        "hold": 44,
+        "beam": 44
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.353489,
+          "future_legal": 0.0,
+          "search_overhead": 0.6963659999999998,
+          "policy_total": 3.049855
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 21.308131,
+          "future_legal": 28.111445,
+          "search_overhead": 0.9528329999999983,
+          "policy_total": 50.372409
+        }
+      }
+    },
+    {
+      "step": 400,
+      "repetition": 0,
+      "root_legal_ms": 3.649924,
+      "policy_ms": {
+        "v1": 80.429734,
+        "hold": 4.116933,
+        "beam": 58.213816
+      },
+      "total_ms": {
+        "v1": 84.079658,
+        "hold": 7.766857,
+        "beam": 61.86374
+      },
+      "action_ids": {
+        "v1": 619,
+        "hold": 619,
+        "beam": 619
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 3.165415,
+          "future_legal": 0.0,
+          "search_overhead": 0.8904320000000001,
+          "policy_total": 4.055847
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 27.503394,
+          "future_legal": 29.264655,
+          "search_overhead": 1.0797580000000018,
+          "policy_total": 57.847807
+        }
+      }
+    },
+    {
+      "step": 400,
+      "repetition": 1,
+      "root_legal_ms": 3.673539,
+      "policy_ms": {
+        "v1": 81.004625,
+        "hold": 4.101603,
+        "beam": 58.654514
+      },
+      "total_ms": {
+        "v1": 84.67816400000001,
+        "hold": 7.775142,
+        "beam": 62.328053
+      },
+      "action_ids": {
+        "v1": 619,
+        "hold": 619,
+        "beam": 619
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 3.151535,
+          "future_legal": 0.0,
+          "search_overhead": 0.8887929999999997,
+          "policy_total": 4.040328
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 27.582898,
+          "future_legal": 29.603701,
+          "search_overhead": 1.0826509999999985,
+          "policy_total": 58.26925
+        }
+      }
+    },
+    {
+      "step": 400,
+      "repetition": 2,
+      "root_legal_ms": 3.708134,
+      "policy_ms": {
+        "v1": 80.594875,
+        "hold": 4.064303,
+        "beam": 58.254012
+      },
+      "total_ms": {
+        "v1": 84.303009,
+        "hold": 7.772437,
+        "beam": 61.962146000000004
+      },
+      "action_ids": {
+        "v1": 619,
+        "hold": 619,
+        "beam": 619
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 3.140314,
+          "future_legal": 0.0,
+          "search_overhead": 0.8618730000000001,
+          "policy_total": 4.002187
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 27.398084,
+          "future_legal": 29.414517,
+          "search_overhead": 1.0748609999999985,
+          "policy_total": 57.887462
+        }
+      }
+    },
+    {
+      "step": 800,
+      "repetition": 0,
+      "root_legal_ms": 3.4142,
+      "policy_ms": {
+        "v1": 18.27624,
+        "hold": 2.600952,
+        "beam": 43.712435
+      },
+      "total_ms": {
+        "v1": 21.690440000000002,
+        "hold": 6.0151520000000005,
+        "beam": 47.126635
+      },
+      "action_ids": {
+        "v1": 90,
+        "hold": 90,
+        "beam": 90
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 1.961842,
+          "future_legal": 0.0,
+          "search_overhead": 0.5963990000000001,
+          "policy_total": 2.558241
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 15.649303,
+          "future_legal": 27.106076,
+          "search_overhead": 0.7063650000000017,
+          "policy_total": 43.461744
+        }
+      }
+    },
+    {
+      "step": 800,
+      "repetition": 1,
+      "root_legal_ms": 3.416345,
+      "policy_ms": {
+        "v1": 18.10591,
+        "hold": 2.649723,
+        "beam": 43.878267
+      },
+      "total_ms": {
+        "v1": 21.522255,
+        "hold": 6.066068,
+        "beam": 47.294612
+      },
+      "action_ids": {
+        "v1": 90,
+        "hold": 90,
+        "beam": 90
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 1.979115,
+          "future_legal": 0.0,
+          "search_overhead": 0.6262450000000002,
+          "policy_total": 2.60536
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 15.739588,
+          "future_legal": 27.18928,
+          "search_overhead": 0.7169510000000052,
+          "policy_total": 43.645819
+        }
+      }
+    },
+    {
+      "step": 800,
+      "repetition": 2,
+      "root_legal_ms": 3.400294,
+      "policy_ms": {
+        "v1": 18.319451,
+        "hold": 2.6373,
+        "beam": 44.179763
+      },
+      "total_ms": {
+        "v1": 21.719745,
+        "hold": 6.037594,
+        "beam": 47.580057000000004
+      },
+      "action_ids": {
+        "v1": 90,
+        "hold": 90,
+        "beam": 90
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 1.976148,
+          "future_legal": 0.0,
+          "search_overhead": 0.6164370000000001,
+          "policy_total": 2.592585
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 16.009702,
+          "future_legal": 27.235507,
+          "search_overhead": 0.7358209999999978,
+          "policy_total": 43.98103
+        }
+      }
+    },
+    {
+      "step": 1200,
+      "repetition": 0,
+      "root_legal_ms": 3.698366,
+      "policy_ms": {
+        "v1": 40.295478,
+        "hold": 3.078158,
+        "beam": 52.964554
+      },
+      "total_ms": {
+        "v1": 43.993844,
+        "hold": 6.776524,
+        "beam": 56.66292
+      },
+      "action_ids": {
+        "v1": 295,
+        "hold": 1033,
+        "beam": 1033
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.326379,
+          "future_legal": 0.0,
+          "search_overhead": 0.6979489999999999,
+          "policy_total": 3.024328
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 22.656153,
+          "future_legal": 28.947308,
+          "search_overhead": 0.999252000000002,
+          "policy_total": 52.602713
+        }
+      }
+    },
+    {
+      "step": 1200,
+      "repetition": 1,
+      "root_legal_ms": 3.686142,
+      "policy_ms": {
+        "v1": 40.166897,
+        "hold": 3.108306,
+        "beam": 52.958031
+      },
+      "total_ms": {
+        "v1": 43.853038999999995,
+        "hold": 6.794447999999999,
+        "beam": 56.644172999999995
+      },
+      "action_ids": {
+        "v1": 295,
+        "hold": 1033,
+        "beam": 1033
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.30044,
+          "future_legal": 0.0,
+          "search_overhead": 0.7558180000000001,
+          "policy_total": 3.056258
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 22.744899,
+          "future_legal": 28.990577,
+          "search_overhead": 0.9584189999999992,
+          "policy_total": 52.693895
+        }
+      }
+    },
+    {
+      "step": 1200,
+      "repetition": 2,
+      "root_legal_ms": 3.667477,
+      "policy_ms": {
+        "v1": 40.314865,
+        "hold": 3.117463,
+        "beam": 52.753877
+      },
+      "total_ms": {
+        "v1": 43.982341999999996,
+        "hold": 6.78494,
+        "beam": 56.421354
+      },
+      "action_ids": {
+        "v1": 295,
+        "hold": 1033,
+        "beam": 1033
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.360331,
+          "future_legal": 0.0,
+          "search_overhead": 0.7035209999999998,
+          "policy_total": 3.063852
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 22.702747,
+          "future_legal": 28.8478,
+          "search_overhead": 0.964261000000004,
+          "policy_total": 52.514808
+        }
+      }
+    },
+    {
+      "step": 1600,
+      "repetition": 0,
+      "root_legal_ms": 3.613856,
+      "policy_ms": {
+        "v1": 39.515572,
+        "hold": 3.144193,
+        "beam": 57.016895
+      },
+      "total_ms": {
+        "v1": 43.129428,
+        "hold": 6.758049,
+        "beam": 60.630751
+      },
+      "action_ids": {
+        "v1": 135,
+        "hold": 1630,
+        "beam": 1630
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.368702,
+          "future_legal": 0.0,
+          "search_overhead": 0.7177630000000002,
+          "policy_total": 3.086465
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 23.627322,
+          "future_legal": 32.127187,
+          "search_overhead": 0.9811359999999993,
+          "policy_total": 56.735645
+        }
+      }
+    },
+    {
+      "step": 1600,
+      "repetition": 1,
+      "root_legal_ms": 3.59995,
+      "policy_ms": {
+        "v1": 39.131891,
+        "hold": 3.126299,
+        "beam": 53.677765
+      },
+      "total_ms": {
+        "v1": 42.731841,
+        "hold": 6.726249,
+        "beam": 57.277715
+      },
+      "action_ids": {
+        "v1": 135,
+        "hold": 1630,
+        "beam": 1630
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.366296,
+          "future_legal": 0.0,
+          "search_overhead": 0.7067229999999998,
+          "policy_total": 3.073019
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 24.011852,
+          "future_legal": 28.333653,
+          "search_overhead": 0.9856679999999969,
+          "policy_total": 53.331173
+        }
+      }
+    },
+    {
+      "step": 1600,
+      "repetition": 2,
+      "root_legal_ms": 3.632672,
+      "policy_ms": {
+        "v1": 39.274569,
+        "hold": 3.210498,
+        "beam": 53.367151
+      },
+      "total_ms": {
+        "v1": 42.907241,
+        "hold": 6.84317,
+        "beam": 56.999823
+      },
+      "action_ids": {
+        "v1": 135,
+        "hold": 1630,
+        "beam": 1630
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.38123,
+          "future_legal": 0.0,
+          "search_overhead": 0.776008,
+          "policy_total": 3.157238
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 23.946884,
+          "future_legal": 28.175808,
+          "search_overhead": 0.9918040000000019,
+          "policy_total": 53.114496
+        }
+      }
+    },
+    {
+      "step": 2000,
+      "repetition": 0,
+      "root_legal_ms": 3.588208,
+      "policy_ms": {
+        "v1": 34.096371,
+        "hold": 2.06354,
+        "beam": 42.016916
+      },
+      "total_ms": {
+        "v1": 37.684579,
+        "hold": 5.6517479999999995,
+        "beam": 45.605124
+      },
+      "action_ids": {
+        "v1": 44,
+        "hold": 1078,
+        "beam": 112
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 1.593576,
+          "future_legal": 0.0,
+          "search_overhead": 0.43295499999999976,
+          "policy_total": 2.026531
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 13.816966,
+          "future_legal": 27.477171,
+          "search_overhead": 0.6064500000000024,
+          "policy_total": 41.900587
+        }
+      }
+    },
+    {
+      "step": 2000,
+      "repetition": 1,
+      "root_legal_ms": 3.599168,
+      "policy_ms": {
+        "v1": 34.285716,
+        "hold": 2.04694,
+        "beam": 41.916206
+      },
+      "total_ms": {
+        "v1": 37.884884,
+        "hold": 5.646108,
+        "beam": 45.515374
+      },
+      "action_ids": {
+        "v1": 44,
+        "hold": 1078,
+        "beam": 112
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 1.545635,
+          "future_legal": 0.0,
+          "search_overhead": 0.46600799999999976,
+          "policy_total": 2.011643
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 13.581492,
+          "future_legal": 27.548989,
+          "search_overhead": 0.5903080000000038,
+          "policy_total": 41.720789
+        }
+      }
+    },
+    {
+      "step": 2000,
+      "repetition": 2,
+      "root_legal_ms": 3.481437,
+      "policy_ms": {
+        "v1": 33.475924,
+        "hold": 2.093347,
+        "beam": 41.621622
+      },
+      "total_ms": {
+        "v1": 36.957361,
+        "hold": 5.574784,
+        "beam": 45.103059
+      },
+      "action_ids": {
+        "v1": 44,
+        "hold": 1078,
+        "beam": 112
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 1.581798,
+          "future_legal": 0.0,
+          "search_overhead": 0.4771239999999999,
+          "policy_total": 2.058922
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 13.747977,
+          "future_legal": 27.098902,
+          "search_overhead": 0.6078700000000019,
+          "policy_total": 41.454749
+        }
+      }
+    },
+    {
+      "step": 3000,
+      "repetition": 0,
+      "root_legal_ms": 3.445509,
+      "policy_ms": {
+        "v1": 77.8167,
+        "hold": 3.179178,
+        "beam": 51.641074
+      },
+      "total_ms": {
+        "v1": 81.262209,
+        "hold": 6.624687,
+        "beam": 55.086583000000005
+      },
+      "action_ids": {
+        "v1": 296,
+        "hold": 66,
+        "beam": 1216
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.395243,
+          "future_legal": 0.0,
+          "search_overhead": 0.728221,
+          "policy_total": 3.123464
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 23.258207,
+          "future_legal": 27.074003,
+          "search_overhead": 0.9661000000000008,
+          "policy_total": 51.29831
+        }
+      }
+    },
+    {
+      "step": 3000,
+      "repetition": 1,
+      "root_legal_ms": 3.489913,
+      "policy_ms": {
+        "v1": 77.111244,
+        "hold": 3.301388,
+        "beam": 51.667064
+      },
+      "total_ms": {
+        "v1": 80.601157,
+        "hold": 6.791301000000001,
+        "beam": 55.156977000000005
+      },
+      "action_ids": {
+        "v1": 296,
+        "hold": 66,
+        "beam": 1216
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.431751,
+          "future_legal": 0.0,
+          "search_overhead": 0.812881,
+          "policy_total": 3.244632
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 23.321798,
+          "future_legal": 27.045894,
+          "search_overhead": 1.005818999999999,
+          "policy_total": 51.373511
+        }
+      }
+    },
+    {
+      "step": 3000,
+      "repetition": 2,
+      "root_legal_ms": 3.407899,
+      "policy_ms": {
+        "v1": 77.69488,
+        "hold": 3.262966,
+        "beam": 52.295886
+      },
+      "total_ms": {
+        "v1": 81.102779,
+        "hold": 6.670865,
+        "beam": 55.703785
+      },
+      "action_ids": {
+        "v1": 296,
+        "hold": 66,
+        "beam": 1216
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.461774,
+          "future_legal": 0.0,
+          "search_overhead": 0.7441749999999998,
+          "policy_total": 3.205949
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 23.691283,
+          "future_legal": 27.325619,
+          "search_overhead": 0.988468000000001,
+          "policy_total": 52.00537
+        }
+      }
+    },
+    {
+      "step": 4000,
+      "repetition": 0,
+      "root_legal_ms": 3.217881,
+      "policy_ms": {
+        "v1": 26.272287,
+        "hold": 3.234553,
+        "beam": 39.71667
+      },
+      "total_ms": {
+        "v1": 29.490167999999997,
+        "hold": 6.452434,
+        "beam": 42.934551
+      },
+      "action_ids": {
+        "v1": 452,
+        "hold": 1720,
+        "beam": 1720
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.472109,
+          "future_legal": 0.0,
+          "search_overhead": 0.710566,
+          "policy_total": 3.182675
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 14.811123,
+          "future_legal": 23.95001,
+          "search_overhead": 0.8165949999999995,
+          "policy_total": 39.577728
+        }
+      }
+    },
+    {
+      "step": 4000,
+      "repetition": 1,
+      "root_legal_ms": 3.225686,
+      "policy_ms": {
+        "v1": 26.555419,
+        "hold": 3.200549,
+        "beam": 39.75388
+      },
+      "total_ms": {
+        "v1": 29.781105,
+        "hold": 6.426235,
+        "beam": 42.979566000000005
+      },
+      "action_ids": {
+        "v1": 452,
+        "hold": 1720,
+        "beam": 1720
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.454382,
+          "future_legal": 0.0,
+          "search_overhead": 0.692145,
+          "policy_total": 3.146527
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 14.823919,
+          "future_legal": 23.942606,
+          "search_overhead": 0.8159819999999982,
+          "policy_total": 39.582507
+        }
+      }
+    },
+    {
+      "step": 4000,
+      "repetition": 2,
+      "root_legal_ms": 3.211239,
+      "policy_ms": {
+        "v1": 26.255475,
+        "hold": 3.189768,
+        "beam": 39.645637
+      },
+      "total_ms": {
+        "v1": 29.466714,
+        "hold": 6.401007,
+        "beam": 42.856876
+      },
+      "action_ids": {
+        "v1": 452,
+        "hold": 1720,
+        "beam": 1720
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.443817,
+          "future_legal": 0.0,
+          "search_overhead": 0.6957779999999998,
+          "policy_total": 3.139595
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 14.79152,
+          "future_legal": 23.886199,
+          "search_overhead": 0.8001419999999975,
+          "policy_total": 39.477861
+        }
+      }
+    },
+    {
+      "step": 6000,
+      "repetition": 0,
+      "root_legal_ms": 3.131469,
+      "policy_ms": {
+        "v1": 26.441215,
+        "hold": 3.24907,
+        "beam": 39.411736
+      },
+      "total_ms": {
+        "v1": 29.572684,
+        "hold": 6.380539000000001,
+        "beam": 42.543205
+      },
+      "action_ids": {
+        "v1": 341,
+        "hold": 1469,
+        "beam": 1469
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.495104,
+          "future_legal": 0.0,
+          "search_overhead": 0.7006260000000002,
+          "policy_total": 3.19573
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 14.796932,
+          "future_legal": 23.641479,
+          "search_overhead": 0.8061420000000048,
+          "policy_total": 39.244553
+        }
+      }
+    },
+    {
+      "step": 6000,
+      "repetition": 1,
+      "root_legal_ms": 3.165333,
+      "policy_ms": {
+        "v1": 26.368277,
+        "hold": 3.192403,
+        "beam": 39.34931
+      },
+      "total_ms": {
+        "v1": 29.53361,
+        "hold": 6.357736,
+        "beam": 42.514643
+      },
+      "action_ids": {
+        "v1": 341,
+        "hold": 1469,
+        "beam": 1469
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.440805,
+          "future_legal": 0.0,
+          "search_overhead": 0.6971859999999999,
+          "policy_total": 3.137991
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 14.72389,
+          "future_legal": 23.673309,
+          "search_overhead": 0.8034400000000019,
+          "policy_total": 39.200639
+        }
+      }
+    },
+    {
+      "step": 6000,
+      "repetition": 2,
+      "root_legal_ms": 3.134374,
+      "policy_ms": {
+        "v1": 26.375711,
+        "hold": 3.188016,
+        "beam": 39.450128
+      },
+      "total_ms": {
+        "v1": 29.510085,
+        "hold": 6.32239,
+        "beam": 42.584502
+      },
+      "action_ids": {
+        "v1": 341,
+        "hold": 1469,
+        "beam": 1469
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.438556,
+          "future_legal": 0.0,
+          "search_overhead": 0.698153,
+          "policy_total": 3.136709
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 14.690045,
+          "future_legal": 23.635718,
+          "search_overhead": 0.7964489999999991,
+          "policy_total": 39.122212
+        }
+      }
+    },
+    {
+      "step": 8000,
+      "repetition": 0,
+      "root_legal_ms": 3.473212,
+      "policy_ms": {
+        "v1": 67.921761,
+        "hold": 2.792261,
+        "beam": 42.913401
+      },
+      "total_ms": {
+        "v1": 71.39497300000001,
+        "hold": 6.265473,
+        "beam": 46.386613
+      },
+      "action_ids": {
+        "v1": 90,
+        "hold": 941,
+        "beam": 941
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.08447,
+          "future_legal": 0.0,
+          "search_overhead": 0.6470560000000001,
+          "policy_total": 2.731526
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 14.595491,
+          "future_legal": 27.360292,
+          "search_overhead": 0.7657679999999942,
+          "policy_total": 42.721551
+        }
+      }
+    },
+    {
+      "step": 8000,
+      "repetition": 1,
+      "root_legal_ms": 3.427105,
+      "policy_ms": {
+        "v1": 68.802699,
+        "hold": 2.687574,
+        "beam": 42.936214
+      },
+      "total_ms": {
+        "v1": 72.229804,
+        "hold": 6.114679000000001,
+        "beam": 46.363319
+      },
+      "action_ids": {
+        "v1": 90,
+        "hold": 941,
+        "beam": 941
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 2.040784,
+          "future_legal": 0.0,
+          "search_overhead": 0.5977779999999999,
+          "policy_total": 2.638562
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 14.649332,
+          "future_legal": 27.380762,
+          "search_overhead": 0.7278759999999984,
+          "policy_total": 42.75797
+        }
+      }
+    },
+    {
+      "step": 8000,
+      "repetition": 2,
+      "root_legal_ms": 3.418659,
+      "policy_ms": {
+        "v1": 67.971145,
+        "hold": 2.55796,
+        "beam": 42.22647
+      },
+      "total_ms": {
+        "v1": 71.38980400000001,
+        "hold": 5.9766189999999995,
+        "beam": 45.645129
+      },
+      "action_ids": {
+        "v1": 90,
+        "hold": 941,
+        "beam": 941
+      },
+      "v2_breakdown": {
+        "hold": {
+          "root_legal": 0.0,
+          "simulation_features": 1.94492,
+          "future_legal": 0.0,
+          "search_overhead": 0.567855,
+          "policy_total": 2.512775
+        },
+        "beam": {
+          "root_legal": 0.0,
+          "simulation_features": 14.45071,
+          "future_legal": 26.93975,
+          "search_overhead": 0.7001349999999995,
+          "policy_total": 42.090595
+        }
+      }
+    }
+  ]
+}

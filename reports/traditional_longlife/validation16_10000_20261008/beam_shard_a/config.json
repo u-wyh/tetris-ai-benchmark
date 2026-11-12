@@ -1,0 +1,38 @@
+{
+  "seeds": [
+    100019,
+    100020,
+    100021,
+    100022,
+    100023,
+    100024,
+    100025
+  ],
+  "max_pieces": 10000,
+  "strategy": "v2-1",
+  "policy": {
+    "mode": "beam",
+    "beam_width": 8,
+    "lookahead": 0.58,
+    "weights": {
+      "cleared": 8.2,
+      "aggregate_height": -0.47,
+      "holes": -4.2,
+      "covered_holes": -0.16,
+      "bumpiness": -0.28,
+      "max_height": -0.18,
+      "wells": -0.08,
+      "row_transitions": -0.14,
+      "column_transitions": -0.22,
+      "top_risk": -0.9
+    },
+    "death_penalty": 1000000.0
+  },
+  "code_sha256": "6dc6c6d31fc3d02fdc3ee0bd369dbd07aac438b14f98bce2803da546c4a469f4",
+  "created_at": "2026-10-08T12:18:58.148868+00:00",
+  "python": "3.12.3",
+  "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39",
+  "git_commit": "308bc90427d62bb9fde954072f79503101fb07e9",
+  "git_status": " M README.md\n?? ppo-viewer.log\n?? reports/traditional_longlife/\n?? tests/test_longlife.py\n?? training/evaluation/extend_traditional.py\n?? training/evaluation/longlife.py\n?? training/evaluation/profile_longlife.py\n?? training/ppo_viewer.html\n?? training/ppo_viewer.py\n",
+  "timing": "root legal BFS + policy simulation/features/future BFS/search; excludes Core.step and record I/O"
+}

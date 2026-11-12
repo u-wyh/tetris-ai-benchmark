@@ -1,0 +1,35 @@
+{
+  "seeds": [
+    100016,
+    100017,
+    100018,
+    100019,
+    100020,
+    100021,
+    100022,
+    100023,
+    100024,
+    100025
+  ],
+  "max_pieces": 100000,
+  "strategy": "v1-adapter-1",
+  "weights": {
+    "cleared": 8.2,
+    "aggregate_height": -0.47,
+    "holes": -4.2,
+    "covered_holes": -0.16,
+    "bumpiness": -0.28,
+    "max_height": -0.18,
+    "wells": -0.08
+  },
+  "lookahead": 0.58,
+  "jitter": 0.002,
+  "hold": false,
+  "code_sha256": "728bbd0f631b2ce33e7b86e2704ab7cedd5ee77a884cbf3ff680347823dc1a6e",
+  "created_at": "2026-10-08T12:42:09.384014+00:00",
+  "python": "3.12.3",
+  "platform": "Linux-6.8.0-146-generic-x86_64-with-glibc2.39",
+  "git_commit": "308bc90427d62bb9fde954072f79503101fb07e9",
+  "git_status": " M README.md\n?? ppo-viewer.log\n?? reports/traditional_longlife/\n?? tests/test_longlife.py\n?? training/evaluation/extend_traditional.py\n?? training/evaluation/longlife.py\n?? training/evaluation/profile_longlife.py\n?? training/ppo_viewer.html\n?? training/ppo_viewer.py\n",
+  "timing": "placement generation + mask + policy; excludes execution/I/O"
+}

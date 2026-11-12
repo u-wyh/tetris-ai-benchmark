@@ -1,0 +1,21 @@
+{
+  "num_seeds": 6,
+  "mean_pieces": 8439.666666666666,
+  "median_pieces": 10000.0,
+  "p90_pieces": 10000,
+  "mean_lines": 3371.5,
+  "median_lines": 3999.0,
+  "p90_lines": 3999,
+  "mean_score": 72241900,
+  "median_score": 88394500.0,
+  "p90_score": 88931400,
+  "game_over_rate": 0.3333333333333333,
+  "cap_rate": 0.6666666666666666,
+  "mean_decision_ms": 74.62212598303645,
+  "p95_decision_ms": 126.48851,
+  "decisions_per_second": 13.400851112541687,
+  "end_to_end_pieces_per_second": 12.58631779554253,
+  "lines_per_piece": 0.39948260199849916,
+  "evaluation_saturated": true,
+  "metric_censored_by_cap": true
+}

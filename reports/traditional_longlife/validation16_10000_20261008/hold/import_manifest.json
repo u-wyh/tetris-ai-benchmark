@@ -1,0 +1,11 @@
+{
+  "source": "reports/traditional_longlife/pilot_20261008_s100016_100018/hold",
+  "source_git_commit": "b57e0fea560ed4abdc14c901516a32253a2add24",
+  "source_code_sha256": "6dc6c6d31fc3d02fdc3ee0bd369dbd07aac438b14f98bce2803da546c4a469f4",
+  "imported_seeds": [
+    100016,
+    100017,
+    100018
+  ],
+  "created_at": "2026-10-08T11:54:29.314975+00:00"
+}
