@@ -6,6 +6,18 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-12T16:24:16+08:00 最新接手：8episode pair与CE均已封闭，CE梯度审计完成，下一单次优化算法对照
+
+本turn01a1cec3-9064-7fe2-a300-79f0447d0058真实消费15:39:25hourly queued，首工具15:58:17.804/call_2247838394934198be1add070c6734b6，RPCqueue空；hourly_head8_execution_20261112.json。轻薄本backend13827→1、health16:19:44四unit enabled active/linger yes/sleepmasked/goalactive，当前proxy存在，不称本轮新无桌面或OS重启。所有新controller已终态，勿重跑。
+
+新8episode pair固定256Adam已失败封闭提交c785318（train1/8/val0/4，83fullforward）；再单独只换全legal CE目标，root runs/autonomous_head_global_ce_20261112，helper改前归档，25tests1.25秒。fresh d0/Adam/原lr.01、256步、KLβ1/L2.01/同8episode与交替schedule；源h全复用。source1832010于16:14:36完成/controller40终态inactive success；唯一0source+82candidatefullforward，另256headforward/256Adam、1model load/0env0PPO。源完整policy/Adam/RNG/ZIP/PPO30003200/36625/31训练20推理源不变，候选只64末层weight。train2/8全局纠正（case91/93）、val0/4（pair领先1/4仍输第三动作），固定准入失败，无candidateZIP/完整棋力或推广；不续256Adam/扫参。val已开发反馈非独立确认，旧eligibleflagsFalse不变。
+
+normaltrain77/316变/val79/316，KL.341930/.385700仅报告；val episodepairloss4.857334→1.476862。正式8.188秒4采样最高CPU66.375/GPU39℃/1043.363MiB，全hold非连续峰；原250%6GiB/swap0/六核/aggregate/温控/最低内存/GPU/lightbook/goalSTOP/120command600wall。332冻结输入相符。
+
+单独audit脚本0模型/forward/env/优化器，3tests1.17秒有限差分/隔离/频次通过；16:19:36读外部封存checkpoint weights_only CPU元数据，真实Adamstep256/唯一64float64/固定超参/系数逐值相等。精确256调度经验目标CE5.0760→1.848394，normalKL.344084/L2.202344，总2.394821589；梯度L2.1540731153，理想强凸次优界.5934631/距离界7.70366，界宽，**不能称已收敛或认定表示无效**。float64诊断非区间证书，val不求梯度。audit100%2GiB/2.075秒guard/346SHA全相符，采样可能早于数组加载不是峰。completion_audit/report head_global_ce_20261112.md持久化。
+
+**下一实际开发（尚未开始，先查重）**：按report末节，隔离优化算法的一次新有限对照：fresh d0、完全同CE/KLβ1/L2.01/频次加权目标和8train数据；CUDA float64阻尼Newton，64Hessian+.02I，train grad∞≤1e-6收敛；最多32接受步、每步12Armijo回溯(c1e-4/.5)，无收敛或预算到即停止不提高，不恢复/延长失败Adam。不再LR/β/数据/val网格。每完整train目标pass=8pair+316normal零权重填至328/41批8，actualheadpass/Hessian/solve/backtrack分别记；0PPO/0env。先独立Hessian有限差分/方向/失败/计数/val隔离测试；只预定train收敛终点可做候选82真实GPUforward，val不挑步数。源policy/Adam/RNG/ZIP/实际PPO计数不变，原准入train/val各≥1globalTop1且valpairloss降、后续全局≥.99pieces/.99score/死亡不增/minseed≥.9保持；收敛不等泛化。原lightbook/GPU8/250%6GiB/温控/120command600wall/STOP保护。GPU/host/额度不可用保留原小时，无CPU/跨机/账户付费fallback。持续goalactive。
+
 ### 2026-11-12T16:10:32+08:00 最新接手：8episode固定覆盖对照已失败封闭，下一全局竞争目标诊断
 
 本小时queued submission01a1ceb2-8015-74a2-923c-8bc542a9fd6f真实被turn01a1cec3-9064-7fe2-a300-79f0447d0058消费，首工具15:58:17.804/call_2247838394934198be1add070c6734b6，RPCqueue空；health后台/四unit enabled active/linger/sleep masked/goalactive，当前proxy存在，不称本轮无桌面或OS重启。hourly_head8_execution_20261112.json持久化。旧job全终态，未重跑。

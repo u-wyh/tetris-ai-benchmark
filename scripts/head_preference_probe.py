@@ -54,12 +54,17 @@ def pack(arrays, metadata, indices, device):
     return tuple(torch.as_tensor(x, device=device) for x in (h, raw, mask, np.array(good), np.array(base)))
 
 
-def loss_terms(delta, h, raw, mask, good, base):
+def loss_terms(delta, h, raw, mask, good, base, objective='pair_softplus'):
     import torch
     from torch.nn import functional as F
     scores = raw+h@delta
     row = torch.arange(4, device=delta.device)
-    preference = F.softplus(-(scores[row, good]-scores[row, base])).mean()
+    if objective == 'pair_softplus':
+        preference = F.softplus(-(scores[row, good]-scores[row, base])).mean()
+    elif objective == 'all_legal_cross_entropy':
+        preference = F.cross_entropy(scores[:4].masked_fill(~mask[:4], -1e30), good)
+    else:
+        raise ValueError('Unregistered preference objective')
     teacher_log = F.log_softmax(raw[4:].masked_fill(~mask[4:], -1e30), dim=-1)
     proposed_log = F.log_softmax(scores[4:].masked_fill(~mask[4:], -1e30), dim=-1)
     kl = (teacher_log.exp()*(teacher_log-proposed_log)).sum(dim=-1).mean()
@@ -128,7 +133,7 @@ def fit(arrays, metadata, receipt, check, checkpoint):
         check()
         batch = pack(arrays, metadata, batch_indices(metadata, step), 'cuda')
         optimizer.zero_grad(set_to_none=True)
-        terms = loss_terms(delta, *batch)
+        terms = loss_terms(delta, *batch, objective=metadata.get('preference_objective', 'pair_softplus'))
         if not all(torch.isfinite(value).item() for value in terms):
             raise ValueError('Nonfinite head objective')
         receipt['head_training_forwards'] += 1
@@ -314,6 +319,35 @@ def reused_validation(design, cases, public, weight, bias):
     return rows
 
 
+def reused_extension(design, cases, public, weight, bias):
+    """Reuse the prior completed CUDA export, with no source policy forward."""
+    reuse = design['reuse_extension']
+    for key in ('readiness', 'execution', 'result', 'arrays'):
+        if sha(reuse[key]) != reuse[key+'_sha256']:
+            raise ValueError('External extension seal differs')
+    ready = json.loads(Path(reuse['readiness']).read_text())
+    execution = json.loads(Path(reuse['execution']).read_text())
+    result = json.loads(Path(reuse['result']).read_text())
+    if (ready['status'] != 'passed' or ready['source_model_sha256'] != MODEL_SHA or
+            ready['source_ppo_counts'] != [30003200, 36625] or ready['train_cases'][4:] != cases or
+            ready['train_episodes'] != 8 or ready['extension_features_sha256'] != reuse['arrays_sha256'] or
+            ready['inherited_eligible_for_training_flags_unchanged'] is not True or
+            execution['status'] != 'completed' or execution['source_policy_forwards'] != 1 or
+            execution['original_state_unchanged'] is not True or result['status'] != 'completed' or
+            result['source_state_unchanged'] is not True or result['source_ppo_counts'] != [30003200, 36625]):
+        raise ValueError('Completed CUDA extension provenance differs')
+    states = [dict(reference_action=c['baseline_action'], input_digest=observation_digest(**public_case(public, c['state_id'])))
+              for c in cases for _ in range(2)]
+    with np.load(reuse['arrays'], allow_pickle=False) as archive:
+        arrays = {k: archive[k] for k in archive.files}
+    validate_arrays(arrays, dict(states=states))
+    if not np.array_equal(weight, arrays['original_weight']) or not np.array_equal(bias, arrays['original_bias']):
+        raise ValueError('Reused extension source head differs')
+    rows = [cached_row(arrays, dict(states=states), i) for i in range(8)]
+    for row in rows:reconstruction(row, weight, bias)
+    return rows
+
+
 def run(folder):
     import torch
     from sb3_contrib import MaskablePPO
@@ -329,6 +363,11 @@ def run(folder):
     blocks = design.get('training_blocks', 1)
     if type(blocks) is not int or blocks not in (1, 2):
         raise ValueError('Only the registered4/8episode protocols are supported')
+    objective = design.get('preference_objective', 'pair_softplus')
+    reuse_extension = 'reuse_extension' in design
+    if (objective not in ('pair_softplus', 'all_legal_cross_entropy') or
+            ((objective == 'all_legal_cross_entropy' or reuse_extension) and blocks != 2)):
+        raise ValueError('Unregistered objective/coverage combination')
     if design['fixed'] != FIXED or not torch.cuda.is_available():
         raise RuntimeError('Fixed head protocol or available CUDA required')
     if (folder/'execution.json').exists():
@@ -336,7 +375,8 @@ def run(folder):
     receipt = dict(at=now(), pid=os.getpid(), status='started', full_policy_forward_attempts=0,
         source_policy_forwards=0, candidate_policy_forwards=0, head_training_forwards=0,
         head_optimizer_steps=0, ppo_optimizer_steps=0, environment_steps=0, model_loads=0, guard_proof=proof)
-    receipt['full_policy_forward_budget'] = 82 if blocks == 1 else 83
+    receipt['full_policy_forward_budget'] = (82 if blocks == 1 else 83)-int(reuse_extension)
+    receipt['preference_objective'] = objective
     durable_json(folder/'execution.json', receipt)
     try:
         if (training_source_identity() != design['training_sources'] or
@@ -374,7 +414,8 @@ def run(folder):
             val_before = reused_validation(design, cases['validation'], public, weight, bias)
             new_views = [public_case(public, c['state_id']) for c in extension for _ in range(2)]
             require_authorization(design, folder)
-            new_rows = observe(source.policy, new_views, receipt, 'source')
+            new_rows = (reused_extension(design, extension, public, weight, bias) if reuse_extension
+                        else observe(source.policy, new_views, receipt, 'source'))
             for row in new_rows:reconstruction(row, weight, bias)
             # Persist only the newly computed eight rows; never overwrite the old caches.
             with (folder/'extension_features.npz').open('xb') as stream:
@@ -388,6 +429,7 @@ def run(folder):
             cases['train'] += extension
         else:
             val_before = observe(source.policy, val_views, receipt, 'source')
+        metadata['preference_objective'] = objective
         max_error = 0.
         for pair, case in enumerate(cases['validation']):
             left, right = val_before[pair*2:pair*2+2];same_features(left, right)
@@ -417,6 +459,8 @@ def run(folder):
             readiness['extension_features_sha256'] = sha(folder/'extension_features.npz')
             readiness['training_pair_indices'] = metadata['training_pair_indices']
             readiness['validation_source_forward_reused'] = True
+            readiness['extension_source_forward_reused'] = reuse_extension
+            readiness['preference_objective'] = objective
             readiness['source_reconstruction_max'] = max(max_error, *(reconstruction(r, weight, bias) for r in new_rows))
         if not readiness['inherited_eligible_for_training_flags_unchanged'] or metadata['eligible_for_training'] is not False:
             raise ValueError('Prior evidence eligibility scope unexpectedly changed')
@@ -489,7 +533,7 @@ def run(folder):
         check();unchanged(design['frozen_files'])
         if not identical(before, (source.policy.state_dict(), source.policy.optimizer.state_dict(), global_rng_state(source), source._n_updates)):
             raise ValueError('Original source policy/Adam/counts/RNG changed')
-        if (receipt['head_optimizer_steps'] != 256 or receipt['source_policy_forwards'] != 1 or
+        if (receipt['head_optimizer_steps'] != 256 or receipt['source_policy_forwards'] != 1-int(reuse_extension) or
                 receipt['candidate_policy_forwards'] != 80+blocks or
                 receipt['full_policy_forward_attempts'] != receipt['full_policy_forward_budget']):
             raise ValueError('Actual finite work counts differ')
@@ -497,6 +541,7 @@ def run(folder):
             eligible_for_ppo_resume=False, source_state_unchanged=True, changed_candidate_parameters=changed,
             delta_l1=float(np.abs(delta).sum()), delta_l2=float(np.linalg.norm(delta)), source_ppo_counts=[30003200, 36625],
             max_score_reconstruction_error=max_error, training_history=history, train=train_report, validation=val_report,
+            preference_objective=objective,
             normal=normal_report, all_normal_mode_changes=discrepancies, coefficients_sha256=sha(folder/'coefficients.npz'),
             checkpoint_sha256=sha(folder/'head_fit_checkpoint.pt'), work={k: receipt[k] for k in
                 ('source_policy_forwards', 'candidate_policy_forwards', 'head_training_forwards', 'head_optimizer_steps',

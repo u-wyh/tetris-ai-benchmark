@@ -2505,3 +2505,38 @@
 ### 2026-11-12T16:10:32+08:00 8episode覆盖对照完成，预定准入失败封闭
 - source1830044 16:07:48完成、controller52终态inactive success，256head更新/forward、83fullpolicyforward/1load/0env0PPO；源完整状态/RNG/ZIP不变。train1/8全局Top1、val0/4，loss改善但准入失败，无candidateZIP/棋力或推广，不续训调参。
 - 19测试通过；323正式冻结输入SHA相符；采样最高CPU66.125GPU40.0℃/1044.390625MiB，全hold非真峰，原250%6GiB/温控预算。证据：runs/autonomous_head_coverage8_20261112/completion_audit.json、reports/experiments/head_coverage8_20261112.md。下一只复用缓存全局竞争诊断，新协议须事前固定。
+
+- 2026-11-12T16:12:57+08:00：资源保护：启动受保护任务 tetris-guard-1831657-1794471177074815881，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_global_ce_20261112/unit/guard。
+
+- 2026-11-12T16:12:59+08:00：资源保护：tetris-guard-1831657-1794471177074815881 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_global_ce_20261112/unit/guard。
+
+- 2026-11-12T16:12:59+08:00：资源保护：全合法动作CE第三动作梯度/padding/有限数值与只复用完整封存CUDA来源测试。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_global_ce_20261112/unit/summary.json。
+
+### 2026-11-12T16:13:34+08:00 全局竞争目标单次CE协议与测试
+- 8episode pair目标封闭提交c785318，3train pair领先仅1全局Top1，其中2输第三动作；不声称唯一泛化失败原因。单独预定只换偏好损失为全合法动作CE，fresh d0/Adam、lr/256步/KLβ1/L2.01/8episode/val终点/准入门槛保持，非网格/失败checkpoint续训。
+- 25定向测试通过，含第三动作梯度、padding/极值、封存完整CUDA来源才复用；0模型/env训练。新源h全部复用，预算0source+82candidate forward/256head步/0env0PPO/1load。旧源码已归档，新协议先于GPU。证据：runs/autonomous_head_global_ce_20261112/protocol.json及unit。
+
+- 2026-11-12T16:14:31+08:00：资源保护：启动受保护任务 tetris-guard-1831999-1794471271392644890，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_global_ce_20261112/probe/guard。
+
+- 2026-11-12T16:14:39+08:00：资源保护：tetris-guard-1831999-1794471271392644890 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_global_ce_20261112/probe/guard。
+
+- 2026-11-12T16:14:40+08:00：资源保护：单次全合法动作CE head目标试验完成；仅候选准入另见probe_result。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_global_ce_20261112/probe/summary.json。
+
+- 2026-11-12T16:18:59+08:00：CE source1832010 16:14:36完成/controller40终态inactive success，0source+82candidatefullforward/256head更新/1load0env0PPO，train2/8、val0/4门槛失败；未推广。准备100%2GiB纯数组解析梯度/serializedhead审计，0新优化器/模型，解析界只理想精确算术非interval证书。证据：runs/autonomous_head_global_ce_20261112/probe及audit。
+
+- 2026-11-12T16:19:01+08:00：资源保护：启动受保护任务 tetris-guard-1833258-1794471541585355596，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_global_ce_20261112/audit_unit/guard。
+
+- 2026-11-12T16:19:03+08:00：资源保护：tetris-guard-1833258-1794471541585355596 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_global_ce_20261112/audit_unit/guard。
+
+- 2026-11-12T16:19:04+08:00：资源保护：终点精确256调度权重/CE和pair解析梯度有限差分/validation隔离测试。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_global_ce_20261112/audit_unit/summary.json。
+
+- 2026-11-12T16:19:35+08:00：资源保护：启动受保护任务 tetris-guard-1833407-1794471575128150413，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_global_ce_20261112/audit/guard。
+
+- 2026-11-12T16:19:37+08:00：资源保护：tetris-guard-1833407-1794471575128150413 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_global_ce_20261112/audit/guard。
+
+- 2026-11-12T16:19:37+08:00：资源保护：已完成CE终点断点与精确训练调度梯度审计完成；0模型/优化器/环境。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_global_ce_20261112/audit/summary.json。
+
+### 2026-11-12T16:24:16+08:00 全合法CE与终点审计封闭
+- CE256GPU head更新/82candidateforward/1load0env0PPO，train2/8、val0/4，准入失败无ZIP/全局棋力/推广。25tests通过。原250%6GiB/温控预算，正式最高采样CPU66.375/GPU39℃/1043.363MiB，全hold非连续峰。
+- 3数值测试通过；纯数组审计真实Adamstep256/参数范围/断点与系数一致，精确调度经验总loss2.394821589/梯度L2.1540731153，理想次优界.5934631较宽，不宣称收敛或表示无效；0新优化器/模型。4guard均终态，15/332/17/346输入SHA相符，源全状态与PPO计数未改。证据：runs/autonomous_head_global_ce_20261112/completion_audit.json、reports/experiments/head_global_ce_20261112.md。
+- 下一仅事前单次freshGPU阻尼Newton优化方法对照，同固定训练目标/val终点/原门槛，严格32接受步×每步12回溯/grad∞1e-6与原120秒预算；尚未开始，不续失败Adam或扫参。

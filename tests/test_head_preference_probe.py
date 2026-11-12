@@ -48,6 +48,61 @@ def test_large_logits_have_finite_loss_and_gradient():
     assert all(torch.isfinite(t) for t in terms) and torch.isfinite(delta.grad).all()
 
 
+def test_global_objective_penalizes_a_third_action_the_pair_loss_ignores():
+    h, raw, mask, good, base = synthetic()
+    mask[:, 2] = True;h[:4, 2, 1] = 3.;raw[:4, 2] = 5.
+    delta = torch.zeros(2, dtype=torch.float64, requires_grad=True)
+    pair = probe.loss_terms(delta, h, raw, mask, good, base)[0]
+    pair_gradient = torch.autograd.grad(pair, delta)[0]
+    global_loss = probe.loss_terms(delta, h, raw, mask, good, base, 'all_legal_cross_entropy')[0]
+    gradient = torch.autograd.grad(global_loss, delta)[0]
+    q = torch.softmax(raw[0], dim=0)
+    assert pair_gradient[1].item() == 0.
+    assert torch.allclose(gradient, torch.stack([2.*q[1]-2., 3.*q[2]]))
+    assert global_loss.item() > pair.item() and gradient[1].item() > 2.9
+
+
+def test_global_objective_masks_padding_and_has_finite_extreme_gradient():
+    args = synthetic();delta = torch.tensor([.1, .2], dtype=torch.float64, requires_grad=True)
+    first = probe.loss_terms(delta, *args, objective='all_legal_cross_entropy')[0]
+    gradient = torch.autograd.grad(first, delta)[0]
+    args[0][:, 2] = 1e8;args[1][:, 2] = 1e10
+    second = probe.loss_terms(delta, *args, objective='all_legal_cross_entropy')[0]
+    assert second.item() == first.item()
+    assert torch.equal(torch.autograd.grad(second, delta)[0], gradient)
+    args[1][:4, 1] = -10000.
+    extreme = probe.loss_terms(delta, *args, objective='all_legal_cross_entropy')[0]
+    assert torch.isfinite(extreme) and torch.isfinite(torch.autograd.grad(extreme, delta)[0]).all()
+
+
+@pytest.mark.parametrize('corruption', ['none', 'incomplete', 'case', 'arrays'])
+def test_only_a_sealed_completed_source_export_can_be_reused(tmp_path, corruption):
+    public = dict(observation_state=np.zeros((4, 237), np.float32),
+        observation_candidate=np.zeros((4, 1840, 16), np.uint8), action_mask=np.zeros((4, 1840), bool))
+    public['action_mask'][:, :2] = True
+    cases = [dict(state_id=i, seed=s, baseline_action=0, action=1) for i, s in enumerate([992010, 992012, 992014, 992015])]
+    arrays, _ = fixture(tmp_path)
+    values = {k: v.copy() for k, v in arrays.items()}
+    values.update(h=arrays['h'][:16], actions=arrays['actions'][:16], raw_score=arrays['raw_score'][:16], offsets=arrays['offsets'][:9])
+    archive = tmp_path/'arrays.npz';np.savez(archive, **values)
+    ready = dict(status='passed', source_model_sha256=probe.MODEL_SHA, source_ppo_counts=[30003200, 36625],
+        train_cases=[{}]*4+cases, train_episodes=8, extension_features_sha256=probe.sha(archive),
+        inherited_eligible_for_training_flags_unchanged=True)
+    execution = dict(status='completed', source_policy_forwards=1, original_state_unchanged=True)
+    result = dict(status='completed', source_state_unchanged=True, source_ppo_counts=[30003200, 36625])
+    if corruption == 'incomplete':execution['status'] = 'failed'
+    if corruption == 'case':ready = copy.deepcopy(ready);ready['train_cases'][4]['seed'] = 992011
+    reuse = dict(arrays=str(archive), arrays_sha256=probe.sha(archive))
+    for key, value in [('readiness', ready), ('execution', execution), ('result', result)]:
+        path = tmp_path/(key+'.json');path.write_text(json.dumps(value));reuse[key] = str(path);reuse[key+'_sha256'] = probe.sha(path)
+    if corruption == 'arrays':archive.write_bytes(b'changed')
+    if corruption == 'none':
+        rows = probe.reused_extension(dict(reuse_extension=reuse), cases, public, values['original_weight'], values['original_bias'])
+        assert len(rows) == 8 and all(r['mode'] == 0 for r in rows)
+    else:
+        with pytest.raises(ValueError):probe.reused_extension(dict(reuse_extension=reuse), cases, public, values['original_weight'], values['original_bias'])
+
+
 def test_whole_episode_training_schedule_never_selects_validation(tmp_path):
     arrays, metadata = fixture(tmp_path)
     selected = [probe.batch_indices(metadata, step) for step in range(256)]
