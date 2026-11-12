@@ -6,6 +6,30 @@
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
 
+### 2026-11-12T15:56:01+08:00 最新接手：新GPU train block1四例全强有益，下一8episode覆盖对照
+
+本轮progress：先封闭Nov7完成/额度中断的head试验，提交499b6cb；旧256步val0/4准入失败，不重跑/续调。Nov12普通额度恢复后当前native turn01a1ceb2-7ff5-7f43-b98b-23c61f7799a3首工具15:39:45.269+08/call_4c8a6ee694c04786b332c27392c0e6c3，queued请求初仍pending不称消费；backend13827→1、当前proxy存在，不称本轮无桌面或OS重启。额度间断未工作，不改账户付费。
+
+新root runs/autonomous_training_block1_20261112，17测试/1.16秒，probe1823853 15:45:39完整8worker/core/NumPy/action RNG/公开mask恢复通过。training_block只0/1、val只0，默认选择兼容，改前source归档before_changes。固定新train：94/992010/25891/1169→62；96/992012/31013/364→338；86/992014/12635/959→1328；98/992015/72678/1073→842，protocol早于GPU，无失败替换。
+
+driver1824118自动10phase，15:49:20真实completed/terminal、unit inactive success/MainPID0，21chunk/5000round；唯一26900env/5000GPUforward/10原model load/0策略optimizer。base2000/2000/900/2000真死，alt全5000右删失，原规则4/4strong beneficial，得分比1.00858249/1.01759858/1.04662883/1.01225647，四消比均≥1；仅观察窗口增益，不外推。现在8train pair/8episode，val4case/3episode不回流。window1825626于15:50:52全链/worker/public输入/动作终止/10receipt审计通过，8新branch显式原30M SHA/30003200/36625；旧记录相等8/8仍不补历史身份/完整tensor。每阶段完整源policy/Adam/RNG不变，未动源ZIP/31训练20推理源。
+
+13guard completed/全采样hold，CPU最高70℃GPU50℃/3202.039MiB（采样非真峰），正式250%6GiB/swap0/六核aggregate与原温控/host目标STOP/120command600wall，unit/window100%2GiB。91job/95pipeline/170window及phase递增SHA完成后相符。25秒journal观察到期124不是任务失败，查同unit终态，未重启。completion_audit/report paired_training_block1_20261112.md及native_goal_head_resume_20261112.json持久化。上述job全部终态勿重跑。
+
+**下一实际开发（未开始，先查重）**：按report末节封存一次8episode覆盖对照，只变训练episode来源；新目录/fresh d0/Adam，不续失败checkpoint，不调超参。原4episode试验固定loss/LR.01/β1/L2.01、256GPU float64更新、bias和余网络冻结。batch8=4pair（t%2交替old4/new4）＋4normal（原train100000..3/chunk=t%79），8train episode各128暴露，val4/3episode只终点按seed等权，旧val作开发反馈非最终独立测试。旧工件eligible_for_training=false不改，另限定准入，不自动PPO恢复或推广。
+
+先验证旧640cache及Nov7 validation_features/readiness外部SHA/源模型和31/20/runtime；复用旧val源mode/h，只新block1源CUDA8一次导出h/public digest。内存append新8state而不覆写旧cache，trainpair indices[0,2,4,6,640,642,644,646]、normal原索引不变。预算fullpolicy83=新源1＋新候选82（train16/2batch＋val8/1＋normal632/79），另head256 forward/256优化步、0env/0PPO。原源PPO30003200/36625、policy/Adam/RNG/ZIP不变，fresh head step另记；先测试追加/隔离/旧4兼容/计数，再原250%6GiB/温控/120command600wall/STOP/GPU主机保护执行。固定终点同门槛train/val各≥1good全局Top1且val pairloss下降才走完整匹配棋力评测，否则终止该8episode试验，不扫参数。normal变化/KL完整报告非硬门槛；原≥.99pieces/.99score、死亡不增/minseed≥.9不改。GPU/host/额度不可用保存等原每小时，无CPU/跨机/账户付费fallback。持续goal active。
+
+### 2026-11-12T15:47:32+08:00 当前实际运行：Nov12新训练block1有限GPU分支，不重复启动
+
+旧head试验已封闭提交499b6cb（256更新/val0/4准入失败，不调参或推广）；本轮quota恢复真实首工具见native_goal_head_resume_20261112.json，goal active。新root runs/autonomous_training_block1_20261112，protocol事前固定4train新episode：case94/992010/25891/1169→62；96/992012/31013/364→338；86/992014/12635/959→1328；98/992015/72678/1073→842。旧val992011/016/027继续隔离，旧177身份限制保留。selector training_block仅0/1、val只0，默认旧train/val兼容；改前两脚本SHA归档before_changes。
+
+17测试/1.16秒通过，probe1823853于15:45:39完整8worker/core/NumPy/action RNG与公开mask成对恢复通过，0模型/forward/env/optimizer。新生产unit **tetris-training-block1-driver-20261112.service**，实查MainPID=1824118/active/success；finite driver≤10phase/1800秒，当前已完成3phase，最后边界{"manifest_sha256": "6618b985364319ebb1ed0ac263d4e09eaa9bc3d2829c1c57bdbcdde0ef239aa9", "chunks": 7, "round": 1536, "environment_steps": 11652}。91job/95pipeline输入封存。各phase≤2×256round/4096唯一env、5000branch40000job、原30M CUDA8/最高float32TF32false、0策略优化器、250%6GiB/swap0/原温控、120command600wall/host/goal/STOP保持，不重做512oracle。GPU/host/额度不可用保存，不CPU/跨机/账户fallback。
+
+**断点续做**：先实查同unit MainPID/Result及pipeline_result；live则等待原handle，观测超时不重启。terminal completed后冻结全部新chunk manifest/state/rows、实际phase receipts、job design/95pipeline输入/历史branches和现行auditor，按既有100%2GiB保护运行audit_paired_branch_window完整窗口审计（strict授权入口前后）。不得只凭文件状态声称终态或accepted声称工作。若quota/STOP中断，先核对livephase/实际commit/未知work，再新显式边界请求，不重用已started attempt或旧driver、不延长40000/5000/不替换case。最终报告原compare标签/右删失/每branch模型身份及旧已记录outcome比较；本轮工作与旧head256步分开，未启动新候选训练。
+
+完成后更新本段、OPERATIONS/native_goal_head_resume回执、仅提交相关文件。持续goal active，不放宽原棋力门槛。
+
 ### 2026-11-12T15:41:54+08:00 最新接手：Nov7单次head训练已失败封闭，Nov12普通额度恢复；下一GPU训练episode扩展
 
 前轮progress：source635732于Nov7 15:58:28完成256head更新/256head forward＋82fullpolicy forward/1model load，0env/0PPO optimizer；源policy/Adam/RNG/ZIP及30003200/36625不变，12测试通过。train2/4good全局Top1、val0/4，按episode等权loss2.8843→.4761/4.8573→1.3419，normal动作变78/316与89/316、KL.2951/.3660。预定gate失败，无evaluation_candidate.zip、无完整棋力评测或推广；不延长/调参/重跑。14/312冻结输入Nov12复核SHA一致，checkpoint真实freshAdam step256。正式8.198秒、4采样最高CPU64.75℃GPU38℃/1047.094MiB、全hold，原250%6GiB/温控/STOP预算。

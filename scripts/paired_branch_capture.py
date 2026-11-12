@@ -16,13 +16,17 @@ from audit_topk_preference_evidence import sealed_bytes, public_hash
 VERSION = 'paired-original30m-gpu8-v1'
 SEEDS = [992000, 992004, 992006, 992008]
 VALIDATION_SEEDS = [992011, 992016, 992027]
+TRAINING_EXTENSION_SEEDS = [992010, 992012, 992014, 992015]
 
 
-def selected_cases(preferences, split='train'):
+def selected_cases(preferences, split='train', training_block=0):
     if split not in ('train', 'validation'):
         raise ValueError('Unknown predetermined case split')
+    if (type(training_block) is not int or training_block not in (0, 1) or
+            (split == 'validation' and training_block != 0)):
+        raise ValueError('Unknown fixed training block or validation reassignment')
     chosen = []
-    seeds = SEEDS if split == 'train' else VALIDATION_SEEDS
+    seeds = (SEEDS if training_block == 0 else TRAINING_EXTENSION_SEEDS) if split == 'train' else VALIDATION_SEEDS
     eligible = [p for p in preferences['preferences'] if p['seed'] in seeds and
                 p['label'] == 'beneficial' and any(s.startswith('ppo_top') for s in p['sources'])]
     for seed in seeds:
@@ -170,7 +174,7 @@ def prepare(folder):
         if sha(path) != expected:
             raise ValueError('Frozen paired source/input changed: '+path)
     preferences = json.loads(sealed_bytes(Path(design['preferences']), design['frozen_files']))
-    if selected_cases(preferences, design.get('case_split', 'train')) != design['cases']:
+    if selected_cases(preferences, design.get('case_split', 'train'), design.get('training_block', 0)) != design['cases']:
         raise ValueError('Fixed pre-GPU pair selection differs')
     if (training_source_identity() != design['training_sources'] or
             inference_source_identity(resumable=True) != design['inference_sources'] or

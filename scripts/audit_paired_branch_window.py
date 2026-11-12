@@ -127,6 +127,7 @@ def run(folder):
             historical_recorded_outcome_comparison=historical,
             branches_sha256=sha(folder/'branches.json'),eligible_for_training=False,
             case_split=jd.get('case_split','train'),
+            training_block=jd.get('training_block',0),
             scope=('Four predetermined '+jd.get('case_split','train')+' cases from previously selected positive CPU outcomes. '
                 'Current CUDA matched-state labels; correlated within episode and conditionally selected. '
                 'Validation labels must not enter training. Not historical runtime reproduction, unbiased frequency or independent final quality.')))
