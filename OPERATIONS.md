@@ -2572,4 +2572,9 @@
 ### 2026-11-12T19:50:00+08:00 v1.0.0 发布阻碍复检
 - 原记录的 2 项失败不再复现：`tests/test_candidate_vs_v2_hold.py` 3 passed；后续提交 `17d0025`/`6d60de7` 的 V2 双源码身份与历史语义回归已覆盖该历史 SHA。
 - 本次复检：Parity 6 passed；传统/身份/网页定向 Python 34 passed；longlife/head Newton 41 passed；JS 61+7 passed；两个冻结模型 SHA256 与清单一致；8080 静态网页 200（仅 Tailscale），8081 推理服务未运行。
-- 全量 `pytest tests/` 含真实事务训练，本次时限内未跑完，不能声明全量通过。未启动训练/评测/unit，未恢复 goal，未创建标签。证据：reports/releases/v1.0.0.md 的「2026-11-12 复检」。
+- 全量 `pytest tests/` 首轮因缺少 `TETRIS_NATIVE_MANIFEST` 在 native 用例中止（215 passed、1 failed）；该用例带环境变量单独复跑通过，随后完成全量（见下条）。未启动训练/评测/unit，未恢复 goal，未创建标签。证据：reports/releases/v1.0.0.md 的「2026-11-12 复检」。
+
+### 2026-11-12T20:14:00+08:00 全量测试通过，未提交改动清账完成
+- 带 `TETRIS_NATIVE_MANIFEST` 跑全量 `pytest tests/ --ignore=tests/parity`：**1296 passed、4 skipped**，767.13 秒，exit 0。未设该变量时 native 相关用例 `KeyError: TETRIS_NATIVE_MANIFEST`，属环境前置而非代码回归。证据：/tmp/full_pytest2.log（本机临时日志）。
+- 5 个逻辑提交：ignore 规则、longlife 工具+数据、PPO viewer、Newton head、计划/排行/发布复检。工作树 clean；`reports/traditional_longlife` 的 100K 逐 seed 轨迹与本机日志不入 Git，聚合结果已入库。
+- 全程未加载模型推理、未跑环境/训练/GPU、未启动或恢复任何 unit、未创建标签。
