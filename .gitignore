@@ -3,3 +3,10 @@ __pycache__/
 *.pyc
 .pytest_cache/
 runs/
+# Local-only 100K-piece per-seed traces (~2.4 MB each); aggregate/config/report are committed.
+reports/traditional_longlife/*_100000_*/v1/seed_*.json
+reports/traditional_longlife/*_100000_*/hold/seed_*.json
+reports/traditional_longlife/*_100000_*/beam/seed_*.json
+ppo-viewer.log
+reports/traditional_longlife/**/*.log
+reports/traditional_longlife/**/.lock
