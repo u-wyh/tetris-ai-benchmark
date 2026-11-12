@@ -2,9 +2,21 @@
 
 用户于2026-11-05授权在其离开期间持续开发；有额度时继续，额度不足后每小时重试。此授权取代此前“只准备实验配置”的执行范围限制。
 
+## 已按用户要求停止持续开发
+
+2026-11-12T16:38:52+08:00：用户已回来并明确停止。goal=paused，control.enabled=false/start_queued_turns=false，已写STOP；关闭自动续办与驻留执行器。下文是暂停前的历史计划，不授权继续执行。仅收到用户明确恢复指令后才能重新启用。保留未提交代码与全部实验断点；最后Newton probe已完成，完整棋力评测未启动。
+
 ## 用户最新首要任务：轻薄本无人值守
 
 2026-11-06 10:06实证：09:57:45小时消息由10:02:08新轮01a1ae97-8675-75b2-abd9-14a46f2bc7a7消费并实际工具执行，桌面proxy为0、后台13827→1、keeper订阅正常、queue空。见runs/autonomous_development_20261105/unattended_hourly_no_desktop_execution_20261106.json；修复后真实无桌面小时接续已验收，整夜/OS重启和显式卸载恢复未测，不重做短时暂停。
+
+### 2026-11-12T16:35:32+08:00 当前未封闭：单次CUDA阻尼Newton，先查实际unit/结果避免重跑
+
+本native goal自动接续turn01a1cedd-3a1a-7dc2-832f-eb72617c6bec，首工具16:26:13.654/call_991349bd973d47f68fbbbcecff54a98e，上一turn completed/progress/提交c785318和6e7b657；不是新小时消费声明。lightbook机器ID核验/无live旧guard。旧CE/Adam均失败封闭，改前helper/auditor/tests归档before_changes。38tests1.42秒通过，包括独立NumPy目标/梯度、Hessian有限差分/正定/下降方向、41批8精确频次/padding/val隔离、12回溯失败不更新、计数和无CPU fallback。
+
+新root runs/autonomous_head_newton_20261112，protocol在GPU前固定，345输入封存。仅优化方法改fresh d0 CUDA float64 Newton，同CE/KLβ1/L2.01、原256schedule经验频次与8train数据；reference steps256不冒充Newton步数或PPO计数。最多32接受步/32Hessianpass、每步12Armijo(c1e-4/.5)、train grad∞≤1e-6停止；不PD/非下降/回溯或预算耗尽即停止保留，不重试扩大。每fullpass8pair+316normal零权重填328/41批8；上限417fullpass/384linepass/17097headbatchforward，解算/接受步/完整fullpolicyforward分开。源特征全部复用，1原模型load，0sourcefullforward/0env/0PPO；只train收敛终点才执行candidate82全CUDAforward，val只终点评价原门槛；未收敛candidate0，不能冒充通过。
+
+下一启动/核验unit tetris-head-newton-probe-20261112.service（此段还未声称已执行；先查execution/MainPID）；live等同handle，terminal读结果/实际计数/guard，禁止重复开始已attempt目录。原250%6GiB/swap0/六核/aggregate/温控/最低内存/host GPU/goal STOP/120command600wall保持。所有旧artifact eligibleFalse不改，收敛不等泛化；源policy/Adam/RNG/ZIP/PPO30003200/36625/31训练20推理源保持。固定train/val各≥1globalTop1且valpairloss降才可后续完整棋力，原.99pieces/.99score/死亡不增/minseed.9不改；无CPU/跨机/额度或账户fallback。完成报告/回执/commit，持续goalactive。
 
 ### 2026-11-12T16:24:16+08:00 最新接手：8episode pair与CE均已封闭，CE梯度审计完成，下一单次优化算法对照
 

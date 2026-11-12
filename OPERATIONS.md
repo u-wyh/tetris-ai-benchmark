@@ -2540,3 +2540,36 @@
 - CE256GPU head更新/82candidateforward/1load0env0PPO，train2/8、val0/4，准入失败无ZIP/全局棋力/推广。25tests通过。原250%6GiB/温控预算，正式最高采样CPU66.375/GPU39℃/1043.363MiB，全hold非连续峰。
 - 3数值测试通过；纯数组审计真实Adamstep256/参数范围/断点与系数一致，精确调度经验总loss2.394821589/梯度L2.1540731153，理想次优界.5934631较宽，不宣称收敛或表示无效；0新优化器/模型。4guard均终态，15/332/17/346输入SHA相符，源全状态与PPO计数未改。证据：runs/autonomous_head_global_ce_20261112/completion_audit.json、reports/experiments/head_global_ce_20261112.md。
 - 下一仅事前单次freshGPU阻尼Newton优化方法对照，同固定训练目标/val终点/原门槛，严格32接受步×每步12回溯/grad∞1e-6与原120秒预算；尚未开始，不续失败Adam或扫参。
+
+### 2026-11-12T16:30:07+08:00 原生持续目标自动接续已实际执行
+- turn01a1cedd-3a1a-7dc2-832f-eb72617c6bec，上一turn completed且两提交/真实GPU结果为progress，当前无live guard。本轮为native goal接续，不冒充新小时消息消费。先归档已封闭CE/Adam helper和auditor，准备同经验目标的fresh有界GPU Newton对照，原资源/主机/额度保护。证据：runs/autonomous_head_newton_20261112/before_changes、native_goal_head_newton_execution_20261112.json。
+
+- 2026-11-12T16:33:32+08:00：资源保护：启动受保护任务 tetris-guard-1836966-1794472412939799429，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额100%，内存上限2GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_newton_20261112/unit/guard。
+
+- 2026-11-12T16:33:35+08:00：资源保护：tetris-guard-1836966-1794472412939799429 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_newton_20261112/unit/guard。
+
+- 2026-11-12T16:33:35+08:00：资源保护：有限Newton Hessian/梯度/回溯/计数/无CPU fallback与旧Adam4/8兼容定向测试。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_newton_20261112/unit/summary.json。
+
+### 2026-11-12T16:35:32+08:00 有界CUDA Newton事前协议与测试完成
+- 38tests1.42秒通过；同8train CE/KLβ1/L2.01和旧256调度频次，fresh d0，不续Adam。封存345输入；32接受步/12固定回溯/grad∞1e-6/417pass上限，原120command600wall/250%6GiB/温控STOP。未收敛不做候选forward；收敛终点最多82candidateCUDA8，0sourceforward/0env0PPO/1load。证据：runs/autonomous_head_newton_20261112/protocol.json及unit。
+
+- 2026-11-12T16:35:42+08:00：资源保护：启动受保护任务 tetris-guard-1837431-1794472542421534054，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_newton_20261112/probe/guard。
+
+- 2026-11-12T16:35:50+08:00：资源保护：tetris-guard-1837431-1794472542421534054 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_newton_20261112/probe/guard。
+
+- 2026-11-12T16:35:51+08:00：资源保护：单次fresh阻尼Newton固定CE经验目标对照结束；收敛与候选准入另见probe_result。证据：/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_head_newton_20261112/probe/summary.json。
+
+### 2026-11-12T16:38:52+08:00 用户明确要求停止持续开发
+- 持续goal已paused；control.enabled=false、start_queued_turns=false并写STOP，禁止自动续办/训练。正在停用小时timer、watchdog与thread keeper，保留所有代码、checkpoint、结果。Newton probe已在用户暂停前completed，完整匹配棋力评测尚未开始，不继续开发/测试/评测。证据：runs/autonomous_development_20261105/user_pause_20261112.json。
+
+- 2026-11-12T16:39:26+08:00：停用后核验小时/watchdog timers与thread keeper均disabled/inactive，hourly/watchdog services MainPID0；无live guard，项目开发执行进程0，RPCqueue 0。停止已生效，保留现场，不继续开发。
+
+### 2026-11-12T19:45:00+08:00 只读盘点模型产物并固化排行榜
+- DSH 只读盘点 `runs/`：554 个 `model.zip`、393 份不同权重（多数为每 4096 步事务快照）；按家族整理出 10 组、25 个有名字的 checkpoint。未加载模型、未跑环境、未改任何权重。
+- 新增 `reports/experiments/model_leaderboard.md`：协议定义（A1/A2/B/C/D/E）、100K/3M/20K 三套排行榜、失败与未评测模型、25 个 checkpoint 的完整 SHA256 与路径、不可比较项说明。证据：reports/experiments/model_leaderboard.md。
+- `.gitignore` 新增排除 100K 逐 seed 轨迹（每文件约 2.4 MB）与 `ppo-viewer.log`；`reports/traditional_longlife/README.md` 记录入库范围。未删除本机任何数据。
+
+### 2026-11-12T19:50:00+08:00 v1.0.0 发布阻碍复检
+- 原记录的 2 项失败不再复现：`tests/test_candidate_vs_v2_hold.py` 3 passed；后续提交 `17d0025`/`6d60de7` 的 V2 双源码身份与历史语义回归已覆盖该历史 SHA。
+- 本次复检：Parity 6 passed；传统/身份/网页定向 Python 34 passed；longlife/head Newton 41 passed；JS 61+7 passed；两个冻结模型 SHA256 与清单一致；8080 静态网页 200（仅 Tailscale），8081 推理服务未运行。
+- 全量 `pytest tests/` 含真实事务训练，本次时限内未跑完，不能声明全量通过。未启动训练/评测/unit，未恢复 goal，未创建标签。证据：reports/releases/v1.0.0.md 的「2026-11-12 复检」。
