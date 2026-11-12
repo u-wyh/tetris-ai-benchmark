@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>俄罗斯方块 · PPO 实际对局</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #0b1220; color: #e8f1ff; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 24px; }
+    main { max-width: 960px; margin: auto; }
+    h1 { font-size: 1.55rem; margin: 0 0 8px; }
+    .note { color: #aebdd2; line-height: 1.5; margin: 0 0 18px; }
+    .layout { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+    canvas { width: min(100%, 360px); height: auto; background: #111b2b; border: 1px solid #344862; border-radius: 8px; }
+    aside { flex: 1; min-width: 245px; }
+    .card { background: #152238; border: 1px solid #32445c; border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+    .card h2 { margin: 0 0 12px; font-size: 1rem; color: #b9dcff; }
+    .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .stat small { display: block; color: #9eb1c9; }
+    .stat strong { font-size: 1.3rem; }
+    .queue { display: flex; gap: 8px; flex-wrap: wrap; }
+    .piece { display: inline-grid; place-items: center; min-width: 38px; height: 38px; padding: 0 8px; border-radius: 6px; font-weight: 800; color: #08111e; }
+    button, input, select { font: inherit; border-radius: 7px; padding: 8px 10px; }
+    button { color: #07111e; background: #67d7ff; border: 0; cursor: pointer; font-weight: 700; }
+    button.secondary { color: #e8f1ff; background: #32445c; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    input, select { color: #e8f1ff; background: #0d192b; border: 1px solid #516783; }
+    input { width: 130px; }
+    .controls { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; }
+    label { display: inline-flex; align-items: center; gap: 6px; }
+    #message { min-height: 1.4em; color: #a9e4ff; }
+    #model { font-size: .8rem; overflow-wrap: anywhere; color: #aebdd2; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Maskable PPO · 实际对局</h1>
+  <p class="note">每个方块的落点由训练好的模型实时选择，使用正式的 Python TetrisCore 和合法动作掩码。这里展示的是 AI Benchmark 的终点级决策：每步直接落定一个方块。</p>
+  <div class="layout">
+    <canvas id="board" width="320" height="640" aria-label="俄罗斯方块棋盘"></canvas>
+    <aside>
+      <section class="card">
+        <h2>对局数据</h2>
+        <div class="stats">
+          <div class="stat"><small>已放方块</small><strong id="pieces">0</strong></div>
+          <div class="stat"><small>消除行数</small><strong id="lines">0</strong></div>
+          <div class="stat"><small>游戏分数</small><strong id="score">0</strong></div>
+          <div class="stat"><small>等级</small><strong id="level">1</strong></div>
+        </div>
+      </section>
+      <section class="card">
+        <h2>公开信息</h2>
+        <p>当前：<span id="current"></span>　Hold：<span id="hold"></span></p>
+        <p>Next 3：</p><div class="queue" id="next"></div>
+        <p id="action">尚未行动</p>
+      </section>
+      <section class="card">
+        <h2>播放控制</h2>
+        <div class="controls">
+          <button id="play">自动播放</button>
+          <button id="step" class="secondary">下一步</button>
+          <label>间隔 <select id="speed"><option value="650">慢</option><option value="300" selected>中</option><option value="100">快</option></select></label>
+        </div>
+        <p id="message">正在连接模型…</p>
+        <div class="controls">
+          <label>Seed <input id="seed" type="number" min="0" max="4294967295" step="1" value="12345"></label>
+          <button id="reset" class="secondary">新游戏</button>
+        </div>
+      </section>
+      <section class="card"><h2>模型</h2><div id="model"></div></section>
+    </aside>
+  </div>
+</main>
+<script>
+const colors = {I:'#44d8ef', J:'#6596ff', L:'#ffb25d', O:'#ffe36b', S:'#66df9a', T:'#bc8dff', Z:'#ff758b'};
+const canvas = document.querySelector('#board');
+const ctx = canvas.getContext('2d');
+let state = null, playing = false, busy = false, timer = null, errorText = '';
+
+function badge(type) {
+  const item = document.createElement('span');
+  item.className = 'piece';
+  item.textContent = type || '—';
+  item.style.background = type ? colors[type] : '#45566c';
+  return item;
+}
+
+function draw(board, preview) {
+  ctx.fillStyle = '#101a29';
+  ctx.fillRect(0, 0, 320, 640);
+  for (let y = 0; y < 20; y++) for (let x = 0; x < 10; x++) {
+    ctx.strokeStyle = '#25334a';
+    ctx.strokeRect(x * 32 + .5, y * 32 + .5, 31, 31);
+    const type = board[y][x];
+    if (type) {
+      ctx.fillStyle = colors[type];
+      ctx.fillRect(x * 32 + 2, y * 32 + 2, 28, 28);
+    }
+  }
+  if (preview) for (const {x, y} of preview.occupiedCells) if (y >= 0) {
+    ctx.fillStyle = colors[preview.pieceType] + 'bb';
+    ctx.fillRect(x * 32 + 2, y * 32 + 2, 28, 28);
+    ctx.strokeStyle = '#ffffff';
+    ctx.strokeRect(x * 32 + 1, y * 32 + 1, 30, 30);
+  }
+}
+
+function render() {
+  if (!state) return;
+  const game = state.game;
+  draw(game.board);
+  for (const key of ['pieces', 'lines', 'score', 'level']) {
+    document.querySelector('#' + key).textContent = key === 'pieces' ? state.pieces : game[key];
+  }
+  const current = document.querySelector('#current');
+  current.replaceChildren(badge(game.currentPiece?.type));
+  const hold = document.querySelector('#hold');
+  hold.replaceChildren(badge(game.hold));
+  document.querySelector('#next').replaceChildren(...game.next.map(badge));
+  const p = state.lastPlacement;
+  document.querySelector('#action').textContent = p
+    ? `上一步：${p.pieceType}${p.hold ? '（使用 Hold）' : ''} → (${p.x}, ${p.y})，旋转 ${p.rotation}，动作 ${p.actionId}`
+    : '尚未行动';
+  document.querySelector('#message').textContent = errorText || (state.finished
+    ? `本局结束：${state.pieces} 块，${game.lines} 行。可换 seed 再看一局。`
+    : playing ? '模型正在实时决策…' : '已暂停；可单步查看。');
+  document.querySelector('#step').disabled = busy || state.finished;
+  document.querySelector('#play').textContent = playing ? '暂停' : '自动播放';
+  document.querySelector('#model').textContent = state.model;
+  document.querySelector('#seed').value = state.seed;
+}
+
+async function request(path, body = {}) {
+  const response = await fetch(path, {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || '请求失败');
+  return result;
+}
+
+async function nextStep() {
+  if (busy || !state || state.finished) return;
+  busy = true;
+  try {
+    const before = state.game.board;
+    const result = await request('/api/step');
+    errorText = '';
+    draw(before, result.lastPlacement);
+    await new Promise(resolve => setTimeout(resolve, Math.min(140, Number(document.querySelector('#speed').value) / 2)));
+    state = result;
+    if (state.finished) playing = false;
+    render();
+  } catch (error) {
+    playing = false;
+    errorText = error.message;
+  } finally {
+    busy = false;
+    if (playing) timer = setTimeout(nextStep, Number(document.querySelector('#speed').value));
+    else render();
+  }
+}
+
+document.querySelector('#play').onclick = () => {
+  if (!state || state.finished) return;
+  playing = !playing;
+  clearTimeout(timer);
+  render();
+  if (playing && !busy) nextStep();
+};
+document.querySelector('#step').onclick = nextStep;
+document.querySelector('#reset').onclick = async () => {
+  if (busy) return;
+  playing = false;
+  clearTimeout(timer);
+  try {
+    state = await request('/api/reset', {seed: Number(document.querySelector('#seed').value)});
+    errorText = '';
+    render();
+  } catch (error) { errorText = error.message; render(); }
+};
+fetch('/api/state').then(response => response.json()).then(result => { state = result; render(); })
+  .catch(error => { document.querySelector('#message').textContent = error.message; });
+</script>
+</body>
+</html>
