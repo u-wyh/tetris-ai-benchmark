@@ -2582,3 +2582,8 @@
 ### 2026-11-23T16:01:57+08:00 俄罗斯方块 AI 论文归档
 - 从三组已完成评测提取并逐局校验 224 条记录，重算生存曲线、汇总结果与配对 Bootstrap 区间。XeLaTeX 两轮编译生成 7 页 A4 PDF，已检查排版、字体、引用与交叉引用。证据见 `reports/paper/`。
 - 论文 PDF SHA-256 为 `d769b17d4a1ab8e7a2fc4eee4beb85eeac38c1c32f6f730734ddf41dca359cc8`，原始逐局 JSON 的哈希保存在 `reports/paper/episodes.csv`。
+
+### 2026-11-23T16:10:45+08:00 恢复开发，复核 Public Lookahead 长局归档
+- 新增只读分析入口，校验 35 份冻结源码和逐局归档，复算 146/160 局 100K 主组；200K 延长为 0/48，冻结准入保持待完整评测。证据在 `scripts/inspect_lookahead_long_validation.py` 与 `reports/experiments/lookahead_long_validation_archive_20261123.json`。
+- 后续优先对照简化 C、原 E 与 BC。当前缺少 `schedule_create`，长局续跑尚未排程。原评测文件与停止记录保留。
+- 续跑静态预检校验 3 份模型权重、4 份检查点内部身份及进度，48 个父局均完整。两项既有 Lookahead 定向测试共 8 项通过。证据在 `reports/experiments/lookahead_long_validation_resume_preflight_20261123.json`。

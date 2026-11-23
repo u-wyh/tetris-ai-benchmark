@@ -1,0 +1,38 @@
+{
+  "main_saves": [
+    {
+      "variant": "C",
+      "seed": 3102862029,
+      "pieces": 37000,
+      "sha256": "502a3211f2fc1505c6ea3c014212a4e64c9101fd2003911d9c5079b897dc0bc1"
+    },
+    {
+      "variant": "E",
+      "seed": 3102862028,
+      "pieces": 75000,
+      "sha256": "84abb680478b618ba1a61b8deb88a17ce10fc8c0573c27984f1f82d324a84ab3"
+    },
+    {
+      "variant": "E",
+      "seed": 3102862029,
+      "pieces": 22000,
+      "sha256": "4f107a820982d2a46d667274458531d39fab511d49ec6d3d0954d1368df5467a"
+    },
+    {
+      "variant": "BC",
+      "seed": 3102862029,
+      "pieces": 5000,
+      "sha256": "6127dbea1601bdd085b2ed652516c5e8a7873845d8b933a646884cc12ce40409"
+    }
+  ],
+  "main_step_upper_bound": 1261000,
+  "extension_parents_present": 48,
+  "zero_step_dead_parents": 2,
+  "extension_step_upper_bound": 4600000,
+  "validated_frozen_models": 3,
+  "frozen_model_sha256": {
+    "runs/candidate_bc_next_stage/champion/model.zip": "5f5613cb5eb4e80a02406b70902ad3d5c571eb8fe38bec4b40f73b34289ca663",
+    "runs/bc_sequence_transfer/supervised/checkpoints/epoch_01/model.zip": "e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914",
+    "runs/ppo_candidate_raw_30m_seed42/final/model.zip": "eb859b8989efe8f3332393ed57110036979b03bb4d3d8d8316d080cf04b2da34"
+  }
+}
