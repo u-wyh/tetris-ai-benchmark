@@ -2578,3 +2578,7 @@
 - 带 `TETRIS_NATIVE_MANIFEST` 跑全量 `pytest tests/ --ignore=tests/parity`：**1296 passed、4 skipped**，767.13 秒，exit 0。未设该变量时 native 相关用例 `KeyError: TETRIS_NATIVE_MANIFEST`，属环境前置而非代码回归。证据：/tmp/full_pytest2.log（本机临时日志）。
 - 5 个逻辑提交：ignore 规则、longlife 工具+数据、PPO viewer、Newton head、计划/排行/发布复检。工作树 clean；`reports/traditional_longlife` 的 100K 逐 seed 轨迹与本机日志不入 Git，聚合结果已入库。
 - 全程未加载模型推理、未跑环境/训练/GPU、未启动或恢复任何 unit、未创建标签。
+
+### 2026-11-23T16:01:57+08:00 俄罗斯方块 AI 论文归档
+- 从三组已完成评测提取并逐局校验 224 条记录，重算生存曲线、汇总结果与配对 Bootstrap 区间。XeLaTeX 两轮编译生成 7 页 A4 PDF，已检查排版、字体、引用与交叉引用。证据见 `reports/paper/`。
+- 论文 PDF SHA-256 为 `d769b17d4a1ab8e7a2fc4eee4beb85eeac38c1c32f6f730734ddf41dca359cc8`，原始逐局 JSON 的哈希保存在 `reports/paper/episodes.csv`。

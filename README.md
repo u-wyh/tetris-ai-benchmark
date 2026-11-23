@@ -1,5 +1,7 @@
 # Tetris AI Benchmark
 
+[论文 PDF](reports/paper/paper.pdf) · [LaTeX、逐局数据与复现说明](reports/paper/)
+
 ## v1.0.0 网页展示与复现
 
 网页提供 Human 人工游玩、V1 Adapter、V2 Hold-only、V2 Beam-8，以及 PPO 30M、BC Champion、Hybrid B12 三种冻结神经 AI。JavaScript 网页是 Benchmark v1.0 正式规则参考实现；Python Core 用于训练、评测和跨语言核对。两端使用相同的 1840 Action ID 与正式合法落点规则。PPO 与 BC 从本地冻结 checkpoint 推理；B12 依据公开棋盘和两个候选落点的风险决定是否采用 BC 动作，不读取隐藏方块。模型权重不在 Git 仓库中，复现前须按[发布清单](reports/releases/v1.0.0.md)核对 SHA256。
