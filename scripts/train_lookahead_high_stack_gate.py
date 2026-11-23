@@ -26,7 +26,7 @@ MIN_TRAIN_PER_CLASS = 20
 MIN_VALIDATION_PER_CLASS = 10
 
 
-def capture(study, rollout, teacher, feature_names, scale, output, seed, identity, atomic_json):
+def capture(study, rollout, teacher, feature_names, scale, output, seed, identity, atomic_json, cap=CAP):
     manifest = output / f"seed_{seed}.json"
     shard = manifest.with_suffix(".npz")
     if manifest.is_file():
@@ -37,13 +37,13 @@ def capture(study, rollout, teacher, feature_names, scale, output, seed, identit
             raise RuntimeError(f"Existing high-stack capture differs for seed {seed}")
         return
 
-    env = study.LongCandidateTetrisEnv(max_pieces=CAP)
+    env = study.LongCandidateTetrisEnv(max_pieces=cap)
     env.reset(seed=seed)
     height_column = feature_names.index("max_height_before")
     features, labels, steps = [], [], []
     high_steps = severe_steps = severe_disagreements = 0
     try:
-        for step in range(CAP):
+        for step in range(cap):
             observation, legal = env.get_observation(), env.action_masks()
             rollout_action = study.fast_action(rollout, observation, legal)
             if not legal[rollout_action]:
@@ -93,7 +93,15 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("checkout", type=Path)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--cap", type=int, default=CAP)
+    parser.add_argument("--train-seeds", type=int, nargs="+", default=TRAIN_SEEDS)
+    parser.add_argument("--validation-seeds", type=int, nargs="+", default=VALIDATION_SEEDS)
     args = parser.parse_args()
+    seeds = args.train_seeds + args.validation_seeds
+    if args.cap < 1:
+        parser.error("--cap must be positive")
+    if len(set(seeds)) != len(seeds) or any(not 0 <= seed < 2**32 for seed in seeds):
+        parser.error("Training and validation seeds must be distinct unsigned 32-bit numbers")
     checkout, output = (p.resolve() for p in (args.checkout, args.output))
     os.chdir(checkout)
     sys.path.insert(0, str(checkout))
@@ -110,7 +118,7 @@ def main():
             raise RuntimeError("CUDA is unavailable")
         protocol = {
             "rollout": "frozen_ppo_30m", "teacher": "Lookahead_C", "minimum_stack_height": MIN_HEIGHT,
-            "train_seeds": TRAIN_SEEDS, "validation_seeds": VALIDATION_SEEDS, "cap": CAP,
+            "train_seeds": args.train_seeds, "validation_seeds": args.validation_seeds, "cap": args.cap,
             "minimum_train_examples_per_class": MIN_TRAIN_PER_CLASS,
             "minimum_validation_examples_per_class": MIN_VALIDATION_PER_CLASS,
             "fit_epochs": EPOCHS, "batch_size": BATCH, "teacher_git": frozen["git"],
@@ -123,23 +131,26 @@ def main():
             )},
         }
         protocol_path = output / "protocol.json"
+        result_path = output / "result.json"
+        checkpoint = output / "gate.pt"
         if protocol_path.is_file():
-            if json.loads(protocol_path.read_text()) != protocol:
+            previous = json.loads(protocol_path.read_text())
+            if result_path.is_file():
+                saved = json.loads(result_path.read_text())
+                if (saved["protocol"] != previous
+                        or any(previous.get(key) != value for key, value in protocol.items() if key != "sources")
+                        or any(previous["sources"].get(key) != value for key, value in protocol["sources"].items()
+                               if key != "script")
+                        or (saved["checkpoint_sha256"] is not None
+                            and saved["checkpoint_sha256"] != study.digest(checkpoint))):
+                    raise RuntimeError("Existing high-stack result differs")
+                print("completed high-stack run already verified", flush=True)
+                return
+            if previous != protocol:
                 raise RuntimeError("Existing high-stack protocol differs")
         else:
             atomic_json(protocol_path, protocol)
         identity = study.digest(protocol_path)
-        result_path = output / "result.json"
-        checkpoint = output / "gate.pt"
-        if result_path.is_file():
-            saved = json.loads(result_path.read_text())
-            if saved["protocol"] != protocol or (
-                saved["checkpoint_sha256"] is not None
-                and saved["checkpoint_sha256"] != study.digest(checkpoint)
-            ):
-                raise RuntimeError("Existing high-stack result differs")
-            print("completed high-stack run already verified", flush=True)
-            return
 
         started = datetime.now(ZoneInfo("Asia/Shanghai")).isoformat()
         data = output / "capture"
@@ -148,12 +159,12 @@ def main():
         student = MaskablePPO.load(study.STUDENT, device="cpu")
         bc = MaskablePPO.load(study.BC, device="cpu")
         teacher = study.AblationController(student, bc, "C")
-        for seed in TRAIN_SEEDS + VALIDATION_SEEDS:
-            capture(study, rollout, teacher, FEATURE_NAMES, FEATURE_SCALE, data, seed, identity, atomic_json)
+        for seed in seeds:
+            capture(study, rollout, teacher, FEATURE_NAMES, FEATURE_SCALE, data, seed, identity, atomic_json, args.cap)
 
         width = 2 * len(FEATURE_NAMES) + 21
-        x, y, captures = load_partition(data, TRAIN_SEEDS, identity, study.digest, width)
-        xv, yv, validation = load_partition(data, VALIDATION_SEEDS, identity, study.digest, width)
+        x, y, captures = load_partition(data, args.train_seeds, identity, study.digest, width)
+        xv, yv, validation = load_partition(data, args.validation_seeds, identity, study.digest, width)
         train_counts = (int(y.sum()), int((~y).sum()))
         validation_counts = (int(yv.sum()), int((~yv).sum()))
         result = {
