@@ -2655,3 +2655,9 @@
 - 2026-11-23T18:34:31+08:00：资源保护：启动受保护任务 tetris-guard-75948-1795430071254860276，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_gate_20261123/replay_20k_guard。
 
 - 2026-11-23T18:37:40+08:00：原学生采样的验证分歧局面中，堆叠高度达到 12 的样本为 0。已接好 20K 对照结束后的高堆叠训练：用冻结 PPO 30M 走棋覆盖高度至少 10 的局面，Lookahead C 为高分学生与 BC 的分歧标注；新种子分 6 局训练与 3 局验证，满足每类样本量门槛后执行 16 轮 CUDA 拟合。证据 `runs/lookahead_high_stack_gate_20261123/`。
+
+- 2026-11-23T18:42:37+08:00：资源保护：tetris-guard-75948-1795430071254860276 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_gate_20261123/replay_20k_guard。
+
+- 2026-11-23T18:42:38+08:00：资源保护：启动受保护任务 tetris-guard-76954-1795430558729792846，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_high_stack_gate_20261123/guard。
+
+- 2026-11-23T18:43:21+08:00：独立 20K 对照完成，双方 5/6 触顶，同一 seed 在第 5,081 块结束。选择器 64 次切换，总分比为 99.298%，逐局 1 胜、1 平、4 负。校验全部逐局记录与权重 SHA-256，资源监护退出 0；证据 `reports/experiments/lookahead_gate_20261123.json`。

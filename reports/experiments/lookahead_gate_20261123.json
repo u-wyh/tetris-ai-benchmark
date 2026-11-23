@@ -884,5 +884,233 @@
         "hold": 164
       }
     }
+  },
+  "replay_20k": {
+    "result": {
+      "started": "2026-11-23T18:34:32.306112+08:00",
+      "ended": "2026-11-23T18:42:34.473816+08:00",
+      "protocol": {
+        "seeds": [
+          3256112420,
+          3256112421,
+          3256112422,
+          3256112423,
+          3256112424,
+          3256112425
+        ],
+        "cap": 20000,
+        "checkpoint_sha256": "7b49d5aaedd27f63eca14b4b5f0fcaa9677ec2d1a91131a16c086f565b8b960e",
+        "fit_result_sha256": "2570717cea5f6a560a682a3e54286ad832f2184b30a75044a38e4b36ce2aa3e6",
+        "frozen_teacher_git": "a5946d1c5a47ed9eb9fd6a8dce70e95b150e9d64",
+        "script_sha256": "313d782a71b58ec883246510a0292c3724fe9e5269a3c93ddcfcc388e6fe19b4",
+        "replay_helper_sha256": "5bf51080fe4261ebd4468867e0991651508df6041284dcc74fdb512a2ba12e30"
+      },
+      "pairs": [
+        {
+          "seed": 3256112420,
+          "protocol_sha256": "a515eb69d1f6fa55ed7e40ea24c211f6ca11d14ef420aefbe1755e2b0f13dddb",
+          "common_pieces": 20000,
+          "student_score": 380862800,
+          "gate_score": 381753200,
+          "student": {
+            "pieces": 20000,
+            "game_over": false,
+            "switches": 0,
+            "disagreements": 0,
+            "median_decision_ms": 0.1972600002773106
+          },
+          "gate": {
+            "pieces": 20000,
+            "game_over": false,
+            "switches": 10,
+            "disagreements": 5774,
+            "median_decision_ms": 0.3677709992189193
+          }
+        },
+        {
+          "seed": 3256112421,
+          "protocol_sha256": "a515eb69d1f6fa55ed7e40ea24c211f6ca11d14ef420aefbe1755e2b0f13dddb",
+          "common_pieces": 5081,
+          "student_score": 24807600,
+          "gate_score": 24807600,
+          "student": {
+            "pieces": 5081,
+            "game_over": true,
+            "switches": 0,
+            "disagreements": 0,
+            "median_decision_ms": 0.19928499750676565
+          },
+          "gate": {
+            "pieces": 5081,
+            "game_over": true,
+            "switches": 0,
+            "disagreements": 1454,
+            "median_decision_ms": 0.3658970017568208
+          }
+        },
+        {
+          "seed": 3256112422,
+          "protocol_sha256": "a515eb69d1f6fa55ed7e40ea24c211f6ca11d14ef420aefbe1755e2b0f13dddb",
+          "common_pieces": 20000,
+          "student_score": 374517400,
+          "gate_score": 373327800,
+          "student": {
+            "pieces": 20000,
+            "game_over": false,
+            "switches": 0,
+            "disagreements": 0,
+            "median_decision_ms": 0.19704999795067124
+          },
+          "gate": {
+            "pieces": 20000,
+            "game_over": false,
+            "switches": 12,
+            "disagreements": 5456,
+            "median_decision_ms": 0.36352299866848625
+          }
+        },
+        {
+          "seed": 3256112423,
+          "protocol_sha256": "a515eb69d1f6fa55ed7e40ea24c211f6ca11d14ef420aefbe1755e2b0f13dddb",
+          "common_pieces": 20000,
+          "student_score": 379110000,
+          "gate_score": 374175700,
+          "student": {
+            "pieces": 20000,
+            "game_over": false,
+            "switches": 0,
+            "disagreements": 0,
+            "median_decision_ms": 0.1980619999812916
+          },
+          "gate": {
+            "pieces": 20000,
+            "game_over": false,
+            "switches": 13,
+            "disagreements": 5519,
+            "median_decision_ms": 0.36361800084705465
+          }
+        },
+        {
+          "seed": 3256112424,
+          "protocol_sha256": "a515eb69d1f6fa55ed7e40ea24c211f6ca11d14ef420aefbe1755e2b0f13dddb",
+          "common_pieces": 20000,
+          "student_score": 381212100,
+          "gate_score": 378029300,
+          "student": {
+            "pieces": 20000,
+            "game_over": false,
+            "switches": 0,
+            "disagreements": 0,
+            "median_decision_ms": 0.19722099932550918
+          },
+          "gate": {
+            "pieces": 20000,
+            "game_over": false,
+            "switches": 11,
+            "disagreements": 5717,
+            "median_decision_ms": 0.36491550054051913
+          }
+        },
+        {
+          "seed": 3256112425,
+          "protocol_sha256": "a515eb69d1f6fa55ed7e40ea24c211f6ca11d14ef420aefbe1755e2b0f13dddb",
+          "common_pieces": 20000,
+          "student_score": 374917600,
+          "gate_score": 369889300,
+          "student": {
+            "pieces": 20000,
+            "game_over": false,
+            "switches": 0,
+            "disagreements": 0,
+            "median_decision_ms": 0.19783199968514964
+          },
+          "gate": {
+            "pieces": 20000,
+            "game_over": false,
+            "switches": 18,
+            "disagreements": 5559,
+            "median_decision_ms": 0.365075498848455
+          }
+        }
+      ]
+    },
+    "score_totals": {
+      "student_score": 1915427500,
+      "gate_score": 1901982900
+    },
+    "score_ratio": 0.9929808880785099,
+    "caps_reached": {
+      "student": 5,
+      "gate": 5
+    },
+    "switches": 64,
+    "wins": 1,
+    "ties": 1,
+    "resource_guard": {
+      "at": "2026-11-23T18:42:37+08:00",
+      "outcome": "completed",
+      "exit_code": 0,
+      "wall_seconds": 486.047,
+      "final_cpu_quota": 250,
+      "samples": 238,
+      "sampled_max_cpu_c": 81.5,
+      "sampled_max_gpu_c": 48.0,
+      "sampled_max_memory_mib": 419.9453125,
+      "decisions": {
+        "hold": 238
+      }
+    }
+  },
+  "original_capture_height_audit": {
+    "train_seeds": {
+      "disagreements": 9236,
+      "thresholds": {
+        "10": {
+          "disagreements": 36,
+          "switch_labels": 2
+        },
+        "12": {
+          "disagreements": 8,
+          "switch_labels": 0
+        },
+        "14": {
+          "disagreements": 1,
+          "switch_labels": 0
+        },
+        "16": {
+          "disagreements": 0,
+          "switch_labels": 0
+        },
+        "18": {
+          "disagreements": 0,
+          "switch_labels": 0
+        }
+      }
+    },
+    "validation_seeds": {
+      "disagreements": 4513,
+      "thresholds": {
+        "10": {
+          "disagreements": 8,
+          "switch_labels": 1
+        },
+        "12": {
+          "disagreements": 0,
+          "switch_labels": 0
+        },
+        "14": {
+          "disagreements": 0,
+          "switch_labels": 0
+        },
+        "16": {
+          "disagreements": 0,
+          "switch_labels": 0
+        },
+        "18": {
+          "disagreements": 0,
+          "switch_labels": 0
+        }
+      }
+    }
   }
 }
