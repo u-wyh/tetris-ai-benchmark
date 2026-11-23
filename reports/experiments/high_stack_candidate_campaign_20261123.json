@@ -1,0 +1,615 @@
+{
+  "specification": {
+    "branch": "codex/hardware-safe-autonomy",
+    "gate_sha256": "3f789412c9c9dbaad9cca96567bad91c3332b57018b3db7984fa24f2f4b2625f",
+    "fit_result_sha256": "d0c6119b9007bc41f73859b186544ff2fc9eb23350d80e04f211aab4f45d891b",
+    "evaluator_sha256": "82354731ce2e05311c0009e41cb342ae284603939353cd744a95d6a816bbde67"
+  },
+  "phases": {
+    "stress": {
+      "data": "/home/wyh/projects/tetris-ai-benchmark/runs/high_stack_candidate_campaign_20261123/stress",
+      "guard": "/home/wyh/projects/tetris-ai-benchmark/runs/high_stack_candidate_campaign_20261123/guards/stress-20261123-201640-782604",
+      "outcome": "completed",
+      "started": "2026-11-23T20:16:40+08:00",
+      "at": "2026-11-23T20:22:13+08:00",
+      "exit_code": 0,
+      "wall_seconds": 330.824,
+      "final_cpu_quota": 100,
+      "returncode": 0,
+      "ended": "2026-11-23T20:22:13+08:00",
+      "result": {
+        "protocol": {
+          "mode": "stress",
+          "seeds": [
+            3256112540,
+            3256112541,
+            3256112542,
+            3256112543,
+            3256112544,
+            3256112545,
+            3256112546,
+            3256112547,
+            3256112548,
+            3256112549,
+            3256112550,
+            3256112551,
+            3256112552,
+            3256112553,
+            3256112554,
+            3256112555
+          ],
+          "stress_seek_cap": 12000,
+          "stress_horizon": 2048,
+          "stress_height": 12,
+          "natural_cap": 100000,
+          "switch_height": 10,
+          "teacher_git": "a5946d1c5a47ed9eb9fd6a8dce70e95b150e9d64",
+          "checkpoint_sha256": "3f789412c9c9dbaad9cca96567bad91c3332b57018b3db7984fa24f2f4b2625f",
+          "fit_result_sha256": "d0c6119b9007bc41f73859b186544ff2fc9eb23350d80e04f211aab4f45d891b",
+          "script_sha256": "82354731ce2e05311c0009e41cb342ae284603939353cd744a95d6a816bbde67"
+        },
+        "started": "2026-11-23T20:16:43.424731+08:00",
+        "ended": "2026-11-23T20:22:10.580484+08:00",
+        "rows": [
+          {
+            "seed": 3256112540,
+            "found": true,
+            "seek_pieces": 4651,
+            "eligible_high_boards": 153,
+            "height": 12,
+            "probability": 0.89236980676651,
+            "snapshot_sha256": "0cf89fc1993cc01c9cc430c271df292918a72336e6c953d6d4d335df95f66aac",
+            "student_first": 958,
+            "gate_first": 1169,
+            "common_pieces": 2048,
+            "student": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 23112300
+            },
+            "gate": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 22220900
+            },
+            "protocol_sha256": "6277f85ab158aa8bc3d1f620f58607b6a1bac7619d8156940558c070287486cb"
+          },
+          {
+            "seed": 3256112541,
+            "found": true,
+            "seek_pieces": 3864,
+            "eligible_high_boards": 48,
+            "height": 14,
+            "probability": 0.6803325414657593,
+            "snapshot_sha256": "f02bd2e1ca7a6298a79e1cd62878c0bbed905590e54a70a02baa44aaf598c7f8",
+            "student_first": 338,
+            "gate_first": 249,
+            "common_pieces": 2048,
+            "student": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 19777100
+            },
+            "gate": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 20311700
+            },
+            "protocol_sha256": "6277f85ab158aa8bc3d1f620f58607b6a1bac7619d8156940558c070287486cb"
+          },
+          {
+            "seed": 3256112542,
+            "found": true,
+            "seek_pieces": 6305,
+            "eligible_high_boards": 154,
+            "height": 16,
+            "probability": 0.9720244407653809,
+            "snapshot_sha256": "6632c45e308c8c770c3ceebd49ce9bdade5968a34fdb7192b69f96f44e54ecb2",
+            "student_first": 12,
+            "gate_first": 249,
+            "common_pieces": 2048,
+            "student": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 29086400
+            },
+            "gate": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 28747000
+            },
+            "protocol_sha256": "6277f85ab158aa8bc3d1f620f58607b6a1bac7619d8156940558c070287486cb"
+          },
+          {
+            "seed": 3256112543,
+            "found": false,
+            "seek_pieces": 12000,
+            "eligible_high_boards": 188,
+            "rollout_game_over": false,
+            "protocol_sha256": "6277f85ab158aa8bc3d1f620f58607b6a1bac7619d8156940558c070287486cb"
+          },
+          {
+            "seed": 3256112544,
+            "found": true,
+            "seek_pieces": 7517,
+            "eligible_high_boards": 208,
+            "height": 13,
+            "probability": 0.910727858543396,
+            "snapshot_sha256": "813d912f81c468f705e83f5f538391b7e7374948f2cb335b0c785b5356822f51",
+            "student_first": 13,
+            "gate_first": 1169,
+            "common_pieces": 2048,
+            "student": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 34293700
+            },
+            "gate": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 34294000
+            },
+            "protocol_sha256": "6277f85ab158aa8bc3d1f620f58607b6a1bac7619d8156940558c070287486cb"
+          },
+          {
+            "seed": 3256112545,
+            "found": true,
+            "seek_pieces": 2684,
+            "eligible_high_boards": 71,
+            "height": 15,
+            "probability": 0.7741280794143677,
+            "snapshot_sha256": "18f539eb1b5bcd42007317ebe96a3ed4f16d7217f560d00f83e2f444e0641d19",
+            "student_first": 240,
+            "gate_first": 1161,
+            "common_pieces": 2048,
+            "student": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 14509600
+            },
+            "gate": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 14994900
+            },
+            "protocol_sha256": "6277f85ab158aa8bc3d1f620f58607b6a1bac7619d8156940558c070287486cb"
+          },
+          {
+            "seed": 3256112546,
+            "found": true,
+            "seek_pieces": 2728,
+            "eligible_high_boards": 52,
+            "height": 16,
+            "probability": 0.9793112874031067,
+            "snapshot_sha256": "7371416b22572ebb6860ae4f7a5c84d85922918ded0f4dc4d610e209240b17f8",
+            "student_first": 11,
+            "gate_first": 249,
+            "common_pieces": 2048,
+            "student": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 15455900
+            },
+            "gate": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 14797300
+            },
+            "protocol_sha256": "6277f85ab158aa8bc3d1f620f58607b6a1bac7619d8156940558c070287486cb"
+          },
+          {
+            "seed": 3256112547,
+            "found": true,
+            "seek_pieces": 9285,
+            "eligible_high_boards": 242,
+            "height": 15,
+            "probability": 0.9513056874275208,
+            "snapshot_sha256": "469fdbbb84c94e3df75eacf05c45c9cab46a82d22858747789eba6e35b8713af",
+            "student_first": 1160,
+            "gate_first": 249,
+            "common_pieces": 2048,
+            "student": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 40091600
+            },
+            "gate": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 40091600
+            },
+            "protocol_sha256": "6277f85ab158aa8bc3d1f620f58607b6a1bac7619d8156940558c070287486cb"
+          },
+          {
+            "seed": 3256112548,
+            "found": true,
+            "seek_pieces": 2623,
+            "eligible_high_boards": 85,
+            "height": 16,
+            "probability": 0.9670648574829102,
+            "snapshot_sha256": "8a939132e174dad5c9d0baed3f54d249ad22ec3378d3744417731b7430287bc8",
+            "student_first": 12,
+            "gate_first": 249,
+            "common_pieces": 2048,
+            "student": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 14044200
+            },
+            "gate": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 14127100
+            },
+            "protocol_sha256": "6277f85ab158aa8bc3d1f620f58607b6a1bac7619d8156940558c070287486cb"
+          },
+          {
+            "seed": 3256112549,
+            "found": false,
+            "seek_pieces": 12000,
+            "eligible_high_boards": 230,
+            "rollout_game_over": false,
+            "protocol_sha256": "6277f85ab158aa8bc3d1f620f58607b6a1bac7619d8156940558c070287486cb"
+          },
+          {
+            "seed": 3256112550,
+            "found": true,
+            "seek_pieces": 11227,
+            "eligible_high_boards": 272,
+            "height": 16,
+            "probability": 0.6966061592102051,
+            "snapshot_sha256": "38dacbf601f526de3e1a1dbc0a27a8880bc134e9b87ed150d2daceff75fdb6ba",
+            "student_first": 373,
+            "gate_first": 260,
+            "common_pieces": 2048,
+            "student": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 48134500
+            },
+            "gate": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 49346400
+            },
+            "protocol_sha256": "6277f85ab158aa8bc3d1f620f58607b6a1bac7619d8156940558c070287486cb"
+          },
+          {
+            "seed": 3256112551,
+            "found": true,
+            "seek_pieces": 2002,
+            "eligible_high_boards": 68,
+            "height": 15,
+            "probability": 0.7351672649383545,
+            "snapshot_sha256": "46b01194b104e8d580e9e0ba87b9c555603dd1138747907421da7a2eb74f26d1",
+            "student_first": 13,
+            "gate_first": 1164,
+            "common_pieces": 2048,
+            "student": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 11710800
+            },
+            "gate": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 11860700
+            },
+            "protocol_sha256": "6277f85ab158aa8bc3d1f620f58607b6a1bac7619d8156940558c070287486cb"
+          },
+          {
+            "seed": 3256112552,
+            "found": true,
+            "seek_pieces": 7327,
+            "eligible_high_boards": 136,
+            "height": 12,
+            "probability": 0.6939947009086609,
+            "snapshot_sha256": "d06d718c823e5786b5f68e5cd2cf0f2e40092779a5f2f2802dbb40501b31b723",
+            "student_first": 17,
+            "gate_first": 249,
+            "common_pieces": 2048,
+            "student": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 32820100
+            },
+            "gate": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 32820100
+            },
+            "protocol_sha256": "6277f85ab158aa8bc3d1f620f58607b6a1bac7619d8156940558c070287486cb"
+          },
+          {
+            "seed": 3256112553,
+            "found": true,
+            "seek_pieces": 1733,
+            "eligible_high_boards": 49,
+            "height": 12,
+            "probability": 0.8454660177230835,
+            "snapshot_sha256": "03f783e7e04d28a6ba243487f6ddc1e72b1cc7abeac38df9a86fd4b5256dc592",
+            "student_first": 109,
+            "gate_first": 249,
+            "common_pieces": 2048,
+            "student": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 10901000
+            },
+            "gate": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 10558100
+            },
+            "protocol_sha256": "6277f85ab158aa8bc3d1f620f58607b6a1bac7619d8156940558c070287486cb"
+          },
+          {
+            "seed": 3256112554,
+            "found": false,
+            "seek_pieces": 12000,
+            "eligible_high_boards": 351,
+            "rollout_game_over": false,
+            "protocol_sha256": "6277f85ab158aa8bc3d1f620f58607b6a1bac7619d8156940558c070287486cb"
+          },
+          {
+            "seed": 3256112555,
+            "found": true,
+            "seek_pieces": 5397,
+            "eligible_high_boards": 56,
+            "height": 12,
+            "probability": 0.7830044627189636,
+            "snapshot_sha256": "43e0145e0d0de5670fc876ce112b228592a7b7a00be857e299165eba4be7a3cf",
+            "student_first": 937,
+            "gate_first": 1169,
+            "common_pieces": 2048,
+            "student": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 24558300
+            },
+            "gate": {
+              "pieces": 2048,
+              "game_over": false,
+              "common_score": 25473200
+            },
+            "protocol_sha256": "6277f85ab158aa8bc3d1f620f58607b6a1bac7619d8156940558c070287486cb"
+          }
+        ]
+      },
+      "result_sha256": "a671260b0c04022b7905f25fd43e65b007df5b5965bb692f87ed8855baaf7a7c",
+      "summary": {
+        "seeds": 16,
+        "compared_pairs": 13,
+        "deaths": {
+          "student": 0,
+          "gate": 0
+        },
+        "mean_pieces": {
+          "student": 2048,
+          "gate": 2048
+        },
+        "common_score_totals": {
+          "student": 318495500,
+          "gate": 319643000
+        },
+        "gate_only_deaths": 0,
+        "student_only_deaths": 0,
+        "wins": 7,
+        "ties": 2
+      }
+    },
+    "natural": {
+      "data": "/home/wyh/projects/tetris-ai-benchmark/runs/high_stack_candidate_campaign_20261123/natural",
+      "guard": "/home/wyh/projects/tetris-ai-benchmark/runs/high_stack_candidate_campaign_20261123/guards/natural-20261123-202213-178974",
+      "outcome": "completed",
+      "started": "2026-11-23T20:22:13+08:00",
+      "at": "2026-11-23T20:55:30+08:00",
+      "exit_code": 0,
+      "wall_seconds": 1997.154,
+      "final_cpu_quota": 100,
+      "returncode": 0,
+      "ended": "2026-11-23T20:55:30+08:00",
+      "result": {
+        "protocol": {
+          "mode": "natural",
+          "seeds": [
+            3256112570,
+            3256112571,
+            3256112572,
+            3256112573,
+            3256112574,
+            3256112575,
+            3256112576,
+            3256112577
+          ],
+          "stress_seek_cap": 12000,
+          "stress_horizon": 2048,
+          "stress_height": 12,
+          "natural_cap": 100000,
+          "switch_height": 10,
+          "teacher_git": "a5946d1c5a47ed9eb9fd6a8dce70e95b150e9d64",
+          "checkpoint_sha256": "3f789412c9c9dbaad9cca96567bad91c3332b57018b3db7984fa24f2f4b2625f",
+          "fit_result_sha256": "d0c6119b9007bc41f73859b186544ff2fc9eb23350d80e04f211aab4f45d891b",
+          "script_sha256": "82354731ce2e05311c0009e41cb342ae284603939353cd744a95d6a816bbde67"
+        },
+        "started": "2026-11-23T20:22:14.321319+08:00",
+        "ended": "2026-11-23T20:55:29.548249+08:00",
+        "rows": [
+          {
+            "seed": 3256112570,
+            "common_pieces": 39755,
+            "student": {
+              "pieces": 39755,
+              "game_over": true,
+              "high_boards": 334,
+              "switches": 0,
+              "common_score": 1502585700
+            },
+            "gate": {
+              "pieces": 39755,
+              "game_over": true,
+              "high_boards": 334,
+              "switches": 0,
+              "common_score": 1502585700
+            },
+            "protocol_sha256": "dadc9e5ce26f34a8ee53d8a9e64e9e3c6e0377150a582af3c24fcdb62025340c"
+          },
+          {
+            "seed": 3256112571,
+            "common_pieces": 39252,
+            "student": {
+              "pieces": 39252,
+              "game_over": true,
+              "high_boards": 311,
+              "switches": 0,
+              "common_score": 1475697000
+            },
+            "gate": {
+              "pieces": 39252,
+              "game_over": true,
+              "high_boards": 317,
+              "switches": 1,
+              "common_score": 1475508800
+            },
+            "protocol_sha256": "dadc9e5ce26f34a8ee53d8a9e64e9e3c6e0377150a582af3c24fcdb62025340c"
+          },
+          {
+            "seed": 3256112572,
+            "common_pieces": 100000,
+            "student": {
+              "pieces": 100000,
+              "game_over": false,
+              "high_boards": 605,
+              "switches": 0,
+              "common_score": 9506964400
+            },
+            "gate": {
+              "pieces": 100000,
+              "game_over": false,
+              "high_boards": 605,
+              "switches": 0,
+              "common_score": 9506964400
+            },
+            "protocol_sha256": "dadc9e5ce26f34a8ee53d8a9e64e9e3c6e0377150a582af3c24fcdb62025340c"
+          },
+          {
+            "seed": 3256112573,
+            "common_pieces": 15785,
+            "student": {
+              "pieces": 94636,
+              "game_over": true,
+              "high_boards": 880,
+              "switches": 0,
+              "common_score": 241613300
+            },
+            "gate": {
+              "pieces": 15785,
+              "game_over": true,
+              "high_boards": 195,
+              "switches": 1,
+              "common_score": 238288500
+            },
+            "protocol_sha256": "dadc9e5ce26f34a8ee53d8a9e64e9e3c6e0377150a582af3c24fcdb62025340c"
+          },
+          {
+            "seed": 3256112574,
+            "common_pieces": 80881,
+            "student": {
+              "pieces": 100000,
+              "game_over": false,
+              "high_boards": 673,
+              "switches": 0,
+              "common_score": 6190738600
+            },
+            "gate": {
+              "pieces": 80881,
+              "game_over": true,
+              "high_boards": 552,
+              "switches": 2,
+              "common_score": 6211433900
+            },
+            "protocol_sha256": "dadc9e5ce26f34a8ee53d8a9e64e9e3c6e0377150a582af3c24fcdb62025340c"
+          },
+          {
+            "seed": 3256112575,
+            "common_pieces": 100000,
+            "student": {
+              "pieces": 100000,
+              "game_over": false,
+              "high_boards": 799,
+              "switches": 0,
+              "common_score": 9521351300
+            },
+            "gate": {
+              "pieces": 100000,
+              "game_over": false,
+              "high_boards": 799,
+              "switches": 0,
+              "common_score": 9521351300
+            },
+            "protocol_sha256": "dadc9e5ce26f34a8ee53d8a9e64e9e3c6e0377150a582af3c24fcdb62025340c"
+          },
+          {
+            "seed": 3256112576,
+            "common_pieces": 1758,
+            "student": {
+              "pieces": 1758,
+              "game_over": true,
+              "high_boards": 47,
+              "switches": 0,
+              "common_score": 2888100
+            },
+            "gate": {
+              "pieces": 1758,
+              "game_over": true,
+              "high_boards": 47,
+              "switches": 0,
+              "common_score": 2888100
+            },
+            "protocol_sha256": "dadc9e5ce26f34a8ee53d8a9e64e9e3c6e0377150a582af3c24fcdb62025340c"
+          },
+          {
+            "seed": 3256112577,
+            "common_pieces": 27614,
+            "student": {
+              "pieces": 27614,
+              "game_over": true,
+              "high_boards": 195,
+              "switches": 0,
+              "common_score": 725229700
+            },
+            "gate": {
+              "pieces": 27614,
+              "game_over": true,
+              "high_boards": 195,
+              "switches": 0,
+              "common_score": 725229700
+            },
+            "protocol_sha256": "dadc9e5ce26f34a8ee53d8a9e64e9e3c6e0377150a582af3c24fcdb62025340c"
+          }
+        ]
+      },
+      "result_sha256": "816c0fe986454140c16b641a8e4950b67023a004e72d8ed6ccced9808635e7b5",
+      "summary": {
+        "seeds": 8,
+        "compared_pairs": 8,
+        "deaths": {
+          "student": 5,
+          "gate": 6
+        },
+        "mean_pieces": {
+          "student": 62876.875,
+          "gate": 50630.625
+        },
+        "common_score_totals": {
+          "student": 29167068100,
+          "gate": 29184250400
+        },
+        "gate_only_deaths": 1,
+        "student_only_deaths": 0,
+        "wins": 1,
+        "ties": 5
+      }
+    }
+  }
+}
