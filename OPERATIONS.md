@@ -2615,3 +2615,20 @@
 - 2026-11-23T17:12:34+08:00：资源保护：tetris-guard-59351-1795425120310340647 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_distillation_anchored_20261123/guard。
 
 - 2026-11-23T17:13:28+08:00：两次受保护 CUDA 蒸馏及 1,024 块配对回放均退出 0，每次 384 次 actor 更新。首轮纠正命中 12/24，普通动作一致率 91.21%；KL 约束候选为 4/24 和 98.46%。第二批四个相同回放种子上，普通候选总分比原学生低 8.76%，KL 候选低 7.28%，均未晋升。两份最终权重的重新载入一致，报告与 SHA-256 在 `reports/experiments/lookahead_distillation_20261123.json`。
+
+### 2026-11-23T18:05:23+08:00 启动 Lookahead 纠正选择器的样本采集
+- 使用 8 个训练种子和 4 个独立验证种子，每局最多 4,096 块；固定高分学生走棋，仅在其与 BC 意见不同时记录两方公开落点特征和 Lookahead C 的选择。本阶段证据在 `runs/lookahead_gate_20261123/capture/`。
+
+- 2026-11-23T18:05:24+08:00：资源保护：启动受保护任务 tetris-guard-68392-1795428324736659282，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_gate_20261123/capture_guard。
+
+- 2026-11-23T18:06:22+08:00：资源保护：tetris-guard-68392-1795428324736659282 自动调整CPU配额250%→200%，CPU82.25°C/GPU48.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_gate_20261123/capture_guard。
+
+- 2026-11-23T18:06:24+08:00：资源保护：tetris-guard-68392-1795428324736659282 自动调整CPU配额200%→150%，CPU82.75°C/GPU48.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_gate_20261123/capture_guard。
+
+- 2026-11-23T18:06:26+08:00：资源保护：tetris-guard-68392-1795428324736659282 自动调整CPU配额150%→100%，CPU83.25°C/GPU49.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_gate_20261123/capture_guard。
+
+- 2026-11-23T18:07:33+08:00：已接好采集完成后的 CUDA 拟合和 6 局配对回放。选择器固定为 32 特征与一层 32 单元的隐藏层；训练 16 轮，用独立样本校准切换阈值，再用 6 个独立种子各 4,096 块回放。训练入口 SHA-256 为 `501cace2f55f078c20abc27d78a150af14c8ccf2f39c6147dd709eda1a47bf8e`。训练与回放证据在 `runs/lookahead_gate_20261123/fit/`。
+
+- 2026-11-23T18:11:18+08:00：资源保护：tetris-guard-68392-1795428324736659282 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_gate_20261123/capture_guard。
+
+- 2026-11-23T18:11:19+08:00：资源保护：启动受保护任务 tetris-guard-69033-1795428679550047636，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_gate_20261123/fit_guard。
