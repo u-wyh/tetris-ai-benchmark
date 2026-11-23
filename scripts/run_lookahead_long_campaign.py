@@ -126,19 +126,20 @@ def evidence(output, specification, phases):
     return result
 
 
-def publish(output, branch, base_commit):
+def publish(output, branch, base_commit, report_path=REPORT,
+            message="Archive the long Lookahead training and replay"):
     if git("branch", "--show-current") != branch or git("rev-parse", "HEAD") != base_commit:
         raise RuntimeError("Checkout advanced during the campaign; the report is saved locally")
     operations = ROOT / "OPERATIONS.md"
     base_operations = subprocess.check_output(["git", "show", "HEAD:OPERATIONS.md"], cwd=ROOT)
     current = operations.read_bytes()
-    paths = [str(REPORT)]
+    paths = [str(report_path)]
     if current.startswith(base_operations):
         appended = [line for line in current[len(base_operations):].decode().splitlines() if line.strip()]
         if appended and all(str(output) in line for line in appended):
             paths.append("OPERATIONS.md")
     subprocess.run(["git", "add", "--", *paths], cwd=ROOT, check=True)
-    subprocess.run(["git", "commit", "--only", "-m", "Archive the long Lookahead training and replay", "--", *paths],
+    subprocess.run(["git", "commit", "--only", "-m", message, "--", *paths],
                    cwd=ROOT, check=True)
     subprocess.run(["git", "push", "origin", f"HEAD:refs/heads/{branch}"], cwd=ROOT, check=True, timeout=120)
     return git("rev-parse", "HEAD")

@@ -2686,3 +2686,6 @@
 - 2026-11-23T19:58:19+08:00：资源保护：tetris-guard-83049-1795431680761489669 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_long_campaign_20261123/guards/replay_100k-20261123-190120-703254。
 
 - 2026-11-23T19:58:19+08:00：后台任务收尾，阶段状态 {'high_stack': 'completed', 'replay_100k': 'completed'}。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_long_campaign_20261123/`。
+
+### 2026-11-23T20:16:40+08:00 准备无人值守验证高堆叠选择器
+- 对 62.5% 验证精度的新权重冻结 16 个高堆叠分叉种子与 8 个自然 100K 对照种子。分叉首步对照、后续同一原学生，单支 2,048 块。真实冻结策略的短分叉已验证快照不变及相同首步完全复现。证据 `runs/high_stack_candidate_campaign_20261123/`。
