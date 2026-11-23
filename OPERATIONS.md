@@ -2648,3 +2648,8 @@
 - 2026-11-23T18:23:58+08:00：资源保护：tetris-guard-72044-1795429103874693073 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_gate_20261123/replay_12k_guard。
 
 - 2026-11-23T18:24:44+08:00：6 个新种子的 12,000 块配对回放完成，资源监护退出 0。选择器共切换 43 次，双方 6/6 触顶，选择器总分 820,957,400，原学生 820,421,800（+0.065%，3 胜 3 负）。校验逐局记录与权重哈希，候选保留用于开发。证据 `reports/experiments/lookahead_gate_20261123.json`。
+
+### 2026-11-23T18:34:29+08:00 启动 Next 3 选择器的独立 20K 对照
+- 原学生与 12K 对照中的同一选择器各运行 6 局，新种子 3256112420–3256112425，每局最多 20,000 块。按同种子共同局长比较累计分，逐对原子保存。任务入口 `scripts/evaluate_lookahead_gate.py`，证据在 `runs/lookahead_gate_20261123/replay_20k/` 与 `replay_20k_guard/`。
+
+- 2026-11-23T18:34:31+08:00：资源保护：启动受保护任务 tetris-guard-75948-1795430071254860276，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_gate_20261123/replay_20k_guard。

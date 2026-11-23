@@ -24,7 +24,13 @@ def main():
     parser.add_argument("checkout", type=Path)
     parser.add_argument("--fit", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--cap", type=int, default=CAP, help="Maximum placed pieces in each game")
+    parser.add_argument("--seeds", type=int, nargs="+", default=SEEDS)
     args = parser.parse_args()
+    if args.cap < 1:
+        parser.error("--cap must be positive")
+    if len(set(args.seeds)) != len(args.seeds) or any(not 0 <= seed < 2**32 for seed in args.seeds):
+        parser.error("--seeds must contain distinct unsigned 32-bit values")
     checkout, fit, output = (p.resolve() for p in (args.checkout, args.fit, args.output))
     os.chdir(checkout)
     sys.path.insert(0, str(checkout))
@@ -46,28 +52,32 @@ def main():
             seed for field in ("train_seeds", "calibration_seeds", "replay_seeds")
             for seed in fit_result["protocol"][field]
         }
-        if previous_seeds.intersection(SEEDS):
+        if previous_seeds.intersection(args.seeds):
             raise RuntimeError("Longer replay seeds overlap previous samples")
         protocol = {
-            "seeds": SEEDS, "cap": CAP, "checkpoint_sha256": fit_result["checkpoint_sha256"],
+            "seeds": args.seeds, "cap": args.cap, "checkpoint_sha256": fit_result["checkpoint_sha256"],
             "fit_result_sha256": study.digest(fit_result_path), "frozen_teacher_git": frozen["git"],
             "script_sha256": study.digest(Path(__file__)),
             "replay_helper_sha256": study.digest(Path(__file__).with_name("train_lookahead_gate.py")),
         }
         protocol_path = output / "protocol.json"
+        result_path = output / "result.json"
         if protocol_path.is_file():
-            if json.loads(protocol_path.read_text()) != protocol:
+            previous_protocol = json.loads(protocol_path.read_text())
+            if result_path.is_file():
+                saved = json.loads(result_path.read_text())
+                source_fields = {"script_sha256", "replay_helper_sha256"}
+                if (saved["protocol"] != previous_protocol
+                        or any(previous_protocol.get(key) != value for key, value in protocol.items()
+                               if key not in source_fields)):
+                    raise RuntimeError("Existing replay summary differs")
+                print("completed replay already verified", flush=True)
+                return
+            if previous_protocol != protocol:
                 raise RuntimeError("Existing replay protocol differs")
         else:
             atomic_json(protocol_path, protocol)
         identity = study.digest(protocol_path)
-        result_path = output / "result.json"
-        if result_path.is_file():
-            saved = json.loads(result_path.read_text())
-            if saved["protocol"] != protocol:
-                raise RuntimeError("Existing replay summary differs")
-            print("completed replay already verified", flush=True)
-            return
         started = datetime.now(ZoneInfo("Asia/Shanghai")).isoformat()
         student = MaskablePPO.load(study.STUDENT, device="cpu")
         bc = MaskablePPO.load(study.BC, device="cpu")
@@ -76,17 +86,17 @@ def main():
         gate = model(len(mean)).eval()
         gate.load_state_dict(saved["model"])
         pairs = []
-        for seed in SEEDS:
+        for seed in args.seeds:
             shard = output / f"seed_{seed}.json"
             if shard.is_file():
                 row = json.loads(shard.read_text())
                 if (row["seed"], row["protocol_sha256"]) != (seed, identity):
                     raise RuntimeError(f"Existing replay differs for seed {seed}")
             else:
-                original, original_metrics = evaluate(study, student, bc, FEATURE_SCALE, seed, cap=CAP)
+                original, original_metrics = evaluate(study, student, bc, FEATURE_SCALE, seed, cap=args.cap)
                 candidate, candidate_metrics = evaluate(
                     study, student, bc, FEATURE_SCALE, seed, gate, (mean, std), saved["threshold"],
-                    preview=True, cap=CAP,
+                    preview=True, cap=args.cap,
                 )
                 common = min(len(original), len(candidate)) - 1
                 row = {
