@@ -48,9 +48,12 @@ def with_inventory(group, evaluation):
     }
 
 
-def inspect(checkout):
-    run = checkout / "runs/lookahead_long_validation"
-    raw_protocol = (run / "protocol.json").read_bytes()
+def inspect(checkout, resume_output=None):
+    archive = checkout / "runs/lookahead_long_validation"
+    run = resume_output if resume_output is not None else archive
+    raw_protocol = (archive / "protocol.json").read_bytes()
+    if (run / "protocol.json").read_bytes() != raw_protocol:
+        raise ValueError("Report workspace does not match the historical protocol")
     protocol = read_record(raw_protocol)
     verify_sources(checkout, protocol["sources"])
 
@@ -58,7 +61,7 @@ def inspect(checkout):
     from training import lookahead_long_validation_report as report
 
     evaluation = run / "evaluation"
-    stop_path = run / "stop.json"
+    stop_path = archive / "stop.json"
     stop = read_record(stop_path.read_bytes()) if stop_path.is_file() else None
     previous_run = report.study.RUN
     # The frozen summarizer emits two intermediate summaries. Isolate those
@@ -94,8 +97,11 @@ def inspect(checkout):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("checkout", type=Path, help="Research checkout containing the frozen run")
+    parser.add_argument("--resume-output", type=Path, help="Separate continuation workspace to report")
     args = parser.parse_args()
-    print(json.dumps(inspect(args.checkout.resolve()), ensure_ascii=False, indent=2, allow_nan=False))
+    resume_output = args.resume_output.resolve() if args.resume_output is not None else None
+    report = inspect(args.checkout.resolve(), resume_output)
+    print(json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False))
 
 
 if __name__ == "__main__":

@@ -2587,3 +2587,7 @@
 - 新增只读分析入口，校验 35 份冻结源码和逐局归档，复算 146/160 局 100K 主组；200K 延长为 0/48，冻结准入保持待完整评测。证据在 `scripts/inspect_lookahead_long_validation.py` 与 `reports/experiments/lookahead_long_validation_archive_20261123.json`。
 - 后续优先对照简化 C、原 E 与 BC。当前缺少 `schedule_create`，长局续跑尚未排程。原评测文件与停止记录保留。
 - 续跑静态预检校验 3 份模型权重、4 份检查点内部身份及进度，48 个父局均完整。两项既有 Lookahead 定向测试共 8 项通过。证据在 `reports/experiments/lookahead_long_validation_resume_preflight_20261123.json`。
+
+### 2026-11-23T16:26:07+08:00 完成 Public Lookahead 低峰分窗续跑入口
+- 增加北京低峰窗口、资源监护、固定主组优先和独立断点目录。3 项新增续跑测试及 8 项既有 Lookahead 定向测试通过；在临时目录复现历史统计，仍为主组 146/160、延长 0/48，待办按先后为 14/48。
+- 实际入口在高峰验证拒绝启动，未生成正式续跑目录。低峰调度和 8081 健康条件尚未就绪。证据见 `scripts/resume_lookahead_long_validation.py`、`scripts/inspect_lookahead_long_validation.py` 与 `tests/test_resume_lookahead_long_validation.py`。

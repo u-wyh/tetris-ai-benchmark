@@ -9,13 +9,17 @@
 - 旧实验在 2026-11-01 收到墙钟停止信号，100K 主组已完成 146/160 局，预定 200K 延长为 0/48。复核通过 35 份冻结源文件。分析器逐局验证协议身份、数组与终点快照的哈希，仅使用完整配对，4 个缺失局存有检查点文件。
 - C 相对 E 的 28 对已完成样本中，C 为 0 次死亡，E 为 2 次。C 共同局长得分低 0.210%，配对生存差约 +2,845 块，95% Bootstrap 区间为 [0, 7,372]。配对单局 P95 的均值比为 0.958，95% 区间为 [0.942, 0.969]。C 相对 BC 的 29 个配对种子共同局长得分全部提高，汇总提高 10.323%，生存优势仍不确定。
 - 续跑预检已校验 3 份冻结权重和 4 份未终止检查点，48 份预定延长的主组父局都已归档。补齐 14 局主组最多再放置 126.1 万块，之后 48 条 200K 同轨迹延长最多再放置 460 万块，其中 2 个父局已失败，直接继承结果。续跑按北京时间 00:30–08:30 分窗执行，先补齐主组，再执行原定延长；每窗写独立执行记录，沿用原有模型、规则、动作、种子和配对顺序。原运行的冻结截止时间、停止记录和已完成文件作核对依据。只有两组完整后才计算原准入规则，通过后再考虑全新种子的独立确认。
-- 当前缺少仓库要求的 `schedule_create` 能力，历史 8081 服务检查也需在续跑前处理。此轮已归档可复核证据，长局队列尚未排程。
+- 续跑入口已实现，默认只列出 62 项待办。运行时使用项目资源监护器与单 CPU 推理进程，到窗口结束前 30 秒停止计算。续跑结果、运行记录和新断点写入独立目录。现有完成局通过链接只读复用，缺失局仅在首次执行时复制历史检查点，之后沿用新断点。每窗记录在 `runs/lookahead_long_validation_resume/windows/`。
+- 当前环境仍缺少 `schedule_create`，8081 推理服务也未监听，因而实际长局尚未排程或启动。
 
 机器证据包括 [归档配对复核](reports/experiments/lookahead_long_validation_archive_20261123.json) 和 [续跑预检](reports/experiments/lookahead_long_validation_resume_preflight_20261123.json)。在仓库根目录调用分析器时，参数是含原始实验的研究工作树。
 
 ```sh
 .venv/bin/python scripts/inspect_lookahead_long_validation.py ../tetris-ai-benchmark-long-validation
+.venv/bin/python scripts/resume_lookahead_long_validation.py ../tetris-ai-benchmark-long-validation
 ```
+
+低峰执行入口接收 `--window-date YYYY-MM-DD`。默认续跑目录是 `runs/lookahead_long_validation_resume`。汇总续跑结果时，给分析器传入 `--resume-output runs/lookahead_long_validation_resume`。如需停机，使用续跑目录的 `STOP` 标记，下一次检查点边界生效。
 
 ## 11 月 12 日暂停记录
 
