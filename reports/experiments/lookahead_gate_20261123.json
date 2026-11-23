@@ -1,0 +1,712 @@
+{
+  "fit": {
+    "source_commit": "ddb52f399313323890bbdf96157e217d382569a8",
+    "local_output": "runs/lookahead_gate_20261123/fit",
+    "result": {
+      "started": "2026-11-23T18:11:20.722219+08:00",
+      "ended": "2026-11-23T18:13:16.356113+08:00",
+      "protocol": {
+        "capture_protocol_sha256": "c3e6e922864ab7223106533bdfcb6775d196c66e936d6020a53b6e19ff3c5678",
+        "script_sha256": "501cace2f55f078c20abc27d78a150af14c8ccf2f39c6147dd709eda1a47bf8e",
+        "train_seeds": [
+          3256112360,
+          3256112361,
+          3256112362,
+          3256112363,
+          3256112364,
+          3256112365,
+          3256112366,
+          3256112367
+        ],
+        "calibration_seeds": [
+          3256112370,
+          3256112371,
+          3256112372,
+          3256112373
+        ],
+        "replay_seeds": [
+          3256112380,
+          3256112381,
+          3256112382,
+          3256112383,
+          3256112384,
+          3256112385
+        ],
+        "replay_cap": 4096,
+        "epochs": 16,
+        "batch": 128,
+        "optimization_seed": 20261124,
+        "minimum_precision": 0.6,
+        "minimum_true_positives": 5
+      },
+      "capture_training": [
+        {
+          "seed": 3256112360,
+          "pieces": 4096,
+          "score": 16010100,
+          "game_over": false,
+          "disagreements": 1215,
+          "switch_labels": 27,
+          "protocol_sha256": "c3e6e922864ab7223106533bdfcb6775d196c66e936d6020a53b6e19ff3c5678",
+          "sha256": "3311bf68559a9b41a1cd6a4336c0969e577ee2dc1e4e2ec33afa1b949329ac5c"
+        },
+        {
+          "seed": 3256112361,
+          "pieces": 4096,
+          "score": 15303500,
+          "game_over": false,
+          "disagreements": 1097,
+          "switch_labels": 19,
+          "protocol_sha256": "c3e6e922864ab7223106533bdfcb6775d196c66e936d6020a53b6e19ff3c5678",
+          "sha256": "447ab1505aae041602f28eb9bfc72a4fd7ea40745ac0ddae5bd59e662ac7f30d"
+        },
+        {
+          "seed": 3256112362,
+          "pieces": 4096,
+          "score": 16068500,
+          "game_over": false,
+          "disagreements": 1202,
+          "switch_labels": 22,
+          "protocol_sha256": "c3e6e922864ab7223106533bdfcb6775d196c66e936d6020a53b6e19ff3c5678",
+          "sha256": "999770b74906649d7803c281daff209f96d13e3dc12644ac7dd673971fa7c4d8"
+        },
+        {
+          "seed": 3256112363,
+          "pieces": 4096,
+          "score": 15719900,
+          "game_over": false,
+          "disagreements": 1084,
+          "switch_labels": 10,
+          "protocol_sha256": "c3e6e922864ab7223106533bdfcb6775d196c66e936d6020a53b6e19ff3c5678",
+          "sha256": "467d646d3546cee76ef66f3b2c6c07a91eb7e2a67f8d700cee2a3bcaa8042fda"
+        },
+        {
+          "seed": 3256112364,
+          "pieces": 4096,
+          "score": 15598100,
+          "game_over": false,
+          "disagreements": 1125,
+          "switch_labels": 17,
+          "protocol_sha256": "c3e6e922864ab7223106533bdfcb6775d196c66e936d6020a53b6e19ff3c5678",
+          "sha256": "aa46273777919f10f8cfd0b7a88d247d1dc4d8857c898f8417f380098252b14e"
+        },
+        {
+          "seed": 3256112365,
+          "pieces": 4096,
+          "score": 16157700,
+          "game_over": false,
+          "disagreements": 1165,
+          "switch_labels": 24,
+          "protocol_sha256": "c3e6e922864ab7223106533bdfcb6775d196c66e936d6020a53b6e19ff3c5678",
+          "sha256": "42d1392373feafcb047e389abb0b6d0c10464302a1eccc2bf23ef12ee28194c3"
+        },
+        {
+          "seed": 3256112366,
+          "pieces": 4096,
+          "score": 16177700,
+          "game_over": false,
+          "disagreements": 1192,
+          "switch_labels": 20,
+          "protocol_sha256": "c3e6e922864ab7223106533bdfcb6775d196c66e936d6020a53b6e19ff3c5678",
+          "sha256": "2e2d9cdb14a40ef92e1171d13032d5f14111ce1f40751f2170b3965449134c71"
+        },
+        {
+          "seed": 3256112367,
+          "pieces": 4096,
+          "score": 15840200,
+          "game_over": false,
+          "disagreements": 1156,
+          "switch_labels": 28,
+          "protocol_sha256": "c3e6e922864ab7223106533bdfcb6775d196c66e936d6020a53b6e19ff3c5678",
+          "sha256": "c7be38383c189b13b40e02427ebfc532cd29fbe2406a49577b87c9d66cba1526"
+        }
+      ],
+      "capture_validation": [
+        {
+          "seed": 3256112370,
+          "pieces": 4096,
+          "score": 15785500,
+          "game_over": false,
+          "disagreements": 1162,
+          "switch_labels": 22,
+          "protocol_sha256": "c3e6e922864ab7223106533bdfcb6775d196c66e936d6020a53b6e19ff3c5678",
+          "sha256": "0c34929899e596215f8a295bce8776e33f12800c0a0374f365b9392f4f3567b4"
+        },
+        {
+          "seed": 3256112371,
+          "pieces": 4096,
+          "score": 15766500,
+          "game_over": false,
+          "disagreements": 1057,
+          "switch_labels": 14,
+          "protocol_sha256": "c3e6e922864ab7223106533bdfcb6775d196c66e936d6020a53b6e19ff3c5678",
+          "sha256": "d6bbf17e1de46a413b17556b437ae1fb09331d9484df3f193e2d016d0f2ff735"
+        },
+        {
+          "seed": 3256112372,
+          "pieces": 4096,
+          "score": 15583000,
+          "game_over": false,
+          "disagreements": 1132,
+          "switch_labels": 9,
+          "protocol_sha256": "c3e6e922864ab7223106533bdfcb6775d196c66e936d6020a53b6e19ff3c5678",
+          "sha256": "ed4a9da63c293a0291cd4cfaa97d6edfbbb1215b50e37c9a3c2c50c4b251fd91"
+        },
+        {
+          "seed": 3256112373,
+          "pieces": 4096,
+          "score": 16004500,
+          "game_over": false,
+          "disagreements": 1162,
+          "switch_labels": 31,
+          "protocol_sha256": "c3e6e922864ab7223106533bdfcb6775d196c66e936d6020a53b6e19ff3c5678",
+          "sha256": "c7dbf18aeb815cd2f2ecbd8dbc4e7de264195d5f8f7651f773b3a3ba30e2f345"
+        }
+      ],
+      "train_loss": [
+        0.6351193087268258,
+        0.4587568917435555,
+        0.34141413878444576,
+        0.2846766060412627,
+        0.2633714631438617,
+        0.2515991865013935,
+        0.24710634539380585,
+        0.24368268999703885,
+        0.24102249035539952,
+        0.2385001131331394,
+        0.23629333840375755,
+        0.23477673829376258,
+        0.23334624926447095,
+        0.23080908408047265,
+        0.23014765898481288,
+        0.22973103810951997
+      ],
+      "positive_class_weight": 7.369219037425668,
+      "calibration": {
+        "samples": 4513,
+        "positives": 76,
+        "average_precision": 0.17201239814379451,
+        "threshold": 0.8702848553657532,
+        "precision": 0.4375,
+        "recall": 0.09210526315789473,
+        "true_positives": 7,
+        "predicted_switches": 16,
+        "meets_precision_target": false
+      },
+      "pairs": [
+        {
+          "seed": 3256112380,
+          "common_pieces": 4096,
+          "student_score": 15761900,
+          "gate_score": 15955000,
+          "student": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 0,
+            "disagreements": 0,
+            "median_decision_ms": 0.2007014991249889
+          },
+          "gate": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 7,
+            "disagreements": 1135,
+            "median_decision_ms": 0.36966399784432724
+          }
+        },
+        {
+          "seed": 3256112381,
+          "common_pieces": 4096,
+          "student_score": 16167000,
+          "gate_score": 15685100,
+          "student": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 0,
+            "disagreements": 0,
+            "median_decision_ms": 0.20072199913556688
+          },
+          "gate": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 2,
+            "disagreements": 1104,
+            "median_decision_ms": 0.3693234993988881
+          }
+        },
+        {
+          "seed": 3256112382,
+          "common_pieces": 4096,
+          "student_score": 16503900,
+          "gate_score": 15953600,
+          "student": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 0,
+            "disagreements": 0,
+            "median_decision_ms": 0.19944499945268035
+          },
+          "gate": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 4,
+            "disagreements": 1154,
+            "median_decision_ms": 0.3687424996314803
+          }
+        },
+        {
+          "seed": 3256112383,
+          "common_pieces": 4096,
+          "student_score": 16298400,
+          "gate_score": 15951800,
+          "student": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 0,
+            "disagreements": 0,
+            "median_decision_ms": 0.20025099911435973
+          },
+          "gate": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 3,
+            "disagreements": 1174,
+            "median_decision_ms": 0.36926899883837905
+          }
+        },
+        {
+          "seed": 3256112384,
+          "common_pieces": 4096,
+          "student_score": 16325700,
+          "gate_score": 16091700,
+          "student": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 0,
+            "disagreements": 0,
+            "median_decision_ms": 0.2003009994950844
+          },
+          "gate": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 12,
+            "disagreements": 1217,
+            "median_decision_ms": 0.3729405016201781
+          }
+        },
+        {
+          "seed": 3256112385,
+          "common_pieces": 4096,
+          "student_score": 15465500,
+          "gate_score": 15594400,
+          "student": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 0,
+            "disagreements": 0,
+            "median_decision_ms": 0.19937449906137772
+          },
+          "gate": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 2,
+            "disagreements": 1099,
+            "median_decision_ms": 0.3683659997477662
+          }
+        }
+      ],
+      "checkpoint_sha256": "93b5372f0f47a88db8cc4a74ac613e94d2857962c03eb4b23d3a3f4eb23c274d",
+      "ppo_updates": 0
+    },
+    "replay_totals": {
+      "gate_score": 95231600,
+      "student_score": 96522400
+    },
+    "replay_ratio": 0.9866269384101515,
+    "replay_switches": 30
+  },
+  "fit_next3": {
+    "source_commit": "9c8e214cf120eefbe107e3542701aac9780baf11",
+    "local_output": "runs/lookahead_gate_20261123/fit_next3",
+    "result": {
+      "started": "2026-11-23T18:15:14.419197+08:00",
+      "ended": "2026-11-23T18:17:09.968810+08:00",
+      "protocol": {
+        "capture_protocol_sha256": "52c448d4437b9d1ec45e801b93cc59da65cc7c77b83fb354c27a4ef42e8a8a7c",
+        "script_sha256": "698e2f17ba1f8887e55dab1a93c91acde93c18af343fcea0fd5567d97e8b2b75",
+        "train_seeds": [
+          3256112360,
+          3256112361,
+          3256112362,
+          3256112363,
+          3256112364,
+          3256112365,
+          3256112366,
+          3256112367
+        ],
+        "calibration_seeds": [
+          3256112370,
+          3256112371,
+          3256112372,
+          3256112373
+        ],
+        "replay_seeds": [
+          3256112390,
+          3256112391,
+          3256112392,
+          3256112393,
+          3256112394,
+          3256112395
+        ],
+        "replay_cap": 4096,
+        "epochs": 16,
+        "batch": 128,
+        "optimization_seed": 20261124,
+        "minimum_precision": 0.6,
+        "minimum_true_positives": 5,
+        "public_next3": true
+      },
+      "capture_training": [
+        {
+          "seed": 3256112360,
+          "pieces": 4096,
+          "score": 16010100,
+          "game_over": false,
+          "disagreements": 1215,
+          "switch_labels": 27,
+          "protocol_sha256": "52c448d4437b9d1ec45e801b93cc59da65cc7c77b83fb354c27a4ef42e8a8a7c",
+          "sha256": "bd4a5613c3122f16d35553ee9b6b956e26c8a35816b12396f6f017c71c2698f1",
+          "parent_sha256": "3311bf68559a9b41a1cd6a4336c0969e577ee2dc1e4e2ec33afa1b949329ac5c"
+        },
+        {
+          "seed": 3256112361,
+          "pieces": 4096,
+          "score": 15303500,
+          "game_over": false,
+          "disagreements": 1097,
+          "switch_labels": 19,
+          "protocol_sha256": "52c448d4437b9d1ec45e801b93cc59da65cc7c77b83fb354c27a4ef42e8a8a7c",
+          "sha256": "c956305f86c939a09e11510c53d2d44da5d256e2a21196201c9ba1cc892d3b1c",
+          "parent_sha256": "447ab1505aae041602f28eb9bfc72a4fd7ea40745ac0ddae5bd59e662ac7f30d"
+        },
+        {
+          "seed": 3256112362,
+          "pieces": 4096,
+          "score": 16068500,
+          "game_over": false,
+          "disagreements": 1202,
+          "switch_labels": 22,
+          "protocol_sha256": "52c448d4437b9d1ec45e801b93cc59da65cc7c77b83fb354c27a4ef42e8a8a7c",
+          "sha256": "9c79f3236fcc39dae1a5b02f6210f335287f05c92326dafdab26f6e79334f122",
+          "parent_sha256": "999770b74906649d7803c281daff209f96d13e3dc12644ac7dd673971fa7c4d8"
+        },
+        {
+          "seed": 3256112363,
+          "pieces": 4096,
+          "score": 15719900,
+          "game_over": false,
+          "disagreements": 1084,
+          "switch_labels": 10,
+          "protocol_sha256": "52c448d4437b9d1ec45e801b93cc59da65cc7c77b83fb354c27a4ef42e8a8a7c",
+          "sha256": "92a6484d9ca6e665a5bc2d5c7fda1800a26c9cdab9aecfb8c923ac7bb5108e79",
+          "parent_sha256": "467d646d3546cee76ef66f3b2c6c07a91eb7e2a67f8d700cee2a3bcaa8042fda"
+        },
+        {
+          "seed": 3256112364,
+          "pieces": 4096,
+          "score": 15598100,
+          "game_over": false,
+          "disagreements": 1125,
+          "switch_labels": 17,
+          "protocol_sha256": "52c448d4437b9d1ec45e801b93cc59da65cc7c77b83fb354c27a4ef42e8a8a7c",
+          "sha256": "0b4cb0471f5fef05245ae6a0feee8878b05071398d75b0d961c3a6325a626719",
+          "parent_sha256": "aa46273777919f10f8cfd0b7a88d247d1dc4d8857c898f8417f380098252b14e"
+        },
+        {
+          "seed": 3256112365,
+          "pieces": 4096,
+          "score": 16157700,
+          "game_over": false,
+          "disagreements": 1165,
+          "switch_labels": 24,
+          "protocol_sha256": "52c448d4437b9d1ec45e801b93cc59da65cc7c77b83fb354c27a4ef42e8a8a7c",
+          "sha256": "c051f079295f8604e872d5ae096730a509dfc4ad5ff73bf3db7be14468be0232",
+          "parent_sha256": "42d1392373feafcb047e389abb0b6d0c10464302a1eccc2bf23ef12ee28194c3"
+        },
+        {
+          "seed": 3256112366,
+          "pieces": 4096,
+          "score": 16177700,
+          "game_over": false,
+          "disagreements": 1192,
+          "switch_labels": 20,
+          "protocol_sha256": "52c448d4437b9d1ec45e801b93cc59da65cc7c77b83fb354c27a4ef42e8a8a7c",
+          "sha256": "f47fa2618f965f3acdcd6d5afb479ce7ed0e18833aa865ab1c147a97c1b7177f",
+          "parent_sha256": "2e2d9cdb14a40ef92e1171d13032d5f14111ce1f40751f2170b3965449134c71"
+        },
+        {
+          "seed": 3256112367,
+          "pieces": 4096,
+          "score": 15840200,
+          "game_over": false,
+          "disagreements": 1156,
+          "switch_labels": 28,
+          "protocol_sha256": "52c448d4437b9d1ec45e801b93cc59da65cc7c77b83fb354c27a4ef42e8a8a7c",
+          "sha256": "2855360d7f2419c03e63f614e249479d376acb5cf4ac03c565158528ab636b01",
+          "parent_sha256": "c7be38383c189b13b40e02427ebfc532cd29fbe2406a49577b87c9d66cba1526"
+        }
+      ],
+      "capture_validation": [
+        {
+          "seed": 3256112370,
+          "pieces": 4096,
+          "score": 15785500,
+          "game_over": false,
+          "disagreements": 1162,
+          "switch_labels": 22,
+          "protocol_sha256": "52c448d4437b9d1ec45e801b93cc59da65cc7c77b83fb354c27a4ef42e8a8a7c",
+          "sha256": "41c564a5972abd2fc75448fa8b6add0d8930b319ac0fd537f4db4f843df6e9fb",
+          "parent_sha256": "0c34929899e596215f8a295bce8776e33f12800c0a0374f365b9392f4f3567b4"
+        },
+        {
+          "seed": 3256112371,
+          "pieces": 4096,
+          "score": 15766500,
+          "game_over": false,
+          "disagreements": 1057,
+          "switch_labels": 14,
+          "protocol_sha256": "52c448d4437b9d1ec45e801b93cc59da65cc7c77b83fb354c27a4ef42e8a8a7c",
+          "sha256": "4bdb9d147fbe3416a778213631c33141c1e329c0807a645522704339e1a1990f",
+          "parent_sha256": "d6bbf17e1de46a413b17556b437ae1fb09331d9484df3f193e2d016d0f2ff735"
+        },
+        {
+          "seed": 3256112372,
+          "pieces": 4096,
+          "score": 15583000,
+          "game_over": false,
+          "disagreements": 1132,
+          "switch_labels": 9,
+          "protocol_sha256": "52c448d4437b9d1ec45e801b93cc59da65cc7c77b83fb354c27a4ef42e8a8a7c",
+          "sha256": "507d56928f771a28bccba7d8a7cc1785263a933474cc94be46c4263d885c5efd",
+          "parent_sha256": "ed4a9da63c293a0291cd4cfaa97d6edfbbb1215b50e37c9a3c2c50c4b251fd91"
+        },
+        {
+          "seed": 3256112373,
+          "pieces": 4096,
+          "score": 16004500,
+          "game_over": false,
+          "disagreements": 1162,
+          "switch_labels": 31,
+          "protocol_sha256": "52c448d4437b9d1ec45e801b93cc59da65cc7c77b83fb354c27a4ef42e8a8a7c",
+          "sha256": "7c6d7246e098f9acca6be2074f4e1d59eae5a74360149257e76e4c18b559fd87",
+          "parent_sha256": "c7dbf18aeb815cd2f2ecbd8dbc4e7de264195d5f8f7651f773b3a3ba30e2f345"
+        }
+      ],
+      "train_loss": [
+        0.6389940505990119,
+        0.4881260009646261,
+        0.36654860240755377,
+        0.2961874955167188,
+        0.2644281654375464,
+        0.2487832437918371,
+        0.24112173344418825,
+        0.23685408313909925,
+        0.23362235841734577,
+        0.2296366088621515,
+        0.22670126021644058,
+        0.22459222881656646,
+        0.2215370309654899,
+        0.21726638248739638,
+        0.21589337266746048,
+        0.21413390356490705
+      ],
+      "positive_class_weight": 7.369219037425668,
+      "calibration": {
+        "samples": 4513,
+        "positives": 76,
+        "average_precision": 0.22330501687540177,
+        "threshold": 0.9285585284233093,
+        "precision": 0.625,
+        "recall": 0.06578947368421052,
+        "true_positives": 5,
+        "predicted_switches": 8,
+        "meets_precision_target": true
+      },
+      "pairs": [
+        {
+          "seed": 3256112390,
+          "common_pieces": 4096,
+          "student_score": 16500600,
+          "gate_score": 15838000,
+          "student": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 0,
+            "disagreements": 0,
+            "median_decision_ms": 0.1991239987546578
+          },
+          "gate": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 3,
+            "disagreements": 1117,
+            "median_decision_ms": 0.37063099989609327
+          }
+        },
+        {
+          "seed": 3256112391,
+          "common_pieces": 4096,
+          "student_score": 15500800,
+          "gate_score": 15610600,
+          "student": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 0,
+            "disagreements": 0,
+            "median_decision_ms": 0.20058200061612297
+          },
+          "gate": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 2,
+            "disagreements": 1122,
+            "median_decision_ms": 0.3675705011119135
+          }
+        },
+        {
+          "seed": 3256112392,
+          "common_pieces": 4096,
+          "student_score": 16511800,
+          "gate_score": 16388000,
+          "student": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 0,
+            "disagreements": 0,
+            "median_decision_ms": 0.19832300131383818
+          },
+          "gate": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 1,
+            "disagreements": 1219,
+            "median_decision_ms": 0.3682765000121435
+          }
+        },
+        {
+          "seed": 3256112393,
+          "common_pieces": 4096,
+          "student_score": 15516400,
+          "gate_score": 16008800,
+          "student": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 0,
+            "disagreements": 0,
+            "median_decision_ms": 0.1998604984692065
+          },
+          "gate": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 3,
+            "disagreements": 1204,
+            "median_decision_ms": 0.3715624989126809
+          }
+        },
+        {
+          "seed": 3256112394,
+          "common_pieces": 4096,
+          "student_score": 16258900,
+          "gate_score": 16098000,
+          "student": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 0,
+            "disagreements": 0,
+            "median_decision_ms": 0.20108750140934717
+          },
+          "gate": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 1,
+            "disagreements": 1143,
+            "median_decision_ms": 0.37071600127092097
+          }
+        },
+        {
+          "seed": 3256112395,
+          "common_pieces": 4096,
+          "student_score": 15847000,
+          "gate_score": 15426600,
+          "student": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 0,
+            "disagreements": 0,
+            "median_decision_ms": 0.19982999947387725
+          },
+          "gate": {
+            "pieces": 4096,
+            "game_over": false,
+            "switches": 3,
+            "disagreements": 1148,
+            "median_decision_ms": 0.3714119993674103
+          }
+        }
+      ],
+      "checkpoint_sha256": "7b49d5aaedd27f63eca14b4b5f0fcaa9677ec2d1a91131a16c086f565b8b960e",
+      "ppo_updates": 0
+    },
+    "replay_totals": {
+      "gate_score": 95370000,
+      "student_score": 96135500
+    },
+    "replay_ratio": 0.9920372807131601,
+    "replay_switches": 13
+  },
+  "resource_guards": {
+    "capture_guard": {
+      "at": "2026-11-23T18:11:18+08:00",
+      "outcome": "completed",
+      "exit_code": 0,
+      "wall_seconds": 353.357,
+      "final_cpu_quota": 100,
+      "samples": 173,
+      "sampled_max_cpu_c": 83.25,
+      "sampled_max_gpu_c": 49.0,
+      "sampled_max_memory_mib": 416.49609375,
+      "decisions": {
+        "hold": 168,
+        "reduce": 5
+      }
+    },
+    "fit_guard": {
+      "at": "2026-11-23T18:13:18+08:00",
+      "outcome": "completed",
+      "exit_code": 0,
+      "wall_seconds": 118.541,
+      "final_cpu_quota": 250,
+      "samples": 58,
+      "sampled_max_cpu_c": 78.125,
+      "sampled_max_gpu_c": 44.0,
+      "sampled_max_memory_mib": 863.78125,
+      "decisions": {
+        "hold": 58
+      }
+    },
+    "next3_guard": {
+      "at": "2026-11-23T18:17:12+08:00",
+      "outcome": "completed",
+      "exit_code": 0,
+      "wall_seconds": 232.95,
+      "final_cpu_quota": 250,
+      "samples": 114,
+      "sampled_max_cpu_c": 78.75,
+      "sampled_max_gpu_c": 45.0,
+      "sampled_max_memory_mib": 860.36328125,
+      "decisions": {
+        "hold": 114
+      }
+    }
+  }
+}

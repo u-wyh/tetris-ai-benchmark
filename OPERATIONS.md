@@ -2640,3 +2640,7 @@
 - 2026-11-23T18:13:19+08:00：资源保护：启动受保护任务 tetris-guard-70757-1795428799482915603，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_gate_20261123/next3_guard。
 
 - 2026-11-23T18:17:12+08:00：资源保护：tetris-guard-70757-1795428799482915603 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_gate_20261123/next3_guard。
+
+- 2026-11-23T18:18:22+08:00：仅落点特征和补充 Next 3 两次 CUDA 拟合与 4,096 块回放均完成。补充特征版本校准精度为 62.5%（5/8），其六局总分为各自对照的 99.20%。使用冻结权重接续 6 个新种子的 12,000 块配对回放。续跑证据在 `runs/lookahead_gate_20261123/replay_12k/`。
+
+- 2026-11-23T18:18:23+08:00：资源保护：启动受保护任务 tetris-guard-72044-1795429103874693073，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_gate_20261123/replay_12k_guard。

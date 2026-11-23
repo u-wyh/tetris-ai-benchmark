@@ -117,12 +117,12 @@ def train(x, y):
 
 
 @torch.no_grad()
-def evaluate(study, student, bc, scale, seed, gate=None, normalization=None, threshold=None, preview=False):
-    env = study.LongCandidateTetrisEnv(max_pieces=CAP)
+def evaluate(study, student, bc, scale, seed, gate=None, normalization=None, threshold=None, preview=False, cap=CAP):
+    env = study.LongCandidateTetrisEnv(max_pieces=cap)
     scores, game_over, switches, disagreements, durations = [0], False, 0, 0, []
     env.reset(seed=seed)
     try:
-        for _ in range(CAP):
+        for _ in range(cap):
             start = time.perf_counter()
             observation, legal = env.get_observation(), env.action_masks()
             action = study.fast_action(student, observation, legal)
