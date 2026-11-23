@@ -1,0 +1,237 @@
+{
+  "local_output": "runs/lookahead_high_stack_gate_20261123",
+  "result_sha256": "68829f006025b8ff1f320fbe217dcedc05083f20a2865e490e87267e27c994f4",
+  "result": {
+    "protocol": {
+      "rollout": "frozen_ppo_30m",
+      "teacher": "Lookahead_C",
+      "minimum_stack_height": 10,
+      "train_seeds": [
+        3256112440,
+        3256112441,
+        3256112442,
+        3256112443,
+        3256112444,
+        3256112445
+      ],
+      "validation_seeds": [
+        3256112450,
+        3256112451,
+        3256112452
+      ],
+      "cap": 4096,
+      "minimum_train_examples_per_class": 20,
+      "minimum_validation_examples_per_class": 10,
+      "fit_epochs": 16,
+      "batch_size": 128,
+      "teacher_git": "a5946d1c5a47ed9eb9fd6a8dce70e95b150e9d64",
+      "teacher_protocol_sha256": "0a499ddaf7a7d70f7e238f3af7e9c78a50fa6f3798975d6b9ea3f4344fe20dd3",
+      "sources": {
+        "rollout_ppo": "eb859b8989efe8f3332393ed57110036979b03bb4d3d8d8316d080cf04b2da34",
+        "student": "e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914",
+        "bc": "5f5613cb5eb4e80a02406b70902ad3d5c571eb8fe38bec4b40f73b34289ca663",
+        "script": "02a9cf9af60e4f59d678cad8309f2a53e9e40e43aecf50aa5fd34c13ee3f5f05",
+        "fit": "5bf51080fe4261ebd4468867e0991651508df6041284dcc74fdb512a2ba12e30",
+        "pair_features": "8af2aedf727e4a5da7b3a9fc392be1dd050e5a39d2a95e1f43c756ff0c09eeb8",
+        "next3": "cb761de231e72ebbf7e5c33919c205c8a2a513f92234d9e4a04c7e2b4a537704"
+      }
+    },
+    "started": "2026-11-23T18:42:39.935300+08:00",
+    "captures": [
+      {
+        "seed": 3256112440,
+        "pieces": 4096,
+        "score": 26677200,
+        "game_over": false,
+        "height_ge_10": 433,
+        "height_ge_12": 166,
+        "disagreements_ge_12": 29,
+        "disagreements": 84,
+        "switch_labels": 6,
+        "protocol_sha256": "f167ed6b098cccf2b72b341601f9931d1808017b37a7dfecb7305cc576b54afd",
+        "sha256": "4046b8b933bd8e7d5133986a0b53dedd46d430d90084ff709e228a42b4350071"
+      },
+      {
+        "seed": 3256112441,
+        "pieces": 4096,
+        "score": 26544500,
+        "game_over": false,
+        "height_ge_10": 376,
+        "height_ge_12": 107,
+        "disagreements_ge_12": 20,
+        "disagreements": 65,
+        "switch_labels": 7,
+        "protocol_sha256": "f167ed6b098cccf2b72b341601f9931d1808017b37a7dfecb7305cc576b54afd",
+        "sha256": "3ef49c96aa48761ab4e8a3f8423b85a3e8f4f08ad3c7ed65da3ea45fbee12202"
+      },
+      {
+        "seed": 3256112442,
+        "pieces": 4096,
+        "score": 26605600,
+        "game_over": false,
+        "height_ge_10": 321,
+        "height_ge_12": 77,
+        "disagreements_ge_12": 6,
+        "disagreements": 49,
+        "switch_labels": 4,
+        "protocol_sha256": "f167ed6b098cccf2b72b341601f9931d1808017b37a7dfecb7305cc576b54afd",
+        "sha256": "02b23fd8a88ebd88877a432067a644a127a474fa15d7e29bd6056eed01ff7211"
+      },
+      {
+        "seed": 3256112443,
+        "pieces": 4096,
+        "score": 26422500,
+        "game_over": false,
+        "height_ge_10": 294,
+        "height_ge_12": 73,
+        "disagreements_ge_12": 10,
+        "disagreements": 52,
+        "switch_labels": 5,
+        "protocol_sha256": "f167ed6b098cccf2b72b341601f9931d1808017b37a7dfecb7305cc576b54afd",
+        "sha256": "13346a82f55fcb99cb21035d871df8b9a5ecebe6ec7c7bc7a9b7476fbd4f2e70"
+      },
+      {
+        "seed": 3256112444,
+        "pieces": 4096,
+        "score": 26748100,
+        "game_over": false,
+        "height_ge_10": 266,
+        "height_ge_12": 68,
+        "disagreements_ge_12": 9,
+        "disagreements": 52,
+        "switch_labels": 6,
+        "protocol_sha256": "f167ed6b098cccf2b72b341601f9931d1808017b37a7dfecb7305cc576b54afd",
+        "sha256": "53b406574c844b4a9246312261e90ad22ec5027c003f31304cc70d6eab241201"
+      },
+      {
+        "seed": 3256112445,
+        "pieces": 4096,
+        "score": 26478500,
+        "game_over": false,
+        "height_ge_10": 456,
+        "height_ge_12": 141,
+        "disagreements_ge_12": 30,
+        "disagreements": 90,
+        "switch_labels": 3,
+        "protocol_sha256": "f167ed6b098cccf2b72b341601f9931d1808017b37a7dfecb7305cc576b54afd",
+        "sha256": "7bda6cb3ef5084336b538b307adb1c8e9d842b3f9abca04d2b7f39561355a11f"
+      }
+    ],
+    "validation": [
+      {
+        "seed": 3256112450,
+        "pieces": 4096,
+        "score": 26727000,
+        "game_over": false,
+        "height_ge_10": 399,
+        "height_ge_12": 126,
+        "disagreements_ge_12": 15,
+        "disagreements": 76,
+        "switch_labels": 5,
+        "protocol_sha256": "f167ed6b098cccf2b72b341601f9931d1808017b37a7dfecb7305cc576b54afd",
+        "sha256": "e9b75f420947ebefba90b3ce1d5b532f50de1c311d16620bdbb6c7a0448fb8df"
+      },
+      {
+        "seed": 3256112451,
+        "pieces": 2006,
+        "score": 6153500,
+        "game_over": true,
+        "height_ge_10": 188,
+        "height_ge_12": 68,
+        "disagreements_ge_12": 14,
+        "disagreements": 29,
+        "switch_labels": 3,
+        "protocol_sha256": "f167ed6b098cccf2b72b341601f9931d1808017b37a7dfecb7305cc576b54afd",
+        "sha256": "8cd59822ca2599606e4e4e30d17a8aee69ba2a3639114e9ba2e275d02172def3"
+      },
+      {
+        "seed": 3256112452,
+        "pieces": 4096,
+        "score": 26618400,
+        "game_over": false,
+        "height_ge_10": 345,
+        "height_ge_12": 85,
+        "disagreements_ge_12": 19,
+        "disagreements": 78,
+        "switch_labels": 6,
+        "protocol_sha256": "f167ed6b098cccf2b72b341601f9931d1808017b37a7dfecb7305cc576b54afd",
+        "sha256": "5e18b0be39a0ab3d012d3a7abe20da17a6064276b588fc7267da81248313de08"
+      }
+    ],
+    "train_switch_retain": [
+      31,
+      361
+    ],
+    "validation_switch_retain": [
+      14,
+      169
+    ],
+    "status": "trained",
+    "checkpoint_sha256": "83286abb45660faedb04b07e67539261e6ebd3dd678f6e40b588ea201aa5bb88",
+    "train_loss": [
+      0.7710415343849026,
+      0.7541872372432631,
+      0.7416417355440101,
+      0.7291012114408065,
+      0.7170362180593063,
+      0.7051892718490289,
+      0.6933035436941652,
+      0.6831928175322863,
+      0.6738800783546604,
+      0.6639425778875545,
+      0.6546691218200995,
+      0.6456358335456069,
+      0.6370990556113574,
+      0.6279333464953364,
+      0.6195053081123196,
+      0.6105376123165598
+    ],
+    "positive_class_weight": 3.412500738508723,
+    "calibration": {
+      "samples": 183,
+      "positives": 14,
+      "average_precision": 0.3445790980484858,
+      "threshold": 0.665428638458252,
+      "precision": 0.5454545454545454,
+      "recall": 0.42857142857142855,
+      "true_positives": 6,
+      "predicted_switches": 11,
+      "meets_precision_target": false
+    },
+    "ended": "2026-11-23T18:44:01.878526+08:00"
+  },
+  "coverage": {
+    "train": {
+      "pieces": 24576,
+      "height_ge_10": 2146,
+      "height_ge_12": 632,
+      "disagreements_ge_12": 104,
+      "disagreements": 392,
+      "switch_labels": 31
+    },
+    "validation": {
+      "pieces": 10198,
+      "height_ge_10": 932,
+      "height_ge_12": 279,
+      "disagreements_ge_12": 48,
+      "disagreements": 183,
+      "switch_labels": 14
+    }
+  },
+  "resource_guard": {
+    "at": "2026-11-23T18:44:04+08:00",
+    "outcome": "completed",
+    "exit_code": 0,
+    "wall_seconds": 85.905,
+    "final_cpu_quota": 250,
+    "samples": 42,
+    "sampled_max_cpu_c": 77.25,
+    "sampled_max_gpu_c": 43.0,
+    "sampled_max_memory_mib": 448.66015625,
+    "decisions": {
+      "hold": 42
+    }
+  },
+  "scope": "off-policy high stacks from PPO 30M, action-label validation only",
+  "promotion": "not_promoted"
+}
