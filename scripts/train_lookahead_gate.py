@@ -17,9 +17,11 @@ from sb3_contrib import MaskablePPO
 from torch import nn
 
 from capture_lookahead_gate import gate_features
+from enrich_lookahead_gate_next3 import next3_features
 
 
 SEEDS = list(range(3256112380, 3256112386))
+NEXT3_SEEDS = list(range(3256112390, 3256112396))
 CAP = 4096
 EPOCHS = 16
 BATCH = 128
@@ -115,7 +117,7 @@ def train(x, y):
 
 
 @torch.no_grad()
-def evaluate(study, student, bc, scale, seed, gate=None, normalization=None, threshold=None):
+def evaluate(study, student, bc, scale, seed, gate=None, normalization=None, threshold=None, preview=False):
     env = study.LongCandidateTetrisEnv(max_pieces=CAP)
     scores, game_over, switches, disagreements, durations = [0], False, 0, 0, []
     env.reset(seed=seed)
@@ -129,6 +131,8 @@ def evaluate(study, student, bc, scale, seed, gate=None, normalization=None, thr
                 if alternate != action:
                     disagreements += 1
                     features = gate_features(observation, action, alternate, scale)
+                    if preview:
+                        features = np.concatenate((features, next3_features(env.core.get_public_observation())))
                     mean, std = normalization
                     probability = gate(torch.from_numpy((features - mean) / std)[None]).sigmoid().item()
                     if probability >= threshold:
@@ -184,15 +188,19 @@ def main():
             raise RuntimeError("Capture completion identity differs")
         if capture["feature_scale"] != FEATURE_SCALE.tolist():
             raise RuntimeError("Capture feature normalization differs")
-        distinct = set(train_seeds) | set(val_seeds) | set(SEEDS)
-        if len(distinct) != len(train_seeds) + len(val_seeds) + len(SEEDS):
+        preview = capture.get("public_next3", False)
+        replay_seeds = NEXT3_SEEDS if preview else SEEDS
+        distinct = set(train_seeds) | set(val_seeds) | set(replay_seeds)
+        if len(distinct) != len(train_seeds) + len(val_seeds) + len(replay_seeds):
             raise RuntimeError("Training, calibration, and replay seeds overlap")
         protocol = {
             "capture_protocol_sha256": identity, "script_sha256": study.digest(Path(__file__)),
-            "train_seeds": train_seeds, "calibration_seeds": val_seeds, "replay_seeds": SEEDS,
+            "train_seeds": train_seeds, "calibration_seeds": val_seeds, "replay_seeds": replay_seeds,
             "replay_cap": CAP, "epochs": EPOCHS, "batch": BATCH, "optimization_seed": RANDOM_SEED,
             "minimum_precision": MIN_PRECISION, "minimum_true_positives": MIN_TRUE_POSITIVES,
         }
+        if preview:
+            protocol["public_next3"] = True
         protocol_path = output / "protocol.json"
         if protocol_path.is_file():
             if json.loads(protocol_path.read_text()) != protocol:
@@ -209,7 +217,7 @@ def main():
             return
 
         started = datetime.now(ZoneInfo("Asia/Shanghai")).isoformat()
-        width = 2 * len(FEATURE_SCALE)
+        width = 2 * len(FEATURE_SCALE) + (21 if preview else 0)
         x, y, training = load_partition(captures, train_seeds, identity, study.digest, width)
         xv, yv, validation = load_partition(captures, val_seeds, identity, study.digest, width)
         gate, mean, std, history, weight = train(x, y)
@@ -235,10 +243,10 @@ def main():
         student = MaskablePPO.load(study.STUDENT, device="cpu")
         bc = MaskablePPO.load(study.BC, device="cpu")
         pairs = []
-        for seed in SEEDS:
+        for seed in replay_seeds:
             original, original_metrics = evaluate(study, student, bc, FEATURE_SCALE, seed)
             gated, gated_metrics = evaluate(
-                study, student, bc, FEATURE_SCALE, seed, restored, (mean, std), saved["threshold"],
+                study, student, bc, FEATURE_SCALE, seed, restored, (mean, std), saved["threshold"], preview,
             )
             common = min(len(original), len(gated)) - 1
             row = {

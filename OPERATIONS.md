@@ -2632,3 +2632,11 @@
 - 2026-11-23T18:11:18+08:00：资源保护：tetris-guard-68392-1795428324736659282 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_gate_20261123/capture_guard。
 
 - 2026-11-23T18:11:19+08:00：资源保护：启动受保护任务 tetris-guard-69033-1795428679550047636，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_gate_20261123/fit_guard。
+
+- 2026-11-23T18:13:09+08:00：采集 12 个种子共 49,152 块、13,749 个分歧局面和 243 个切换标签。第一轮 CUDA 训练完成，校准精度 43.75%（7/16），低于预定 60%。排队补充公开 Next 3 特征，沿原学生轨迹复用原标签，另用 6 个回放种子。证据在 `runs/lookahead_gate_20261123/`。
+
+- 2026-11-23T18:13:18+08:00：资源保护：tetris-guard-69033-1795428679550047636 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_gate_20261123/fit_guard。
+
+- 2026-11-23T18:13:19+08:00：资源保护：启动受保护任务 tetris-guard-70757-1795428799482915603，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_gate_20261123/next3_guard。
+
+- 2026-11-23T18:17:12+08:00：资源保护：tetris-guard-70757-1795428799482915603 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_gate_20261123/next3_guard。
