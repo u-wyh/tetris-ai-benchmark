@@ -2591,3 +2591,27 @@
 ### 2026-11-23T16:26:07+08:00 完成 Public Lookahead 低峰分窗续跑入口
 - 增加北京低峰窗口、资源监护、固定主组优先和独立断点目录。3 项新增续跑测试及 8 项既有 Lookahead 定向测试通过；在临时目录复现历史统计，仍为主组 146/160、延长 0/48，待办按先后为 14/48。
 - 实际入口在高峰验证拒绝启动，未生成正式续跑目录。低峰调度和 8081 健康条件尚未就绪。证据见 `scripts/resume_lookahead_long_validation.py`、`scripts/inspect_lookahead_long_validation.py` 与 `tests/test_resume_lookahead_long_validation.py`。
+
+### 2026-11-23T17:07:39+08:00 按用户指示开展本地 Lookahead C 蒸馏
+- 本轮按当前指示启动训练。以冻结高分学生为初始模型，固定 C 教师，学生自身轨迹用于采样。4 个训练种子、2 个验证种子，每局最多 1,536 块，纠正动作权重 32，CUDA 训练 2 轮，仅更新 actor；另外 4 个种子做 1,024 块回放。证据目录为 `runs/lookahead_distillation_20261123/`，入口为 `scripts/train_lookahead_distillation.py`。
+
+- 2026-11-23T17:07:40+08:00：资源保护：启动受保护任务 tetris-guard-58278-1795424860933295827，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_distillation_20261123/guard。
+
+- 2026-11-23T17:08:23+08:00：资源保护：tetris-guard-58278-1795424860933295827 自动调整CPU配额250%→200%，CPU82.0°C/GPU46.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_distillation_20261123/guard。
+
+- 2026-11-23T17:08:25+08:00：资源保护：tetris-guard-58278-1795424860933295827 自动调整CPU配额200%→150%，CPU82.375°C/GPU47.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_distillation_20261123/guard。
+
+- 2026-11-23T17:08:27+08:00：资源保护：tetris-guard-58278-1795424860933295827 自动调整CPU配额150%→100%，CPU83.125°C/GPU47.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_distillation_20261123/guard。
+
+- 2026-11-23T17:10:20+08:00：资源保护：tetris-guard-58278-1795424860933295827 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_distillation_20261123/guard。
+
+- 2026-11-23T17:11:58+08:00：首轮 CUDA 蒸馏两轮和回放均已完成，384 次 actor 更新；验证纠正命中从 0/24 到 12/24，4 个回放种子的共同分汇总下降 7.22%。证据 `runs/lookahead_distillation_20261123/result.json`。
+- 2026-11-23T17:11:58+08:00：固定一轮原策略 KL 约束对照，复用首轮样本与相同初始权重，纠正行保留权重 32，普通行使用权重 4 的参考分布 KL，使用另外四个回放种子。证据 `runs/lookahead_distillation_anchored_20261123/`。
+
+- 2026-11-23T17:12:00+08:00：资源保护：启动受保护任务 tetris-guard-59351-1795425120310340647，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_distillation_anchored_20261123/guard。
+
+- 2026-11-23T17:12:32+08:00：资源保护：tetris-guard-59351-1795425120310340647 自动调整CPU配额250%→200%，CPU82.25°C/GPU48.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_distillation_anchored_20261123/guard。
+
+- 2026-11-23T17:12:34+08:00：资源保护：tetris-guard-59351-1795425120310340647 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_distillation_anchored_20261123/guard。
+
+- 2026-11-23T17:13:28+08:00：两次受保护 CUDA 蒸馏及 1,024 块配对回放均退出 0，每次 384 次 actor 更新。首轮纠正命中 12/24，普通动作一致率 91.21%；KL 约束候选为 4/24 和 98.46%。第二批四个相同回放种子上，普通候选总分比原学生低 8.76%，KL 候选低 7.28%，均未晋升。两份最终权重的重新载入一致，报告与 SHA-256 在 `reports/experiments/lookahead_distillation_20261123.json`。

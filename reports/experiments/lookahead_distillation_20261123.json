@@ -1,0 +1,389 @@
+{
+  "pilot": {
+    "local_run": "runs/lookahead_distillation_20261123",
+    "result_sha256": "45b4837949dec01cf4c7a1bd78cf69a38b2f4bf27d8cdc1b6b3a41daa3a0e0a4",
+    "result": {
+      "started": "2026-11-23T17:07:42.064844+08:00",
+      "ended": "2026-11-23T17:10:17.380761+08:00",
+      "protocol": {
+        "initial_student_sha256": "e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914",
+        "teacher_bc_sha256": "5f5613cb5eb4e80a02406b70902ad3d5c571eb8fe38bec4b40f73b34289ca663",
+        "teacher_frozen_git": "a5946d1c5a47ed9eb9fd6a8dce70e95b150e9d64",
+        "teacher_variant": "C",
+        "teacher_protocol_sha256": "0a499ddaf7a7d70f7e238f3af7e9c78a50fa6f3798975d6b9ea3f4344fe20dd3",
+        "script_sha256": "c771e90fd67aaf4553fe7b39246e79206b908bd1a08548975911327c15c15c8d",
+        "seeds": {
+          "train": [
+            3256112300,
+            3256112301,
+            3256112302,
+            3256112303
+          ],
+          "validation": [
+            3256112310,
+            3256112311
+          ],
+          "replay": [
+            3256112320,
+            3256112321,
+            3256112322,
+            3256112323
+          ]
+        },
+        "capture_policy": "frozen_student",
+        "episode_cap": 1536,
+        "replay_cap": 1024,
+        "epochs": 2,
+        "batch_size": 32,
+        "learning_rate": 5e-05,
+        "correction_weight": 32,
+        "random_seed": 20261123,
+        "device": "cuda"
+      },
+      "captures": [
+        {
+          "seed": 3256112300,
+          "samples": 1536,
+          "teacher_corrections": 9,
+          "game_over": false,
+          "student_score": 2150500,
+          "protocol_sha256": "4fbce284bc7a0ec331a1271f8c3f83591f2287d15a0120e765c18ca31b584f63",
+          "sha256": "873b8f3192b085ff27daf26de84f632badced9ecd5286e8fc0569f9ef3087b73"
+        },
+        {
+          "seed": 3256112301,
+          "samples": 1536,
+          "teacher_corrections": 7,
+          "game_over": false,
+          "student_score": 2200800,
+          "protocol_sha256": "4fbce284bc7a0ec331a1271f8c3f83591f2287d15a0120e765c18ca31b584f63",
+          "sha256": "3e1963300276b21fafdd932412a70757d00452ca8cb83f25b1db8d04c7b065be"
+        },
+        {
+          "seed": 3256112302,
+          "samples": 1536,
+          "teacher_corrections": 5,
+          "game_over": false,
+          "student_score": 2225900,
+          "protocol_sha256": "4fbce284bc7a0ec331a1271f8c3f83591f2287d15a0120e765c18ca31b584f63",
+          "sha256": "aa6f97da85189725e9d10fb46412014ccd37e62ce2abcf3bc3ed4ea98c24ed33"
+        },
+        {
+          "seed": 3256112303,
+          "samples": 1536,
+          "teacher_corrections": 10,
+          "game_over": false,
+          "student_score": 2161300,
+          "protocol_sha256": "4fbce284bc7a0ec331a1271f8c3f83591f2287d15a0120e765c18ca31b584f63",
+          "sha256": "925603ea4356673109b666b8cc8c1a5ddcd88c8f3736ac5f6df4745fc6bdf56a"
+        },
+        {
+          "seed": 3256112310,
+          "samples": 1536,
+          "teacher_corrections": 17,
+          "game_over": false,
+          "student_score": 2374200,
+          "protocol_sha256": "4fbce284bc7a0ec331a1271f8c3f83591f2287d15a0120e765c18ca31b584f63",
+          "sha256": "ddde6459f9025cba74d7e4e83eb6e0d51d63ee785f66f36df2bc0c024b11f9bf"
+        },
+        {
+          "seed": 3256112311,
+          "samples": 1536,
+          "teacher_corrections": 7,
+          "game_over": false,
+          "student_score": 2264600,
+          "protocol_sha256": "4fbce284bc7a0ec331a1271f8c3f83591f2287d15a0120e765c18ca31b584f63",
+          "sha256": "dc4d62e7ec502075b2f797705d9ee91a4995dcaac3cd3c9840998b988737aafb"
+        }
+      ],
+      "history": [
+        {
+          "epoch": 0,
+          "validation": {
+            "samples": 3072,
+            "teacher_corrections": 24,
+            "corrected": 0,
+            "top1": 0.9921875,
+            "loss": 0.5111654590194424,
+            "correction_top1": 0.0,
+            "retention_top1": 1.0
+          }
+        },
+        {
+          "epoch": 1,
+          "train_weighted_loss": 0.582013446155524,
+          "validation": {
+            "samples": 3072,
+            "teacher_corrections": 24,
+            "corrected": 12,
+            "top1": 0.8974609375,
+            "loss": 0.3905719871011873,
+            "correction_top1": 0.5,
+            "retention_top1": 0.9005905511811023
+          }
+        },
+        {
+          "epoch": 2,
+          "train_weighted_loss": 0.5427511845400097,
+          "validation": {
+            "samples": 3072,
+            "teacher_corrections": 24,
+            "corrected": 12,
+            "top1": 0.9088541666666666,
+            "loss": 0.3652197339882453,
+            "correction_top1": 0.5,
+            "retention_top1": 0.9120734908136483
+          }
+        }
+      ],
+      "replay_pairs": [
+        {
+          "seed": 3256112320,
+          "student_pieces": 1024,
+          "trained_pieces": 1024,
+          "student_game_over": false,
+          "trained_game_over": false,
+          "common_pieces": 1024,
+          "student_score": 1024400,
+          "trained_score": 951300
+        },
+        {
+          "seed": 3256112321,
+          "student_pieces": 1024,
+          "trained_pieces": 1024,
+          "student_game_over": false,
+          "trained_game_over": false,
+          "common_pieces": 1024,
+          "student_score": 1008100,
+          "trained_score": 923400
+        },
+        {
+          "seed": 3256112322,
+          "student_pieces": 1024,
+          "trained_pieces": 1024,
+          "student_game_over": false,
+          "trained_game_over": false,
+          "common_pieces": 1024,
+          "student_score": 999700,
+          "trained_score": 924100
+        },
+        {
+          "seed": 3256112323,
+          "student_pieces": 1024,
+          "trained_pieces": 1024,
+          "student_game_over": false,
+          "trained_game_over": false,
+          "common_pieces": 1024,
+          "student_score": 987800,
+          "trained_score": 930900
+        }
+      ],
+      "checkpoint": "epoch_02.zip",
+      "checkpoint_sha256": "5ec0f4e48d802e56bd05f96f1cd7fc1e7d6e1c8e6e7b1b4a9fba771b8f03962c",
+      "checkpoint_use": "supervised_policy",
+      "ppo_updates": 0
+    },
+    "resource_guard": {
+      "outcome": "completed",
+      "wall_seconds": 159.258,
+      "samples": 78,
+      "sampled_max_cpu_c": 84.0,
+      "sampled_max_gpu_c": 48.0,
+      "sampled_max_gpu_memory_mib": 260.0,
+      "sampled_max_cgroup_memory_mib": 1391.53125,
+      "decisions": {
+        "hold": 69,
+        "reduce": 9
+      }
+    }
+  },
+  "anchored": {
+    "local_run": "runs/lookahead_distillation_anchored_20261123",
+    "result_sha256": "a0bbe5511ea0fe3d7a55a5dcbd9c15027b2935dc84fdf34884f99f5317206b70",
+    "result": {
+      "started": "2026-11-23T17:12:01.460531+08:00",
+      "ended": "2026-11-23T17:12:34.067189+08:00",
+      "protocol": {
+        "pilot_result_sha256": "45b4837949dec01cf4c7a1bd78cf69a38b2f4bf27d8cdc1b6b3a41daa3a0e0a4",
+        "pilot_source_sha256": "c771e90fd67aaf4553fe7b39246e79206b908bd1a08548975911327c15c15c8d",
+        "script_sha256": "2907871f9a8d75b018dfeeb36300fa85c1d7ac6704b6eed754fff59bef5f994c",
+        "source_sha256": "e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914",
+        "epochs": 2,
+        "batch_size": 32,
+        "lr": 5e-05,
+        "correction_weight": 32,
+        "ordinary_kl_weight": 4,
+        "train_seed": 20261123,
+        "device": "cuda",
+        "replay_seeds": [
+          3256112330,
+          3256112331,
+          3256112332,
+          3256112333
+        ],
+        "replay_cap": 1024
+      },
+      "history": [
+        {
+          "epoch": 0,
+          "validation": {
+            "samples": 3072,
+            "teacher_corrections": 24,
+            "corrected": 0,
+            "top1": 0.9921875,
+            "loss": 0.5111654590194424,
+            "correction_top1": 0.0,
+            "retention_top1": 1.0
+          }
+        },
+        {
+          "epoch": 1,
+          "train_weighted_loss": 0.08061024288030194,
+          "validation": {
+            "samples": 3072,
+            "teacher_corrections": 24,
+            "corrected": 4,
+            "top1": 0.9798177083333334,
+            "loss": 0.5059463527674476,
+            "correction_top1": 0.16666666666666666,
+            "retention_top1": 0.9862204724409449
+          }
+        },
+        {
+          "epoch": 2,
+          "train_weighted_loss": 0.07766091325259543,
+          "validation": {
+            "samples": 3072,
+            "teacher_corrections": 24,
+            "corrected": 4,
+            "top1": 0.9781901041666666,
+            "loss": 0.5097375918800632,
+            "correction_top1": 0.16666666666666666,
+            "retention_top1": 0.9845800524934383
+          }
+        }
+      ],
+      "replay_pairs": [
+        {
+          "seed": 3256112330,
+          "common_pieces": 1024,
+          "results": {
+            "student": {
+              "pieces": 1024,
+              "game_over": false,
+              "common_score": 1121500
+            },
+            "pilot": {
+              "pieces": 1024,
+              "game_over": false,
+              "common_score": 951400
+            },
+            "anchored": {
+              "pieces": 1024,
+              "game_over": false,
+              "common_score": 962700
+            }
+          }
+        },
+        {
+          "seed": 3256112331,
+          "common_pieces": 1024,
+          "results": {
+            "student": {
+              "pieces": 1024,
+              "game_over": false,
+              "common_score": 990000
+            },
+            "pilot": {
+              "pieces": 1024,
+              "game_over": false,
+              "common_score": 942400
+            },
+            "anchored": {
+              "pieces": 1024,
+              "game_over": false,
+              "common_score": 991100
+            }
+          }
+        },
+        {
+          "seed": 3256112332,
+          "common_pieces": 1024,
+          "results": {
+            "student": {
+              "pieces": 1024,
+              "game_over": false,
+              "common_score": 1063300
+            },
+            "pilot": {
+              "pieces": 1024,
+              "game_over": false,
+              "common_score": 959700
+            },
+            "anchored": {
+              "pieces": 1024,
+              "game_over": false,
+              "common_score": 963600
+            }
+          }
+        },
+        {
+          "seed": 3256112333,
+          "common_pieces": 1024,
+          "results": {
+            "student": {
+              "pieces": 1024,
+              "game_over": false,
+              "common_score": 1015500
+            },
+            "pilot": {
+              "pieces": 1024,
+              "game_over": false,
+              "common_score": 969600
+            },
+            "anchored": {
+              "pieces": 1024,
+              "game_over": false,
+              "common_score": 967700
+            }
+          }
+        }
+      ],
+      "checkpoint": "epoch_02.zip",
+      "checkpoint_sha256": "c0926fd489362fd27faf9de2576f71b75a7c2eea1ec0bdc73861f365cb7db4f8",
+      "checkpoint_use": "supervised_policy",
+      "ppo_updates": 0
+    },
+    "resource_guard": {
+      "outcome": "completed",
+      "wall_seconds": 34.687,
+      "samples": 17,
+      "sampled_max_cpu_c": 82.25,
+      "sampled_max_gpu_c": 48.0,
+      "sampled_max_gpu_memory_mib": 264.0,
+      "sampled_max_cgroup_memory_mib": 1329.62890625,
+      "decisions": {
+        "hold": 16,
+        "reduce": 1
+      }
+    }
+  },
+  "paired_replay_score_totals": {
+    "first_seed_group": {
+      "student": 4020000,
+      "trained": 3729700
+    },
+    "second_seed_group": {
+      "student": 4190300,
+      "pilot": 3823100,
+      "anchored": 3885100
+    }
+  },
+  "interpretation": {
+    "scope": "supervised pilot; replay cap 1024; short replay is not long-horizon survival evidence",
+    "pilot_percent_vs_student_first_group": -7.221393034825874,
+    "pilot_percent_vs_student_second_group": -8.76309572107009,
+    "anchored_percent_vs_student_second_group": -7.2834880557477995,
+    "promotion": "not_promoted"
+  }
+}
