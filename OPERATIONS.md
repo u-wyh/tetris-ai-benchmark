@@ -2732,3 +2732,19 @@
 - 2026-11-23T22:57:07+08:00：第 preflight 段运行中审查，local_codex 建议 continue。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261124/preflight/live_monitor/`。
 
 - 2026-11-23T22:57:40+08:00：根据用户授权，把夜间监督扩展到训练段内每 15 分钟审查。通过真实本机 Codex 审查上轮完整评测与预检训练数据，两个调用都返回 continue。模拟验证 Codex 可提前触发配对评测，训练自行完成时不补发暂停信号。定时器仍等待北京时间 11 月 24 日 00:30。证据 `reports/experiments/overnight_student_ppo_preflight_20261124.json`。
+
+- 2026-11-24T00:30:00+08:00：夜间监督任务启动，各段用真实游戏结果决定下一方向。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261124/`。
+
+- 2026-11-24T00:30:01+08:00：资源保护：启动受保护任务 tetris-guard-148165-1795451401935050550，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261124/stages/01/training_guard。
+
+- 2026-11-24T00:30:06+08:00：资源保护：tetris-guard-148165-1795451401935050550 结束：command_failed:exit-code，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261124/stages/01/training_guard。
+
+- 2026-11-24T00:31:07+08:00：资源保护：启动受保护任务 tetris-guard-148371-1795451467623503518，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261124/stages/02/training_guard。
+
+- 2026-11-24T00:31:11+08:00：资源保护：tetris-guard-148371-1795451467623503518 结束：command_failed:exit-code，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261124/stages/02/training_guard。
+
+- 2026-11-24T00:32:13+08:00：资源保护：启动受保护任务 tetris-guard-148544-1795451533321091638，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261124/stages/03/training_guard。
+
+- 2026-11-24T00:32:17+08:00：资源保护：tetris-guard-148544-1795451533321091638 结束：command_failed:exit-code，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261124/stages/03/training_guard。
+
+- 2026-11-24T00:32:17+08:00：夜间训练收尾，已记录训练 0 秒、Codex 已应用决策 0 次。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261124/`。

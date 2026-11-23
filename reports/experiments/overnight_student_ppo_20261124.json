@@ -1,0 +1,87 @@
+{
+  "protocol": {
+    "start": "2026-11-24T00:30:00+08:00",
+    "end": "2026-11-24T08:20:00+08:00",
+    "minimum_training_seconds": 18000,
+    "target_training_seconds": 21600,
+    "training_config_sha256": "0c4f8dee1ff67ac57823cc905c56737eb8612f4ca00ec4d019c4a784152e71bb",
+    "variants": {
+      "base": {
+        "seed_offset": 0,
+        "height": 0.0,
+        "beta": 0.3,
+        "learning_rate": 3e-05
+      },
+      "try_height": {
+        "seed_offset": 100,
+        "height": 0.004,
+        "beta": 0.3,
+        "learning_rate": 3e-05
+      },
+      "try_anchor": {
+        "seed_offset": 200,
+        "height": 0.0,
+        "beta": 0.8,
+        "learning_rate": 1.5e-05
+      }
+    },
+    "development_seeds": [
+      3266112500,
+      3266112501,
+      3266112502,
+      3266112503
+    ],
+    "live_review_interval_seconds": 900,
+    "source_sha256": "e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914"
+  },
+  "training": {},
+  "stages": [
+    {
+      "stage": 1,
+      "variant": "base",
+      "training_guard": {
+        "at": "2026-11-24T00:30:06+08:00",
+        "outcome": "command_failed:exit-code",
+        "exit_code": 1,
+        "wall_seconds": 4.112,
+        "final_cpu_quota": 250
+      },
+      "committed": {},
+      "training_seconds": 0,
+      "live_reviews": []
+    },
+    {
+      "stage": 2,
+      "variant": "base",
+      "training_guard": {
+        "at": "2026-11-24T00:31:11+08:00",
+        "outcome": "command_failed:exit-code",
+        "exit_code": 1,
+        "wall_seconds": 4.114,
+        "final_cpu_quota": 250
+      },
+      "committed": {},
+      "training_seconds": 0,
+      "live_reviews": []
+    },
+    {
+      "stage": 3,
+      "variant": "base",
+      "training_guard": {
+        "at": "2026-11-24T00:32:17+08:00",
+        "outcome": "command_failed:exit-code",
+        "exit_code": 1,
+        "wall_seconds": 4.111,
+        "final_cpu_quota": 250
+      },
+      "committed": {},
+      "training_seconds": 0,
+      "live_reviews": []
+    }
+  ],
+  "training_seconds": 0,
+  "training_minimum_met": false,
+  "verified_codex_decisions": 0,
+  "verified_codex_live_reviews": 0,
+  "early_evaluations": 0
+}
