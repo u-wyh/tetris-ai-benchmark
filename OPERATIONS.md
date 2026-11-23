@@ -2653,3 +2653,5 @@
 - 原学生与 12K 对照中的同一选择器各运行 6 局，新种子 3256112420–3256112425，每局最多 20,000 块。按同种子共同局长比较累计分，逐对原子保存。任务入口 `scripts/evaluate_lookahead_gate.py`，证据在 `runs/lookahead_gate_20261123/replay_20k/` 与 `replay_20k_guard/`。
 
 - 2026-11-23T18:34:31+08:00：资源保护：启动受保护任务 tetris-guard-75948-1795430071254860276，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_gate_20261123/replay_20k_guard。
+
+- 2026-11-23T18:37:40+08:00：原学生采样的验证分歧局面中，堆叠高度达到 12 的样本为 0。已接好 20K 对照结束后的高堆叠训练：用冻结 PPO 30M 走棋覆盖高度至少 10 的局面，Lookahead C 为高分学生与 BC 的分歧标注；新种子分 6 局训练与 3 局验证，满足每类样本量门槛后执行 16 轮 CUDA 拟合。证据 `runs/lookahead_high_stack_gate_20261123/`。
