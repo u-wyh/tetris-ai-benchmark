@@ -2689,3 +2689,42 @@
 
 ### 2026-11-23T20:16:40+08:00 准备无人值守验证高堆叠选择器
 - 对 62.5% 验证精度的新权重冻结 16 个高堆叠分叉种子与 8 个自然 100K 对照种子。分叉首步对照、后续同一原学生，单支 2,048 块。真实冻结策略的短分叉已验证快照不变及相同首步完全复现。证据 `runs/high_stack_candidate_campaign_20261123/`。
+
+- 2026-11-23T20:16:40+08:00：无人值守评测启动，先做高堆叠同局面分叉，再做独立自然 100K 对照。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/high_stack_candidate_campaign_20261123/`。
+
+- 2026-11-23T20:16:42+08:00：资源保护：启动受保护任务 tetris-guard-101120-1795436202349012210，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/high_stack_candidate_campaign_20261123/guards/stress-20261123-201640-782604。
+
+- 2026-11-23T20:17:33+08:00：资源保护：tetris-guard-101120-1795436202349012210 自动调整CPU配额250%→200%，CPU82.0°C/GPU48.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/high_stack_candidate_campaign_20261123/guards/stress-20261123-201640-782604。
+
+- 2026-11-23T20:17:35+08:00：资源保护：tetris-guard-101120-1795436202349012210 自动调整CPU配额200%→150%，CPU82.5°C/GPU48.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/high_stack_candidate_campaign_20261123/guards/stress-20261123-201640-782604。
+
+- 2026-11-23T20:17:37+08:00：资源保护：tetris-guard-101120-1795436202349012210 自动调整CPU配额150%→100%，CPU83.125°C/GPU48.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/high_stack_candidate_campaign_20261123/guards/stress-20261123-201640-782604。
+
+- 2026-11-23T20:22:13+08:00：资源保护：tetris-guard-101120-1795436202349012210 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/high_stack_candidate_campaign_20261123/guards/stress-20261123-201640-782604。
+
+- 2026-11-23T20:22:13+08:00：资源保护：启动受保护任务 tetris-guard-102740-1795436533242080998，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/high_stack_candidate_campaign_20261123/guards/natural-20261123-202213-178974。
+
+- 2026-11-23T20:53:13+08:00：夜间 Codex 监督预检。绕过缺失的服务环境，复用既有 Codex 代理配置；系统服务实测返回结构化实验方向。开始两个 4,096 步的 CUDA 原子提交及恢复烟雾测试。证据 `runs/overnight_student_ppo_20261124/preflight/`。
+
+- 2026-11-23T20:53:13+08:00：资源保护：启动受保护任务 tetris-guard-111373-1795438393712476812，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261124/preflight/guard。
+
+- 2026-11-23T20:53:30+08:00：资源保护：tetris-guard-111373-1795438393712476812 自动调整CPU配额250%→200%，CPU82.125°C/GPU48.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261124/preflight/guard。
+
+- 2026-11-23T20:53:46+08:00：资源保护：tetris-guard-102740-1795436533242080998 自动调整CPU配额250%→200%，CPU83.875°C/GPU51.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/high_stack_candidate_campaign_20261123/guards/natural-20261123-202213-178974。
+
+- 2026-11-23T20:53:46+08:00：资源保护：tetris-guard-111373-1795438393712476812 自动调整CPU配额200%→150%，CPU84.125°C/GPU50.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261124/preflight/guard。
+
+- 2026-11-23T20:53:48+08:00：资源保护：tetris-guard-102740-1795436533242080998 自动调整CPU配额200%→150%，CPU86.125°C/GPU50.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/high_stack_candidate_campaign_20261123/guards/natural-20261123-202213-178974。
+
+- 2026-11-23T20:53:48+08:00：资源保护：tetris-guard-111373-1795438393712476812 自动调整CPU配额150%→100%，CPU86.25°C/GPU50.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261124/preflight/guard。
+
+- 2026-11-23T20:53:50+08:00：资源保护：tetris-guard-102740-1795436533242080998 自动调整CPU配额150%→100%，CPU85.75°C/GPU49.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/high_stack_candidate_campaign_20261123/guards/natural-20261123-202213-178974。
+
+- 2026-11-23T20:53:50+08:00：资源保护：tetris-guard-111373-1795438393712476812 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261124/preflight/guard。
+
+- 2026-11-23T20:55:30+08:00：资源保护：tetris-guard-102740-1795436533242080998 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/high_stack_candidate_campaign_20261123/guards/natural-20261123-202213-178974。
+
+- 2026-11-23T20:55:30+08:00：无人值守评测收尾，阶段状态 {'stress': 'completed', 'natural': 'completed'}。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/high_stack_candidate_campaign_20261123/`。
+
+### 2026-11-23T20:57:15+08:00 登记夜间 Codex 监督训练
+- 本机 systemd 用户定时器已等待 2026-11-24 00:30（北京时间），窗口至 08:20。目标累计 6 小时已提交训练，每约 45 分钟回放并由实际 Codex 选择方向。首次服务网络预检超时，复用原代理配置后成功。真实 CUDA 预检已提交 8,192 步并完成断点恢复，真实回放返回可执行的 Codex 决策 continue。改方向和监督失败分支均做控制流验证。证据 `reports/experiments/overnight_student_ppo_preflight_20261124.json`。

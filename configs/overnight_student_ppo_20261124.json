@@ -1,0 +1,39 @@
+{
+  "target_total_steps": 67108864,
+  "task_steps": 4096,
+  "device": "cuda",
+  "n_envs": 8,
+  "n_steps": 512,
+  "base_seed": 3266112400,
+  "candidate_policy": true,
+  "fast_candidate_env": true,
+  "max_pieces": 100000,
+  "overnight_monitor": true,
+  "step0_baseline": false,
+  "transaction_retention": 3,
+  "validation_interval": 1000000000,
+  "milestone_interval": 1000000000,
+  "final_test_seeds": 100,
+  "final_test_max_pieces": 50000,
+  "initial_model": {
+    "path": "runs/bc_sequence_transfer/supervised/checkpoints/epoch_01/model.zip",
+    "sha256": "e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914"
+  },
+  "ppo_overrides": {
+    "gamma": 0.995,
+    "gae_lambda": 0.95,
+    "learning_rate": 0.00003
+  },
+  "kl_reference": {
+    "path": "runs/bc_sequence_transfer/supervised/checkpoints/epoch_01/model.zip",
+    "sha256": "e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914",
+    "beta": 0.3
+  },
+  "initial_optimizer": "fresh",
+  "candidate_feature_backend": "bitboard_native",
+  "candidate_search_backend": "bitboard_compact",
+  "native_feature_runtime": {
+    "manifest": "/home/wyh/projects/tetris-ai-benchmark/runs/autonomous_native_features_20261106/artifact/manifest.json",
+    "sha256": "fc2b36a881a6275fe376c35a8588e61d2b7db532ff9868c5755b08dbc26a21d2"
+  }
+}

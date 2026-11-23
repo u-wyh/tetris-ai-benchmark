@@ -1,0 +1,91 @@
+{
+  "registered_at": "2026-11-23T20:57:15+08:00",
+  "planned_start": "2026-11-24T00:30:00+08:00",
+  "training_window_end": "2026-11-24T08:20:00+08:00",
+  "scheduled_by": "persistent local systemd user timer",
+  "timer": "tetris-overnight-student-ppo-20261124.timer",
+  "timer_properties": {
+    "NextElapseUSecRealtime": "Tue 2026-11-24 00:30:00 CST",
+    "ActiveState": "active",
+    "SubState": "waiting"
+  },
+  "target_committed_training_seconds": 21600,
+  "minimum_committed_training_seconds": 18000,
+  "config_sha256": {
+    "configs/overnight_student_ppo_20261124.json": "0c4f8dee1ff67ac57823cc905c56737eb8612f4ca00ec4d019c4a784152e71bb",
+    "configs/systemd/tetris-overnight-student-ppo-20261124.timer": "d55aedfa40016077020ddc1617901e9e6f6871e54e3f46e3f256a936a59f7a61",
+    "configs/systemd/tetris-overnight-student-ppo-20261124.service": "fb235d45673685f7b40d05b8a3de7e8a1fc5dd044b9ecb1c5547366a0d2c5fef",
+    "scripts/supervise_overnight_student_ppo.py": "7bd2c39b39f3d5ecc63912dabc58428ccdfa4ca51f3c70eeb235e14e3a608259",
+    "scripts/evaluate_overnight_student_ppo.py": "752a8464e178b98d51759e9b189c7f02b988b9f47c048bd0d2878b85c750007e"
+  },
+  "preflight": {
+    "committed_steps": 8192,
+    "committed_tasks": 2,
+    "guard": {
+      "at": "2026-11-23T20:53:50+08:00",
+      "outcome": "completed",
+      "exit_code": 0,
+      "wall_seconds": 36.751,
+      "final_cpu_quota": 100
+    },
+    "synthetic_decision": {
+      "action": "try_height",
+      "reason": "High stacks rose 1.8× while policy divergence stayed small. A modest height penalty directly targets the clearest regression."
+    },
+    "real_replay": {
+      "cap": 128,
+      "pairs": [
+        {
+          "seed": 53,
+          "shared_pieces": 128,
+          "reference": {
+            "pieces": 128,
+            "over": false,
+            "height_ge_12": 0,
+            "common_score": 16700
+          },
+          "candidate": {
+            "pieces": 128,
+            "over": false,
+            "height_ge_12": 0,
+            "common_score": 16900
+          }
+        },
+        {
+          "seed": 54,
+          "shared_pieces": 128,
+          "reference": {
+            "pieces": 128,
+            "over": false,
+            "height_ge_12": 0,
+            "common_score": 15200
+          },
+          "candidate": {
+            "pieces": 128,
+            "over": false,
+            "height_ge_12": 0,
+            "common_score": 19400
+          }
+        }
+      ],
+      "summary": {
+        "common_score_ratio": 1.1379310344827587,
+        "reference_deaths": 0,
+        "candidate_deaths": 0,
+        "reference_pieces": 256,
+        "candidate_pieces": 256,
+        "reference_high_fraction": 0.0,
+        "candidate_high_fraction": 0.0
+      }
+    },
+    "real_decision": {
+      "source": "local_codex",
+      "action": "continue",
+      "reason": "两个种子在相同的128块长度上均比冻结学生得分高，合计高13.8%。双方均无提前结束，堆高也均未达到12。没有历史阶段或策略偏离数据，两个工程种子只够做冒烟验证，继续当前实验。"
+    },
+    "control_flow_checks": [
+      "valid decision changes the next training preset",
+      "two unavailable decisions leave the latest checkpoint and stop"
+    ]
+  }
+}
