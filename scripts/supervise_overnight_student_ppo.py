@@ -24,6 +24,7 @@ DEVELOPMENT_SEEDS = list(range(3266112500, 3266112504))
 MINIMUM_TRAINING = 5 * 3600
 TARGET_TRAINING = 6 * 3600
 SLICE = 45 * 60
+LIVE_REVIEW_INTERVAL = 15 * 60
 VARIANTS = {
     "base": {"seed_offset": 0, "height": 0.0, "beta": 0.3, "learning_rate": 3e-5},
     "try_height": {"seed_offset": 100, "height": 0.004, "beta": 0.3, "learning_rate": 3e-5},
@@ -32,7 +33,7 @@ VARIANTS = {
 SCHEMA = {
     "type": "object",
     "properties": {
-        "action": {"type": "string", "enum": ["continue", "try_height", "try_anchor"]},
+        "action": {"type": "string"},
         "reason": {"type": "string"},
     },
     "required": ["action", "reason"],
@@ -94,18 +95,44 @@ def write_preset(output, baseline, variant):
     return preset
 
 
-def run_guarded(output, directory, budget, command, state):
+def run_guarded(output, directory, budget, command, state, review=None):
     state["guard"] = str(directory)
     write_json(output / "status.json", state)
     supervisor = [
         sys.executable, str(ROOT / "scripts/resource_guard.py"),
         "--output", str(directory), "--seconds", str(budget), "--", sys.executable, *command,
     ]
-    process = subprocess.run(supervisor, cwd=ROOT, check=False)
+    requested_review = None
+    if review is None:
+        code = subprocess.run(supervisor, cwd=ROOT, check=False).returncode
+    else:
+        with subprocess.Popen(supervisor, cwd=ROOT) as process:
+            next_review = time.monotonic() + LIVE_REVIEW_INTERVAL
+            while True:
+                try:
+                    code = process.wait(timeout=max(0, next_review - time.monotonic()))
+                    break
+                except subprocess.TimeoutExpired:
+                    if process.poll() is not None:
+                        code = process.returncode
+                        break
+                    decision = review(directory)
+                    enacted = decision["action"] == "evaluate_now" and process.poll() is None
+                    decision["applied"] = False
+                    write_json(output / "status.json", state)
+                    if enacted:
+                        requested_review = decision
+                        process.terminate()
+                        code = process.wait()
+                        break
+                    next_review += LIVE_REVIEW_INTERVAL
     result = directory / "result.json"
-    return read_json(result) if result.is_file() else {
-        "outcome": "guard_result_missing", "exit_code": process.returncode,
-    }
+    terminal = read_json(result) if result.is_file() else {"outcome": "guard_result_missing", "exit_code": code}
+    if requested_review is not None and terminal["outcome"] == "interrupted":
+        requested_review["applied"] = True
+        write_json(output / "status.json", state)
+        terminal = {**terminal, "guard_outcome": "interrupted", "outcome": "review_requested"}
+    return terminal
 
 
 def preserve_checkpoint(output, stage, variant, total):
@@ -119,22 +146,14 @@ def preserve_checkpoint(output, stage, variant, total):
     return target
 
 
-def decide(stage, evidence, available):
-    """Ask authenticated local Codex for a structured experiment choice."""
+def ask_codex(stage, evidence, available, instructions):
     decision_path, schema_path = stage / "decision.json", stage / "schema.json"
     write_json(stage / "decision_input.json", evidence)
-    write_json(schema_path, SCHEMA)
-    prompt = (
-        "Supervise a bounded experiment for a local Tetris game benchmark. "
-        "Use only the supplied JSON evidence. Choose exactly one allowed action. Do not call tools. "
-        "Compare common-length score, actual early endings, high stacks, and divergence from the frozen student. "
-        "Consider consistency across stages and seeds. Scores near parity on a small development set are uncertain. "
-        "Continue when the evidence is healthy or inconclusive. Choose try_height when stack risk repeatedly rises "
-        "while score still holds; choose try_anchor when the trained policy drifts and repeatedly loses score. "
-        "A switch starts a fresh controlled comparison from the same frozen student. "
-        "Leave a concise reason in Chinese and never recommend deployment from this development set.\n"
-        + json.dumps(evidence, ensure_ascii=False, allow_nan=False)
-    )
+    schema = {**SCHEMA, "properties": {
+        **SCHEMA["properties"], "action": {"type": "string", "enum": available},
+    }}
+    write_json(schema_path, schema)
+    prompt = instructions + "\n" + json.dumps(evidence, ensure_ascii=False, allow_nan=False)
     try:
         with TemporaryDirectory(prefix="tetris-codex-judge-") as scratch, (stage / "codex.log").open("w") as log:
             command = [
@@ -153,6 +172,69 @@ def decide(stage, evidence, available):
         result = {"source": "fallback", "action": "continue", "reason": f"Codex decision unavailable: {type(exc).__name__}"}
     write_json(stage / "applied_decision.json", result)
     return result
+
+
+def decide(stage, evidence, available):
+    """Ask authenticated local Codex for a structured experiment choice."""
+    return ask_codex(stage, evidence, available, (
+        "Supervise a bounded experiment for a local Tetris game benchmark. "
+        "Use only the supplied JSON evidence. Choose exactly one allowed action. Do not call tools. "
+        "Compare common-length score, actual early endings, high stacks, and divergence from the frozen student. "
+        "Consider consistency across stages and seeds. Scores near parity on a small development set are uncertain. "
+        "Continue when the evidence is healthy or inconclusive. Choose try_height when stack risk repeatedly rises "
+        "while score still holds; choose try_anchor when the trained policy drifts and repeatedly loses score. "
+        "A switch starts a fresh controlled comparison from the same frozen student. "
+        "Leave a concise reason in Chinese and never recommend deployment from this development set."
+    ))
+
+
+def latest_resource_sample(directory):
+    sample_file = directory / "samples.jsonl"
+    if not sample_file.is_file():
+        return None
+    with sample_file.open("rb") as stream:
+        stream.seek(max(0, sample_file.stat().st_size - 8192))
+        lines = stream.read().splitlines()
+    for line in reversed(lines):
+        try:
+            sample = json.loads(line)
+        except ValueError:
+            continue
+        return {key: sample.get(key) for key in ("at", "cpu_c", "gpu_c", "memory_mib", "decision")}
+    return None
+
+
+def review_training(output, stage, variant, before, state, reviews, directory):
+    check = stage / f"live_{len(reviews) + 1:02d}"
+    check.mkdir()
+    totals = training_totals(output)
+    committed = totals.get(variant, {})
+    available = ["continue"]
+    if committed.get("steps", 0) > before:
+        available.append("evaluate_now")
+    evidence = {
+        "variant": variant, "allowed_actions": available, "segment_start_steps": before,
+        "committed": committed, "resource_sample": latest_resource_sample(directory),
+        "last_evaluation": next((r["evaluation"] for r in reversed(state["stages"])
+                                 if "evaluation" in r), None),
+        "previous_checks": [{"steps": r["steps"], "recent_training_metrics": r["recent_training_metrics"],
+                             "action": r["action"]} for r in reviews],
+    }
+    result = ask_codex(check, evidence, available, (
+        "You supervise a running local Tetris PPO training segment. Use only the supplied data and no tools. "
+        "Continue if committed checkpoints progress and training data look stable or inconclusive. "
+        "Choose evaluate_now only if the observed trend gives a concrete reason to pause at the latest "
+        "committed checkpoint and run the paired game evaluation before the regular end of this segment. "
+        "Resource limits are independently enforced; do not waive them. "
+        "Training loss and KL alone do not establish gameplay quality. Give a concise reason in Chinese."
+    ))
+    row = {
+        **result, "at": now(), "steps": committed.get("steps", 0),
+        "recent_training_metrics": committed.get("recent_training_metrics", {}),
+    }
+    reviews.append(row)
+    operation(output, f"第 {state['stage']} 段运行中审查，{row['source']} 建议 {row['action']}")
+    return row
 
 
 def seconds_to(deadline):
@@ -178,16 +260,19 @@ def train_and_assess(output, state, baseline, deadline):
         train_budget = min(SLICE, max(300, int(remaining) + 90), seconds_to(deadline) - 210)
         state.update(phase="training", stage=stage_number, training_directory=str(directory),
                      training_seconds=completed_seconds(totals))
+        reviews = []
+        state["live_reviews"] = reviews
         outcome = run_guarded(output, stage / "training_guard", train_budget, [
             "-m", "training.train_vector_transaction", "--run-dir", str(directory), *option,
-        ], state)
+        ], state, review=lambda guard: review_training(output, stage, variant, before, state, reviews, guard))
 
         totals = training_totals(output)
         current = totals.get(variant, {})
         progress = current.get("steps", 0) > before
         errors = 0 if progress else errors + 1
         row = {"stage": stage_number, "variant": variant, "training_guard": outcome,
-               "committed": current, "training_seconds": completed_seconds(totals)}
+               "committed": current, "training_seconds": completed_seconds(totals),
+               "live_reviews": reviews}
         state["stages"].append(row)
         write_json(output / "status.json", state)
         if errors >= 3 or outcome.get("outcome") == "interrupted":
@@ -297,6 +382,7 @@ def main():
             "start": args.start.isoformat(), "end": args.end.isoformat(),
             "minimum_training_seconds": MINIMUM_TRAINING, "target_training_seconds": TARGET_TRAINING,
             "training_config_sha256": digest(CONFIG), "variants": VARIANTS, "development_seeds": DEVELOPMENT_SEEDS,
+            "live_review_interval_seconds": LIVE_REVIEW_INTERVAL,
             "source_sha256": baseline["initial_model"]["sha256"],
         }
         plan = output / "protocol.json"
@@ -319,13 +405,19 @@ def main():
             totals = train_and_assess(output, state, baseline, args.end)
             seconds = completed_seconds(totals)
             calls = sum(row.get("decision", {}).get("source") == "local_codex" for row in state["stages"])
+            live_calls = sum(review["source"] == "local_codex" for stage in state["stages"]
+                             for review in stage.get("live_reviews", []))
+            early_evaluations = sum(review.get("applied", False) for stage in state["stages"]
+                                    for review in stage.get("live_reviews", []))
             state.update(phase="archiving", ended=now(), training_seconds=seconds,
-                         training_minimum_met=seconds >= MINIMUM_TRAINING, verified_codex_decisions=calls)
+                         training_minimum_met=seconds >= MINIMUM_TRAINING, verified_codex_decisions=calls,
+                         verified_codex_live_reviews=live_calls, early_evaluations=early_evaluations)
             write_json(status, state)
             archive = {
                 "protocol": specification, "training": totals, "stages": state["stages"],
                 "training_seconds": seconds, "training_minimum_met": seconds >= MINIMUM_TRAINING,
-                "verified_codex_decisions": calls,
+                "verified_codex_decisions": calls, "verified_codex_live_reviews": live_calls,
+                "early_evaluations": early_evaluations,
             }
             write_json(output / "archive.json", archive)
             if (git("branch", "--show-current") != branch or git("rev-parse", "HEAD") != base_commit

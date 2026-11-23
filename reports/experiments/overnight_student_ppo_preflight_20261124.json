@@ -15,7 +15,7 @@
     "configs/overnight_student_ppo_20261124.json": "0c4f8dee1ff67ac57823cc905c56737eb8612f4ca00ec4d019c4a784152e71bb",
     "configs/systemd/tetris-overnight-student-ppo-20261124.timer": "d55aedfa40016077020ddc1617901e9e6f6871e54e3f46e3f256a936a59f7a61",
     "configs/systemd/tetris-overnight-student-ppo-20261124.service": "fb235d45673685f7b40d05b8a3de7e8a1fc5dd044b9ecb1c5547366a0d2c5fef",
-    "scripts/supervise_overnight_student_ppo.py": "7bd2c39b39f3d5ecc63912dabc58428ccdfa4ca51f3c70eeb235e14e3a608259",
+    "scripts/supervise_overnight_student_ppo.py": "5cc82889d1a5df73d73f1e4bd2fd6c854c36a0bbd2db32d67dcc8f126a054e57",
     "scripts/evaluate_overnight_student_ppo.py": "752a8464e178b98d51759e9b189c7f02b988b9f47c048bd0d2878b85c750007e"
   },
   "preflight": {
@@ -85,7 +85,29 @@
     },
     "control_flow_checks": [
       "valid decision changes the next training preset",
-      "two unavailable decisions leave the latest checkpoint and stop"
-    ]
-  }
+      "two unavailable decisions leave the latest checkpoint and stop",
+      "Codex early evaluation request stops the active guard safely and uses the last committed checkpoint",
+      "if the training guard finishes during the decision, no extra stop is sent"
+    ],
+    "completed_campaign_review": {
+      "source": "local_codex",
+      "action": "continue",
+      "reason": "压力测试与自然回放使用不同种子，共同长度得分均接近持平。压力测试双方均无提前结束，自然回放旧选择器独有一次提前结束。压力测试只改变首步，且 PPO 尚未更新，没有证据表明高堆风险反复上升，或训练策略偏离冻结学生并反复掉分。"
+    },
+    "live_review": {
+      "source": "local_codex",
+      "action": "continue",
+      "reason": "已提交步数从 4096 推进到 8192。仅有一次训练指标采样，尚无明确恶化趋势，上一轮配对评估双方均无死亡。继续训练，并遵循独立的资源降载决定。",
+      "at": "2026-11-23T22:57:07+08:00",
+      "steps": 8192,
+      "recent_training_metrics": {
+        "reference_kl": 0.0035783584223736398,
+        "gradient_norm": 54.90684030056,
+        "mean_risk_increase": 0.0064697265625,
+        "mean_height_penalty": 0.0
+      }
+    }
+  },
+  "live_review_interval_seconds": 900,
+  "updated_at": "2026-11-23T22:57:40+08:00"
 }
