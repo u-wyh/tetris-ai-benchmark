@@ -1,0 +1,804 @@
+{
+  "specification": {
+    "high_stack_cap": 8192,
+    "train_seeds": [
+      3256112460,
+      3256112461,
+      3256112462,
+      3256112463,
+      3256112464,
+      3256112465,
+      3256112466,
+      3256112467,
+      3256112468,
+      3256112469,
+      3256112470,
+      3256112471,
+      3256112472,
+      3256112473,
+      3256112474,
+      3256112475,
+      3256112476,
+      3256112477,
+      3256112478,
+      3256112479,
+      3256112480,
+      3256112481,
+      3256112482,
+      3256112483
+    ],
+    "validation_seeds": [
+      3256112490,
+      3256112491,
+      3256112492,
+      3256112493,
+      3256112494,
+      3256112495,
+      3256112496,
+      3256112497
+    ],
+    "replay_cap": 100000,
+    "replay_seeds": [
+      3256112510,
+      3256112511,
+      3256112512,
+      3256112513,
+      3256112514,
+      3256112515,
+      3256112516,
+      3256112517
+    ],
+    "frozen_eval_gate_sha256": "7b49d5aaedd27f63eca14b4b5f0fcaa9677ec2d1a91131a16c086f565b8b960e",
+    "branch": "codex/hardware-safe-autonomy"
+  },
+  "phases": {
+    "high_stack": {
+      "data": "/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_long_campaign_20261123/high_stack",
+      "guard": "/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_long_campaign_20261123/guards/high_stack-20261123-185142-548648",
+      "outcome": "completed",
+      "started": "2026-11-23T18:51:42+08:00",
+      "at": "2026-11-23T19:01:20+08:00",
+      "exit_code": 0,
+      "wall_seconds": 576.584,
+      "final_cpu_quota": 100,
+      "returncode": 0,
+      "ended": "2026-11-23T19:01:20+08:00",
+      "result_sha256": "d0c6119b9007bc41f73859b186544ff2fc9eb23350d80e04f211aab4f45d891b",
+      "result": {
+        "protocol": {
+          "rollout": "frozen_ppo_30m",
+          "teacher": "Lookahead_C",
+          "minimum_stack_height": 10,
+          "train_seeds": [
+            3256112460,
+            3256112461,
+            3256112462,
+            3256112463,
+            3256112464,
+            3256112465,
+            3256112466,
+            3256112467,
+            3256112468,
+            3256112469,
+            3256112470,
+            3256112471,
+            3256112472,
+            3256112473,
+            3256112474,
+            3256112475,
+            3256112476,
+            3256112477,
+            3256112478,
+            3256112479,
+            3256112480,
+            3256112481,
+            3256112482,
+            3256112483
+          ],
+          "validation_seeds": [
+            3256112490,
+            3256112491,
+            3256112492,
+            3256112493,
+            3256112494,
+            3256112495,
+            3256112496,
+            3256112497
+          ],
+          "cap": 8192,
+          "minimum_train_examples_per_class": 20,
+          "minimum_validation_examples_per_class": 10,
+          "fit_epochs": 16,
+          "batch_size": 128,
+          "teacher_git": "a5946d1c5a47ed9eb9fd6a8dce70e95b150e9d64",
+          "teacher_protocol_sha256": "0a499ddaf7a7d70f7e238f3af7e9c78a50fa6f3798975d6b9ea3f4344fe20dd3",
+          "sources": {
+            "rollout_ppo": "eb859b8989efe8f3332393ed57110036979b03bb4d3d8d8316d080cf04b2da34",
+            "student": "e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914",
+            "bc": "5f5613cb5eb4e80a02406b70902ad3d5c571eb8fe38bec4b40f73b34289ca663",
+            "script": "9ad10a54a6c1769dadb8c7e3c3246d9247c3b48217717248fc786460afd387b1",
+            "fit": "5bf51080fe4261ebd4468867e0991651508df6041284dcc74fdb512a2ba12e30",
+            "pair_features": "8af2aedf727e4a5da7b3a9fc392be1dd050e5a39d2a95e1f43c756ff0c09eeb8",
+            "next3": "cb761de231e72ebbf7e5c33919c205c8a2a513f92234d9e4a04c7e2b4a537704"
+          }
+        },
+        "started": "2026-11-23T18:51:45.247977+08:00",
+        "captures": [
+          {
+            "seed": 3256112460,
+            "pieces": 8192,
+            "score": 106441800,
+            "game_over": false,
+            "height_ge_10": 789,
+            "height_ge_12": 193,
+            "disagreements_ge_12": 24,
+            "disagreements": 154,
+            "switch_labels": 7,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "2e65e0357cbed95f6b8f5f7db0df21eb8da9998288955b8670b2271b64313095"
+          },
+          {
+            "seed": 3256112461,
+            "pieces": 8192,
+            "score": 106932000,
+            "game_over": false,
+            "height_ge_10": 603,
+            "height_ge_12": 148,
+            "disagreements_ge_12": 21,
+            "disagreements": 109,
+            "switch_labels": 8,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "0881e4ed71aa1cd6876eef2c936b73fe25dce4989418c725d59805f6ee4d6c66"
+          },
+          {
+            "seed": 3256112462,
+            "pieces": 8192,
+            "score": 106690900,
+            "game_over": false,
+            "height_ge_10": 700,
+            "height_ge_12": 190,
+            "disagreements_ge_12": 28,
+            "disagreements": 142,
+            "switch_labels": 8,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "f62f6d66fa4faf182b73d033fdc8ce2848699b8644c3740c607164177c33c2ed"
+          },
+          {
+            "seed": 3256112463,
+            "pieces": 8192,
+            "score": 106940600,
+            "game_over": false,
+            "height_ge_10": 601,
+            "height_ge_12": 115,
+            "disagreements_ge_12": 17,
+            "disagreements": 123,
+            "switch_labels": 8,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "e7d09a74db16bcd3c39859d0f303c8d913191a668ebf6670d34b5044ade656e5"
+          },
+          {
+            "seed": 3256112464,
+            "pieces": 8192,
+            "score": 106094100,
+            "game_over": false,
+            "height_ge_10": 736,
+            "height_ge_12": 234,
+            "disagreements_ge_12": 35,
+            "disagreements": 128,
+            "switch_labels": 7,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "0075b804f7f1798caa0198a99a74b7b6e949a8dfffc7b6c609115d75c153b279"
+          },
+          {
+            "seed": 3256112465,
+            "pieces": 8192,
+            "score": 106077400,
+            "game_over": false,
+            "height_ge_10": 677,
+            "height_ge_12": 178,
+            "disagreements_ge_12": 28,
+            "disagreements": 121,
+            "switch_labels": 13,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "2755289f1be542f6bbf17e99bcd317a99b40b587cf3a9b35b63da41d40505a26"
+          },
+          {
+            "seed": 3256112466,
+            "pieces": 8192,
+            "score": 106103100,
+            "game_over": false,
+            "height_ge_10": 597,
+            "height_ge_12": 90,
+            "disagreements_ge_12": 18,
+            "disagreements": 129,
+            "switch_labels": 7,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "c091a8536a57afb22e858c0ea789f7dc1192dd459d797ce44b3ed4c67b97dbf2"
+          },
+          {
+            "seed": 3256112467,
+            "pieces": 8192,
+            "score": 106482100,
+            "game_over": false,
+            "height_ge_10": 660,
+            "height_ge_12": 162,
+            "disagreements_ge_12": 38,
+            "disagreements": 132,
+            "switch_labels": 7,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "96542b9e808128c57bb93c1874f0134cf8f1830339602ed33c0144dc904f9fca"
+          },
+          {
+            "seed": 3256112468,
+            "pieces": 8192,
+            "score": 106516600,
+            "game_over": false,
+            "height_ge_10": 646,
+            "height_ge_12": 165,
+            "disagreements_ge_12": 16,
+            "disagreements": 108,
+            "switch_labels": 3,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "713f65205fa2b1ae1f2ff829e679bf8af373b2cc6d8a1f3a2725638f234f3b19"
+          },
+          {
+            "seed": 3256112469,
+            "pieces": 4126,
+            "score": 26711100,
+            "game_over": true,
+            "height_ge_10": 358,
+            "height_ge_12": 97,
+            "disagreements_ge_12": 17,
+            "disagreements": 68,
+            "switch_labels": 3,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "4b538cd124a2f50955f304f86600dec4ff1fdaa3150d0fbd45d824e76826617c"
+          },
+          {
+            "seed": 3256112470,
+            "pieces": 8192,
+            "score": 106117200,
+            "game_over": false,
+            "height_ge_10": 735,
+            "height_ge_12": 178,
+            "disagreements_ge_12": 25,
+            "disagreements": 138,
+            "switch_labels": 13,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "83acd6be044d43edebbe6aae66104b00663e81a2f9933d5888ed60c231ed7929"
+          },
+          {
+            "seed": 3256112471,
+            "pieces": 8192,
+            "score": 106102100,
+            "game_over": false,
+            "height_ge_10": 686,
+            "height_ge_12": 192,
+            "disagreements_ge_12": 28,
+            "disagreements": 125,
+            "switch_labels": 15,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "07a1d0a32d942bfbc6cd89ae717a9238d00c8f0e7ab92ec8da3d40d9f5eddc1b"
+          },
+          {
+            "seed": 3256112472,
+            "pieces": 8192,
+            "score": 106595700,
+            "game_over": false,
+            "height_ge_10": 713,
+            "height_ge_12": 210,
+            "disagreements_ge_12": 35,
+            "disagreements": 137,
+            "switch_labels": 12,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "998af65135faacdf9fccdf00a0a1b6f2e3b3fb57f72b025d6f6e246baf337020"
+          },
+          {
+            "seed": 3256112473,
+            "pieces": 8192,
+            "score": 106707900,
+            "game_over": false,
+            "height_ge_10": 634,
+            "height_ge_12": 131,
+            "disagreements_ge_12": 14,
+            "disagreements": 98,
+            "switch_labels": 6,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "934c9148e1b8b9373dd0cd15c62da736f7d27391bf3df79df08f2f1bd38282bb"
+          },
+          {
+            "seed": 3256112474,
+            "pieces": 8192,
+            "score": 106404000,
+            "game_over": false,
+            "height_ge_10": 690,
+            "height_ge_12": 138,
+            "disagreements_ge_12": 19,
+            "disagreements": 123,
+            "switch_labels": 7,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "02b603d742d7569dce816a6167fbe09d47546fb93855798657c16d3e3b16cde2"
+          },
+          {
+            "seed": 3256112475,
+            "pieces": 8192,
+            "score": 106452600,
+            "game_over": false,
+            "height_ge_10": 566,
+            "height_ge_12": 146,
+            "disagreements_ge_12": 13,
+            "disagreements": 108,
+            "switch_labels": 9,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "10e1817fc7c7fadf9f712def33be86fef713edca21b44ea17835f2abdbd7dc79"
+          },
+          {
+            "seed": 3256112476,
+            "pieces": 8192,
+            "score": 106692600,
+            "game_over": false,
+            "height_ge_10": 661,
+            "height_ge_12": 123,
+            "disagreements_ge_12": 20,
+            "disagreements": 119,
+            "switch_labels": 5,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "49f3a10827595f0c3a031459c44ab75533eec4cf3f289ab945b6d0bfab8994eb"
+          },
+          {
+            "seed": 3256112477,
+            "pieces": 8192,
+            "score": 106073900,
+            "game_over": false,
+            "height_ge_10": 727,
+            "height_ge_12": 186,
+            "disagreements_ge_12": 36,
+            "disagreements": 132,
+            "switch_labels": 9,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "846e0e62e886147d53179cabf4b1178ee97251791712ffa531bca1eb74470d10"
+          },
+          {
+            "seed": 3256112478,
+            "pieces": 8192,
+            "score": 106809700,
+            "game_over": false,
+            "height_ge_10": 545,
+            "height_ge_12": 123,
+            "disagreements_ge_12": 22,
+            "disagreements": 100,
+            "switch_labels": 9,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "51be48cd7aa234bbc557fc0bf41869c1aed435af110d5112b8996db92113bc78"
+          },
+          {
+            "seed": 3256112479,
+            "pieces": 8192,
+            "score": 106166300,
+            "game_over": false,
+            "height_ge_10": 717,
+            "height_ge_12": 178,
+            "disagreements_ge_12": 27,
+            "disagreements": 153,
+            "switch_labels": 11,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "b179f75e2367432458a4112281fdca9246c635d12d37cba1cea9d640b48bc3b6"
+          },
+          {
+            "seed": 3256112480,
+            "pieces": 8192,
+            "score": 106472200,
+            "game_over": false,
+            "height_ge_10": 716,
+            "height_ge_12": 230,
+            "disagreements_ge_12": 44,
+            "disagreements": 154,
+            "switch_labels": 5,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "4743a6a13d467a7d36fed6d0e3dfd6354bd6dcd6c082e1fde46f86fef456041b"
+          },
+          {
+            "seed": 3256112481,
+            "pieces": 8192,
+            "score": 106700400,
+            "game_over": false,
+            "height_ge_10": 696,
+            "height_ge_12": 189,
+            "disagreements_ge_12": 20,
+            "disagreements": 140,
+            "switch_labels": 13,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "6c3820ac2fd534ffd26fc2483a5938ba9c55bdc3519d049b206953d681c8b561"
+          },
+          {
+            "seed": 3256112482,
+            "pieces": 8192,
+            "score": 106109700,
+            "game_over": false,
+            "height_ge_10": 782,
+            "height_ge_12": 212,
+            "disagreements_ge_12": 36,
+            "disagreements": 154,
+            "switch_labels": 10,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "22b5ea0016757362464d7dcdfcebca6e17280fcd0024018d56e0781ae1029520"
+          },
+          {
+            "seed": 3256112483,
+            "pieces": 6977,
+            "score": 76213400,
+            "game_over": true,
+            "height_ge_10": 672,
+            "height_ge_12": 181,
+            "disagreements_ge_12": 22,
+            "disagreements": 123,
+            "switch_labels": 11,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "043e14309f26a0c8a2b0352226a7d606051fbc99541e0e39b90590e44d7e49e8"
+          }
+        ],
+        "validation": [
+          {
+            "seed": 3256112490,
+            "pieces": 8192,
+            "score": 106634100,
+            "game_over": false,
+            "height_ge_10": 660,
+            "height_ge_12": 157,
+            "disagreements_ge_12": 28,
+            "disagreements": 132,
+            "switch_labels": 17,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "425a0cfe62b7534fcc883481b4ed4ae3a5d8bcff4076c8e62e6acbf18b7a8c10"
+          },
+          {
+            "seed": 3256112491,
+            "pieces": 4227,
+            "score": 28007500,
+            "game_over": true,
+            "height_ge_10": 367,
+            "height_ge_12": 103,
+            "disagreements_ge_12": 29,
+            "disagreements": 83,
+            "switch_labels": 4,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "35b390cf0492ce4d14a60741ce47ddf8862a4cc8039d6fb7989658254d76b0f5"
+          },
+          {
+            "seed": 3256112492,
+            "pieces": 8192,
+            "score": 106212500,
+            "game_over": false,
+            "height_ge_10": 581,
+            "height_ge_12": 134,
+            "disagreements_ge_12": 18,
+            "disagreements": 103,
+            "switch_labels": 11,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "2fb1f0328f839f496fabc719defef179180637a02c6e921f93b9a28369618a92"
+          },
+          {
+            "seed": 3256112493,
+            "pieces": 8192,
+            "score": 106080300,
+            "game_over": false,
+            "height_ge_10": 717,
+            "height_ge_12": 203,
+            "disagreements_ge_12": 30,
+            "disagreements": 130,
+            "switch_labels": 14,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "dfc176d1c085649f3d6fb5d25b46fc8fa806a152f97303f28cf3c35ce6928b90"
+          },
+          {
+            "seed": 3256112494,
+            "pieces": 8192,
+            "score": 106541400,
+            "game_over": false,
+            "height_ge_10": 611,
+            "height_ge_12": 127,
+            "disagreements_ge_12": 24,
+            "disagreements": 119,
+            "switch_labels": 7,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "4b3ff2b286dd368fdb9af7702611b7ad8eb9793a15bca75618ca198b02f1afce"
+          },
+          {
+            "seed": 3256112495,
+            "pieces": 8192,
+            "score": 106542500,
+            "game_over": false,
+            "height_ge_10": 783,
+            "height_ge_12": 202,
+            "disagreements_ge_12": 24,
+            "disagreements": 142,
+            "switch_labels": 7,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "5239bbcde1a3207587cde66dfb27fb43023427516a7e9d95efdf0b9eca1f69cd"
+          },
+          {
+            "seed": 3256112496,
+            "pieces": 4988,
+            "score": 38980100,
+            "game_over": true,
+            "height_ge_10": 420,
+            "height_ge_12": 136,
+            "disagreements_ge_12": 17,
+            "disagreements": 80,
+            "switch_labels": 3,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "2bee13c2015aefcb995dad3ab152144510c55555107de91b9c2f2410d4ab2631"
+          },
+          {
+            "seed": 3256112497,
+            "pieces": 8192,
+            "score": 106636000,
+            "game_over": false,
+            "height_ge_10": 823,
+            "height_ge_12": 228,
+            "disagreements_ge_12": 48,
+            "disagreements": 183,
+            "switch_labels": 16,
+            "protocol_sha256": "c35a62fa0185ea185db2fbb0644579445466532978e17ac7fbed69b9c9b13ab0",
+            "sha256": "dc49c5b44b75107ed9c98c2e096fda14a1ca634917fc9fc82efffe225ab6aaa1"
+          }
+        ],
+        "train_switch_retain": [
+          206,
+          2812
+        ],
+        "validation_switch_retain": [
+          79,
+          893
+        ],
+        "status": "trained",
+        "checkpoint_sha256": "3f789412c9c9dbaad9cca96567bad91c3332b57018b3db7984fa24f2f4b2625f",
+        "train_loss": [
+          0.7414815874586365,
+          0.687697866604453,
+          0.6429712231622143,
+          0.6034735485842245,
+          0.565731090216387,
+          0.5328569492415295,
+          0.5047278686064296,
+          0.48340591924564974,
+          0.4676254771259781,
+          0.4546277908752737,
+          0.4456327294892551,
+          0.4399261896068328,
+          0.43460711607718167,
+          0.4305378477489656,
+          0.4271112391891821,
+          0.4223745336510473
+        ],
+        "positive_class_weight": 3.6946563354246096,
+        "calibration": {
+          "samples": 972,
+          "positives": 79,
+          "average_precision": 0.36807104649991984,
+          "threshold": 0.6634169816970825,
+          "precision": 0.625,
+          "recall": 0.25316455696202533,
+          "true_positives": 20,
+          "predicted_switches": 32,
+          "meets_precision_target": true
+        },
+        "ended": "2026-11-23T19:01:19.059261+08:00"
+      }
+    },
+    "replay_100k": {
+      "data": "/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_long_campaign_20261123/replay_100k",
+      "guard": "/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_long_campaign_20261123/guards/replay_100k-20261123-190120-703254",
+      "outcome": "completed",
+      "started": "2026-11-23T19:01:20+08:00",
+      "at": "2026-11-23T19:58:19+08:00",
+      "exit_code": 0,
+      "wall_seconds": 3418.399,
+      "final_cpu_quota": 250,
+      "returncode": 0,
+      "ended": "2026-11-23T19:58:19+08:00",
+      "result_sha256": "932a73d18b7837999297255bd17bd15b62f282c5bcf4b6918e4eac4af602a162",
+      "result": {
+        "started": "2026-11-23T19:01:21.824346+08:00",
+        "ended": "2026-11-23T19:58:18.526383+08:00",
+        "protocol": {
+          "seeds": [
+            3256112510,
+            3256112511,
+            3256112512,
+            3256112513,
+            3256112514,
+            3256112515,
+            3256112516,
+            3256112517
+          ],
+          "cap": 100000,
+          "checkpoint_sha256": "7b49d5aaedd27f63eca14b4b5f0fcaa9677ec2d1a91131a16c086f565b8b960e",
+          "fit_result_sha256": "2570717cea5f6a560a682a3e54286ad832f2184b30a75044a38e4b36ce2aa3e6",
+          "frozen_teacher_git": "a5946d1c5a47ed9eb9fd6a8dce70e95b150e9d64",
+          "script_sha256": "313d782a71b58ec883246510a0292c3724fe9e5269a3c93ddcfcc388e6fe19b4",
+          "replay_helper_sha256": "5bf51080fe4261ebd4468867e0991651508df6041284dcc74fdb512a2ba12e30"
+        },
+        "pairs": [
+          {
+            "seed": 3256112510,
+            "protocol_sha256": "ba50706658a7d446e3193726b1003cde55158dd52eb5cc49b233fcbd577d8dc8",
+            "common_pieces": 100000,
+            "student_score": 9516968500,
+            "gate_score": 9427586300,
+            "student": {
+              "pieces": 100000,
+              "game_over": false,
+              "switches": 0,
+              "disagreements": 0,
+              "median_decision_ms": 0.19906200031982735
+            },
+            "gate": {
+              "pieces": 100000,
+              "game_over": false,
+              "switches": 58,
+              "disagreements": 28040,
+              "median_decision_ms": 0.36805900163017213
+            }
+          },
+          {
+            "seed": 3256112511,
+            "protocol_sha256": "ba50706658a7d446e3193726b1003cde55158dd52eb5cc49b233fcbd577d8dc8",
+            "common_pieces": 41981,
+            "student_score": 1691782400,
+            "gate_score": 1682661000,
+            "student": {
+              "pieces": 100000,
+              "game_over": false,
+              "switches": 0,
+              "disagreements": 0,
+              "median_decision_ms": 0.19962399892392568
+            },
+            "gate": {
+              "pieces": 41981,
+              "game_over": true,
+              "switches": 23,
+              "disagreements": 12123,
+              "median_decision_ms": 0.3681189991766587
+            }
+          },
+          {
+            "seed": 3256112512,
+            "protocol_sha256": "ba50706658a7d446e3193726b1003cde55158dd52eb5cc49b233fcbd577d8dc8",
+            "common_pieces": 100000,
+            "student_score": 9491313600,
+            "gate_score": 9472025200,
+            "student": {
+              "pieces": 100000,
+              "game_over": false,
+              "switches": 0,
+              "disagreements": 0,
+              "median_decision_ms": 0.20071600010851398
+            },
+            "gate": {
+              "pieces": 100000,
+              "game_over": false,
+              "switches": 58,
+              "disagreements": 28092,
+              "median_decision_ms": 0.3675089992611902
+            }
+          },
+          {
+            "seed": 3256112513,
+            "protocol_sha256": "ba50706658a7d446e3193726b1003cde55158dd52eb5cc49b233fcbd577d8dc8",
+            "common_pieces": 100000,
+            "student_score": 9510729900,
+            "gate_score": 9469781700,
+            "student": {
+              "pieces": 100000,
+              "game_over": false,
+              "switches": 0,
+              "disagreements": 0,
+              "median_decision_ms": 0.19824199989670888
+            },
+            "gate": {
+              "pieces": 100000,
+              "game_over": false,
+              "switches": 46,
+              "disagreements": 28108,
+              "median_decision_ms": 0.36810000165132806
+            }
+          },
+          {
+            "seed": 3256112514,
+            "protocol_sha256": "ba50706658a7d446e3193726b1003cde55158dd52eb5cc49b233fcbd577d8dc8",
+            "common_pieces": 100000,
+            "student_score": 9452016400,
+            "gate_score": 9472470900,
+            "student": {
+              "pieces": 100000,
+              "game_over": false,
+              "switches": 0,
+              "disagreements": 0,
+              "median_decision_ms": 0.19817399879684672
+            },
+            "gate": {
+              "pieces": 100000,
+              "game_over": false,
+              "switches": 72,
+              "disagreements": 28765,
+              "median_decision_ms": 0.3688949982461054
+            }
+          },
+          {
+            "seed": 3256112515,
+            "protocol_sha256": "ba50706658a7d446e3193726b1003cde55158dd52eb5cc49b233fcbd577d8dc8",
+            "common_pieces": 100000,
+            "student_score": 9498532200,
+            "gate_score": 9401574400,
+            "student": {
+              "pieces": 100000,
+              "game_over": false,
+              "switches": 0,
+              "disagreements": 0,
+              "median_decision_ms": 0.19954600065830164
+            },
+            "gate": {
+              "pieces": 100000,
+              "game_over": false,
+              "switches": 44,
+              "disagreements": 28098,
+              "median_decision_ms": 0.3673009996418841
+            }
+          },
+          {
+            "seed": 3256112516,
+            "protocol_sha256": "ba50706658a7d446e3193726b1003cde55158dd52eb5cc49b233fcbd577d8dc8",
+            "common_pieces": 52931,
+            "student_score": 2644609300,
+            "gate_score": 2654962300,
+            "student": {
+              "pieces": 52931,
+              "game_over": true,
+              "switches": 0,
+              "disagreements": 0,
+              "median_decision_ms": 0.1981429995794315
+            },
+            "gate": {
+              "pieces": 100000,
+              "game_over": false,
+              "switches": 54,
+              "disagreements": 28381,
+              "median_decision_ms": 0.3682220012706239
+            }
+          },
+          {
+            "seed": 3256112517,
+            "protocol_sha256": "ba50706658a7d446e3193726b1003cde55158dd52eb5cc49b233fcbd577d8dc8",
+            "common_pieces": 91062,
+            "student_score": 7916252900,
+            "gate_score": 7850595700,
+            "student": {
+              "pieces": 100000,
+              "game_over": false,
+              "switches": 0,
+              "disagreements": 0,
+              "median_decision_ms": 0.19864299974869937
+            },
+            "gate": {
+              "pieces": 91062,
+              "game_over": true,
+              "switches": 49,
+              "disagreements": 25633,
+              "median_decision_ms": 0.36862749948340934
+            }
+          }
+        ]
+      },
+      "score_totals": {
+        "student_score": 59722205200,
+        "gate_score": 59431657500
+      },
+      "score_ratio": 0.9951350138691798,
+      "caps_reached": {
+        "student": 7,
+        "gate": 6
+      }
+    }
+  }
+}

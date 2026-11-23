@@ -2668,3 +2668,21 @@
 
 ### 2026-11-23T18:51:42+08:00 准备用户要求的后台长期训练与评测
 - 首阶段使用 24/8 个新种子做最多 8,192 块的高堆叠采样与 CUDA 拟合，其后用 8 个新种子做两种冻结策略每局最多 100,000 块的配对评测。设置 tmux 挂载、逐局保存及收尾归档。证据 `runs/lookahead_long_campaign_20261123/`。
+
+- 2026-11-23T18:51:42+08:00：后台任务启动，先扩充高堆叠训练，再进行独立 100K 配对评测。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_long_campaign_20261123/`。
+
+- 2026-11-23T18:51:44+08:00：资源保护：启动受保护任务 tetris-guard-80414-1795431104113083149，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_long_campaign_20261123/guards/high_stack-20261123-185142-548648。
+
+- 2026-11-23T18:52:29+08:00：资源保护：tetris-guard-80414-1795431104113083149 自动调整CPU配额250%→200%，CPU82.375°C/GPU48.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_long_campaign_20261123/guards/high_stack-20261123-185142-548648。
+
+- 2026-11-23T18:52:31+08:00：资源保护：tetris-guard-80414-1795431104113083149 自动调整CPU配额200%→150%，CPU83.0°C/GPU48.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_long_campaign_20261123/guards/high_stack-20261123-185142-548648。
+
+- 2026-11-23T18:52:33+08:00：资源保护：tetris-guard-80414-1795431104113083149 自动调整CPU配额150%→100%，CPU83.0°C/GPU48.0°C。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_long_campaign_20261123/guards/high_stack-20261123-185142-548648。
+
+- 2026-11-23T19:01:20+08:00：资源保护：tetris-guard-80414-1795431104113083149 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_long_campaign_20261123/guards/high_stack-20261123-185142-548648。
+
+- 2026-11-23T19:01:20+08:00：资源保护：启动受保护任务 tetris-guard-83049-1795431680761489669，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_long_campaign_20261123/guards/replay_100k-20261123-190120-703254。
+
+- 2026-11-23T19:58:19+08:00：资源保护：tetris-guard-83049-1795431680761489669 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_long_campaign_20261123/guards/replay_100k-20261123-190120-703254。
+
+- 2026-11-23T19:58:19+08:00：后台任务收尾，阶段状态 {'high_stack': 'completed', 'replay_100k': 'completed'}。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/lookahead_long_campaign_20261123/`。
