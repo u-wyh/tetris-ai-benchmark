@@ -2986,3 +2986,5 @@
 - 2026-11-24T17:37:25+08:00：独立回放完成，等长得分比 1.56650685498961，候选提前结束 3/8 局，Codex 后续决策 focus_survival。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_confirmation_20261124/`。
 
 - 2026-11-24T17:38:03+08:00：执行独立回放报告 332ab18 的 Codex 生存率优先决策，将夜间服务首段设为 try_anchor，KL 系数 0.8、学习率 1.5e-5、从原冻结学生起训。已重载并核对 systemd 触发时间为 11 月 25 日北京时间 00:30，目标累计训练 6 小时。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261125/`。
+
+- 2026-11-24T18:12:37+08:00：用户要求任务条件具备后立即开始，已更新协作约定，正将原定凌晨的生存率长训切换到即时执行。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_survival_live_20261124/`。
