@@ -213,6 +213,7 @@ def decide(stage, evidence, available):
         "Consider consistency across stages and seeds. Scores near parity on a small development set are uncertain. "
         "Continue when the evidence is healthy or inconclusive. Choose try_height when stack risk repeatedly rises "
         "while score still holds; choose try_anchor when the trained policy drifts and repeatedly loses score. "
+        "If base is available, choose it to compare against training without the current variant's intervention. "
         "A switch starts a fresh controlled comparison from the same frozen student. "
         "Leave a concise reason in Chinese and never recommend deployment from this development set."
     ))
@@ -348,7 +349,7 @@ def train_and_assess(output, state, baseline, deadline):
         row["evaluation"] = report["summary"]
         state["phase"] = "codex_decision"
         write_json(output / "status.json", state)
-        available = ["continue", *(name for name in VARIANTS if name != "base" and name not in state["used"])]
+        available = ["continue", *(name for name in VARIANTS if name not in state["used"])]
         evidence = {
             "current_variant": variant, "settings": VARIANTS[variant], "allowed_actions": available,
             "development_pairs": report["pairs"], "development_summary": report["summary"],
@@ -393,6 +394,7 @@ def main():
     parser.add_argument("--start", type=datetime.fromisoformat, required=True)
     parser.add_argument("--end", type=datetime.fromisoformat, required=True)
     parser.add_argument("--report", type=Path, default=REPORT)
+    parser.add_argument("--initial-variant", choices=VARIANTS, default="base")
     args = parser.parse_args()
     report = (ROOT / args.report).resolve()
     if report.parent != ROOT / "reports/experiments" or report.suffix != ".json":
@@ -401,7 +403,7 @@ def main():
     if any(date.tzinfo is None for date in (args.start, args.end)) or args.end <= args.start:
         parser.error("start and end must be ordered timestamps with explicit timezones")
     if time.time() < args.start.timestamp() or seconds_to(args.end) < 240:
-        parser.error("outside the planned overnight training interval")
+        parser.error("outside the planned training interval")
     require_runtime()
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
@@ -421,6 +423,8 @@ def main():
             "live_review_interval_seconds": LIVE_REVIEW_INTERVAL,
             "source_sha256": baseline["initial_model"]["sha256"],
         }
+        if args.initial_variant != "base":
+            specification["initial_variant"] = args.initial_variant
         plan = output / "protocol.json"
         if plan.is_file() and read_json(plan) != specification:
             raise RuntimeError("Existing overnight protocol differs")
@@ -432,11 +436,12 @@ def main():
             return 0 if previous.get("outcome") == "completed" else 1
         state = {
             "phase": "starting", "started": previous.get("started", now()),
-            "variant": previous.get("variant", "base"), "used": previous.get("used", ["base"]),
+            "variant": previous.get("variant", args.initial_variant),
+            "used": previous.get("used", [args.initial_variant]),
             "stages": previous.get("stages", []), "next_stage": previous.get("next_stage", 1),
         }
         write_json(status, state)
-        operation(output, "夜间监督任务启动，各段用真实游戏结果决定下一方向")
+        operation(output, f"Codex 监督训练启动，初始配置 {state['variant']}，各段用真实游戏结果决定下一方向")
         try:
             totals = train_and_assess(output, state, baseline, args.end)
             seconds = completed_seconds(totals)
@@ -461,15 +466,15 @@ def main():
                     or git("status", "--porcelain", "--", str(report_path))):
                 raise RuntimeError("Checkout or report changed; archive.json is available locally")
             write_json(report, archive)
-            operation(output, f"夜间训练收尾，状态 {outcome}，已记录训练 {seconds:.0f} 秒、Codex 已应用决策 {calls} 次")
-            state["pushed_commit"] = publish(output, branch, base_commit, report_path, "Archive the overnight Codex-supervised PPO run")
+            operation(output, f"监督训练收尾，状态 {outcome}，已记录训练 {seconds:.0f} 秒、Codex 已应用决策 {calls} 次")
+            state["pushed_commit"] = publish(output, branch, base_commit, report_path, "Archive the Codex-supervised PPO run")
             state["phase"] = "finished"
             write_json(status, state)
             return 0 if outcome == "completed" else 1
         except Exception as exc:
             state.update(phase="failed", ended=now(), error=repr(exc))
             write_json(status, state)
-            operation(output, f"夜间监督任务中断，保留已提交训练，原因 {exc!r}")
+            operation(output, f"监督训练中断，保留已提交训练，原因 {exc!r}")
             raise
 
 
