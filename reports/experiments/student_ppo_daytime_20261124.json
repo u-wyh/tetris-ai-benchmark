@@ -1,0 +1,145 @@
+{
+  "protocol": {
+    "start": "2026-11-24T10:00:30+08:00",
+    "end": "2026-11-24T10:12:30+08:00",
+    "minimum_training_seconds": 120,
+    "target_training_seconds": 165,
+    "training_config_sha256": "ecb51efb259b08b190f62a17de327e918e6b684f186d6cec94d204b89fcc456e",
+    "variants": {
+      "base": {
+        "seed_offset": 0,
+        "height": 0.0,
+        "beta": 0.3,
+        "learning_rate": 3e-05
+      },
+      "try_height": {
+        "seed_offset": 100,
+        "height": 0.004,
+        "beta": 0.3,
+        "learning_rate": 3e-05
+      },
+      "try_anchor": {
+        "seed_offset": 200,
+        "height": 0.0,
+        "beta": 0.8,
+        "learning_rate": 1.5e-05
+      }
+    },
+    "development_seeds": [
+      3266112500,
+      3266112501,
+      3266112502,
+      3266112503
+    ],
+    "live_review_interval_seconds": 90,
+    "source_sha256": "e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914"
+  },
+  "training": {
+    "base": {
+      "steps": 143360,
+      "task": 35,
+      "training_seconds": 199.639,
+      "recent_training_metrics": {
+        "reference_kl": 0.06358233719947748,
+        "gradient_norm": 32.01409938856959,
+        "mean_risk_increase": 0.024169921875,
+        "mean_height_penalty": 0.0
+      }
+    }
+  },
+  "stages": [
+    {
+      "stage": 1,
+      "variant": "base",
+      "training_guard": {
+        "at": "2026-11-24T10:04:04+08:00",
+        "outcome": "command_failed:timeout",
+        "exit_code": 1,
+        "wall_seconds": 211.715,
+        "final_cpu_quota": 250
+      },
+      "committed": {
+        "steps": 143360,
+        "task": 35,
+        "training_seconds": 199.639,
+        "recent_training_metrics": {
+          "reference_kl": 0.06358233719947748,
+          "gradient_norm": 32.01409938856959,
+          "mean_risk_increase": 0.024169921875,
+          "mean_height_penalty": 0.0
+        }
+      },
+      "training_seconds": 199.639,
+      "live_reviews": [
+        {
+          "source": "local_codex",
+          "action": "continue",
+          "reason": "检查点已提交至 57,344 步。当前只有一次训练指标快照，尚无趋势支持提前暂停并进行配对评估。",
+          "at": "2026-11-24T10:02:14+08:00",
+          "steps": 57344,
+          "recent_training_metrics": {
+            "reference_kl": 0.0363644771365216,
+            "gradient_norm": 11.879317143186928,
+            "mean_risk_increase": 0.0184326171875,
+            "mean_height_penalty": 0.0
+          },
+          "applied": false
+        },
+        {
+          "source": "local_codex",
+          "action": "continue",
+          "reason": "已提交步数从 57,344 增至 118,784。风险增幅基本持平，高度惩罚仍为零。参考 KL 上升不足以判断实战表现，目前没有提前评估的具体依据。",
+          "at": "2026-11-24T10:03:45+08:00",
+          "steps": 118784,
+          "recent_training_metrics": {
+            "reference_kl": 0.06198785622254945,
+            "gradient_norm": 10.062493388541043,
+            "mean_risk_increase": 0.018707275390625,
+            "mean_height_penalty": 0.0
+          },
+          "applied": false
+        }
+      ],
+      "checkpoint": {
+        "path": "/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_daytime_20261124/stages/01/candidate.zip",
+        "sha256": "9e3f75b732e194e19bbbf1ee008c345b94cdcae0f0eb927b7d97a4da0c87ebc7"
+      },
+      "evaluation_attempts": [
+        {
+          "at": "2026-11-24T10:05:31+08:00",
+          "outcome": "completed",
+          "exit_code": 0,
+          "wall_seconds": 87.764,
+          "final_cpu_quota": 250
+        }
+      ],
+      "evaluation": {
+        "common_score_ratio": 1.432868887295979,
+        "reference_deaths": 0,
+        "candidate_deaths": 0,
+        "reference_pieces": 16384,
+        "candidate_pieces": 16384,
+        "reference_high_fraction": 0.00067138671875,
+        "candidate_high_fraction": 0.00848388671875
+      },
+      "judge_attempts": [
+        {
+          "source": "local_codex",
+          "action": "try_height",
+          "reason": "四个种子的等长得分均领先，总分高约43%，双方均无提前结束。四个种子的高堆叠次数均增加，总体占比从0.067%升至0.848%。相对冻结学生的KL约为0.064，目前仅有一个阶段的数据。应从同一冻结学生出发，重新开展高度惩罚的受控对照。"
+        }
+      ],
+      "decision": {
+        "source": "local_codex",
+        "action": "try_height",
+        "reason": "四个种子的等长得分均领先，总分高约43%，双方均无提前结束。四个种子的高堆叠次数均增加，总体占比从0.067%升至0.848%。相对冻结学生的KL约为0.064，目前仅有一个阶段的数据。应从同一冻结学生出发，重新开展高度惩罚的受控对照。"
+      }
+    }
+  ],
+  "outcome": "completed",
+  "training_seconds": 199.639,
+  "training_minimum_met": true,
+  "verified_codex_decisions": 1,
+  "verified_codex_live_reviews": 2,
+  "early_evaluations": 0
+}

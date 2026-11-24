@@ -2766,3 +2766,25 @@
 - 2026-11-24T09:55:57+08:00：第 1 段评测后，local_codex 选择 continue。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261125/service_preflight/probe/`。
 
 - 2026-11-24T09:57:11+08:00：复核 11 月 24 日夜间任务失败，定时器 00:30 启动，后台服务缺少 Node.js 导致初始化失败，残留配置阻塞两次重试。00:32:17 归档时提交 0 步、Codex 调用 0 次。已修复服务路径、保留未完成初始化并修正未达标退出状态。同环境预检提交 32,768 步 CUDA 训练，Codex 完成两次运行中审查和一次回放后决策。已启用 11 月 25 日 00:30 补跑定时器，窗口至 08:20，目标累计 6 小时。证据：`reports/experiments/overnight_student_ppo_recovery_20261125.json`、`/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261125/schedule_receipt.json`。
+
+- 2026-11-24T10:00:08+08:00：按用户要求即时启动独立 CUDA 短训，训练种子 3266113000，目标累计训练 165 秒。Codex 每 90 秒审查进度，并根据阶段后的四种子配对回放作出决策。。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_daytime_20261124/`。
+
+- 2026-11-24T10:00:30+08:00：短训服务首次启动在导入监督模块时失败，未开始训练。已修正启动器的模块搜索路径并重试。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_daytime_20261124/`。
+
+- 2026-11-24T10:00:30+08:00：夜间监督任务启动，各段用真实游戏结果决定下一方向。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_daytime_20261124/`。
+
+- 2026-11-24T10:00:32+08:00：资源保护：启动受保护任务 tetris-guard-244237-1795485632403851678，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_daytime_20261124/stages/01/training_guard。
+
+- 2026-11-24T10:02:14+08:00：第 1 段运行中审查，local_codex 建议 continue。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_daytime_20261124/`。
+
+- 2026-11-24T10:03:45+08:00：第 1 段运行中审查，local_codex 建议 continue。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_daytime_20261124/`。
+
+- 2026-11-24T10:04:04+08:00：资源保护：tetris-guard-244237-1795485632403851678 结束：command_failed:timeout，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_daytime_20261124/stages/01/training_guard。
+
+- 2026-11-24T10:04:04+08:00：资源保护：启动受保护任务 tetris-guard-245739-1795485844219119625，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_daytime_20261124/stages/01/evaluation_guard_1。
+
+- 2026-11-24T10:05:31+08:00：资源保护：tetris-guard-245739-1795485844219119625 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_daytime_20261124/stages/01/evaluation_guard_1。
+
+- 2026-11-24T10:05:48+08:00：第 1 段评测后，local_codex 选择 try_height。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_daytime_20261124/`。
+
+- 2026-11-24T10:05:49+08:00：夜间训练收尾，状态 completed，已记录训练 200 秒、Codex 已应用决策 1 次。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_daytime_20261124/`。
