@@ -1,0 +1,153 @@
+{
+  "verified_at": "2026-11-24T09:57:11+08:00",
+  "original_run": {
+    "outcome": "incomplete",
+    "started_at": "2026-11-24T00:30:00+08:00",
+    "ended_at": "2026-11-24T00:32:17+08:00",
+    "committed_steps": 0,
+    "training_seconds": 0,
+    "verified_codex_decisions": 0,
+    "verified_codex_live_reviews": 0,
+    "archived_report": "reports/experiments/overnight_student_ppo_20261124.json",
+    "archived_commit": "40ee67957b579d5e616cdb7c928a528c65998759",
+    "service_at_inspection": {
+      "Result": "success",
+      "ExecMainStatus": "0"
+    },
+    "failures": [
+      {
+        "log": "runs/overnight_student_ppo_20261124/stages/01/training_guard/command.log",
+        "error": "FileNotFoundError: [Errno 2] No such file or directory: 'node'"
+      },
+      {
+        "log": "runs/overnight_student_ppo_20261124/stages/02/training_guard/command.log",
+        "error": "FileExistsError: Run already exists; use resume"
+      },
+      {
+        "log": "runs/overnight_student_ppo_20261124/stages/03/training_guard/command.log",
+        "error": "FileExistsError: Run already exists; use resume"
+      }
+    ]
+  },
+  "make_up_run": {
+    "state_at_verification": "scheduled",
+    "scheduled_start": "2026-11-25T00:30:00+08:00",
+    "deadline": "2026-11-25T08:20:00+08:00",
+    "minimum_committed_training_seconds": 18000,
+    "target_committed_training_seconds": 21600,
+    "live_review_interval_seconds": 900,
+    "local_output": "runs/overnight_student_ppo_20261125",
+    "result_report": "reports/experiments/overnight_student_ppo_20261125.json",
+    "timer": "tetris-overnight-student-ppo-20261125.timer",
+    "timer_status": {
+      "NextElapseUSecRealtime": "Wed 2026-11-25 00:30:00 CST",
+      "Triggers": "tetris-overnight-student-ppo-20261125.service",
+      "ActiveState": "active",
+      "SubState": "waiting",
+      "UnitFileState": "enabled"
+    },
+    "service": "tetris-overnight-student-ppo-20261125.service",
+    "service_status": {
+      "ActiveState": "inactive",
+      "SubState": "dead"
+    },
+    "user_manager_linger": "yes",
+    "unit_sha256": {
+      "tetris-overnight-student-ppo-20261125.service": "1a520ee0bf35db55ee7fc39f3cd13f933ffc0b047a36e1f8dda836c3ee934802",
+      "tetris-overnight-student-ppo-20261125.timer": "00e94626aa9d7f2e58a95ae5b2ec15085e18c1fb8b52c75980696ee6e944f8c3"
+    }
+  },
+  "service_preflight": {
+    "purpose": "Exercise the repaired service environment and supervision loop on engineering seeds",
+    "transient_service": "tetris-overnight-recovery-proof-20261124.service",
+    "local_receipt": "runs/overnight_student_ppo_20261125/service_preflight/verified.json",
+    "local_artifacts": "runs/overnight_student_ppo_20261125/service_preflight/probe",
+    "same_working_directory_path_and_network_environment_as_scheduled_service": true,
+    "evaluation_seeds": [
+      53,
+      54
+    ],
+    "replay_piece_cap": 4096,
+    "training_slice_budget_seconds": 55,
+    "live_review_interval_seconds": 25,
+    "tested_at": "2026-11-24T09:55:57+08:00",
+    "node_version": "v24.18.0",
+    "committed_steps": 32768,
+    "committed_training_seconds": 46.639,
+    "live_reviews": [
+      {
+        "source": "local_codex",
+        "action": "continue",
+        "reason": "训练已提交至 8192 步。目前只有一次指标观测，尚无趋势支持提前暂停并进行配对评估。",
+        "at": "2026-11-24T09:54:34+08:00",
+        "steps": 8192,
+        "recent_training_metrics": {
+          "reference_kl": 0.006360230422751556,
+          "gradient_norm": 52.37632443904877,
+          "mean_risk_increase": 0.0062255859375,
+          "mean_height_penalty": 0.0
+        },
+        "applied": false
+      },
+      {
+        "source": "local_codex",
+        "action": "continue",
+        "reason": "已提交检查点从 8192 步推进至 28672 步。平均风险增幅由 0.0062 升至 0.0110，高度惩罚仍为零。仅两次观测，尚无足够依据提前评估，资源限制照常执行。",
+        "at": "2026-11-24T09:55:00+08:00",
+        "steps": 28672,
+        "recent_training_metrics": {
+          "reference_kl": 0.01741308612055426,
+          "gradient_norm": 36.376920104026794,
+          "mean_risk_increase": 0.011021205357142858,
+          "mean_height_penalty": 0.0
+        },
+        "applied": false
+      }
+    ],
+    "decisions": [
+      {
+        "source": "local_codex",
+        "action": "continue",
+        "reason": "共同长度得分高约 27.5%。53 号种子打满且高堆减少，54 号种子高堆增加并在 2796 块时提前结束。相对冻结学生的 KL 约为 0.019，且未伴随失分。高堆风险只在一个种子上升，暂无跨阶段证据，继续观察。"
+      }
+    ],
+    "initialization_failure_preserved": true,
+    "stage_summaries": [
+      {
+        "stage": 1,
+        "training_guard": {
+          "at": "2026-11-24T09:54:56+08:00",
+          "outcome": "command_failed:timeout",
+          "exit_code": 1,
+          "wall_seconds": 57.024,
+          "final_cpu_quota": 250
+        },
+        "committed": {
+          "steps": 32768,
+          "task": 8,
+          "training_seconds": 46.639,
+          "recent_training_metrics": {
+            "reference_kl": 0.019439911000415578,
+            "gradient_norm": 34.12899295762181,
+            "mean_risk_increase": 0.010894775390625,
+            "mean_height_penalty": 0.0
+          }
+        },
+        "evaluation": {
+          "common_score_ratio": 1.2751991620504217,
+          "reference_deaths": 0,
+          "candidate_deaths": 1,
+          "reference_pieces": 8192,
+          "candidate_pieces": 6892,
+          "reference_high_fraction": 0.0050048828125,
+          "candidate_high_fraction": 0.009286128845037725
+        },
+        "decision": {
+          "source": "local_codex",
+          "action": "continue",
+          "reason": "共同长度得分高约 27.5%。53 号种子打满且高堆减少，54 号种子高堆增加并在 2796 块时提前结束。相对冻结学生的 KL 约为 0.019，且未伴随失分。高堆风险只在一个种子上升，暂无跨阶段证据，继续观察。"
+        }
+      }
+    ]
+  }
+}

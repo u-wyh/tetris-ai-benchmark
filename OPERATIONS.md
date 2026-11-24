@@ -2748,3 +2748,21 @@
 - 2026-11-24T00:32:17+08:00：资源保护：tetris-guard-148544-1795451533321091638 结束：command_failed:exit-code，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261124/stages/03/training_guard。
 
 - 2026-11-24T00:32:17+08:00：夜间训练收尾，已记录训练 0 秒、Codex 已应用决策 0 次。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261124/`。
+
+- 2026-11-24T09:53:57+08:00：保留未完成的训练初始化到 /home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261125/service_preflight/probe/stages/01/failed_initialization。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261125/service_preflight/probe/`。
+
+- 2026-11-24T09:53:59+08:00：资源保护：启动受保护任务 tetris-guard-241979-1795485239526291561，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261125/service_preflight/probe/stages/01/training_guard。
+
+- 2026-11-24T09:54:34+08:00：第 1 段运行中审查，local_codex 建议 continue。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261125/service_preflight/probe/`。
+
+- 2026-11-24T09:54:56+08:00：资源保护：tetris-guard-241979-1795485239526291561 结束：command_failed:timeout，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261125/service_preflight/probe/stages/01/training_guard。
+
+- 2026-11-24T09:55:00+08:00：第 1 段运行中审查，local_codex 建议 continue。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261125/service_preflight/probe/`。
+
+- 2026-11-24T09:55:00+08:00：资源保护：启动受保护任务 tetris-guard-242669-1795485300452398609，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261125/service_preflight/probe/stages/01/evaluation_guard_1。
+
+- 2026-11-24T09:55:43+08:00：资源保护：tetris-guard-242669-1795485300452398609 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261125/service_preflight/probe/stages/01/evaluation_guard_1。
+
+- 2026-11-24T09:55:57+08:00：第 1 段评测后，local_codex 选择 continue。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261125/service_preflight/probe/`。
+
+- 2026-11-24T09:57:11+08:00：复核 11 月 24 日夜间任务失败，定时器 00:30 启动，后台服务缺少 Node.js 导致初始化失败，残留配置阻塞两次重试。00:32:17 归档时提交 0 步、Codex 调用 0 次。已修复服务路径、保留未完成初始化并修正未达标退出状态。同环境预检提交 32,768 步 CUDA 训练，Codex 完成两次运行中审查和一次回放后决策。已启用 11 月 25 日 00:30 补跑定时器，窗口至 08:20，目标累计 6 小时。证据：`reports/experiments/overnight_student_ppo_recovery_20261125.json`、`/home/wyh/projects/tetris-ai-benchmark/runs/overnight_student_ppo_20261125/schedule_receipt.json`。

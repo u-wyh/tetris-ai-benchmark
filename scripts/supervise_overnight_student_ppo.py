@@ -95,6 +95,36 @@ def write_preset(output, baseline, variant):
     return preset
 
 
+def require_runtime():
+    """Check the timed service environment before the trainer writes a config."""
+    node = shutil.which("node")
+    if node is None:
+        raise RuntimeError("Node.js is missing from the training service PATH")
+    subprocess.run([node, "--version"], stdout=subprocess.DEVNULL, check=True, timeout=8)
+    if not CODEX.is_file():
+        raise RuntimeError("The local Codex executable is missing")
+
+
+def training_options(output, stage, directory, baseline, variant):
+    state_file = directory / "transaction_state.json"
+    if state_file.is_file():
+        return ["--resume"]
+    if (directory / "config.json").is_file():
+        # Initialization may have written a config before publishing its first
+        # transaction pointer. Keep the failed attempt before trying afresh.
+        with (directory / ".train.lock").open("a+") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            if state_file.is_file():
+                return ["--resume"]
+            committed = directory / "committed"
+            if committed.is_dir() and any(committed.iterdir()):
+                raise RuntimeError("Training checkpoints exist without a transaction pointer")
+            archived = stage / "failed_initialization"
+            directory.rename(archived)
+        operation(output, f"保留未完成的训练初始化到 {archived}")
+    return ["--config-file", str(write_preset(output, baseline, variant))]
+
+
 def run_guarded(output, directory, budget, command, state, review=None):
     state["guard"] = str(directory)
     write_json(output / "status.json", state)
@@ -254,8 +284,7 @@ def train_and_assess(output, state, baseline, deadline):
         stage = output / "stages" / f"{stage_number:02d}"
         stage.mkdir(parents=True)
         directory = output / "training" / variant
-        option = (["--resume"] if (directory / "transaction_state.json").is_file()
-                  else ["--config-file", str(write_preset(output, baseline, variant))])
+        option = training_options(output, stage, directory, baseline, variant)
         before = totals.get(variant, {}).get("steps", 0)
         train_budget = min(SLICE, max(300, int(remaining) + 90), seconds_to(deadline) - 210)
         state.update(phase="training", stage=stage_number, training_directory=str(directory),
@@ -274,6 +303,7 @@ def train_and_assess(output, state, baseline, deadline):
                "committed": current, "training_seconds": completed_seconds(totals),
                "live_reviews": reviews}
         state["stages"].append(row)
+        state["training_seconds"] = row["training_seconds"]
         write_json(output / "status.json", state)
         if errors >= 3 or outcome.get("outcome") == "interrupted":
             break
@@ -362,11 +392,17 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--start", type=datetime.fromisoformat, required=True)
     parser.add_argument("--end", type=datetime.fromisoformat, required=True)
+    parser.add_argument("--report", type=Path, default=REPORT)
     args = parser.parse_args()
+    report = (ROOT / args.report).resolve()
+    if report.parent != ROOT / "reports/experiments" or report.suffix != ".json":
+        parser.error("report must be a JSON file in reports/experiments")
+    report_path = report.relative_to(ROOT)
     if any(date.tzinfo is None for date in (args.start, args.end)) or args.end <= args.start:
         parser.error("start and end must be ordered timestamps with explicit timezones")
     if time.time() < args.start.timestamp() or seconds_to(args.end) < 240:
         parser.error("outside the planned overnight training interval")
+    require_runtime()
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
     with (output / "overnight.lock").open("a") as lock:
@@ -393,7 +429,7 @@ def main():
         previous = read_json(status) if status.is_file() else {}
         if previous.get("phase") == "finished":
             print("overnight training already archived", previous.get("pushed_commit"), flush=True)
-            return
+            return 0 if previous.get("outcome") == "completed" else 1
         state = {
             "phase": "starting", "started": previous.get("started", now()),
             "variant": previous.get("variant", "base"), "used": previous.get("used", ["base"]),
@@ -409,25 +445,27 @@ def main():
                              for review in stage.get("live_reviews", []))
             early_evaluations = sum(review.get("applied", False) for stage in state["stages"]
                                     for review in stage.get("live_reviews", []))
-            state.update(phase="archiving", ended=now(), training_seconds=seconds,
+            outcome = "completed" if seconds >= MINIMUM_TRAINING and calls else "incomplete"
+            state.update(phase="archiving", outcome=outcome, ended=now(), training_seconds=seconds,
                          training_minimum_met=seconds >= MINIMUM_TRAINING, verified_codex_decisions=calls,
                          verified_codex_live_reviews=live_calls, early_evaluations=early_evaluations)
             write_json(status, state)
             archive = {
-                "protocol": specification, "training": totals, "stages": state["stages"],
+                "protocol": specification, "training": totals, "stages": state["stages"], "outcome": outcome,
                 "training_seconds": seconds, "training_minimum_met": seconds >= MINIMUM_TRAINING,
                 "verified_codex_decisions": calls, "verified_codex_live_reviews": live_calls,
                 "early_evaluations": early_evaluations,
             }
             write_json(output / "archive.json", archive)
             if (git("branch", "--show-current") != branch or git("rev-parse", "HEAD") != base_commit
-                    or git("status", "--porcelain", "--", str(REPORT))):
+                    or git("status", "--porcelain", "--", str(report_path))):
                 raise RuntimeError("Checkout or report changed; archive.json is available locally")
-            write_json(ROOT / REPORT, archive)
-            operation(output, f"夜间训练收尾，已记录训练 {seconds:.0f} 秒、Codex 已应用决策 {calls} 次")
-            state["pushed_commit"] = publish(output, branch, base_commit, REPORT, "Archive the overnight Codex-supervised PPO run")
+            write_json(report, archive)
+            operation(output, f"夜间训练收尾，状态 {outcome}，已记录训练 {seconds:.0f} 秒、Codex 已应用决策 {calls} 次")
+            state["pushed_commit"] = publish(output, branch, base_commit, report_path, "Archive the overnight Codex-supervised PPO run")
             state["phase"] = "finished"
             write_json(status, state)
+            return 0 if outcome == "completed" else 1
         except Exception as exc:
             state.update(phase="failed", ended=now(), error=repr(exc))
             write_json(status, state)
@@ -436,4 +474,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
