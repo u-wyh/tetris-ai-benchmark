@@ -50,20 +50,24 @@ def evaluate(reference, candidate, seeds, cap):
             "reference": {**old, "common_score": old_scores[shared]},
             "candidate": {**new, "common_score": new_scores[shared]},
         })
+    return {
+        "cap": cap, "pairs": pairs,
+        "summary": summarize_pairs(pairs),
+    }
+
+
+def summarize_pairs(pairs):
     refs, candidates = ([row[role] for row in pairs] for role in ("reference", "candidate"))
     reference_score = sum(r["common_score"] for r in refs)
     return {
-        "cap": cap, "pairs": pairs,
-        "summary": {
-            "common_score_ratio": sum(r["common_score"] for r in candidates) / reference_score
-            if reference_score else None,
-            "reference_deaths": sum(r["over"] for r in refs),
-            "candidate_deaths": sum(r["over"] for r in candidates),
-            "reference_pieces": sum(r["pieces"] for r in refs),
-            "candidate_pieces": sum(r["pieces"] for r in candidates),
-            "reference_high_fraction": sum(r["height_ge_12"] for r in refs) / sum(r["pieces"] for r in refs),
-            "candidate_high_fraction": sum(r["height_ge_12"] for r in candidates) / sum(r["pieces"] for r in candidates),
-        },
+        "common_score_ratio": sum(r["common_score"] for r in candidates) / reference_score
+        if reference_score else None,
+        "reference_deaths": sum(r["over"] for r in refs),
+        "candidate_deaths": sum(r["over"] for r in candidates),
+        "reference_pieces": sum(r["pieces"] for r in refs),
+        "candidate_pieces": sum(r["pieces"] for r in candidates),
+        "reference_high_fraction": sum(r["height_ge_12"] for r in refs) / sum(r["pieces"] for r in refs),
+        "candidate_high_fraction": sum(r["height_ge_12"] for r in candidates) / sum(r["pieces"] for r in candidates),
     }
 
 
