@@ -1,0 +1,182 @@
+{
+  "protocol": {
+    "source_report": "reports/experiments/student_ppo_balanced_live_20261125.json",
+    "source_report_sha256": "49f293035ef06be27a6ec527cb76207ea455683515b646791b5be2393c5af936",
+    "stage": 10,
+    "candidate_steps": 15953920,
+    "selection": "Lowest development high-stack fraction among stages with no early endings",
+    "models": {
+      "reference": {
+        "path": "runs/bc_sequence_transfer/supervised/checkpoints/epoch_01/model.zip",
+        "sha256": "e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914"
+      },
+      "candidate": {
+        "path": "runs/student_ppo_balanced_live_20261125/stages/10/candidate.zip",
+        "sha256": "79e47e1519276c53a1c9ed77e4f7eb76e10d8125efa9a112b103ec8a828f58cd"
+      }
+    },
+    "seeds": [
+      3269114400,
+      3269114401,
+      3269114402,
+      3269114403,
+      3269114404,
+      3269114405,
+      3269114406,
+      3269114407
+    ],
+    "cap": 20000,
+    "eligibility": {
+      "minimum_common_score_ratio": 1.15,
+      "minimum_score_wins": 7,
+      "maximum_excess_deaths": 0,
+      "minimum_pieces_ratio": 1.0
+    }
+  },
+  "summary": {
+    "common_score_ratio": 1.4492099542655341,
+    "reference_deaths": 0,
+    "candidate_deaths": 3,
+    "reference_pieces": 160000,
+    "candidate_pieces": 131144,
+    "reference_high_fraction": 0.00095,
+    "candidate_high_fraction": 0.00516988958701885
+  },
+  "score_wins": 8,
+  "eligible_to_expand": false,
+  "pairs": [
+    {
+      "seed": 3269114400,
+      "shared_pieces": 20000,
+      "reference": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 71,
+        "common_score": 381296000
+      },
+      "candidate": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 57,
+        "common_score": 552696700
+      }
+    },
+    {
+      "seed": 3269114401,
+      "shared_pieces": 17818,
+      "reference": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 1,
+        "common_score": 304299700
+      },
+      "candidate": {
+        "pieces": 17818,
+        "over": true,
+        "height_ge_12": 104,
+        "common_score": 439696200
+      }
+    },
+    {
+      "seed": 3269114402,
+      "shared_pieces": 20000,
+      "reference": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 9,
+        "common_score": 383620200
+      },
+      "candidate": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 107,
+        "common_score": 544863900
+      }
+    },
+    {
+      "seed": 3269114403,
+      "shared_pieces": 20000,
+      "reference": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 13,
+        "common_score": 376406300
+      },
+      "candidate": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 57,
+        "common_score": 556401200
+      }
+    },
+    {
+      "seed": 3269114404,
+      "shared_pieces": 11023,
+      "reference": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 24,
+        "common_score": 115919500
+      },
+      "candidate": {
+        "pieces": 11023,
+        "over": true,
+        "height_ge_12": 91,
+        "common_score": 167207200
+      }
+    },
+    {
+      "seed": 3269114405,
+      "shared_pieces": 20000,
+      "reference": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 11,
+        "common_score": 372294400
+      },
+      "candidate": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 91,
+        "common_score": 547494100
+      }
+    },
+    {
+      "seed": 3269114406,
+      "shared_pieces": 20000,
+      "reference": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 12,
+        "common_score": 381554800
+      },
+      "candidate": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 131,
+        "common_score": 547313900
+      }
+    },
+    {
+      "seed": 3269114407,
+      "shared_pieces": 2303,
+      "reference": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 11,
+        "common_score": 5025400
+      },
+      "candidate": {
+        "pieces": 2303,
+        "over": true,
+        "height_ge_12": 40,
+        "common_score": 7097200
+      }
+    }
+  ],
+  "codex_decision": {
+    "source": "local_codex",
+    "action": "focus_survival",
+    "reason": "候选在 8 个种子中有 3 次提前结束，分别止于 17,818、11,023 和 2,303 块，基准则全部达到 20,000 块上限。提前结束在多个种子上重现，候选比基准多 3 次结束，超过预设的 0 次上限，总落块数也仅为基准的 81.97%，低于 100% 门槛。相同落块数下，候选总分为基准的 1.449 倍，8 对全胜，达到 1.15 倍和至少 7 胜的得分门槛。这一增益只反映双方都完成的区间，提前结束后的得分机会未计入。候选堆高达到 12 层的比例为 0.517%，基准为 0.095%，且三个提前结束的配对中候选的高堆比例均更高，进一步支持优先改善生存。此次未达到开展下一轮独立评估的条件，部署在实验范围之外。"
+  }
+}
