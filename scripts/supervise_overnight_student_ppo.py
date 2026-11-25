@@ -372,6 +372,12 @@ def train_and_assess(output, state, baseline, deadline):
             if result["source"] == "local_codex":
                 row["decision"] = result
                 break
+            if available == ["continue"]:
+                row["decision"] = {
+                    "source": "fixed_protocol", "action": "continue",
+                    "reason": "Codex unavailable; the protocol only permits the current variant.",
+                }
+                break
             if attempt == 1 and seconds_to(deadline) >= 200:
                 operation(output, f"第 {stage_number} 段 Codex 调用未返回可用决策，准备重试")
                 time.sleep(20)
@@ -388,6 +394,39 @@ def train_and_assess(output, state, baseline, deadline):
     return training_totals(output)
 
 
+def load_continuation(output, source, specification):
+    if output == source or source in output.parents:
+        raise RuntimeError("Continuation requires a separate output directory")
+    original = read_json(source / "status.json")
+    archive_path = source / "archive.json"
+    archive = read_json(archive_path)
+    if original.get("phase") != "finished" or archive.get("outcome") != "incomplete" or not original.get("pushed_commit"):
+        raise RuntimeError("Continuation requires an archived incomplete run")
+    if any(archive["protocol"].get(key) != value for key, value in specification.items() if key not in {"start", "end"}):
+        raise RuntimeError("Continuation training protocol differs")
+    if archive["stages"] != original["stages"] or training_totals(source) != archive["training"]:
+        raise RuntimeError("Source checkpoints or stage records differ from the archive")
+    specification["continuation"] = {
+        "source": str(source), "source_archive_sha256": digest(archive_path),
+        "source_commit": original["pushed_commit"],
+        "previous_training_seconds": archive["training_seconds"],
+    }
+    return original
+
+
+def copy_continuation_checkpoints(output, source, original):
+    expected = training_totals(source)
+    training = output / "training"
+    if not training.exists():
+        with TemporaryDirectory(dir=output) as temporary:
+            snapshot = Path(temporary) / "training"
+            shutil.copytree(source / "training", snapshot)
+            snapshot.rename(training)
+    if training_totals(output) != expected:
+        raise RuntimeError("Continuation checkpoints differ from the incomplete run")
+    return {key: original[key] for key in ("variant", "used", "stages", "next_stage")}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
@@ -395,6 +434,7 @@ def main():
     parser.add_argument("--end", type=datetime.fromisoformat, required=True)
     parser.add_argument("--report", type=Path, default=REPORT)
     parser.add_argument("--initial-variant", choices=VARIANTS, default="base")
+    parser.add_argument("--resume-from", type=Path, help="Archived incomplete run whose checkpoints and stages to continue")
     args = parser.parse_args()
     report = (ROOT / args.report).resolve()
     if report.parent != ROOT / "reports/experiments" or report.suffix != ".json":
@@ -425,15 +465,23 @@ def main():
         }
         if args.initial_variant != "base":
             specification["initial_variant"] = args.initial_variant
+        source = args.resume_from.resolve() if args.resume_from else None
+        if source is not None:
+            original = load_continuation(output, source, specification)
         plan = output / "protocol.json"
         if plan.is_file() and read_json(plan) != specification:
-            raise RuntimeError("Existing overnight protocol differs")
+            raise RuntimeError("Existing training protocol differs")
         if not plan.is_file():
             write_json(plan, specification)
         previous = read_json(status) if status.is_file() else {}
         if previous.get("phase") == "finished":
-            print("overnight training already archived", previous.get("pushed_commit"), flush=True)
+            print("training already archived", previous.get("pushed_commit"), flush=True)
             return 0 if previous.get("outcome") == "completed" else 1
+        if report.exists():
+            raise RuntimeError("Final report path is already in use")
+        if source is not None and not previous:
+            previous = copy_continuation_checkpoints(output, source, original)
+            operation(output, f"已接续 {source.name} 的检查点，已有训练 {original['training_seconds']:.0f} 秒")
         state = {
             "phase": "starting", "started": previous.get("started", now()),
             "variant": previous.get("variant", args.initial_variant),

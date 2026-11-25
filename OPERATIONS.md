@@ -3090,3 +3090,5 @@
 - 2026-11-24T22:39:34+08:00：第 6 段缺少可用 Codex 决策，保留检查点并停止新增训练。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_survival_live_20261124/`。
 
 - 2026-11-24T22:39:34+08:00：监督训练收尾，状态 incomplete，已记录训练 14913 秒、Codex 已应用决策 5 次。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_survival_live_20261124/`。
+
+- 2026-11-25T09:29:12+08:00：复核昨晚第 6 段，两次 Codex 请求均触发用量上限，累计训练 14913 秒时停止。已核对今日额度恢复，验证旧账本及检查点副本。修正协议只有继续选项时的停机逻辑，准备从归档 ffefd82 接续至累计 6 小时。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_survival_resume_20261125/`。
