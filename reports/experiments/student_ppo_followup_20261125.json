@@ -1,0 +1,45 @@
+{
+  "started_at": "2026-11-25T14:23:17+08:00",
+  "experiments": [
+    {
+      "name": "confirmation",
+      "report": "reports/experiments/student_ppo_followup_20261125_confirmation.json",
+      "summary": {
+        "common_score_ratio": 1.5001961213830166,
+        "reference_deaths": 1,
+        "candidate_deaths": 3,
+        "reference_pieces": 141194,
+        "candidate_pieces": 119100,
+        "reference_high_fraction": 0.001898097652874768,
+        "candidate_high_fraction": 0.010663308144416456
+      },
+      "fallback_height": null,
+      "decision": {
+        "source": "local_codex",
+        "action": "focus_survival"
+      }
+    },
+    {
+      "name": "fallback",
+      "report": "reports/experiments/student_ppo_followup_20261125_fallback.json",
+      "summary": {
+        "common_score_ratio": 1.4945599168316945,
+        "reference_deaths": 1,
+        "candidate_deaths": 3,
+        "reference_pieces": 141194,
+        "candidate_pieces": 129397,
+        "reference_high_fraction": 0.001898097652874768,
+        "candidate_high_fraction": 0.009443804724993624
+      },
+      "fallback_height": 10,
+      "decision": {
+        "source": "local_codex",
+        "action": "focus_survival"
+      }
+    }
+  ],
+  "active_experiment": null,
+  "updated_at": "2026-11-25T14:35:18+08:00",
+  "ended_at": "2026-11-25T14:47:45+08:00",
+  "final_action": "focus_survival"
+}
