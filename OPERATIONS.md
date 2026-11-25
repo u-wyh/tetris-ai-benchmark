@@ -3190,3 +3190,39 @@
 - 2026-11-25T14:34:57+08:00：资源保护：tetris-guard-656183-1795588391737017031 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/confirmation/seed_3269114207/guard_1795588391674729660。
 
 - 2026-11-25T14:35:13+08:00：配对回放完成，等长得分比 1.5001961213830166，候选提前结束 3/8 局，Codex 后续决策 focus_survival。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/confirmation/`。
+
+- 2026-11-25T14:35:18+08:00：配对回放启动，冻结第 9 段检查点，8 个种子，每局最多 20,000 块，堆高达到 10 格时由冻结学生接管。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/fallback/`。
+
+- 2026-11-25T14:35:20+08:00：资源保护：启动受保护任务 tetris-guard-656938-1795588520198218105，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/fallback/seed_3269114200/guard_1795588518631206117。
+
+- 2026-11-25T14:36:49+08:00：资源保护：tetris-guard-656938-1795588520198218105 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/fallback/seed_3269114200/guard_1795588518631206117。
+
+- 2026-11-25T14:36:50+08:00：资源保护：启动受保护任务 tetris-guard-657418-1795588610086048021，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/fallback/seed_3269114201/guard_1795588610004921200。
+
+- 2026-11-25T14:38:07+08:00：资源保护：tetris-guard-657418-1795588610086048021 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/fallback/seed_3269114201/guard_1795588610004921200。
+
+- 2026-11-25T14:38:07+08:00：资源保护：启动受保护任务 tetris-guard-657823-1795588687751871882，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/fallback/seed_3269114202/guard_1795588687687661484。
+
+- 2026-11-25T14:39:53+08:00：资源保护：tetris-guard-657823-1795588687751871882 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/fallback/seed_3269114202/guard_1795588687687661484。
+
+- 2026-11-25T14:39:54+08:00：资源保护：启动受保护任务 tetris-guard-658338-1795588793988142876，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/fallback/seed_3269114203/guard_1795588793921649897。
+
+- 2026-11-25T14:41:09+08:00：资源保护：tetris-guard-658338-1795588793988142876 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/fallback/seed_3269114203/guard_1795588793921649897。
+
+- 2026-11-25T14:41:09+08:00：资源保护：启动受保护任务 tetris-guard-658709-1795588869612791120，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/fallback/seed_3269114204/guard_1795588869549439747。
+
+- 2026-11-25T14:42:55+08:00：资源保护：tetris-guard-658709-1795588869612791120 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/fallback/seed_3269114204/guard_1795588869549439747。
+
+- 2026-11-25T14:42:55+08:00：资源保护：启动受保护任务 tetris-guard-659219-1795588975888508136，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/fallback/seed_3269114205/guard_1795588975805518621。
+
+- 2026-11-25T14:43:51+08:00：资源保护：tetris-guard-659219-1795588975888508136 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/fallback/seed_3269114205/guard_1795588975805518621。
+
+- 2026-11-25T14:43:51+08:00：资源保护：启动受保护任务 tetris-guard-659493-1795589031094203096，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/fallback/seed_3269114206/guard_1795589031031965100。
+
+- 2026-11-25T14:45:37+08:00：资源保护：tetris-guard-659493-1795589031094203096 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/fallback/seed_3269114206/guard_1795589031031965100。
+
+- 2026-11-25T14:45:37+08:00：资源保护：启动受保护任务 tetris-guard-660252-1795589137323934566，CPU亲和性[4, 6, 8, 10, 12, 14]，初始配额250%，内存上限6GiB。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/fallback/seed_3269114207/guard_1795589137260501979。
+
+- 2026-11-25T14:47:23+08:00：资源保护：tetris-guard-660252-1795589137323934566 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/fallback/seed_3269114207/guard_1795589137260501979。
+
+- 2026-11-25T14:47:38+08:00：配对回放完成，等长得分比 1.4945599168316945，候选提前结束 3/8 局，Codex 后续决策 focus_survival。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/fallback/`。
