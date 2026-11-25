@@ -3228,3 +3228,5 @@
 - 2026-11-25T14:47:38+08:00：配对回放完成，等长得分比 1.4945599168316945，候选提前结束 3/8 局，Codex 后续决策 focus_survival。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/fallback/`。
 
 - 2026-11-25T14:47:45+08:00：自动实验流程收尾，完成 2 轮，最后决策 focus_survival。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/`。
+
+- 2026-11-25T14:47:52+08:00：配对回放显示高堆切回基线增加了候选总落块量，但仍有 3/8 局提前结束，基线 1/8。启动生存平衡奖励训练，从同一冻结模型、种子与 KL 参数起步，目标累计训练 6 小时。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_balanced_live_20261125/`。

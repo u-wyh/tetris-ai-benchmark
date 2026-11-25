@@ -78,6 +78,12 @@ def completed_seconds(totals):
     return sum(row["training_seconds"] for row in totals.values())
 
 
+def compatible_variants(baseline):
+    if baseline.get("reward_profile", "default") == "default":
+        return VARIANTS
+    return {name: settings for name, settings in VARIANTS.items() if settings["height"] == 0}
+
+
 def write_preset(output, baseline, variant):
     change = VARIANTS[variant]
     config = {
@@ -211,7 +217,7 @@ def decide(stage, evidence, available):
         "Use only the supplied JSON evidence. Choose exactly one allowed action. Do not call tools. "
         "Compare common-length score, actual early endings, high stacks, and divergence from the frozen student. "
         "Consider consistency across stages and seeds. Scores near parity on a small development set are uncertain. "
-        "Continue when the evidence is healthy or inconclusive. Choose try_height when stack risk repeatedly rises "
+        "Continue when the evidence is healthy or inconclusive. If available, choose try_height when stack risk repeatedly rises "
         "while score still holds; choose try_anchor when the trained policy drifts and repeatedly loses score. "
         "If base is available, choose it to compare against training without the current variant's intervention. "
         "A switch starts a fresh controlled comparison from the same frozen student. "
@@ -274,6 +280,7 @@ def seconds_to(deadline):
 
 def train_and_assess(output, state, baseline, deadline):
     errors = 0
+    variants = compatible_variants(baseline)
     while seconds_to(deadline) >= 240:
         totals = training_totals(output)
         remaining = TARGET_TRAINING - completed_seconds(totals)
@@ -349,7 +356,7 @@ def train_and_assess(output, state, baseline, deadline):
         row["evaluation"] = report["summary"]
         state["phase"] = "codex_decision"
         write_json(output / "status.json", state)
-        available = ["continue", *(name for name in VARIANTS if name not in state["used"])]
+        available = ["continue", *(name for name in variants if name not in state["used"])]
         evidence = {
             "current_variant": variant, "settings": VARIANTS[variant], "allowed_actions": available,
             "development_pairs": report["pairs"], "development_summary": report["summary"],
@@ -434,6 +441,7 @@ def main():
     parser.add_argument("--end", type=datetime.fromisoformat, required=True)
     parser.add_argument("--report", type=Path, default=REPORT)
     parser.add_argument("--initial-variant", choices=VARIANTS, default="base")
+    parser.add_argument("--reward-profile", choices=("default", "survival_balanced_v1"), default="default")
     parser.add_argument("--resume-from", type=Path, help="Archived incomplete run whose checkpoints and stages to continue")
     args = parser.parse_args()
     report = (ROOT / args.report).resolve()
@@ -454,15 +462,22 @@ def main():
         if not branch:
             raise RuntimeError("A named branch is needed for archived results")
         baseline = read_json(CONFIG)
+        if args.reward_profile != "default":
+            baseline["reward_profile"] = args.reward_profile
+        variants = compatible_variants(baseline)
+        if args.initial_variant not in variants:
+            parser.error("the initial variant is incompatible with the selected reward profile")
         if digest(ROOT / baseline["initial_model"]["path"]) != baseline["initial_model"]["sha256"]:
             raise RuntimeError("Frozen starting model differs")
         specification = {
             "start": args.start.isoformat(), "end": args.end.isoformat(),
             "minimum_training_seconds": MINIMUM_TRAINING, "target_training_seconds": TARGET_TRAINING,
-            "training_config_sha256": digest(CONFIG), "variants": VARIANTS, "development_seeds": DEVELOPMENT_SEEDS,
+            "training_config_sha256": digest(CONFIG), "variants": variants, "development_seeds": DEVELOPMENT_SEEDS,
             "live_review_interval_seconds": LIVE_REVIEW_INTERVAL,
             "source_sha256": baseline["initial_model"]["sha256"],
         }
+        if args.reward_profile != "default":
+            specification["reward_profile"] = args.reward_profile
         if args.initial_variant != "base":
             specification["initial_variant"] = args.initial_variant
         source = args.resume_from.resolve() if args.resume_from else None
