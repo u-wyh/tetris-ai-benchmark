@@ -3152,3 +3152,5 @@
 - 2026-11-25T11:37:19+08:00：第 10 段评测后，local_codex 选择 continue。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_survival_resume_20261125/`。
 
 - 2026-11-25T11:37:20+08:00：监督训练收尾，状态 completed，已记录训练 21850 秒、Codex 已应用决策 9 次。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_survival_resume_20261125/`。
+
+- 2026-11-25T14:23:16+08:00：核验续训累计 21850 秒并于 11:37 完成，原流程缺少任务接续。已验证第 9 段来源、配对回放和自动分支，部署自动接续评测。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_followup_20261125/`。
