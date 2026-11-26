@@ -3638,3 +3638,5 @@
 - 2026-11-26T16:11:36+08:00：资源保护：tetris-guard-1014816-1795680587884508844 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_evening_20261126/evaluation/seed_3269114607/guard_1795680587819874655。
 
 - 2026-11-26T16:11:53+08:00：配对回放完成，等长得分比 1.1457378178356472，候选提前结束 1/8 局，Codex 后续决策 hold_candidate。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_evening_20261126/evaluation/`。
+
+- 2026-11-26T16:11:58+08:00：11 月 26 日晚间核验工作流已完成并归档。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_evening_20261126/`。
