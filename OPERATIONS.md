@@ -3422,3 +3422,5 @@
 - 2026-11-25T21:41:54+08:00：资源保护：tetris-guard-791631-1795614053476410537 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_balanced_confirmation_20261125/seed_3269114407/guard_1795614053413331195。
 
 - 2026-11-25T21:42:10+08:00：配对回放完成，等长得分比 1.4492099542655341，候选提前结束 3/8 局，Codex 后续决策 focus_survival。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_balanced_confirmation_20261125/`。
+
+- 2026-11-26T11:12:25+08:00：核验 11 月 25 日 21867 秒 CUDA 训练及自动接续的 8 组长局回放均已归档。候选等长总分 +44.9%，3 局提前结束，基线 0 局。冻结平衡奖励检查点与原种子，启动较早回退的生存率对照，预设 8 格与 6 格，过门槛后自动切换全新种子。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_balanced_recovery_20261126/`。
