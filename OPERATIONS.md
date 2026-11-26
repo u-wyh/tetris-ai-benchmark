@@ -3498,3 +3498,5 @@
 - 2026-11-26T11:38:33+08:00：配对回放完成，等长得分比 1.359822309945346，候选提前结束 4/8 局，Codex 后续决策 focus_survival。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_balanced_recovery_20261126/height_6/`。
 
 - 2026-11-26T11:38:39+08:00：生存回退对照收尾，共 2 轮，最后决策 focus_survival。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_balanced_recovery_20261126/`。
+
+- 2026-11-26T11:38:50+08:00：按用户 22:00 验收要求登记自动接续：回退策略独立验证通过则扩大评测，否则执行仅提高 KL 系数的生存对照。随后归档训练、独立回放及未完成原因。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_evening_20261126/`。
