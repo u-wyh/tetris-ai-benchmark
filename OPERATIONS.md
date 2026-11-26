@@ -3496,3 +3496,5 @@
 - 2026-11-26T11:38:17+08:00：资源保护：tetris-guard-931684-1795664189759398477 结束：completed，已释放进程组；已提交训练事务保留。证据：/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_balanced_recovery_20261126/height_6/seed_3269114407/guard_1795664189696255685。
 
 - 2026-11-26T11:38:33+08:00：配对回放完成，等长得分比 1.359822309945346，候选提前结束 4/8 局，Codex 后续决策 focus_survival。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_balanced_recovery_20261126/height_6/`。
+
+- 2026-11-26T11:38:39+08:00：生存回退对照收尾，共 2 轮，最后决策 focus_survival。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_balanced_recovery_20261126/`。

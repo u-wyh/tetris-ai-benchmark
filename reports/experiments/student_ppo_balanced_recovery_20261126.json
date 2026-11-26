@@ -1,0 +1,70 @@
+{
+  "started_at": "2026-11-26T11:12:26+08:00",
+  "active_experiment": null,
+  "raw_report": "reports/experiments/student_ppo_balanced_confirmation_20261125.json",
+  "raw_sha256": "e04c90199836c0080b1b3603654747531056fa06ea866c986135c91e4baeb34b",
+  "raw_summary": {
+    "common_score_ratio": 1.4492099542655341,
+    "reference_deaths": 0,
+    "candidate_deaths": 3,
+    "reference_pieces": 160000,
+    "candidate_pieces": 131144,
+    "reference_high_fraction": 0.00095,
+    "candidate_high_fraction": 0.00516988958701885
+  },
+  "thresholds": [
+    8,
+    6
+  ],
+  "holdout_seeds": [
+    3269114500,
+    3269114501,
+    3269114502,
+    3269114503,
+    3269114504,
+    3269114505,
+    3269114506,
+    3269114507
+  ],
+  "experiments": [
+    {
+      "name": "height_8",
+      "height": 8,
+      "report": "reports/experiments/student_ppo_balanced_recovery_20261126_height_8.json",
+      "summary": {
+        "common_score_ratio": 1.4215571755849616,
+        "reference_deaths": 0,
+        "candidate_deaths": 3,
+        "reference_pieces": 160000,
+        "candidate_pieces": 126449,
+        "reference_high_fraction": 0.00095,
+        "candidate_high_fraction": 0.00620012811489217
+      },
+      "decision": {
+        "source": "local_codex",
+        "action": "focus_survival"
+      }
+    },
+    {
+      "name": "height_6",
+      "height": 6,
+      "report": "reports/experiments/student_ppo_balanced_recovery_20261126_height_6.json",
+      "summary": {
+        "common_score_ratio": 1.359822309945346,
+        "reference_deaths": 0,
+        "candidate_deaths": 4,
+        "reference_pieces": 160000,
+        "candidate_pieces": 115866,
+        "reference_high_fraction": 0.00095,
+        "candidate_high_fraction": 0.007344691281307717
+      },
+      "decision": {
+        "source": "local_codex",
+        "action": "focus_survival"
+      }
+    }
+  ],
+  "updated_at": "2026-11-26T11:25:44+08:00",
+  "ended_at": "2026-11-26T11:38:39+08:00",
+  "final_action": "focus_survival"
+}
