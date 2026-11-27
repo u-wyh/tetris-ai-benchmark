@@ -3640,3 +3640,5 @@
 - 2026-11-26T16:11:53+08:00：配对回放完成，等长得分比 1.1457378178356472，候选提前结束 1/8 局，Codex 后续决策 hold_candidate。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_evening_20261126/evaluation/`。
 
 - 2026-11-26T16:11:58+08:00：11 月 26 日晚间核验工作流已完成并归档。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_evening_20261126/`。
+
+- 2026-11-27T18:45:52+08:00：登记三天无人值守配对训练，开始 2026-11-27T18:45:52+08:00，窗口截止 2026-11-30T18:45:52+08:00。每臂 8388608 步，Codex 分段监督与独立种子回放，任务完成后按组归档到当前 GitHub 分支。证据：`/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_three_day_20261127/`。

@@ -284,9 +284,9 @@ def train_and_assess(output, state, baseline, deadline):
     while seconds_to(deadline) >= 240:
         totals = training_totals(output)
         remaining = TARGET_TRAINING - completed_seconds(totals)
-        if remaining <= 0:
-            break
         variant = state["variant"]
+        if remaining <= 0 or totals.get(variant, {}).get("steps", 0) >= baseline["target_total_steps"]:
+            break
         stage_number = state["next_stage"]
         state["next_stage"] += 1
         stage = output / "stages" / f"{stage_number:02d}"

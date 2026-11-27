@@ -1,0 +1,21 @@
+[Unit]
+Description=Run the three-day matched PPO survival benchmark
+StartLimitIntervalSec=45min
+StartLimitBurst=6
+
+[Service]
+Type=exec
+WorkingDirectory=%h/projects/tetris-ai-benchmark
+Environment="PATH=%h/.nvm/versions/node/v24.18.0/bin:%h/.local/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONPATH=%h/projects/tetris-ai-benchmark"
+EnvironmentFile=%h/.config/systemd/user/tetris-overnight-codex-network.env
+ExecStart=%h/projects/tetris-ai-benchmark/.venv/bin/python %h/projects/tetris-ai-benchmark/scripts/run_student_ppo_three_day.py
+Restart=on-failure
+RestartSec=5min
+RuntimeMaxSec=72h
+TimeoutStopSec=45s
+StandardOutput=append:%h/projects/tetris-ai-benchmark/runs/student_ppo_three_day_20261127/service.log
+StandardError=append:%h/projects/tetris-ai-benchmark/runs/student_ppo_three_day_20261127/service.log
+
+[Install]
+WantedBy=default.target
