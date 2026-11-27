@@ -1,0 +1,397 @@
+{
+  "protocol": {
+    "start": "2026-11-28T01:54:27+08:00",
+    "end": "2026-11-28T07:34:27+08:00",
+    "minimum_training_seconds": 7200,
+    "target_training_seconds": 43200,
+    "training_config_sha256": "6f29a58ed795683357031351d78c619b031916f0638d026804382c0a28a2afc2",
+    "variants": {
+      "base": {
+        "seed_offset": 0,
+        "height": 0.0,
+        "beta": 0.8,
+        "learning_rate": 3e-05
+      }
+    },
+    "development_seeds": [
+      3266112500,
+      3266112501,
+      3266112502,
+      3266112503
+    ],
+    "live_review_interval_seconds": 1800,
+    "source_sha256": "e40bfad269566c052d880cb01857f5bd998e22a1730c6a71d75845387f605914",
+    "reward_profile": "survival_balanced_v1"
+  },
+  "training": {
+    "base": {
+      "steps": 8388608,
+      "task": 2048,
+      "training_seconds": 11685.813,
+      "recent_training_metrics": {
+        "reference_kl": 0.02081199128588196,
+        "gradient_norm": 11.069489867519588,
+        "mean_risk_increase": 0.012664794921875,
+        "mean_height_penalty": 0.0
+      }
+    }
+  },
+  "stages": [
+    {
+      "stage": 1,
+      "variant": "base",
+      "training_guard": {
+        "at": "2026-11-28T02:39:27+08:00",
+        "outcome": "time_budget",
+        "exit_code": 1,
+        "wall_seconds": 2700.638,
+        "final_cpu_quota": 250
+      },
+      "committed": {
+        "steps": 1892352,
+        "task": 462,
+        "training_seconds": 2641.084,
+        "recent_training_metrics": {
+          "reference_kl": 0.017875563542474993,
+          "gradient_norm": 7.413185376953333,
+          "mean_risk_increase": 0.015289306640625,
+          "mean_height_penalty": 0.0
+        }
+      },
+      "training_seconds": 2641.084,
+      "live_reviews": [
+        {
+          "source": "local_codex",
+          "action": "continue",
+          "reason": "已提交检查点推进至 1,257,472 步。目前只有一份训练指标快照，无法判断趋势，暂无提前进行配对游戏评估的具体依据。",
+          "at": "2026-11-28T02:24:37+08:00",
+          "steps": 1257472,
+          "recent_training_metrics": {
+            "reference_kl": 0.01563774759997614,
+            "gradient_norm": 4.04813573108986,
+            "mean_risk_increase": 0.0120849609375,
+            "mean_height_penalty": 0.0
+          },
+          "applied": false
+        }
+      ],
+      "checkpoint": {
+        "path": "/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_three_day_20261127/block_02/candidate/stages/01/candidate.zip",
+        "sha256": "773e06585e65102c663396208d2cee03cc80ac8c4bf4d527c8f19b1017b07cce"
+      },
+      "evaluation_attempts": [
+        {
+          "at": "2026-11-28T02:40:45+08:00",
+          "outcome": "completed",
+          "exit_code": 0,
+          "wall_seconds": 77.567,
+          "final_cpu_quota": 250
+        }
+      ],
+      "evaluation": {
+        "common_score_ratio": 1.2052542394805261,
+        "reference_deaths": 0,
+        "candidate_deaths": 3,
+        "reference_pieces": 16384,
+        "candidate_pieces": 12123,
+        "reference_high_fraction": 0.00067138671875,
+        "candidate_high_fraction": 0.00849624680359647
+      },
+      "judge_attempts": [
+        {
+          "source": "local_codex",
+          "action": "continue",
+          "reason": "四个种子的同长度得分均高于冻结学生，合计高约20.5%。但候选在三个种子上提前结束，冻结学生均跑满，且候选在四个种子上的高堆叠次数均更多，总体占比从0.067%升至0.850%。近期相对冻结学生的KL约为0.018，缺少历史阶段数据，无法判断偏离趋势。继续观察是唯一允许的动作。"
+        }
+      ],
+      "decision": {
+        "source": "local_codex",
+        "action": "continue",
+        "reason": "四个种子的同长度得分均高于冻结学生，合计高约20.5%。但候选在三个种子上提前结束，冻结学生均跑满，且候选在四个种子上的高堆叠次数均更多，总体占比从0.067%升至0.850%。近期相对冻结学生的KL约为0.018，缺少历史阶段数据，无法判断偏离趋势。继续观察是唯一允许的动作。"
+      }
+    },
+    {
+      "stage": 2,
+      "variant": "base",
+      "training_guard": {
+        "at": "2026-11-28T03:26:00+08:00",
+        "outcome": "command_failed:timeout",
+        "exit_code": 1,
+        "wall_seconds": 2702.036,
+        "final_cpu_quota": 250
+      },
+      "committed": {
+        "steps": 3768320,
+        "task": 920,
+        "training_seconds": 5269.96,
+        "recent_training_metrics": {
+          "reference_kl": 0.023175567627185957,
+          "gradient_norm": 2.610178645327687,
+          "mean_risk_increase": 0.015625,
+          "mean_height_penalty": 0.0
+        }
+      },
+      "training_seconds": 5269.96,
+      "live_reviews": [
+        {
+          "source": "local_codex",
+          "action": "continue",
+          "reason": "已提交检查点推进至 3141632 步。上次评估虽有得分提升，也出现了更多死亡，但目前只有一次训练指标快照，尚无持续恶化的趋势支持提前评估。",
+          "at": "2026-11-28T03:11:07+08:00",
+          "steps": 3141632,
+          "recent_training_metrics": {
+            "reference_kl": 0.01966832799371332,
+            "gradient_norm": 15.148110957350582,
+            "mean_risk_increase": 0.0223388671875,
+            "mean_height_penalty": 0.0
+          },
+          "applied": false
+        }
+      ],
+      "checkpoint": {
+        "path": "/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_three_day_20261127/block_02/candidate/stages/02/candidate.zip",
+        "sha256": "707ca7b438cd9e430395086d81d01d08ac4f8c99bb0e4177ca439607d6657c89"
+      },
+      "evaluation_attempts": [
+        {
+          "at": "2026-11-28T03:27:26+08:00",
+          "outcome": "completed",
+          "exit_code": 0,
+          "wall_seconds": 85.776,
+          "final_cpu_quota": 250
+        }
+      ],
+      "evaluation": {
+        "common_score_ratio": 1.2347189644371275,
+        "reference_deaths": 0,
+        "candidate_deaths": 1,
+        "reference_pieces": 16384,
+        "candidate_pieces": 15133,
+        "reference_high_fraction": 0.00067138671875,
+        "candidate_high_fraction": 0.0065419943170554416
+      },
+      "judge_attempts": [
+        {
+          "source": "local_codex",
+          "action": "continue",
+          "reason": "四个种子在共同长度内均胜过冻结学生，总分高23.5%，上一阶段高20.5%。提前结束从3次降至1次，冻结学生两阶段均为0次。高堆比例从0.85%降至0.65%，但本阶段四个种子的高堆次数均多于冻结学生。当前相对冻结学生的KL为0.023，缺少前阶段KL，无法判断偏离趋势。继续观察提前结束和高堆风险。"
+        }
+      ],
+      "decision": {
+        "source": "local_codex",
+        "action": "continue",
+        "reason": "四个种子在共同长度内均胜过冻结学生，总分高23.5%，上一阶段高20.5%。提前结束从3次降至1次，冻结学生两阶段均为0次。高堆比例从0.85%降至0.65%，但本阶段四个种子的高堆次数均多于冻结学生。当前相对冻结学生的KL为0.023，缺少前阶段KL，无法判断偏离趋势。继续观察提前结束和高堆风险。"
+      }
+    },
+    {
+      "stage": 3,
+      "variant": "base",
+      "training_guard": {
+        "at": "2026-11-28T04:12:39+08:00",
+        "outcome": "time_budget",
+        "exit_code": 1,
+        "wall_seconds": 2700.342,
+        "final_cpu_quota": 250
+      },
+      "committed": {
+        "steps": 5664768,
+        "task": 1383,
+        "training_seconds": 7886.364,
+        "recent_training_metrics": {
+          "reference_kl": 0.021126062802795786,
+          "gradient_norm": 9.143497860524803,
+          "mean_risk_increase": 0.012481689453125,
+          "mean_height_penalty": 0.0
+        }
+      },
+      "training_seconds": 7886.364,
+      "live_reviews": [
+        {
+          "source": "local_codex",
+          "action": "continue",
+          "reason": "已提交步数从 3,768,320 增至 5,029,888。上次评估中候选得分更高，但死亡和高堆叠更多。当前缺少连续观测，尚无明确的恶化趋势支持提前评估。",
+          "at": "2026-11-28T03:57:48+08:00",
+          "steps": 5029888,
+          "recent_training_metrics": {
+            "reference_kl": 0.017521348482114264,
+            "gradient_norm": 10.461212395690382,
+            "mean_risk_increase": 0.01141357421875,
+            "mean_height_penalty": 0.0
+          },
+          "applied": false
+        }
+      ],
+      "checkpoint": {
+        "path": "/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_three_day_20261127/block_02/candidate/stages/03/candidate.zip",
+        "sha256": "7a8dd9bdf0df48c86a6a0e8ea4f2eba2764176e2105e3d019be8860d71fcde47"
+      },
+      "evaluation_attempts": [
+        {
+          "at": "2026-11-28T04:14:09+08:00",
+          "outcome": "completed",
+          "exit_code": 0,
+          "wall_seconds": 89.834,
+          "final_cpu_quota": 250
+        }
+      ],
+      "evaluation": {
+        "common_score_ratio": 1.1937843735529012,
+        "reference_deaths": 0,
+        "candidate_deaths": 0,
+        "reference_pieces": 16384,
+        "candidate_pieces": 16384,
+        "reference_high_fraction": 0.00067138671875,
+        "candidate_high_fraction": 0.00146484375
+      },
+      "judge_attempts": [
+        {
+          "source": "local_codex",
+          "action": "continue",
+          "reason": "本轮四个种子在等长对局中均领先，总分高19.4%，且全部跑满；此前两轮分别有3次和1次提前结束。高堆比例连续三轮高于冻结学生，但已降至0.146%（对照0.067%），本轮四个种子两升两降。近期相对冻结学生的KL约0.021，缺少跨轮趋势，且三轮等长得分均领先，继续观察。"
+        }
+      ],
+      "decision": {
+        "source": "local_codex",
+        "action": "continue",
+        "reason": "本轮四个种子在等长对局中均领先，总分高19.4%，且全部跑满；此前两轮分别有3次和1次提前结束。高堆比例连续三轮高于冻结学生，但已降至0.146%（对照0.067%），本轮四个种子两升两降。近期相对冻结学生的KL约0.021，缺少跨轮趋势，且三轮等长得分均领先，继续观察。"
+      }
+    },
+    {
+      "stage": 4,
+      "variant": "base",
+      "training_guard": {
+        "at": "2026-11-28T04:59:22+08:00",
+        "outcome": "time_budget",
+        "exit_code": 1,
+        "wall_seconds": 2700.433,
+        "final_cpu_quota": 250
+      },
+      "committed": {
+        "steps": 7532544,
+        "task": 1839,
+        "training_seconds": 10487.069,
+        "recent_training_metrics": {
+          "reference_kl": 0.02458090048166923,
+          "gradient_norm": 1.9024552501738072,
+          "mean_risk_increase": 0.008697509765625,
+          "mean_height_penalty": 0.0
+        }
+      },
+      "training_seconds": 10487.069,
+      "live_reviews": [
+        {
+          "source": "local_codex",
+          "action": "continue",
+          "reason": "已提交步数从 566 万增至 691 万，近期指标只有一个观测点，尚无明确恶化趋势。上次配对评估得分比为 1.19，双方均无死亡，目前没有提前评估的具体依据。",
+          "at": "2026-11-28T04:44:30+08:00",
+          "steps": 6909952,
+          "recent_training_metrics": {
+            "reference_kl": 0.02501238269614987,
+            "gradient_norm": 7.096686650812626,
+            "mean_risk_increase": 0.0201416015625,
+            "mean_height_penalty": 0.0
+          },
+          "applied": false
+        }
+      ],
+      "checkpoint": {
+        "path": "/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_three_day_20261127/block_02/candidate/stages/04/candidate.zip",
+        "sha256": "42fbd3f72303d54b73f5075778aa9ed49784a73bd7d1d78195e5782230ed9b0b"
+      },
+      "evaluation_attempts": [
+        {
+          "at": "2026-11-28T05:00:38+08:00",
+          "outcome": "completed",
+          "exit_code": 0,
+          "wall_seconds": 75.585,
+          "final_cpu_quota": 250
+        }
+      ],
+      "evaluation": {
+        "common_score_ratio": 1.3008603430550294,
+        "reference_deaths": 0,
+        "candidate_deaths": 2,
+        "reference_pieces": 16384,
+        "candidate_pieces": 11096,
+        "reference_high_fraction": 0.00067138671875,
+        "candidate_high_fraction": 0.008020908435472242
+      },
+      "judge_attempts": [
+        {
+          "source": "fallback",
+          "action": "continue",
+          "reason": "Codex decision unavailable: CalledProcessError"
+        }
+      ],
+      "decision": {
+        "source": "fixed_protocol",
+        "action": "continue",
+        "reason": "Codex unavailable; the protocol only permits the current variant."
+      }
+    },
+    {
+      "stage": 5,
+      "variant": "base",
+      "training_guard": {
+        "at": "2026-11-28T05:21:37+08:00",
+        "outcome": "completed",
+        "exit_code": 0,
+        "wall_seconds": 1250.336,
+        "final_cpu_quota": 250
+      },
+      "committed": {
+        "steps": 8388608,
+        "task": 2048,
+        "training_seconds": 11685.813,
+        "recent_training_metrics": {
+          "reference_kl": 0.02081199128588196,
+          "gradient_norm": 11.069489867519588,
+          "mean_risk_increase": 0.012664794921875,
+          "mean_height_penalty": 0.0
+        }
+      },
+      "training_seconds": 11685.813,
+      "live_reviews": [],
+      "checkpoint": {
+        "path": "/home/wyh/projects/tetris-ai-benchmark/runs/student_ppo_three_day_20261127/block_02/candidate/stages/05/candidate.zip",
+        "sha256": "0ae870c35f3cf2592b485586cf10fd99b3955319584a2b8c75a6a21e5894461f"
+      },
+      "evaluation_attempts": [
+        {
+          "at": "2026-11-28T05:23:05+08:00",
+          "outcome": "completed",
+          "exit_code": 0,
+          "wall_seconds": 87.796,
+          "final_cpu_quota": 250
+        }
+      ],
+      "evaluation": {
+        "common_score_ratio": 1.3000719981223396,
+        "reference_deaths": 0,
+        "candidate_deaths": 0,
+        "reference_pieces": 16384,
+        "candidate_pieces": 16384,
+        "reference_high_fraction": 0.00067138671875,
+        "candidate_high_fraction": 0.00689697265625
+      },
+      "judge_attempts": [
+        {
+          "source": "fallback",
+          "action": "continue",
+          "reason": "Codex decision unavailable: CalledProcessError"
+        }
+      ],
+      "decision": {
+        "source": "fixed_protocol",
+        "action": "continue",
+        "reason": "Codex unavailable; the protocol only permits the current variant."
+      }
+    }
+  ],
+  "outcome": "completed",
+  "training_seconds": 11685.813,
+  "training_minimum_met": true,
+  "verified_codex_decisions": 3,
+  "verified_codex_live_reviews": 4,
+  "early_evaluations": 0
+}
