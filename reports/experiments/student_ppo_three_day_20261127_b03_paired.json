@@ -1,0 +1,199 @@
+{
+  "protocol": {
+    "models": {
+      "reference": {
+        "path": "runs/student_ppo_three_day_20261127/block_03/reference/training/base/committed/task_002048/model.zip",
+        "sha256": "59b16cb611e5fce9f90299e8f09414a4a8cc26dfd7f2f866365e48e189b2895a"
+      },
+      "candidate": {
+        "path": "runs/student_ppo_three_day_20261127/block_03/candidate/training/base/committed/task_002048/model.zip",
+        "sha256": "7e3e6760bf410bd47fec6606d860844c369fe5cf5e938f6515bbb8a3b3dee8f2"
+      }
+    },
+    "seeds": [
+      3277110300,
+      3277110301,
+      3277110302,
+      3277110303,
+      3277110304,
+      3277110305,
+      3277110306,
+      3277110307
+    ],
+    "cap": 20000
+  },
+  "arms": {
+    "reference": {
+      "experiment": {
+        "beta": 0.3,
+        "reward_profile": "survival_balanced_v1"
+      },
+      "seed": 3276110300,
+      "steps": 8388608,
+      "seconds": 11543.603,
+      "report": "reports/experiments/student_ppo_three_day_20261127_b03_reference.json",
+      "codex_reviews": 1,
+      "codex_decisions": 2,
+      "checkpoint": {
+        "path": "runs/student_ppo_three_day_20261127/block_03/reference/training/base/committed/task_002048/model.zip",
+        "sha256": "59b16cb611e5fce9f90299e8f09414a4a8cc26dfd7f2f866365e48e189b2895a"
+      }
+    },
+    "candidate": {
+      "experiment": {
+        "beta": 0.5,
+        "reward_profile": "survival_balanced_v1"
+      },
+      "seed": 3276110300,
+      "steps": 8388608,
+      "seconds": 11596.333,
+      "report": "reports/experiments/student_ppo_three_day_20261127_b03_candidate.json",
+      "codex_reviews": 4,
+      "codex_decisions": 5,
+      "checkpoint": {
+        "path": "runs/student_ppo_three_day_20261127/block_03/candidate/training/base/committed/task_002048/model.zip",
+        "sha256": "7e3e6760bf410bd47fec6606d860844c369fe5cf5e938f6515bbb8a3b3dee8f2"
+      }
+    }
+  },
+  "pairs": [
+    {
+      "seed": 3277110300,
+      "shared_pieces": 2727,
+      "reference": {
+        "pieces": 5005,
+        "over": true,
+        "height_ge_12": 36,
+        "common_score": 10349000
+      },
+      "candidate": {
+        "pieces": 2727,
+        "over": true,
+        "height_ge_12": 77,
+        "common_score": 9491800
+      }
+    },
+    {
+      "seed": 3277110301,
+      "shared_pieces": 20000,
+      "reference": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 75,
+        "common_score": 553231200
+      },
+      "candidate": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 171,
+        "common_score": 521452700
+      }
+    },
+    {
+      "seed": 3277110302,
+      "shared_pieces": 1547,
+      "reference": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 89,
+        "common_score": 3337400
+      },
+      "candidate": {
+        "pieces": 1547,
+        "over": true,
+        "height_ge_12": 25,
+        "common_score": 2940600
+      }
+    },
+    {
+      "seed": 3277110303,
+      "shared_pieces": 20000,
+      "reference": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 87,
+        "common_score": 560088500
+      },
+      "candidate": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 154,
+        "common_score": 518337400
+      }
+    },
+    {
+      "seed": 3277110304,
+      "shared_pieces": 11821,
+      "reference": {
+        "pieces": 11821,
+        "over": true,
+        "height_ge_12": 83,
+        "common_score": 195021300
+      },
+      "candidate": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 200,
+        "common_score": 184575400
+      }
+    },
+    {
+      "seed": 3277110305,
+      "shared_pieces": 20000,
+      "reference": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 73,
+        "common_score": 553553200
+      },
+      "candidate": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 202,
+        "common_score": 516397400
+      }
+    },
+    {
+      "seed": 3277110306,
+      "shared_pieces": 1525,
+      "reference": {
+        "pieces": 1525,
+        "over": true,
+        "height_ge_12": 32,
+        "common_score": 3245700
+      },
+      "candidate": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 119,
+        "common_score": 2989100
+      }
+    },
+    {
+      "seed": 3277110307,
+      "shared_pieces": 12461,
+      "reference": {
+        "pieces": 20000,
+        "over": false,
+        "height_ge_12": 123,
+        "common_score": 215484700
+      },
+      "candidate": {
+        "pieces": 12461,
+        "over": true,
+        "height_ge_12": 139,
+        "common_score": 201637100
+      }
+    }
+  ],
+  "summary": {
+    "common_score_ratio": 0.9348284471599491,
+    "reference_deaths": 3,
+    "candidate_deaths": 3,
+    "reference_pieces": 118351,
+    "candidate_pieces": 116735,
+    "reference_high_fraction": 0.005052766770031516,
+    "candidate_high_fraction": 0.009311688867948772
+  },
+  "ended_at": "2026-11-28T16:05:46+08:00"
+}
